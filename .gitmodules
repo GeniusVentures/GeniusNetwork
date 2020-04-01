@@ -4,3 +4,6 @@
 [submodule "pay-channel-eth"]
 	path = pay-channel-eth
 	url = git@bitbucket.org:geniusventures/pay-channel-eth.git
+[submodule "thirdparty/celer-network/pb3-gen-sol"]
+	path = thirdparty/celer-network/pb3-gen-sol
+	url = https://github.com/celer-network/pb3-gen-sol.git
