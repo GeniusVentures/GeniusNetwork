@@ -1,6 +1,6 @@
 [submodule "SuperGenius"]
 	path = SuperGenius
-	url = ./SuperGenius/
+	url = git@bitbucket.org:geniusventures/supergenius.git
 [submodule "pay-channel-eth"]
 	path = pay-channel-eth
-	url = ./pay-channel-eth
+	url = git@bitbucket.org:geniusventures/pay-channel-eth.git
