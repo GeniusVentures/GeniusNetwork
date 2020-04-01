@@ -1,0 +1,6 @@
+[submodule "SuperGenius"]
+	path = SuperGenius
+	url = ./SuperGenius/
+[submodule "pay-channel-eth"]
+	path = pay-channel-eth
+	url = ./pay-channel-eth
