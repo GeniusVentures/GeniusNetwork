@@ -1,9 +1,9 @@
 [submodule "SuperGenius"]
 	path = SuperGenius
-	url = git@bitbucket.org:geniusventures/supergenius.git
+	url = ssh://git@gitlab.geniusventures.io:8487/GeniusVentures/supergenius.git
 [submodule "pay-channel-eth"]
 	path = pay-channel-eth
-	url = git@bitbucket.org:geniusventures/pay-channel-eth.git
+	url = ssh://git@gitlab.geniusventures.io:8487/GeniusVentures/pay-channel-eth.git
 [submodule "thirdparty/celer-network/pb3-gen-sol"]
 	path = thirdparty/celer-network/pb3-gen-sol
 	url = https://github.com/celer-network/pb3-gen-sol.git
