@@ -7,3 +7,6 @@
 [submodule "thirdparty/celer-network/pb3-gen-sol"]
 	path = thirdparty/celer-network/pb3-gen-sol
 	url = https://github.com/celer-network/pb3-gen-sol.git
+[submodule "GeniusWallet"]
+	path = GeniusWallet
+	url = ssh://git@gitlab.geniusventures.io:8487/GeniusVentures/GeniusWallet.git
