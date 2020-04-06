@@ -10,3 +10,6 @@
 [submodule "GeniusWallet"]
 	path = GeniusWallet
 	url = ssh://git@gitlab.geniusventures.io:8487/GeniusVentures/GeniusWallet.git
+[submodule "GeniusSDK"]
+	path = GeniusSDK
+	url = ssh://git@gitlab.geniusventures.io:8487/GeniusVentures/GeniusSDK.git
