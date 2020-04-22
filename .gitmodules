@@ -14,7 +14,7 @@
 	path = GeniusSDK
 	url = ssh://git@gitlab.geniusventures.io:8487/GeniusVentures/GeniusSDK.git
 [submodule "CMake.build"]
-        path = CMake.build
+        path = thirdparty/CMake.build
         url = https://github.com/psiha/build.git
 [submodule "TestVMs"]
 	path = TestVMs
