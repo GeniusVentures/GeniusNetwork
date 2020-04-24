@@ -13,10 +13,9 @@
 [submodule "GeniusSDK"]
 	path = GeniusSDK
 	url = ssh://git@gitlab.geniusventures.io:8487/GeniusVentures/GeniusSDK.git
-[submodule "CMake.build"]
-        path = thirdparty/CMake.build
-        url = https://github.com/psiha/build.git
 [submodule "TestVMs"]
 	path = TestVMs
 	url = ssh://git@gitlab.geniusventures.io:8487/GeniusVentures/TestVMs.git
-
+[submodule "flutter"]
+	path = thirdparty/flutter
+	url = https://github.com/flutter/flutter.git
