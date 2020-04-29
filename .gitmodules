@@ -22,3 +22,6 @@
 [submodule "thirdparty/boost-for-mobile"]
 	path = thirdparty/boost-for-mobile
 	url = ssh://git@gitlab.geniusventures.io:8487/GeniusVentures/boost-for-mobile.git
+[submodule "thirdparty/lmdb"]
+	path = thirdparty/lmdb
+	url = ssh://git@gitlab.geniusventures.io:8487/GeniusVentures/lmdb.git
