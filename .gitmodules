@@ -19,4 +19,6 @@
 [submodule "TestVMs"]
 	path = TestVMs
 	url = ssh://git@gitlab.geniusventures.io:8487/GeniusVentures/TestVMs.git
-
+[submodule "thirdparty/boost-for-mobile"]
+	path = thirdparty/boost-for-mobile
+	url = ssh://git@gitlab.geniusventures.io:8487/GeniusVentures/boost-for-mobile.git
