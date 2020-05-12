@@ -25,4 +25,10 @@
 [submodule "flutter"]
 	path = thirdparty/flutter
 	url = https://github.com/flutter/flutter.git
+[submodule "libcurl"]
+	path = thirdparty/curl-android-ios
+	url = https://github.com/gcesarmza/curl-android-ios.git
+[submodule "restclient-cpp"]
+	path = thirdparty/restclient-cpp
+	url = https://github.com/mrtazz/restclient-cpp.git
 
