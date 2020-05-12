@@ -32,3 +32,9 @@
 	path = thirdparty/restclient-cpp
 	url = https://github.com/mrtazz/restclient-cpp.git
 
+[submodule "thirdparty/restclient-cpp"]
+	path = thirdparty/restclient-cpp
+	url = https://github.com/mrtazz/restclient-cpp.git
+[submodule "thirdparty/curl-android-ios"]
+	path = thirdparty/curl-android-ios
+	url = https://github.com/gcesarmza/curl-android-ios.git
