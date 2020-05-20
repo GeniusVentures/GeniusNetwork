@@ -4,9 +4,6 @@
 [submodule "pay-channel-eth"]
 	path = pay-channel-eth
 	url = ssh://git@gitlab.geniusventures.io:8487/GeniusVentures/pay-channel-eth.git
-[submodule "thirdparty/celer-network/pb3-gen-sol"]
-	path = thirdparty/celer-network/pb3-gen-sol
-	url = https://github.com/celer-network/pb3-gen-sol.git
 [submodule "GeniusWallet"]
 	path = GeniusWallet
 	url = ssh://git@gitlab.geniusventures.io:8487/GeniusVentures/GeniusWallet.git
@@ -16,25 +13,6 @@
 [submodule "TestVMs"]
 	path = TestVMs
 	url = ssh://git@gitlab.geniusventures.io:8487/GeniusVentures/TestVMs.git
-[submodule "thirdparty/boost-for-mobile"]
-	path = thirdparty/boost-for-mobile
-	url = ssh://git@gitlab.geniusventures.io:8487/GeniusVentures/boost-for-mobile.git
-[submodule "thirdparty/lmdb"]
-	path = thirdparty/lmdb
-	url = ssh://git@gitlab.geniusventures.io:8487/GeniusVentures/lmdb.git
-[submodule "flutter"]
-	path = thirdparty/flutter
-	url = https://github.com/flutter/flutter.git
-[submodule "libcurl"]
-	path = thirdparty/curl-android-ios
-	url = https://github.com/gcesarmza/curl-android-ios.git
-[submodule "restclient-cpp"]
-	path = thirdparty/restclient-cpp
-	url = https://github.com/mrtazz/restclient-cpp.git
-
-[submodule "thirdparty/restclient-cpp"]
-	path = thirdparty/restclient-cpp
-	url = https://github.com/mrtazz/restclient-cpp.git
-[submodule "thirdparty/curl-android-ios"]
-	path = thirdparty/curl-android-ios
-	url = https://github.com/gcesarmza/curl-android-ios.git
+[submodule "thirdparty"]
+	path = thirdparty
+	url = ssh://git@gitlab.geniusventures.io:8487/GeniusVentures/thirdparty.git
