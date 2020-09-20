@@ -1,0 +1,26 @@
+{
+  "name": "exported-from-react-studio",
+  "version": "0.0.1",
+  "private": true,
+  "dependencies": {
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6",
+    "react-localization": "^1.0.13",
+    "react-router-dom": "^5.1.2",
+    "react-scripts": "2.1.8",
+    "muicss": "^0.9.41"
+  },
+  "scripts": {
+    "start": "PORT=3000 react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject",
+    "openbrowser": "node -e 'const openBrowser = require(\"react-dev-utils/openBrowser\"); openBrowser(\"http://localhost:3000\"); process.exit();'"
+  },
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not ie <= 11",
+    "not op_mini all"
+  ]
+}
