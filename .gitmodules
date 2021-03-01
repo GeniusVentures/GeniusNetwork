@@ -1,6 +1,6 @@
 [submodule "SuperGenius"]
 	path = SuperGenius
-	url = ssh://git@gitlab.geniusventures.io:8487/GeniusVentures/supergenius.git
+	url = ssh://git@gitlab.geniusventures.io:8487/GeniusVentures/SuperGenius.git
 [submodule "pay-channel-eth"]
 	path = pay-channel-eth
 	url = ssh://git@gitlab.geniusventures.io:8487/GeniusVentures/pay-channel-eth.git
