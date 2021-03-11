@@ -102,17 +102,15 @@ Do not restate code.
 **Guideline 2** - Keep code and comments visually separate.
 
 **Standard 1** - Use top of file comments for all files. The comments
-should be DOXYGEN compatible
+should be JSDoc/Doxygen compatible
 
 Here is an example of a good header for a file:
 ```
-///=====================================================================
-/// \\file IRenderContext.h
-/// \\brief Header file for the Rendering contexts
-/// i.e. rendering surface inside windows
-/// \\date 09/29/2002
-/// \\author Kenneth Hurley
-///=====================================================================
+JSDOC Style (preferred)
+/**
+* Header file for the Rendering contexts i.e. rendering surface inside windows
+* @author Kenneth Hurley
+*/
 ```
 **Standard 2** - Use header comments for all functions. The size of the
 comment should mirror the size and complexity of the code. Class
@@ -120,14 +118,12 @@ interface functions and procedures should be commented in the header.
 
 **Standard 3 --** Include comment headers for interfaces inside the .h
 file. A well-formed .h file should look like the following:
+
 ```
-    ///=====================================================================
-    /// \file	IRenderContext.h
-    /// \brief	Header file for the Rendering contexts
-    ///				  i.e. rendering surface inside windows
-    /// \date	09/29/2002
-    /// \author	Kenneth Hurley
-    ///=====================================================================
+/**
+* Header file for the Rendering contexts i.e. rendering surface inside windows
+* @author Kenneth Hurley
+*/
 
     #ifndef IRENDERCONTEXT_H
     #define IRENDERCONTEXT_H
@@ -136,44 +132,36 @@ file. A well-formed .h file should look like the following:
     class IRenderView;
     class IRenderWindow;
 
-    /// \class IRenderContext
-    /// \brief Context for Rendering objects into.  
-    ///
-    ///	Render contexts have rendering windows
-    /// attached to them before they can be used.
+    /** 
+    * Context for Rendering objects into.  
+    * Render contexts have rendering windows attached to them before they can be used.
+    */
+
     class IRenderContext
     {
     public:
-    	/// Attach a Rendering windows to a rendering context.
-    	/// \param rendWin - The window to attach to the context
-    	/// \return false on failure
+        /** Attach a Rendering windows to a rendering context.
+        * @param rendWin - The window to attach to the context
+        * @return false on failure
+        */
     	virtual BOOL AttachRenderWindow(IRenderWindow *rendWin) = 0;
-    	/// Get the number of rendering views inside the context
-    	/// \return the count of current rendering views
+        /**
+        * Get the number of rendering views inside the context
+        * @return the count of current rendering views
+        */
     	virtual DWORD GetRenderViewCount() = 0;
-    	/// Get one of the views associated with the context
-    	/// \param index - index # of the internal rendering view
-    	/// \param pRV - pointer to receive the IRenderView interface pointer
-    	/// \return false on failure
+        /**
+        * Get one of the views associated with the context
+        * @param index - index # of the internal rendering view
+        * @param pRV - pointer to receive the IRenderView interface pointer
+        * @return false on failure
+        */
     	virtual BOOL GetRenderView(DWORD index, IRenderView **pRV) = 0;
-    	/// Add a rendering view to the rendering context
-    	/// \param pRV - the renderview to add to the context
-    	/// \return false on failure
-    	virtual BOOL AddRenderView(IRenderView *pRV) = 0;
-    	/// Delete one of the rendering views in the context
-    	/// \param index = index # of the internal rendering view
-    	/// \return false on failure
-    	virtual BOOL DeleteRenderView(DWORD index) = 0;
-    	/// Get the configuration meta-data for the rendering context
-    	/// \return interface to configuration meta data
-    	virtual IMeta *GetConfig() = 0;
-    	/// Get the parent rendering window for this context
-    	/// \return interface to the parent rendering window
-    	virtual IRenderWindow *GetParentWnd() = 0;
     };
 
     #endif	  // #ifndef IRENDERCONTEXT_H
 ```
+
 **Standard (.cpp) 1** - Use only the C++ comment style (double slashes)
 for single line comments.
 
