@@ -1,18 +1,18 @@
 [submodule "SuperGenius"]
 	path = SuperGenius
-	url = ssh://git@gitlab.geniusventures.io:8487/GeniusVentures/SuperGenius.git
-[submodule "pay-channel-eth"]
-	path = pay-channel-eth
-	url = ssh://git@gitlab.geniusventures.io:8487/GeniusVentures/pay-channel-eth.git
+	url = ../SuperGenius.git
 [submodule "GeniusWallet"]
 	path = GeniusWallet
-	url = ssh://git@gitlab.geniusventures.io:8487/GeniusVentures/GeniusWallet.git
+	url = ../GeniusWallet.git
 [submodule "GeniusSDK"]
 	path = GeniusSDK
-	url = ssh://git@gitlab.geniusventures.io:8487/GeniusVentures/GeniusSDK.git
+	url = ../GeniusSDK.git
 [submodule "TestVMs"]
 	path = TestVMs
-	url = ssh://git@gitlab.geniusventures.io:8487/GeniusVentures/TestVMs.git
+	url = ../TestVMs.git
 [submodule "thirdparty"]
 	path = thirdparty
-	url = ssh://git@gitlab.geniusventures.io:8487/GeniusVentures/thirdparty.git
+	url = ../thirdparty.git
+[submodule "TokenContracts"]
+	path = TokenContracts
+	url = ../tokencontracts.git
