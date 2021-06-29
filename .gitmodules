@@ -10,9 +10,6 @@
 [submodule "TestVMs"]
 	path = TestVMs
 	url = ../TestVMs.git
-[submodule "thirdparty"]
-	path = thirdparty
-	url = ../thirdparty.git
 [submodule "TokenContracts"]
 	path = TokenContracts
 	url = ../tokencontracts.git
