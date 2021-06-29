@@ -13,3 +13,6 @@
 [submodule "TokenContracts"]
 	path = TokenContracts
 	url = ../tokencontracts.git
+[submodule "thirdparty"]
+	path = thirdparty
+	url = ../thirdparty
