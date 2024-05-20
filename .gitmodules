@@ -1,0 +1,6 @@
+[submodule "SuperGenius"]
+	path = SuperGenius
+	url = ../SuperGenius.git
+[submodule "GeniusSDK"]
+	path = GeniusSDK
+	url = ../GeniusSDK.git
