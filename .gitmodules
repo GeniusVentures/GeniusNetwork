@@ -7,3 +7,6 @@
 [submodule "GithubReleaseDownloader"]
 	path = GithubReleaseDownloader
 	url = https://github.com/MBQbUtils/GithubReleaseDownloader.git
+[submodule "thirdparty"]
+	path = thirdparty
+	url = ./thirdparty
