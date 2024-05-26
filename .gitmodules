@@ -4,3 +4,6 @@
 [submodule "GeniusSDK"]
 	path = GeniusSDK
 	url = ../GeniusSDK.git
+[submodule "GithubReleaseDownloader"]
+	path = GithubReleaseDownloader
+	url = https://github.com/MBQbUtils/GithubReleaseDownloader.git
