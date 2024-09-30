@@ -16,3 +16,9 @@
 [submodule "thirdparty"]
 	path = thirdparty
 	url = ../thirdparty
+[submodule "GithubReleaseDownloader"]
+	path = GithubReleaseDownloader
+	url = https://github.com/MBQbUtils/GithubReleaseDownloader.git
+[submodule "ProofSystem"]
+	path = ProofSystem
+	url = ../ProofSystem.git
