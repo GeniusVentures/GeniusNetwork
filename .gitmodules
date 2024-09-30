@@ -1,12 +1,15 @@
 [submodule "SuperGenius"]
 	path = SuperGenius
 	url = ../SuperGenius.git
-[submodule "GeniusSDK"]
-	path = GeniusSDK
-	url = ../GeniusSDK.git
 [submodule "GithubReleaseDownloader"]
 	path = GithubReleaseDownloader
 	url = https://github.com/MBQbUtils/GithubReleaseDownloader.git
 [submodule "thirdparty"]
 	path = thirdparty
-	url = ./thirdparty
+	url = ../thirdparty.git
+[submodule "GeniusSDK"]
+	path = GeniusSDK
+	url = ../GeniusSDK.git
+[submodule "ProofSystem"]
+	path = ProofSystem
+	url = ../ProofSystem.git
