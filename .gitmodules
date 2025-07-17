@@ -19,3 +19,6 @@
 [submodule "GithubReleaseDownloader"]
 	path = GithubReleaseDownloader
 	url = https://github.com/MBQbUtils/GithubReleaseDownloader.git
+[submodule "zkLLVM"]
+	path = zkLLVM
+	url = ../zkLLVM.git
