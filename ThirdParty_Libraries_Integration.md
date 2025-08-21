@@ -243,4 +243,4 @@ The following libraries are supported across SuperGenius submodules, as listed i
 - **Performance**: Optimize hot paths using `xxhash` or `abseil-cpp` for fast data processing, as per issue #14. Consider `MNN` for ML-related submodules.
 - **Documentation**: Follow issue #10 for Doxygen documentation and usage examples. Include performance characteristics for libraries like `rocksdb` or `libp2p`.
 
-This generic integration guide ensures that SuperGenius submodules, including the C++ RLP protocol, can seamlessly incorporate third-party libraries while adhering to the project’s build system, coding standards, and testing practices.
+This generic integration guide ensures that SuperGenius submodules, including the C++ RLP protocol, can seamlessly incorporate third-party libraries while adhering to the project’s build system, coding standards, and testing practices. 
