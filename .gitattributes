@@ -1,1 +1,13 @@
-*.* linguist-language=C++
+# Specify C++ for relevant file extensions
+*.cpp linguist-language=C++
+*.h linguist-language=C++
+*.hpp linguist-language=C++
+*.cxx linguist-language=C++
+*.cc linguist-language=C++
+
+# Allow Markdown to be detected correctly
+*.md linguist-language=Markdown
+*.markdown linguist-language=Markdown
+
+# Optionally, reset other files to their default detection
+*.* linguist-language=
