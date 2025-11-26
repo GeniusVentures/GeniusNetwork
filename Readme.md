@@ -15,6 +15,7 @@
 </div>
 
 Downloadable computer software (International Class 9) providing the complete GNUS.ai™ operating system and development kit for the Genius Tokens blockchain ecosystem.
+
 GNUS.ai™ is also provided as an online non-downloadable platform (SaaS) for blockchain-integrated gaming and privacy-first computing (International Class 042).
 
 **Trademarks**  
