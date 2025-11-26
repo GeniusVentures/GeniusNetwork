@@ -3,7 +3,7 @@
 ![GNUS.ai Logo](https://raw.githubusercontent.com/GeniusVentures/GeniusNetwork/main/gnus-ai-logo.png)
 
 **GNUS.ai™** – Decentralized Privacy-First Operating System & Gaming SDK  
-![Genius Ventures Logo](https://raw.githubusercontent.com/GeniusVentures/GeniusNetwork/main/gvi-logo.png) **by Genius Ventures, Inc.**
+![Genius Ventures Logo](https://raw.githubusercontent.com/GeniusVentures/GeniusNetwork/main/gvi-logo-only.png) **by Genius Ventures, Inc.**
 
 Downloadable computer software (International Class 9) providing the complete GNUS.ai™ operating system and development kit for the Genius Tokens blockchain ecosystem.
 
