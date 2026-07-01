@@ -84,7 +84,7 @@ Genius Network is a monorepo (parent repo with Git submodules) implementing a de
 - SuperGenius uses a **layered architecture** within `src/`: each subdirectory is a self-contained module with public headers, implementation, and CMake build
 - GeniusWallet uses the **BLoC (Business Logic Component)** pattern for state management with `flutter_bloc`
 - Protocol Buffers define serialization contracts between components (`.proto` files in each module's `proto/` dir)
-- CMake is the universal build system across all C++ components
+- CMake is the universal build system across all C++ components. Main projects do NOT have root `CMakeLists.txt` — builds originate from `build/<Platform>/<Debug|Release>/` using `cmake ../..` (arm64 targets) or `cmake ..` (x86_64/macOS targets).
 - Cross-platform compilation to Linux, macOS, Windows, iOS, Android
 - CRDT (Conflict-free Replicated Data Types) for distributed consensus-free state synchronization over IPFS
 
