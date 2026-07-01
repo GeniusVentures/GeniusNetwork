@@ -122,9 +122,31 @@
 
 **Build:**
 - Main C++ projects (SuperGenius, GeniusSDK, thirdparty) do NOT have root `CMakeLists.txt`. Build entry points are inside `build/<Platform>/`.
-- Build from `build/<Platform>/<Debug|Release>/`:
-  - `cmake ../..` — for arm64-based targets (Linux aarch64, Android arm64-v8a, Android armeabi-v7a) that have extra depth
-  - `cmake ..` — for x86_64 targets (Windows, Linux x86_64) and macOS
+- Build commands from `build/<Platform>/<Debug|Release>/`:
+
+  ```bash
+  # Windows (x86_64, MSVC)
+  cmake .. -G "Visual Studio 17 2022" -A x64 -DCMAKE_BUILD_TYPE=Release
+  cmake --build . --parallel 8 --config Release     # or: cmake --build . --config Release (Debug)
+
+  # Linux (x86_64 or aarch64, Clang)
+  cmake ../.. -DCMAKE_BUILD_TYPE=Release
+  make -j                                            # or: ninja, cmake --build . --parallel 8
+
+  # macOS (OSX, universal)
+  cmake .. -DCMAKE_BUILD_TYPE=Release
+  make -j                                            # or: ninja, cmake --build . --parallel 8
+
+  # iOS (arm64)
+  cmake .. -DCMAKE_BUILD_TYPE=Release
+
+  # Android (arm64-v8a, armeabi-v7a, x86_64 — adjust ANDROID_ABI)
+  cmake ../../ -DANDROID_ABI="arm64-v8a" -DCMAKE_ANDROID_NDK=$ANDROID_NDK -DANDROID_TOOLCHAIN=clang -DCMAKE_BUILD_TYPE=Release
+  ```
+
+  - Single-command alternative: combine generate + build in one step with `cmake -B build/<Platform>/Release ...` plus `--build`.
+  - Generator: Visual Studio on Windows; Ninja or Unix Makefiles on Linux/macOS.
+  - `thirdparty/` must be built first as it provides all dependency libraries.
 - `cmake/CommonBuildParameters.cmake` (`GeniusSDK/cmake/`) - Central dependency configuration
 - `cmake/CommonCompilerOptions.cmake` - Compiler flags and toolchain config
 - `cmake/functions.cmake` - Build helper functions
@@ -143,14 +165,14 @@
 - All: Git, Python 3.7+, Node.js (for smart contracts), Rust (for ZK/LLVM)
 
 **Production:**
-- Windows x86_64 (MSVC) — `cmake ..` from `build/Windows/<Debug|Release>/`
-- Linux x86_64 (Clang) — `cmake ..` from `build/Linux/<Debug|Release>/`
-- Linux aarch64 (Clang cross-compile) — `cmake ../..` from `build/Linux/<Debug|Release>/`
-- macOS universal (x86_64 + ARM64) — `cmake ..` from `build/OSX/<Debug|Release>/`
-- iOS arm64 — platform-specific CMake from `build/iOS/`
-- Android arm64-v8a, armeabi-v7a, x86_64 — `cmake ../..` from `build/Android/`
+- Windows x86_64 (MSVC) — `cmake .. -G "Visual Studio 17 2022" -A x64 ...` from `build/Windows/`
+- Linux (x86_64 or aarch64, Clang) — `cmake ../.. ...` from `build/Linux/`
+- macOS universal (x86_64 + ARM64) — `cmake .. ...` from `build/OSX/`
+- iOS arm64 — `cmake .. ...` from `build/iOS/`
+- Android arm64-v8a, armeabi-v7a, x86_64 — `cmake ../../ -DANDROID_ABI=...` from `build/Android/`
 - WebAssembly via Emscripten toolchain
 - Container: `ghcr.io/geniusventures/debian-bullseye:latest` (Docker)
+- Build tool: `make -j`, `cmake --build . --parallel 8 --config Release`, or Ninja
 
 ---
 

@@ -251,12 +251,21 @@ GeniusNetwork/                         # Monorepo root (parent repo)
 
 **Build System:**
 - Main C++ projects (SuperGenius, GeniusSDK, thirdparty) do NOT have root `CMakeLists.txt`. Build entry points are inside `build/<Platform>/`.
-- Build from `build/<Platform>/<Debug|Release>/`: `cmake ../..` (for arm64-based targets: Linux aarch64, Android arm64-v8a/armeabi-v7a) or `cmake ..` (for x86_64 and macOS targets). Example:
-  ```bash
-  cd build/Linux/Debug && cmake ../.. -DCMAKE_BUILD_TYPE=Debug
-  cd build/Windows/Debug && cmake .. -DCMAKE_BUILD_TYPE=Debug
-  ```
 - `thirdparty/` must be built first as it provides all dependency libraries.
+- Build commands issued from `build/<Platform>/<Debug|Release>/`:
+
+  | Platform | CMake generate | Build |
+  |----------|---------------|-------|
+  | Windows (x64, MSVC) | `cmake .. -G "Visual Studio 17 2022" -A x64 -DCMAKE_BUILD_TYPE=Release` | `cmake --build . --parallel 8 --config Release` |
+  | Linux (x86_64/aarch64, Clang) | `cmake ../.. -DCMAKE_BUILD_TYPE=Release` | `make -j` |
+  | macOS (OSX, universal) | `cmake .. -DCMAKE_BUILD_TYPE=Release` | `make -j` |
+  | iOS (arm64) | `cmake .. -DCMAKE_BUILD_TYPE=Release` | - |
+  | Android | `cmake ../../ -DANDROID_ABI="arm64-v8a" -DCMAKE_ANDROID_NDK=$ANDROID_NDK -DANDROID_TOOLCHAIN=clang -DCMAKE_BUILD_TYPE=Release` | - |
+
+  - Adjust `ANDROID_ABI` per target: `arm64-v8a`, `armeabi-v7a`, or `x86_64`.
+  - Set `-DCMAKE_BUILD_TYPE=Debug` for debug builds.
+  - Generator alternatives: Ninja (`-G Ninja`) on Linux/macOS for faster builds.
+  - Single-command option: `cmake -B build/<Platform>/<Config> <source-path> ...` then `cmake --build build/<Platform>/<Config> --parallel 8`.
 
 **Generated / Build Artifacts:**
 - `build/<Platform>/<Config>/`: Build outputs in all C++ projects (not committed)
@@ -331,7 +340,8 @@ GeniusNetwork/                         # Monorepo root (parent repo)
 ## Special Directories
 
 **build/<Platform>/<Debug|Release>/:**
-- Purpose: CMake build entry points and output directories. The `build/<Platform>/` subdirectories contain the actual `CMakeLists.txt` build entries; there is no root-level CMakeLists.txt for main projects. Build from within the config dir: `cmake ../..` (arm64 targets) or `cmake ..` (x86_64/macOS targets).
+- Purpose: CMake build entry points and output directories. The `build/<Platform>/` subdirectories contain the actual `CMakeLists.txt` build entries; there is no root-level CMakeLists.txt for main projects. The cmake source path depth varies by platform: `..` (Windows, OSX, iOS), `../..` (Linux), or `../../` (Android).
+- Build tool: `make -j` (Linux/macOS), `cmake --build . --parallel 8 --config Release` (Windows), or Ninja.
 - Generated: Yes (by CMake generate + build)
 - Committed: Build outputs no; the `CMakeLists.txt` entry points in `build/<Platform>/` are committed.
 
