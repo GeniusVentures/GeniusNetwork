@@ -48,7 +48,7 @@ Genius Network is a monorepo (parent repo with Git submodules) implementing a de
 ├─────────────────────────────────────────────────────────────────────┤
 │  ┌───────────────────────┐  ┌─────────────────────────────────────┐ │
 │  │  zkLLVM (C++)         │  │  TokenContracts (Solidity / TS)     │ │
-│  │  C++/Rust → Circuit   │  │  gnus-token (ICO/ERC-20)           │ │
+│  │  C++ → Circuit        │  │  gnus-token (ICO/ERC-20)           │ │
 │  │  assigner/prover/circ │  │  gnus-ai (Escrow / AI Payments)    │ │
 │  │  transpiler           │  │  ZoKrates (ZK on-chain verifiers)  │ │
 │  └───────────────────────┘  └─────────────────────────────────────┘ │
@@ -64,7 +64,7 @@ Genius Network is a monorepo (parent repo with Git submodules) implementing a de
 | SuperGenius | Core blockchain node: account ledger, consensus, AI processing, proof generation, CRDT storage, gRPC API | `SuperGenius/src/` |
 | GeniusSDK | Embeddable C++ library wrapping SuperGenius for game/app developers | `GeniusSDK/src/` |
 | GeniusWallet | Cross-platform Flutter wallet with fiat on-ramp, token swaps, WalletConnect | `GeniusWallet/lib/` |
-| zkLLVM | Zero-knowledge circuit compiler (C++/Rust → algebraic circuits) | `zkLLVM/libs/` |
+| zkLLVM | Zero-knowledge circuit compiler (C++ → algebraic circuits) | `zkLLVM/libs/` |
 | TokenContracts | Ethereum smart contracts: GNUS ICO, AI escrow, SGNUS bridge | `TokenContracts/gnus-token/`, `TokenContracts/gnus-ai/` |
 | ProofSystem | SuperGenius ZK proof circuits and verifier | `SuperGenius/ProofSystem/` |
 | SGProcessingManager | Processing job schema, generated gRPC stubs, processing-dapp logic | `SuperGenius/SGProcessingManager/` |
