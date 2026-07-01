@@ -121,11 +121,13 @@
 - Key env vars (externalized): `GITHUB_TOKEN`/`GH_TOKEN`, `GITHUB_WORKSPACE`, `VULKAN_SDK`, wallet private keys, RPC URLs, API keys
 
 **Build:**
-- `CMakeLists.txt` - Root and per-directory for all C++ projects
+- Main C++ projects (SuperGenius, GeniusSDK, thirdparty) do NOT have root `CMakeLists.txt`. Build entry points are inside `build/<Platform>/`.
+- Build from `build/<Platform>/<Debug|Release>/`:
+  - `cmake ../..` — for arm64-based targets (Linux aarch64, Android arm64-v8a, Android armeabi-v7a) that have extra depth
+  - `cmake ..` — for x86_64 targets (Windows, Linux x86_64) and macOS
 - `cmake/CommonBuildParameters.cmake` (`GeniusSDK/cmake/`) - Central dependency configuration
 - `cmake/CommonCompilerOptions.cmake` - Compiler flags and toolchain config
 - `cmake/functions.cmake` - Build helper functions
-- `build/Android/CMakeLists.txt`, `build/iOS/CMakeLists.txt`, etc. - Platform-specific builds
 - `hardhat.config.ts` - Smart contract build configuration
 - `pubspec.yaml` - Flutter build configuration
 - `Cargo.toml` - Rust/ZoKrates workspace
@@ -141,11 +143,12 @@
 - All: Git, Python 3.7+, Node.js (for smart contracts), Rust (for ZK/LLVM)
 
 **Production:**
-- Windows x86_64 (MSVC)
-- Linux x86_64, aarch64 (Clang)
-- macOS universal (x86_64 + ARM64)
-- iOS arm64
-- Android armeabi-v7a, arm64-v8a, x86_64
+- Windows x86_64 (MSVC) — `cmake ..` from `build/Windows/<Debug|Release>/`
+- Linux x86_64 (Clang) — `cmake ..` from `build/Linux/<Debug|Release>/`
+- Linux aarch64 (Clang cross-compile) — `cmake ../..` from `build/Linux/<Debug|Release>/`
+- macOS universal (x86_64 + ARM64) — `cmake ..` from `build/OSX/<Debug|Release>/`
+- iOS arm64 — platform-specific CMake from `build/iOS/`
+- Android arm64-v8a, armeabi-v7a, x86_64 — `cmake ../..` from `build/Android/`
 - WebAssembly via Emscripten toolchain
 - Container: `ghcr.io/geniusventures/debian-bullseye:latest` (Docker)
 
