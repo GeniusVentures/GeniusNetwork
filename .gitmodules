@@ -22,6 +22,3 @@
 [submodule "zkLLVM"]
 	path = zkLLVM
 	url = ../zkLLVM.git
-[submodule "wallet-assets"]
-	path = wallet-assets
-	url = ./wallet-assets
