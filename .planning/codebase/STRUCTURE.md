@@ -112,7 +112,7 @@ GeniusNetwork/                         # Monorepo root (parent repo)
 │   │   ├── stdlib/                    # ZK standard library
 │   │   └── transpiler/                # Circuit → EVM verifier transpiler
 │   ├── bin/                           # Built binaries (assigner, clang)
-│   ├── examples/                      # Example circuits (C++/Rust)
+│   ├── examples/                      # Example circuits (C++ and Rust)
 │   ├── tests/                         # Test circuits and inputs
 │   ├── cmake/                         # CMake configuration
 │   ├── CMakeLists.txt                 # Root CMake
@@ -179,7 +179,7 @@ GeniusNetwork/                         # Monorepo root (parent repo)
 - Key files: `lib/main.dart` (entry point), `lib/navigation/router.dart` (route definitions)
 
 **zkLLVM/:**
-- Purpose: Compile C++/Rust → ZK circuits → proofs
+- Purpose: Compile C++ → ZK circuits → proofs (Rust examples available, core is C++)
 - Contains: LLVM-based compiler libraries with CMake build
 - Key files: `libs/assigner/` (trace gen), `libs/circifier/` (IR→circuit), `libs/transpiler/` (circuit→EVM)
 

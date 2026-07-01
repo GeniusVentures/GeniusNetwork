@@ -11,7 +11,7 @@
 
 **Secondary:**
 - TypeScript ^4.5 - TokenContracts Hardhat scripts/tests (`gnus-ai/scripts/`, `gnus-ai/test/`, `erc20-gnus-proxy/scripts/`, `erc20-gnus-proxy/test/`)
-- Rust nightly-2022-07-01 - ZoKrates proof system (`TokenContracts/ZoKrates/`), zkLLVM rslang toolchain (`zkLLVM/libs/rslang/`)
+- Rust nightly-2022-07-01 - ZoKrates proof system (`TokenContracts/ZoKrates/`), wallet-core Rust bindings (`thirdparty/wallet-core`)
 - Python 3.7+ - Utility scripts (`util/install_from_github.py`), zkLLVM build helpers (`zkLLVM/detect-platform.py`, `zkLLVM/rslang-installer.py`)
 - JavaScript ES6+ - gnus-token Truffle migrations (`TokenContracts/gnus-token/migrations/`)
 
@@ -62,7 +62,7 @@
 - Visual Studio 17 2022 - Windows C++ compiler
 - Xcode - iOS/macOS builds (`GeniusWallet/ios/Runner.xcodeproj/`, `GeniusWallet/macos/Runner.xcodeproj/`)
 - Gradle - Android builds (`GeniusWallet/android/build.gradle`)
-- cbindgen - Rust-to-C FFI bindings (CI pipeline)
+- cbindgen - Rust-to-C FFI bindings for wallet-core (CI pipeline)
 - ccache - Compiler cache (all platforms)
 - TypeChain - TypeScript bindings from Solidity ABIs (`gnus-ai/`, `gnus-token/`)
 - ffigen ^20.1.1 - Dart FFI bindings generator (`packages/genius_api/`)
@@ -152,7 +152,7 @@
 - `cmake/functions.cmake` - Build helper functions
 - `hardhat.config.ts` - Smart contract build configuration
 - `pubspec.yaml` - Flutter build configuration
-- `Cargo.toml` - Rust/ZoKrates workspace
+- `Cargo.toml` - Rust/ZoKrates workspace (`TokenContracts/ZoKrates/` only)
 - `build.bat`, `build.sh` (`GeniusWallet/`) - Flutter build scripts
 - `install_flutter.bat`, `install_flutter.sh` - Flutter SDK setup
 
@@ -162,7 +162,7 @@
 - Windows: Visual Studio 2022, CMake ^3.5, Flutter SDK ^3.10, Git
 - Linux: Clang/LLVM, CMake ^3.5, Ninja, libsecret-1-dev, libvulkan-dev, dbus, gnome-keyring, Flutter SDK
 - macOS: Xcode, CMake, Ninja, GNU tar, Flutter SDK, CocoaPods (for iOS)
-- All: Git, Python 3.7+, Node.js (for smart contracts), Rust (for ZK/LLVM)
+- All: Git, Python 3.7+, Node.js (for smart contracts), Rust (for ZoKrates, wallet-core)
 
 **Production:**
 - Windows x86_64 (MSVC) — `cmake .. -G "Visual Studio 17 2022" -A x64 ...` from `build/Windows/`

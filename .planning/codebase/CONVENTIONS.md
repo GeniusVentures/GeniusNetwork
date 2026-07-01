@@ -11,7 +11,7 @@ The codebase is polyglot with primary languages:
 | C++17      | SuperGenius, GeniusSDK, evmrelay, zkLLVM bindings      |
 | Dart 3.x   | GeniusWallet (Flutter)                                 |
 | Solidity   | TokenContracts (EIP-2535 Diamond pattern)              |
-| Rust       | zkLLVM, ProofSystem components                         |
+| Rust       | TokenContracts/ZoKrates, thirdparty/wallet-core       |
 
 ---
 
