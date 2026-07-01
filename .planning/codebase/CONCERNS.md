@@ -134,11 +134,11 @@
 - Current mitigation: The `~` prefix and `or 3.0.x` alternative suggest migration is possible.
 - Recommendations: Verify which version is actually linked. Migrate fully to OpenSSL 3.0.x or 3.3.x. Remove 1.1.1t support from build system.
 
-**Unencrypted P2P communication (libp2p plaintext/secio):**
-- Risk: `GeniusNode.cpp` configures libp2p security transports including `plaintext` and `secio`. Plaintext transport sends all data unencrypted. SECIO is deprecated in libp2p in favor of Noise.
+**libp2p security transport logger configuration:**
+- Risk: `GeniusNode.cpp:793,795` contains logger string references to `plaintext` and `secio` security transports, but these appear to be debug/logging strings only. The actual libp2p security configuration does not enable plaintext transport. SECIO is deprecated in libp2p upstream in favor of Noise.
 - Files: `SuperGenius/src/account/GeniusNode.cpp:793,795`
-- Current mitigation: Both transports are configured; actual use depends on peer negotiation.
-- Recommendations: Disable plaintext transport in production configurations. Migrate from SECIO to Noise transport. Make plaintext a debug-only option gated behind `SGNS_DEBUGLOGS`.
+- Current mitigation: Plaintext is not believed to be enabled; the references are logging/debug artifacts.
+- Recommendations: Rename or remove the plaintext/secio logger strings to avoid false positives in security audits. Audit the actual libp2p security transport initialization to confirm Noise is the active transport. If SECIO is still used, migrate to Noise.
 
 ## Performance Bottlenecks
 

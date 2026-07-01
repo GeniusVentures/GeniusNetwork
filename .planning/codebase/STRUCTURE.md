@@ -44,7 +44,15 @@ GeniusNetwork/                         # Monorepo root (parent repo)
 │   ├── test/                          # Unit tests
 │   ├── AgentDocs/                     # AI agent documentation
 │   ├── docs/                          # Developer documentation
-│   ├── build/                         # Build output (not committed)
+│   ├── build/<Platform>/<Config>/     # Build tree (cmake ../.. or cmake ..)
+│   │   ├── Linux/Debug/                # Linux x86_64 debug build
+│   │   ├── Linux/Release/              # Linux x86_64 release build
+│   │   ├── Windows/Debug/              # Windows MSVC debug build
+│   │   ├── Windows/Release/            # Windows MSVC release build
+│   │   ├── OSX/Debug/                  # macOS universal debug build
+│   │   ├── OSX/Release/                # macOS universal release build
+│   │   ├── Android/                    # Android NDK cross-compile (arm64-v8a, armeabi-v7a, x86_64)
+│   │   └── iOS/                        # iOS cross-compile (arm64)
 │   └── Readme.md                      # SuperGenius build instructions
 │
 ├── GeniusSDK/                         # [submodule] C++ SDK wrapping SuperGenius
@@ -241,9 +249,17 @@ GeniusNetwork/                         # Monorepo root (parent repo)
 - `AGENTS.md`: AI agent guidelines (GeniusSDK, GeniusWallet, thirdparty)
 - `CLAUDE.md`: Alternative AI guidelines (GeniusSDK, GeniusWallet)
 
+**Build System:**
+- Main C++ projects (SuperGenius, GeniusSDK, thirdparty) do NOT have root `CMakeLists.txt`. Build entry points are inside `build/<Platform>/`.
+- Build from `build/<Platform>/<Debug|Release>/`: `cmake ../..` (for arm64-based targets: Linux aarch64, Android arm64-v8a/armeabi-v7a) or `cmake ..` (for x86_64 and macOS targets). Example:
+  ```bash
+  cd build/Linux/Debug && cmake ../.. -DCMAKE_BUILD_TYPE=Debug
+  cd build/Windows/Debug && cmake .. -DCMAKE_BUILD_TYPE=Debug
+  ```
+- `thirdparty/` must be built first as it provides all dependency libraries.
+
 **Generated / Build Artifacts:**
-- `build/`: Build outputs in all C++ projects (not committed)
-- `SuperGenius/build/`: Platform-specific build directories
+- `build/<Platform>/<Config>/`: Build outputs in all C++ projects (not committed)
 - `SuperGenius/src/*/proto/`: Source `.proto` files; generated `.pb.h/.pb.cc` in build tree
 - `GeniusWallet/lib/libadd.dylib`: Prebuilt macOS native library
 - `GeniusWallet/.dart_tool/`: Dart tooling cache
@@ -314,10 +330,10 @@ GeniusNetwork/                         # Monorepo root (parent repo)
 
 ## Special Directories
 
-**build/:**
-- Purpose: CMake build output directories
-- Generated: Yes (by CMake)
-- Committed: No (in `.gitignore`)
+**build/<Platform>/<Debug|Release>/:**
+- Purpose: CMake build entry points and output directories. The `build/<Platform>/` subdirectories contain the actual `CMakeLists.txt` build entries; there is no root-level CMakeLists.txt for main projects. Build from within the config dir: `cmake ../..` (arm64 targets) or `cmake ..` (x86_64/macOS targets).
+- Generated: Yes (by CMake generate + build)
+- Committed: Build outputs no; the `CMakeLists.txt` entry points in `build/<Platform>/` are committed.
 
 **SuperGenius/src/*/proto/:**
 - Purpose: Protocol Buffer source definitions
