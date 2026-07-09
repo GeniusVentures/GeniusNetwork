@@ -287,37 +287,216 @@ This is a benign race condition: the outcome is deterministic (block is served) 
 
 ## Lock Call-Chain Analysis
 
-*To be populated in Plan 02 — Tasks 1-3.*
+### Documented Lock Ordering
+
+Only one nesting path exists in the codebase:
+
+```
+mutexRequestCallbacks_ ──→ mutexProviders_
+```
+
+**Path:** `processReceivedBlocks()` acquires `mutexRequestCallbacks_` (line 271), calls `markProviderSuccess()` which acquires `mutexProviders_` (line 1756). This is the only multi-mutex nesting in the entire Bitswap codebase.
+
+**Reverse check:** No method acquires `mutexProviders_` first then `mutexRequestCallbacks_`. All provider methods run independently.
+
+### Non-Nested Sequential Acquisitions
+
+These mutex pairs are acquired in sequence (lock, release, next lock), never nested:
+
+| Sequence | First Lock | Released? | Second Lock | In Method |
+|----------|-----------|-----------|-------------|-----------|
+| blockStore → diskIndex | `mutexBlockStore_` | Yes | `mutexDiskIndex_` | `storeBlock()`, `HasBlock()` |
+| diskIndex → blockStore | `mutexDiskIndex_` | Yes | `mutexBlockStore_` | `tryLoadFromDisk()` |
+| diskIndex → diskIndex | `mutexDiskIndex_` | Yes | `mutexDiskIndex_` | `buildDiskIndex()` (clear then populate) |
+| providers → streams | `mutexProviders_` | Yes | `mutexActiveStreams_` | `requestBlockWithProviders()` → `RequestBlockWithRetry()` |
+
+### Self-Deadlock Check
+
+All locks use `std::lock_guard` (non-recursive). No method re-acquires its own mutex. No self-deadlock risk.
+
+### Lock-Across-Async Analysis
+
+| Method | Lock Held | Async Operation | Verdict |
+|--------|-----------|----------------|---------|
+| `messageSent()` | `mutexRequestCallbacks_` (line 324) | Released before `rw->read()` at line 339 | **SAFE** |
+| `setupContentRequest()` | `mutexContentRequests_` (line 540) | Released before `ctx->timeout.async_wait()` at line 546 | **SAFE** |
+| `RequestBlockWithRetry()` | `mutexActiveStreams_` (line 419) | Released before `host_.newStream()` at line 440 | **SAFE** |
+| `processReceivedBlocks()` | `mutexRequestCallbacks_` (line 271) | `HandleResponse()` callbacks invoked at line 279 while lock held | **RE-ENTRANCY RISK** — if callback re-enters Bitswap and acquires mutexRequestCallbacks_, non-recursive mutex deadlock |
+
+**Verdict:** No lock-across-async violations found. The `processReceivedBlocks()` callback invocation under lock is a re-entrancy risk, not an async violation — callbacks are synchronous but could re-enter Bitswap.
+
+### Deadlock Risk Assessment
+
+| Risk | Status |
+|------|--------|
+| Lock ordering deadlock | **None** — only 1 documented nesting, verified no reverse path |
+| Self-deadlock (re-entrant) | **None** — all std::lock_guard, no re-acquisition of same mutex |
+| Callback re-entrancy deadlock | **POSSIBLE** — if BlockCallback re-enters Bitswap (see Finding C-7 / F-04) |
 
 ---
 
 ## Boundary Crossing Matrix
 
-*To be populated in Plan 02 — Task 4.*
+### libp2p → Bitswap
+
+| Entry Point | Caller | Thread Context | Bitswap Locks Acquired |
+|------------|--------|---------------|----------------------|
+| `Bitswap::handle()` | libp2p protocol handler dispatch | **libp2p dispatch thread** (assumed — not confirmed from libp2p source) | `mutexRequestCallbacks_`, `mutexProviders_`, `mutexBlockStore_`, `mutexDiskIndex_` |
+| `Bitswap::onNewConnection()` | event bus `OnNewConnectionChannel` | **event bus dispatch thread** | none (lightweight — only logs connection state) |
+| `Bitswap::processReceivedBlocks()` | `handle()` → libp2p read callback | **libp2p I/O thread** | `mutexRequestCallbacks_`, `mutexProviders_` |
+| `bitswap.cpp:164-201` server read loop | `handle()` → async read completion | **libp2p I/O thread** (persistent) | Called from handle(), inherits same context |
+
+**Key finding:** `Bitswap::handle()` and all async read continuations run on libp2p threads, NOT on Bitswap's `io_context`. This means all locks acquired in these paths are held on libp2p threads.
+
+### Consumer (SuperGenius) → Bitswap
+
+| Call Site | File:Line | Thread Context | Methods Called |
+|-----------|-----------|---------------|---------------|
+| Construction | `GeniusNode.cpp:1308` | Main initialization thread | `Bitswap()`, `initialize()`, `setCacheDir()`, `start()` (indirect via event bus) |
+| Mirroring callback | `GeniusNode.cpp:754-805` | Processing service callback thread | `HasBlock()`, `RequestContent()` |
+| Data availability | `processing_subtask_queue_accessor_impl.hpp:61` | Processing worker thread | `HasBlock()`, `GetBlock()`, `RequestBlock()` |
+| Processing service | `processing_service.hpp:70` | Processing node thread | `RequestBlock()`, `RequestContent()` |
+| FileManager | `GeniusNode.cpp:1317` | Various (FileManager thread) | `HasBlock()`, `RequestContent()` |
+
+**Key finding:** Bitswap is shared via `shared_ptr<Bitswap>` across at least 4 SuperGenius subsystems. Each may call Bitswap from different threads — internals must be thread-safe.
+
+### Bitswap → Consumer (Callbacks)
+
+| Callback Type | Fires From | Thread Context | Severity |
+|--------------|-----------|---------------|----------|
+| `BlockCallback` | `BitswapRequestContext::HandleResponse()` | **libp2p thread** (via `processReceivedBlocks`) | Consumer must handle thread-safety |
+| `BlockCallback` (timeout) | `BitswapRequestContext::HandleResponseTimeout()` | **Bitswap io_context** (via `deadline_timer`) | Different thread from normal callback! |
+| `ContentCallback` | `checkContentRequestComplete()` | **libp2p thread** (via callback chain) | Consumer must handle thread-safety |
+| `ContentCallback` (timeout) | `setupContentRequest::timeout` handler | **Bitswap io_context** | Different thread from normal callback! |
+| `PublishCallback` | `PublishFile()` / `PublishDirectory()` | **DETACHED std::thread** | **HIGH severity** — detached thread identity unknown to consumer |
+
+**Key finding:** Callbacks fire from 3 different thread contexts (libp2p thread, io_context, detached thread). Consumer code MUST handle thread-safety for all state accessed in callbacks.
+
+### Bitswap → Filesystem
+
+| Operation | Method | Thread Context | Protection |
+|-----------|--------|---------------|------------|
+| Write block to disk | `persistBlock()` | Various (called from `storeBlock()`) | `mutexDiskIndex_` for index only — **NO lock for filesystem I/O** |
+| Read block from disk | `tryLoadFromDisk()` | libp2p thread + consumer (via const_cast) | `mutexDiskIndex_` for index, `mutexBlockStore_` for store |
+| Build disk index | `buildDiskIndex()` | Main init thread only | `mutexDiskIndex_` for index |
+| Remove block from disk | `unpersistBlock()` | Unknown | `mutexDiskIndex_` for index |
+
+### Bitswap → RocksDB
+
+**No direct boundary.** Bitswap uses flat files in `cacheDir_` for persistence, not RocksDB. The architectural doc's claim of a Bitswap→RocksDB boundary is incorrect. However, consumer callbacks in SuperGenius may store received blocks into RocksDB — that boundary is in the consumer's scope, not Bitswap's.
 
 ---
 
 ## Thread Entry-Point Inventory
 
-*To be populated in Plan 02 — Task 5.*
+Every function that can be called from outside Bitswap (public API or callback entry):
+
+| Entry Point | Visibility | Called From | Thread Context(s) | Locks Acquired | Notes |
+|------------|-----------|-------------|-------------------|---------------|-------|
+| `Bitswap()` | public | Consumer | Main init thread | none | Constructor only |
+| `initialize()` | public | Consumer | Main init thread | none (registers protocol handler, builds disk index via `buildDiskIndex()`) | |
+| `start()` | public | Consumer | Main init thread | none (subscribes to event bus) | |
+| `handle()` | public (BaseProtocol override) | libp2p | **libp2p dispatch thread** | `mutexRequestCallbacks_`, `mutexProviders_`, `mutexBlockStore_`, `mutexDiskIndex_` | |
+| `onNewConnection()` | private | Event bus | **event bus dispatch thread** | none | |
+| `RequestBlock()` | public | Consumer, self | **Any** | `mutexActiveStreams_`, `mutexRequestCallbacks_` | |
+| `RequestBlockWithRetry()` | public | Consumer, self, retry timer | **Any** | `mutexActiveStreams_` | Retry timer runs on io_context |
+| `RequestContent()` | public (2 overloads) | Consumer | **Any** | `mutexContentRequests_` | |
+| `AddProvider()` | public | Consumer, self | **Any** | `mutexProviders_` | |
+| `AddProviders()` | public | Consumer | **Any** | `mutexProviders_` (per item) | Loops `AddProvider()` |
+| `RemoveProvider()` | public | Consumer | **Any** | `mutexProviders_` | |
+| `GetProviders()` | public (const) | Consumer | **Any** | `mutexProviders_` | Returns copy |
+| `ClearProviders()` | public | Consumer | **Any** | `mutexProviders_` | |
+| `SetMaxPeerAttempts()` | public | Consumer | **Any** | **NONE — FLAGGED** | Data race |
+| `SetPeerFailureThreshold()` | public | Consumer | **Any** | **NONE — FLAGGED** | Data race |
+| `PublishFile()` | public | Consumer | **Any** (caller) + **DETACHED std::thread** (work) | `mutexBlockStore_` | Spawns detached thread |
+| `PublishDirectory()` | public | Consumer | **Any** (caller) + **DETACHED std::thread** (work) | `mutexBlockStore_` | Spawns detached thread |
+| `PublishData()` | public | Consumer | **Any** (inline) | `mutexBlockStore_` | Inline, no detach |
+| `HasBlock()` | public (const) | Consumer | **Any** | `mutexBlockStore_`, `mutexDiskIndex_` | Safe |
+| `GetBlock()` | public (const) | Consumer | **Any** | `mutexBlockStore_`, `mutexDiskIndex_` | **const_cast** mutates blockStore_ |
+| `UnpublishContent()` | public | Consumer | **Any** | `mutexBlockStore_` | |
+| `ListPublishedContent()` | public (const) | Consumer | **Any** | `mutexBlockStore_` | |
+| `setCacheDir()` | public | Consumer | **Any** | **NONE — FLAGGED** | Data race |
+| `getCacheDir()` | public (const) | Consumer | **Any** | **NONE — FLAGGED** | Data race |
+| `buildDiskIndex()` | public | Consumer | Init thread | `mutexDiskIndex_` | |
+| `persistBlock()` | public | Self (storeBlock) | **Any** | `mutexDiskIndex_` | |
+| `unpersistBlock()` | public | Unknown | **Any** | `mutexDiskIndex_` | |
+| `getProtocolId()` | public (const, override) | libp2p | **Any** | none | No state access |
+| `messageSent()` | private (callback) | libp2p I/O thread | **libp2p I/O thread** | `mutexRequestCallbacks_` | |
+| `cleanupStaleProviders()` | private | **NEVER CALLED** | — | `mutexProviders_` (dead code) | |
+
+**Functions with ambiguous thread context:** `handle()`, `onNewConnection()`, `messageSent()` — all assume libp2p dispatch/I/O threads. This assumption needs verification from libp2p source code.
 
 ---
 
 ## Strand Confinement Analysis
 
-*To be populated in Plan 02 — Task 5.*
+### ContentRequestContext — Strand Violation
+
+`ContentRequestContext` (bitswap.hpp:121-167) has **NO internal mutex**. All fields are accessed directly.
+
+| Field | Modified By | Thread |
+|-------|------------|--------|
+| `pendingCIDs` | `processUnixFSBlock()` | **libp2p thread** (via callback chain) |
+| `completedCIDs` | `processUnixFSBlock()` | **libp2p thread** |
+| `collectedFiles` | `assembleCompleteFile()`, `handleFileBlock()` | **libp2p thread** |
+| `filesInProgress` | `handleFileBlock()`, `handleFileChunk()`, `assembleCompleteFile()` | **libp2p thread** |
+| `cidToPath` | `handleFileBlock()`, `handleDirectoryBlock()` | **libp2p thread** |
+| `chunkToCidIndex` | `processUnixFSBlock()` (via chunk registration) | **libp2p thread** |
+| `requestQueue` | `processUnixFSBlock()` → `processRequestQueue()` | **libp2p thread** + **io_context** (delay timer) |
+| `processingQueue` | `processRequestQueue()` | **libp2p thread** + **io_context** |
+| `timedOut` | `setupContentRequest::timeout` handler | **Bitswap io_context** |
+| `peerInfo` | `RequestContent()` | Caller thread |
+
+**Race window:** `processUnixFSBlock()` runs on libp2p thread (via block result callback). The timeout handler at `bitswap.cpp:553-559` runs on io_context. These may execute concurrently, and `processingQueue` only serializes `processRequestQueue()` calls — it does NOT protect `pendingCIDs`, `completedCIDs`, `filesInProgress`, `cidToPath`, or other fields.
+
+**Severity: HIGH** — multiple callbacks for the same `ContentRequestContext` may execute concurrently on libp2p thread and io_context, causing data races on all context fields.
+
+**Fields at risk:** `pendingCIDs`, `completedCIDs`, `collectedFiles`, `filesInProgress`, `cidToPath`, `chunkToCidIndex`, `requestQueue`, `timedOut`.
+
+### BitswapRequestContext — Timer Race
+
+| Method | Thread | Fields Accessed |
+|--------|--------|----------------|
+| `HandleResponse()` | **libp2p thread** (via `processReceivedBlocks`) | `callbacks_`, `responseTimer_` |
+| `HandleResponseTimeout()` | **Bitswap io_context** (via `deadline_timer`) | calls `HandleResponse()` → same fields |
+
+**Race window:** If a block arrives via the protocol handler just as the deadline_timer fires, both `HandleResponse()` (libp2p) and `HandleResponseTimeout()` → `HandleResponse()` (io_context) may execute in parallel, both iterating and clearing `callbacks_` and modifying `responseTimer_`.
+
+**Severity: MEDIUM** (SUSPECTED) — requires exact timing. Double callback invocation possible.
 
 ---
 
 ## Master Findings Summary
 
-*To be populated in Plan 02 — Task 6.*
+| # | Severity | Category | Location | Description | Evidence | Confidence |
+|---|----------|----------|----------|-------------|----------|-----------|
+| **C-1** | **CRITICAL** | Missing Lock | `cacheDir_` (bitswap.cpp:1908-1920, bitswap.hpp:338) | No synchronization on std::string. 7 read/write sites across 4 thread contexts. | `setCacheDir()` line 1908-1914: direct assignment, no lock. `getCacheDir()` line 1917-1920: direct return, no lock. All other methods read cacheDir_ without lock. | **CONFIRMED** |
+| **C-2** | **HIGH** | Missing Lock | `maxPeerAttempts_`, `peerFailureThreshold_` (bitswap.cpp:1616-1624, bitswap.hpp:344-345) | Setters have no lock. Partial reader coverage under mutexProviders_. 3 of 4 maxPeerAttempts_ reads unprotected. | Setter direct assignment at line 1618, 1623. `requestBlockWithProviders()` reads maxPeerAttempts_ at line 1809 without lock. | **CONFIRMED** |
+| **C-3** | **HIGH** | Thread Confusion | `PublishFile()`/`PublishDirectory()` (bitswap.cpp:1358, 1395) | Detached std::thread accesses blockStore_ and publishedContent_ under lock. Detached threads cannot be joined/coordinated. Multiple publishes → parallel detached threads → potential use-after-free if Bitswap destroyed. | Lines 1358-1388 (PublishFile), 1395-1431 (PublishDirectory). Both use `.detach()`. | **CONFIRMED** |
+| **C-4** | **HIGH** | Async Safety | `GetBlock()` (bitswap.cpp:1481-1502) | const method uses `const_cast<Bitswap*>(this)->tryLoadFromDisk()` to mutate blockStore_. Violates const-correctness = thread-safety contract. | Line 1492: `const_cast<Bitswap*>(this)->tryLoadFromDisk(cid)`. | **CONFIRMED** |
+| **C-5** | **HIGH** | Missing Lock | `ContentRequestContext` (bitswap.hpp:121-167) | No synchronization on context fields. Accessed from libp2p thread AND io_context. processingQueue flag only protects processRequestQueue() — not other fields. | `processUnixFSBlock()` modifies pendingCIDs, completedCIDs, filesInProgress, etc. on libp2p thread. Timeout handler modifies timedOut on io_context. | **CONFIRMED** |
+| **C-6** | **MEDIUM** | Async Safety | `BitswapRequestContext` (bitswap.cpp:70-89) | HandleResponse() on libp2p thread races with HandleResponseTimeout() on io_context. Both access callbacks_ and responseTimer_. | `HandleResponseTimeout()` line 87-89 calls HandleResponse(). HandleResponse() line 79 iterates callbacks_. | **SUSPECTED** |
+| **C-7** | **MEDIUM** | Async Safety | `processReceivedBlocks()` (bitswap.cpp:271-285) | Callback invoked while mutexRequestCallbacks_ held. If BlockCallback re-enters Bitswap and acquires mutexRequestCallbacks_, non-recursive mutex → deadlock. | Line 279: `itContext->second->HandleResponse(block)` under lock_guard. | **CONFIRMED** |
+| **C-8** | **MEDIUM** | Documentation Gap | `cleanupStaleProviders()` (bitswap.cpp:1774-1805) | Defined but never called. Dead code. | Grep entire codebase: zero call sites. | **CONFIRMED** |
+| **C-9** | **MEDIUM** | Thread Confusion | `Bitswap::handle()` (bitswap.cpp:123-216) | Server read loop runs on libp2p thread indefinitely. All handleWantlistRequest() calls run on this libp2p thread. Implicit threading contract — not documented. | Lines 164-201: recursive `setupServerRead` lambda captures shared_ptr and spins on libp2p thread. | **CONFIRMED** |
+| **C-10** | **LOW** | Documentation Gap | 6 mutexes (bitswap.hpp:324-345) | Only one lock ordering documented (callbacks→providers). No comments on mutex domains or thread context assumptions. | Header file has zero lock documentation. | **CONFIRMED** |
+
+**Summary:** 1 CRITICAL, 4 HIGH, 4 MEDIUM, 1 LOW. 9 CONFIRMED, 1 SUSPECTED.
 
 ---
 
 ## Atomic Operations Review
 
-*To be populated in Plan 02 — Task 6.*
+### Current State
+- **ZERO `std::atomic` usage** in Bitswap source (`bitswap.hpp` + `bitswap.cpp`)
+- `maxPeerAttempts_` (size_t) and `peerFailureThreshold_` (int) are plain types — candidates for atomic conversion (see C-2)
+- No `std::atomic_flag`, `std::atomic_ref`, or `__atomic_*` primitives found
+
+### Recommendation for Phase 2
+1. Convert `maxPeerAttempts_` to `std::atomic<size_t>` — eliminates the 4-access-site mixed protection finding (C-2), simpler than extending mutex coverage
+2. Convert `peerFailureThreshold_` to `std::atomic<int>` — same rationale
+3. Default memory ordering: `std::memory_order_seq_cst` unless explicitly relaxed with performance benchmarking justification
+4. No other candidates for atomic conversion identified — remaining shared state involves complex types (maps, strings, structs) that require mutex protection
 
 ---
 
