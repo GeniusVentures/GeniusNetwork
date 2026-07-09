@@ -10,11 +10,11 @@ Requirements for initial release. Each maps to roadmap phases.
 ### Audit
 
 - [x] **AUDIT-01**: Inventory all shared mutable state in ipfs-bitswap-cpp (member variables, statics, callback-captured state) — produce a concurrency map document
-- [ ] **AUDIT-02**: Verify synchronization coverage for every shared state location (mutex, atomic, or strand confinement) — flag any unprotected access
-- [ ] **AUDIT-03**: Review all mutex usage for deadlock potential, lock-across-async-call violations, and re-entrancy risks
-- [ ] **AUDIT-04**: Review all atomic operations for correct memory ordering and compound-operation atomicity
-- [ ] **AUDIT-05**: Verify callback/strand safety — every handler runs on the intended execution context
-- [ ] **AUDIT-06**: Trace all third-party boundary crossings (libp2p → Bitswap, Bitswap → AsyncIOManager, CRDT → Bitswap, Bitswap → RocksDB) for thread context assumptions
+- [x] **AUDIT-02**: Verify synchronization coverage for every shared state location (mutex, atomic, or strand confinement) — flag any unprotected access
+- [x] **AUDIT-03**: Review all mutex usage for deadlock potential, lock-across-async-call violations, and re-entrancy risks
+- [x] **AUDIT-04**: Review all atomic operations for correct memory ordering and compound-operation atomicity
+- [x] **AUDIT-05**: Verify callback/strand safety — every handler runs on the intended execution context
+- [x] **AUDIT-06**: Trace all third-party boundary crossings (libp2p → Bitswap, Bitswap → AsyncIOManager, CRDT → Bitswap, Bitswap → RocksDB) for thread context assumptions
 
 ### Fix
 
@@ -70,11 +70,11 @@ Which phases cover which requirements. Updated during roadmap creation.
 | Requirement | Phase | Status |
 |-------------|-------|--------|
 | AUDIT-01 | Phase 1 | Complete |
-| AUDIT-02 | Phase 1 | Pending |
-| AUDIT-03 | Phase 1 | Pending |
-| AUDIT-04 | Phase 1 | Pending |
-| AUDIT-05 | Phase 1 | Pending |
-| AUDIT-06 | Phase 1 | Pending |
+| AUDIT-02 | Phase 1 | Complete |
+| AUDIT-03 | Phase 1 | Complete |
+| AUDIT-04 | Phase 1 | Complete |
+| AUDIT-05 | Phase 1 | Complete |
+| AUDIT-06 | Phase 1 | Complete |
 | FIX-01 | Phase 2 | Pending |
 | FIX-02 | Phase 2 | Pending |
 | FIX-03 | Phase 2 | Pending |

@@ -10,9 +10,9 @@
 
 | # | Phase | Goal | Requirements | Success Criteria |
 |---|-------|------|--------------|------------------|
-| 1 | Audit | Complete thread-safety analysis of ipfs-bitswap | AUDIT-01..06 | 5 |
-| 2 | Fix & Test | Fix all thread-safety issues and verify | FIX-01..05, TEST-01..03, DOCS-01, DOCS-03 | 5 |
-| 3 | Consumer Integration | Update SuperGenius & AsyncIOManager for any API changes | CONS-01..04, DOCS-02 | 4 |
+| 1 | Audit | ✓ Complete | AUDIT-01..06 | 5/5 met |
+| 2 | Fix & Test | ○ Pending | FIX-01..05, TEST-01..03, DOCS-01, DOCS-03 | 5 |
+| 3 | Consumer Integration | ○ Pending | CONS-01..04, DOCS-02 | 4 |
 
 ---
 
