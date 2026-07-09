@@ -133,11 +133,82 @@ Every member variable of `class Bitswap` with guarding mutex, access pattern, an
 
 ### Domain: `mutexProviders_`
 
-*To be populated in Plan 02 — Task 3.*
+**Mutex declaration:** `bitswap.hpp:342` — `mutable std::mutex mutexProviders_`
+**Guarded members:** `providers_` (bitswap.hpp:343). Also partially protects reads of `maxPeerAttempts_` and `peerFailureThreshold_` in `selectBestProvider()` and `markProviderFailure()`.
+**Lock pattern:** `std::lock_guard<std::mutex>` — RAII. `findProvider()` returns raw `PeerProvider*` valid only under lock — all callers hold the lock (fragile but currently correct).
+
+#### `providers_` — `std::map<CID, std::vector<PeerProvider>>` — Access Sites
+
+| # | Method | File:Line | Thread Context | Lock Pattern | Classification | Notes |
+|---|--------|-----------|---------------|-------------|---------------|-------|
+| 1 | `AddProvider()` | `bitswap.cpp:1550-1569` | Caller thread (consumer, self) | `lock_guard` (line 1550) | MUTEX-GUARDED | `findProvider()` + emplace_back — updates existing or creates new provider entry |
+| 2 | `RemoveProvider()` | `bitswap.cpp:1574-1594` | Caller thread (consumer) | `lock_guard` (line 1574) | MUTEX-GUARDED | find + remove_if + erase — removes provider by peerId, erases CID entry if vector empty |
+| 3 | `GetProviders()` | `bitswap.cpp:1599-1607` | Caller thread (consumer) | `lock_guard` (line 1599) | MUTEX-GUARDED | find — returns copy of provider vector (safe — data copied before lock released) |
+| 4 | `ClearProviders()` | `bitswap.cpp:1611-1613` | Caller thread (consumer) | `lock_guard` (line 1611) | MUTEX-GUARDED | erase — removes all providers for a CID |
+| 5 | `GetTotalProviderCount()` | `bitswap.cpp:1637-1643` | Caller thread (consumer) | `lock_guard` (line 1637) | MUTEX-GUARDED | iteration + sum — counts all providers across all CIDs |
+| 6 | `GetProviderDebugInfo()` | `bitswap.cpp:1648-1663` | Caller thread (consumer, debugging) | `lock_guard` (line 1648) | MUTEX-GUARDED | iteration — copies provider info to string map |
+| 7 | `selectBestProvider()` | `bitswap.cpp:1667-1725` | Caller thread (various: consumer, retry) | `lock_guard` (line 1667) | MUTEX-GUARDED | find + sort + select. Reads `peerFailureThreshold_` under lock (line 1680). Returns `PeerInfo` by value — safe. |
+| 8 | `markProviderFailure()` | `bitswap.cpp:1729-1752` | Caller thread (various: messageSent error, retry) | `lock_guard` (line 1729) | MUTEX-GUARDED | `findProvider()` + failureCount++. Reads `peerFailureThreshold_` under lock (line 1737). |
+| 9 | `markProviderSuccess()` | `bitswap.cpp:1756-1770` | **libp2p thread** (via `processReceivedBlocks`) | `lock_guard` (line 1756) | MUTEX-GUARDED | `findProvider()` + failureCount reset. **Called under nested mutexRequestCallbacks_ lock** (see line 277) — part of documented nesting. |
+| 10 | `cleanupStaleProviders()` | `bitswap.cpp:1774-1805` | **NEVER CALLED** — dead code | `lock_guard` (line 1774) | MUTEX-GUARDED (dead code) | remove_if + erase — removes providers older than 1 hour. **No call site exists in entire codebase** (grep confirmed). |
+
+**Total providers_ access sites:** 10 confirmed (9 live, 1 dead code). All well-guarded. `findProvider()` returns raw pointer — all callers hold the lock, but this pattern is fragile.
+
+**Lock ordering verified:** `mutexRequestCallbacks_` → `mutexProviders_` via `processReceivedBlocks()` → `markProviderSuccess()`. No reverse ordering exists.
+
+---
+
+### Config Members: `maxPeerAttempts_` and `peerFailureThreshold_`
+
+**Declaration:** `bitswap.hpp:344-345`
+**Status:** **FLAGGED** — mixed protection. Setter methods have no lock. Readers inconsistently protected.
+
+#### `maxPeerAttempts_` — `size_t` — Access Sites
+
+| # | Method | File:Line | Lock Held? | Classification | Notes |
+|---|--------|-----------|-----------|---------------|-------|
+| 1 | `SetMaxPeerAttempts()` | `bitswap.cpp:1616-1619` | **NO** | **FLAGGED** | Direct assignment — data race if concurrent with any read |
+| 2 | `requestBlockWithProviders()` | `bitswap.cpp:1809` | **NO** | **FLAGGED** | Read without lock — torn read possible on 32-bit platforms |
+| 3 | `requestBlockWithProvidersFromRoot()` | `bitswap.cpp:1854` | **NO** | **FLAGGED** | Read without lock |
+| 4 | `selectBestProvider()` | `bitswap.cpp:1713` | `mutexProviders_` | GUARDED (partial) | Read under provider lock — safe for this path |
+
+**3 of 4 access sites have NO lock. Severity: HIGH.**
+
+#### `peerFailureThreshold_` — `int` — Access Sites
+
+| # | Method | File:Line | Lock Held? | Classification | Notes |
+|---|--------|-----------|-----------|---------------|-------|
+| 1 | `SetPeerFailureThreshold()` | `bitswap.cpp:1621-1624` | **NO** | **FLAGGED** | Direct assignment — data race if concurrent with any read |
+| 2 | `selectBestProvider()` | `bitswap.cpp:1680` | `mutexProviders_` | GUARDED (partial) | Read under provider lock — safe for this path |
+| 3 | `markProviderFailure()` | `bitswap.cpp:1737` | `mutexProviders_` | GUARDED (partial) | Read under provider lock — safe for this path |
+
+**2 of 3 access sites have a lock (partial protection). Write site unprotected. Severity: HIGH.**
+
+---
 
 ### Unprotected State (FLAGGED)
 
-*To be populated in Plan 02 — Task 3.*
+#### `cacheDir_` — `std::string` — **CRITICAL**
+
+| # | Method | File:Line | Thread Context | Lock Held? | Type |
+|---|--------|-----------|---------------|-----------|------|
+| 1 | `setCacheDir()` | `bitswap.cpp:1908-1914` | **Any** (public API) | **NO** | WRITE |
+| 2 | `getCacheDir()` | `bitswap.cpp:1917-1920` | **Any** (public API) | **NO** | READ |
+| 3 | `buildDiskIndex()` | `bitswap.cpp:1924` | Main init thread | **NO** | READ |
+| 4 | `persistBlock()` | `bitswap.cpp:1965` | Various (via storeBlock → call chain) | **NO** | READ |
+| 5 | `tryLoadFromDisk()` | `bitswap.cpp:2047` | **libp2p thread** + consumer (via const_cast) | **NO** | READ |
+| 6 | `cidToFilePath()` | `bitswap.cpp:1960` | Various (called from persistBlock, tryLoadFromDisk, unpersistBlock) | **NO** | READ |
+| 7 | `unpersistBlock()` | `bitswap.cpp:2011` | Unknown (API available) | **NO** | READ |
+
+**7 access sites across 4 thread contexts (main init, libp2p thread, io_context, detached thread). ZERO lock protection. Severity: CRITICAL — data race on std::string can cause corruption, crashes, or incorrect file paths.**
+
+#### `started_` — `bool` — **LOW**
+
+| # | Method | File:Line | Thread Context | Lock Held? | Type |
+|---|--------|-----------|---------------|-----------|------|
+| 1 | `start()` | `bitswap.cpp:220-221` | Main init thread | **NO** (BOOST_ASSERT guard) | WRITE |
+
+**Written once during initialization (main thread). Internal use only — no external readers. BOOST_ASSERT prevents double-start. Severity: LOW — not a concurrency risk in practice, but undocumented assumption.**
 
 ---
 
