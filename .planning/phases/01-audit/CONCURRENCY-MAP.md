@@ -93,11 +93,43 @@ Every member variable of `class Bitswap` with guarding mutex, access pattern, an
 
 ### Domain: `mutexActiveStreams_`
 
-*To be populated in Plan 02 — Task 2.*
+**Mutex declaration:** `bitswap.hpp:330` — `mutable std::mutex mutexActiveStreams_`
+**Guarded members:** `activeStreams_` (bitswap.hpp:331)
+**Lock pattern:** `std::lock_guard<std::mutex>` — RAII. Lock held for minimal scope, always released before async operations (`newStream`, `writeBitswapMessageToStream`).
+
+#### `activeStreams_` — `std::map<libp2p::peer::PeerId, std::shared_ptr<libp2p::connection::Stream>>` — Access Sites
+
+| # | Method | File:Line | Thread Context | Lock Pattern | Classification | Notes |
+|---|--------|-----------|---------------|-------------|---------------|-------|
+| 1 | `RequestBlockWithRetry()` | `bitswap.cpp:419-431` | Caller thread (various: consumer, server, retry) | `lock_guard` (line 419) | MUTEX-GUARDED | find + isClosed check + erase. Lock released at line 431 before `host_.newStream()` — ASYNC SAFE. |
+| 2 | `RequestBlockWithRetry()` retry callback | `bitswap.cpp:465-467` | **Bitswap io_context** (via retry timer) | `lock_guard` (line 465) | MUTEX-GUARDED | erase — cleans up failed stream from map on stream creation failure |
+| 3 | `RequestBlockWithRetry()` newStream success | `bitswap.cpp:501-504` | **libp2p async callback** (via `newStream` result) | `lock_guard` (line 502) | MUTEX-GUARDED | emplace — caches new stream. Lock released before `writeBitswapMessageToStream()` at line 505 — ASYNC SAFE. |
+
+**Total activeStreams_ access sites:** 3 confirmed. All guarded. Lock always released before async calls — zero lock-across-async violations for this domain.
+
+**Stream reuse pattern:** Lines 419-431 demonstrate the pattern: lock held to check and erase a closed stream, then released before `writeBitswapMessageToStream()` or `host_.newStream()`. The `shared_ptr<Stream>` keeps the stream alive after the lock is released — lifetime safety through shared ownership.
+
+---
 
 ### Domain: `mutexDiskIndex_`
 
-*To be populated in Plan 02 — Task 2.*
+**Mutex declaration:** `bitswap.hpp:339` — `mutable std::mutex mutexDiskIndex_`
+**Guarded members:** `diskIndex_` (bitswap.hpp:340)
+**Lock pattern:** `std::lock_guard<std::mutex>` — RAII. **buildDiskIndex() lock/re-lock pattern** creates a transitory empty-index window (see Finding F-05).
+
+#### `diskIndex_` — `std::set<std::string>` — Access Sites
+
+| # | Method | File:Line | Thread Context | Lock Pattern | Classification | Notes |
+|---|--------|-----------|---------------|-------------|---------------|-------|
+| 1 | `HasBlock()` | `bitswap.cpp:1476-1478` | Caller thread (consumer, server, various) | `lock_guard` (line 1477) | MUTEX-GUARDED | count — checks disk index as fallback when block not in blockStore_ |
+| 2 | `buildDiskIndex()` | `bitswap.cpp:1937-1939` | **Main init thread** (via `initialize()`) | `lock_guard` (line 1937) | MUTEX-GUARDED | clear — wipes entire index. Lock released after clear, **re-acquired per file** at line 1948 |
+| 3 | `buildDiskIndex()` per-file | `bitswap.cpp:1948-1950` | **Main init thread** | `lock_guard` (line 1948) | MUTEX-GUARDED | insert per file — lock acquired and released for EACH file in cache directory. **Between clear (site 2) and first insert, diskIndex_ is empty** |
+| 4 | `persistBlock()` | `bitswap.cpp:1978-1980` | Various (via `storeBlock()` → caller chain) | `lock_guard` (line 1978) | MUTEX-GUARDED | insert — adds CID to disk index after persisting. Lock held for index insertion only |
+| 5 | `unpersistBlock()` | `bitswap.cpp:2038-2040` | Unknown (API available but callers not traced) | `lock_guard` (line 2038) | MUTEX-GUARDED | erase — removes CID from disk index |
+| 6 | `tryLoadFromDisk()` | `bitswap.cpp:2058-2063` | Various (libp2p thread via handleWantlistRequest, consumer via GetBlock's const_cast) | `lock_guard` (line 2058) | MUTEX-GUARDED | count — checks if CID exists in disk index before attempting file read |
+| 7 | `tryLoadFromDisk()` | `bitswap.cpp:2070-2071` | Various | `lock_guard` (line 2070) | MUTEX-GUARDED | erase — removes CID from index if file disappeared from disk (stale index entry) |
+
+**Total diskIndex_ access sites:** 7 confirmed. All guarded. **buildDiskIndex() empty-index window flagged as LOW severity finding (F-05).**
 
 ### Domain: `mutexProviders_`
 
