@@ -428,6 +428,24 @@ Every function that can be called from outside Bitswap (public API or callback e
 
 ---
 
+## Phase 3: Consumer Contract
+
+Method-by-method thread-safety reference for Bitswap consumers (SuperGenius, AsyncIOManager). This is the canonical thread-safety reference for Bitswap consumers — every public method's threading contract, current synchronization coverage, and Phase 2 change impact are documented here.
+
+| Method | Caller Thread Requirement | Callback Thread | Mutex/Atomic Guarantee | Phase 2 Change Summary |
+|---|---|---|---|---|
+| PublishFile | Any | Bitswap io_context (was: detached std::thread) | mutexBlockStore_ | io_context::post replaces detached thread |
+| PublishDirectory | Any | Bitswap io_context (was: detached std::thread) | mutexBlockStore_ | io_context::post replaces detached thread |
+| HasBlock | Any | N/A | mutexBlockStore_ + mutexDiskIndex_ | Unchanged |
+| RequestContent | Any | libp2p thread (success) / io_context (timeout) | mutexContentRequests_ | Unchanged |
+| GetBlock | Any | N/A | mutexBlockStore_ + mutexDiskIndex_ | const removed |
+| setCacheDir | Called once before async ops begin | N/A | mutexCacheDir_ | Added mutex guard |
+| getCacheDir | Caller's thread | N/A | mutexCacheDir_ | Added mutex guard |
+| SetMaxPeerAttempts | Any | N/A | std::atomic | Plain → atomic |
+| SetPeerFailureThreshold | Any | N/A | std::atomic | Plain → atomic |
+
+---
+
 ## Strand Confinement Analysis
 
 ### ContentRequestContext — Strand Violation
