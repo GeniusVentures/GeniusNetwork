@@ -55,11 +55,41 @@ Every member variable of `class Bitswap` with guarding mutex, access pattern, an
 
 ### Domain: `mutexRequestCallbacks_`
 
-*To be populated in Plan 02 — Task 1.*
+**Mutex declaration:** `bitswap.hpp:324` — `mutable std::mutex mutexRequestCallbacks_`
+**Guarded members:** `requestContexts_` (bitswap.hpp:325)
+**Lock pattern:** `std::lock_guard<std::mutex>` — RAII. **WARNING: callback invoked while lock held** (see Finding F-04)
+
+#### `requestContexts_` — `std::map<CID, std::shared_ptr<BitswapRequestContext>>` — Access Sites
+
+| # | Method | File:Line | Thread Context | Lock Pattern | Classification | Notes |
+|---|--------|-----------|---------------|-------------|---------------|-------|
+| 1 | `processReceivedBlocks()` | `bitswap.cpp:271-285` | **libp2p thread** (via `handle()` → server read loop) | `lock_guard` (line 271) | MUTEX-GUARDED | find + HandleResponse() invocation. **Callback fires while lock held** (line 279) — if callback re-enters Bitswap and acquires mutexRequestCallbacks_, deadlock. |
+| 2 | `messageSent()` | `bitswap.cpp:324-336` | **libp2p I/O thread** (via `rw->write` callback) | `lock_guard` (line 324) | MUTEX-GUARDED | find + emplace. Lock released at line 336 before async `rw->read()` at line 340 — ASYNC SAFE. |
+| 3 | `processReceivedBlocks()` | `bitswap.cpp:277` | **libp2p thread** | `lock_guard` (line 271) | MUTEX-GUARDED | markProviderSuccess called under lock → acquires `mutexProviders_`. **This is the only documented lock nesting: mutexRequestCallbacks_ → mutexProviders_.** |
+| 4 | `messageSent()` | `bitswap.cpp:328` | **libp2p I/O thread** | `lock_guard` (line 324) | MUTEX-GUARDED | AddCallback() invoked under lock — adds BlockCallback to request context. |
+
+**Total requestContexts_ access sites:** 4 confirmed. All guarded.
+
+**Lock nesting:** Line 277: `mutexRequestCallbacks_` → `markProviderSuccess()` → `mutexProviders_`. No reverse nesting found.
+
+---
 
 ### Domain: `mutexContentRequests_`
 
-*To be populated in Plan 02 — Task 1.*
+**Mutex declaration:** `bitswap.hpp:327` — `mutable std::mutex mutexContentRequests_`
+**Guarded members:** `contentRequests_` (bitswap.hpp:328)
+**Lock pattern:** `std::lock_guard<std::mutex>` — RAII, never nested with other mutexes
+
+#### `contentRequests_` — `std::map<CID, std::shared_ptr<ContentRequestContext>>` — Access Sites
+
+| # | Method | File:Line | Thread Context | Lock Pattern | Classification | Notes |
+|---|--------|-----------|---------------|-------------|---------------|-------|
+| 1 | `setupContentRequest()` | `bitswap.cpp:540-542` | Caller thread (content request path) | `lock_guard` (line 540) | MUTEX-GUARDED | emplace — lock held for map insertion only, released before `ctx->timeout.async_wait()` at line 546 |
+| 2 | `setupContentRequest()` timeout handler | `bitswap.cpp:553-559` | **Bitswap io_context** (via `deadline_timer::async_wait`) | `lock_guard` (line 553) | MUTEX-GUARDED | find + erase + callback invocation. **Callback invoked while lock held** — same pattern as mutexRequestCallbacks_. |
+| 3 | `failContentRequest()` | `bitswap.cpp:573-574` | Caller thread (error paths) | `lock_guard` (line 573) | MUTEX-GUARDED | erase — removes context from map on failure |
+| 4 | `checkContentRequestComplete()` | `bitswap.cpp:890-891` | **libp2p thread** (via callback chain from `processUnixFSBlock`) | `lock_guard` (line 890) | MUTEX-GUARDED | erase — removes completed content request from map |
+
+**Total contentRequests_ access sites:** 4 confirmed. All guarded.
 
 ### Domain: `mutexActiveStreams_`
 
