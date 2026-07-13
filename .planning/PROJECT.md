@@ -22,13 +22,13 @@ The design documents must map every child-wallet behavior — registration, disc
 - ✓ CRDT element filters gate incoming transactions by key pattern (`TransactionManager::FilterTransaction`) — existing
 - ✓ Cryptographic-only transaction authorization via `CheckSignature`/`CheckTransactionAuthorization` — existing
 - ✓ Escrow-based processing reward split (`peers_cut` + `dev_addr`) via HoldEscrow/PayEscrow — existing
+- ✓ Design doc: child-wallet identity & keypair model (independent keypair, nonce tracking, address derivation) mapped to `GeniusAccount`/`GeniusNode` — validated in Phase 1 (`docs/child-wallet-identity-model.md`, IDENT-01..04)
+- ✓ Design doc: child-signed registration protocol (child-signed-only registration record per D-04/D-05, sequence numbering, additive proto schema) with proto additions to `SGTransaction.proto`/`Consensus.proto` — validated in Phase 1 (`docs/registration-protocol.md`, REG-01..05)
 
 ### Active
 
 <!-- Design documents to produce. Each is a hypothesis until reviewed and adopted. -->
 
-- [ ] Design doc: child-wallet identity & keypair model (independent keypair, nonce tracking, address derivation) mapped to `GeniusAccount`/`GeniusNode`
-- [ ] Design doc: main-wallet registration protocol (dual-signature registration record, nonce/sequence, lifecycle states) with proto schema additions to `SGTransaction.proto`/`SGAccountComm.proto`
 - [ ] Design doc: registration broadcast over the main wallet's pubsub channel and CRDT namespace/key layout that persists the registration record
 - [ ] Design doc: main-wallet discovery & monitoring — subscribing to child pubsub channels, CRDT sync, and reading child balances/assets without the child private key
 - [ ] Design doc: consensus rules for parent-child authority (main→child fund, main-recover-from-child, child→arbitrary, child→developer, reject child-spends-main) mapped to `ValidateTransactionForConsensus`/`ValidateWitnessForConsensus`
@@ -73,9 +73,9 @@ The design documents must map every child-wallet behavior — registration, disc
 | Decision | Rationale | Outcome |
 |----------|-----------|---------|
 | Deliverable is design documents, not implementation | User intent: produce docs grounded in current code for future implementation | — Pending |
-| Child wallet is a fully independent keypair (not derived from main) | Matches proposal; bounds compromise scope; child usable standalone | — Pending |
+| Child wallet is a fully independent keypair (not derived from main) | Matches proposal; bounds compromise scope; child usable standalone | ✓ Adopted (Phase 1) |
 | Registration recorded in consensus-visible CRDT state | Enables main-wallet discovery/monitoring and consensus-enforced authority | — Pending |
-| Dual-signature (child + main) required for registration | Prevents unsolicited/fraudulent parent-child associations | — Pending |
+| Registration is child-signed-only (dual-signature REVERSED by D-04/D-05) | Main private key never enters child process; unsolicited claims bounded to discovery spam, grant zero authority | ✓ Adopted (Phase 1) |
 | Main wallet subscribes to child pubsub channels for CRDT balance sync | User-specified sync model; reuses existing PubSubBroadcasterExt/GlobalDB | — Pending |
 | Reuse escrow reward-split mechanics for child processing rewards | Avoids new token economics; per-child `dev_addr`/`peers_cut` config | — Pending |
 
@@ -97,4 +97,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-07-13 after initialization*
+*Last updated: 2026-07-13 after Phase 1 completion*
