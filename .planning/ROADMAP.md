@@ -14,27 +14,27 @@ This milestone produces implementation-ready design documents for child wallets 
 - Integer phases (1, 2, 3): Planned milestone work
 - Decimal phases (2.1, 2.2): Urgent insertions (marked with INSERTED)
 
-- [ ] **Phase 1: Child Identity & Registration Protocol** - Design the independent child-wallet identity and the dual-signature registration record + proto schema
+- [ ] **Phase 1: Child Identity & Registration Protocol** - Design the independent child-wallet identity and the child-signed registration record + proto schema (REG-02 dual-signature reversed per D-04/D-05)
 - [ ] **Phase 2: CRDT Persistence, PubSub & Consensus Authority** - Design consensus-visible registration storage, broadcast/sync, and the parent-child authority rules
 - [ ] **Phase 3: Discovery, Rewards & Lifecycle** - Design main-wallet discovery/monitoring, per-child reward policy, and lifecycle/change flows
 
 ## Phase Details
 
 ### Phase 1: Child Identity & Registration Protocol
-**Goal**: Produce design documents defining the child-wallet identity model and the dual-signature registration protocol with additive, backward-compatible proto schema changes.
+**Goal**: Produce design documents defining the child-wallet identity model and the child-signed registration protocol with additive, backward-compatible proto schema changes (REG-02 dual-signature REVERSED by D-04/D-05 — registration is child-signed-only).
 **Mode:** mvp
 **Depends on**: Nothing (first phase)
 **Requirements**: IDENT-01, IDENT-02, IDENT-03, IDENT-04, REG-01, REG-02, REG-03, REG-04, REG-05
 **Success Criteria** (what must be TRUE):
   1. A design document specifies the child-wallet identity model (independent secp256k1 keypair, own nonce, standalone creation, UTXO ownership) with named `GeniusAccount`/`GeniusNode`/`GeniusUTXO` anchor points, traceable to IDENT-01..04.
-  2. A design document specifies the registration record schema and dual-signature protocol (child + main signatures, sequence number, metadata), traceable to REG-01, REG-02.
+  2. A design document specifies the registration record schema and child-signed-only protocol (child signature only; REG-02 dual-signature REVERSED per D-04/D-05), traceable to REG-01, REG-02.
   3. A design document specifies additive Protocol Buffer changes to `SGTransaction.proto` with a backward-compatibility matrix, traceable to REG-03.
   4. The design specifies the out-of-process main-signing flow and monotonic per-child sequence numbering for replay protection, traceable to REG-04, REG-05.
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 01-01: Child-wallet identity & keypair model design
-- [ ] 01-02: Registration record schema + dual-signature protocol + proto changes
+- [ ] 01-01-PLAN.md — Child-wallet identity & keypair model design (IDENT-01..04)
+- [ ] 01-02-PLAN.md — Registration record schema + child-signed-only protocol + proto changes (REG-01..05; REG-02 REVERSED)
 
 ### Phase 2: CRDT Persistence, PubSub & Consensus Authority
 **Goal**: Produce design documents for persisting the registration record in consensus-visible CRDT state, broadcasting/subscribing over pubsub, and enforcing all parent-child authority rules.
