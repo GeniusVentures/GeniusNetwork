@@ -11,10 +11,10 @@ Requirements for the initial design-document set. Each maps to a roadmap phase.
 
 ### Identity
 
-- [ ] **IDENT-01**: Design specifies the child-wallet identity model — independent secp256k1 keypair with its own address derivation — mapped to `GeniusAccount`/`EthereumKeyGenerator`
-- [ ] **IDENT-02**: Design specifies independent nonce/sequence tracking for a child wallet distinct from the main wallet
-- [ ] **IDENT-03**: Design specifies how a child wallet is created and loaded (standalone, no main required) mapped to `GeniusNode` `AccountSource`
-- [ ] **IDENT-04**: Design specifies UTXO ownership for child wallets so child-owned assets are distinguishable, mapped to `GeniusUTXO.owner_address`
+- [x] **IDENT-01**: Design specifies the child-wallet identity model — independent secp256k1 keypair with its own address derivation — mapped to `GeniusAccount`/`EthereumKeyGenerator`
+- [x] **IDENT-02**: Design specifies independent nonce/sequence tracking for a child wallet distinct from the main wallet
+- [x] **IDENT-03**: Design specifies how a child wallet is created and loaded (standalone, no main required) mapped to `GeniusNode` `AccountSource`
+- [x] **IDENT-04**: Design specifies UTXO ownership for child wallets so child-owned assets are distinguishable, mapped to `GeniusUTXO.owner_address`
 
 ### Registration
 
@@ -93,10 +93,10 @@ Which phases cover which requirements. Populated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| IDENT-01 | Phase 1 | Pending |
-| IDENT-02 | Phase 1 | Pending |
-| IDENT-03 | Phase 1 | Pending |
-| IDENT-04 | Phase 1 | Pending |
+| IDENT-01 | Phase 1 | Complete |
+| IDENT-02 | Phase 1 | Complete |
+| IDENT-03 | Phase 1 | Complete |
+| IDENT-04 | Phase 1 | Complete |
 | REG-01 | Phase 1 | Pending |
 | REG-02 | Phase 1 | Pending |
 | REG-03 | Phase 1 | Pending |

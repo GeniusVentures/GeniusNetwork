@@ -37,7 +37,7 @@ This milestone produces implementation-ready design documents for child wallets 
 **Plans**: 2 plans
 Plans:
 
-- [ ] 01-01-PLAN.md — Child-wallet identity & keypair model design (IDENT-01..04)
+- [x] 01-01-PLAN.md — Child-wallet identity & keypair model design (IDENT-01..04)
 - [ ] 01-02-PLAN.md — Registration record schema + child-signed-only protocol + proto changes (REG-01..05; REG-02 REVERSED)
 
 ### Phase 2: CRDT Persistence, PubSub & Consensus Authority
@@ -87,6 +87,6 @@ Phases execute in numeric order: 1 → 2 → 3
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Child Identity & Registration Protocol | 0/2 | Not started | - |
+| 1. Child Identity & Registration Protocol | 1/2 | In Progress|  |
 | 2. CRDT Persistence, PubSub & Consensus Authority | 0/2 | Not started | - |
 | 3. Discovery, Rewards & Lifecycle | 0/2 | Not started | - |
