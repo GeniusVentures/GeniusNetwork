@@ -1,101 +1,134 @@
-# Requirements: Genius Network — IPFS Bitswap Thread Safety
+# Requirements: GNUS Child Wallet Design
 
-**Defined:** 2026-07-08
-**Core Value:** All concurrent access to IPFS Bitswap state is provably free of data races — verified through static analysis, code audit, and runtime tests.
+**Defined:** 2026-07-13
+**Core Value:** The design documents map every child-wallet behavior — registration, discovery, funding, recovery, and consensus authority — onto concrete SuperGenius anchor points so a future implementation can proceed directly without re-deriving how the existing system works.
+
+> **Milestone type:** Design documentation. Each requirement is satisfied when a design document specifies the behavior, integrates it with named SuperGenius code, and is testable/reviewable against the proposal — not by shipping C++ code.
 
 ## v1 Requirements
 
-Requirements for initial release. Each maps to roadmap phases.
+Requirements for the initial design-document set. Each maps to a roadmap phase.
 
-### Audit
+### Identity
 
-- [x] **AUDIT-01**: Inventory all shared mutable state in ipfs-bitswap-cpp (member variables, statics, callback-captured state) — produce a concurrency map document
-- [x] **AUDIT-02**: Verify synchronization coverage for every shared state location (mutex, atomic, or strand confinement) — flag any unprotected access
-- [x] **AUDIT-03**: Review all mutex usage for deadlock potential, lock-across-async-call violations, and re-entrancy risks
-- [x] **AUDIT-04**: Review all atomic operations for correct memory ordering and compound-operation atomicity
-- [x] **AUDIT-05**: Verify callback/strand safety — every handler runs on the intended execution context
-- [x] **AUDIT-06**: Trace all third-party boundary crossings (libp2p → Bitswap, Bitswap → AsyncIOManager, CRDT → Bitswap, Bitswap → RocksDB) for thread context assumptions
+- [ ] **IDENT-01**: Design specifies the child-wallet identity model — independent secp256k1 keypair with its own address derivation — mapped to `GeniusAccount`/`EthereumKeyGenerator`
+- [ ] **IDENT-02**: Design specifies independent nonce/sequence tracking for a child wallet distinct from the main wallet
+- [ ] **IDENT-03**: Design specifies how a child wallet is created and loaded (standalone, no main required) mapped to `GeniusNode` `AccountSource`
+- [ ] **IDENT-04**: Design specifies UTXO ownership for child wallets so child-owned assets are distinguishable, mapped to `GeniusUTXO.owner_address`
 
-### Fix
+### Registration
 
-- [ ] **FIX-01**: Guard or strand-confine all unprotected shared mutable state identified in AUDIT-02
-- [ ] **FIX-02**: Resolve all deadlock risks and lock-across-async violations identified in AUDIT-03
-- [ ] **FIX-03**: Correct all atomic ordering and compound-operation issues identified in AUDIT-04
-- [ ] **FIX-04**: Add explicit strand dispatch for any callback running on wrong execution context (AUDIT-05)
-- [ ] **FIX-05**: Ensure no over-synchronization — benchmark Bitswap throughput before and after fixes to confirm no performance regression
+- [ ] **REG-01**: Design specifies the registration record schema (child pubkey, main pubkey, both signatures, sequence number, timestamp, optional game/publisher/dev-wallet/split metadata)
+- [ ] **REG-02**: Design specifies the dual-signature registration protocol requiring both child and main signatures over the canonical record
+- [ ] **REG-03**: Design specifies additive Protocol Buffer schema changes (new `RegistrationTx`/`RegistrationRecord` messages/oneof arm) in `SGTransaction.proto` with a backward-compatibility matrix
+- [ ] **REG-04**: Design specifies the out-of-process main-wallet signing flow so the main private key never enters the game/child process
+- [ ] **REG-05**: Design specifies monotonic per-child sequence numbering and consensus-based replay/reorder protection
 
-### Consumer Updates
+### Consensus
 
-- [ ] **CONS-01**: Update SuperGenius Bitswap integration to match any API/synchronization contract changes from FIX phase
-- [ ] **CONS-02**: Update AsyncIOManager Bitswap integration to match any API/synchronization contract changes from FIX phase
-- [ ] **CONS-03**: Verify SuperGenius CRDT layer correctness with updated Bitswap threading model
-- [ ] **CONS-04**: Verify AsyncIOManager event-loop integration correctness with updated Bitswap
+- [ ] **CONS-01**: Design specifies the main→child funding rule (main signature + child registered that main) integrated with `ValidateTransactionForConsensus`
+- [ ] **CONS-02**: Design specifies main-recover-from-child with destination restricted to the registered main address, via a delegated-spend branch in `GeniusInputValidator`
+- [ ] **CONS-03**: Design specifies child→arbitrary-address and child→main transfer rules (child signature + UTXO ownership) reusing existing validation
+- [ ] **CONS-04**: Design specifies child→registered-developer-wallet payment rule (child signature + destination check)
+- [ ] **CONS-05**: Design specifies the explicit rejection rule that a child key can never authorize spending main-wallet funds, plus its negative-test expectation
+- [ ] **CONS-06**: Design specifies where the new hierarchical-authority layer slots into `CheckTransactionAuthorization` without conflating with UTXO ownership checks
 
-### Testing
+### State Sync
 
-- [ ] **TEST-01**: Set up ThreadSanitizer (TSAN) build configuration for ipfs-bitswap-cpp
-- [ ] **TEST-02**: Write GTest-based concurrent stress tests exercising all Bitswap operations under multi-threaded access
-- [ ] **TEST-03**: Verify TSAN-clean test suite passes with zero data-race reports
+- [ ] **SYNC-01**: Design specifies the consensus-visible CRDT namespace/key layout for the registration record in `globaldb`
+- [ ] **SYNC-02**: Design specifies a CRDT element filter that validates and persists registration deltas, alongside existing `tx/`/`proof/` filters in `TransactionManager`
+- [ ] **SYNC-03**: Design specifies registration broadcast over the main wallet's pubsub channel via `PubSubBroadcasterExt`
+- [ ] **SYNC-04**: Design specifies the main wallet subscribing to child pubsub channel(s) and syncing CRDT to read child balances/assets without the child private key
+- [ ] **SYNC-05**: Design specifies that discovery/monitoring data is trusted only after signature + consensus validation, never based on pubsub topic membership
 
-### Documentation
+### Discovery
 
-- [ ] **DOCS-01**: Document Bitswap thread-safety guarantees and concurrency model (strand/mutex strategy per component)
-- [ ] **DOCS-02**: Document any API contract changes for Bitswap consumers (SuperGenius, AsyncIOManager)
-- [ ] **DOCS-03**: Add TSAN suppression file with documented rationale for each suppression
+- [ ] **DISC-01**: Design specifies how a main wallet discovers all child wallets registered to it from consensus-visible CRDT state
+- [ ] **DISC-02**: Design specifies the per-child information a main wallet displays (balance, assets, game, publisher, developer wallet, cut ratio, registration date, activity, status)
+- [ ] **DISC-03**: Design specifies main-wallet actions over discovered children (fund, recover, inspect history, view assets, revoke/detach) mapped to consensus rules
+
+### Rewards
+
+- [ ] **RWD-01**: Design specifies per-child processing-reward policy (`dev_addr`, `peers_cut`) resolution for both standalone and registered children, reusing escrow `HoldEscrow`/`PayEscrow`
+- [ ] **RWD-02**: Design specifies pinning the reward policy at escrow-hold time so mid-flight policy changes do not affect in-progress payouts
+- [ ] **RWD-03**: Design specifies authenticated update rules for the developer wallet and cut ratio
+
+### Lifecycle
+
+- [ ] **LIFE-01**: Design specifies the child-wallet lifecycle state machine (standalone, registration-pending, registered, detached, revoked, closed) and valid transitions
+- [ ] **LIFE-02**: Design specifies replace/remove-main flows with a "supersedes sequence N" linkage and deterministic (seq, tie-break) conflict resolution to prevent split-brain
+- [ ] **LIFE-03**: Design decides and documents the main-replacement policy fork (require existing-main consent vs allow child-only replacement) with rationale
+- [ ] **LIFE-04**: Design specifies that detaching a main wallet leaves the child a valid standalone wallet unless explicitly defined otherwise
 
 ## v2 Requirements
 
-Deferred to future release.
+Deferred to a future milestone. Tracked but not in the current roadmap.
 
-### Advanced Verification
+### Platform
 
-- **VERF-01**: Formal lock ordering verification via Helgrind or Clang thread safety annotations
-- **VERF-02**: Deterministic concurrency fuzz testing with controlled thread interleavings
-- **VERF-03**: CI-integrated TSAN regression suite running on every commit to Bitswap-related code
+- **PLAT-01**: "Connect GNUS Wallet" platform UI flows (Android/iOS/Windows/macOS/Linux) design
+- **PLAT-02**: GeniusWallet Flutter app changes for child-wallet display
+
+### Advanced
+
+- **ADV-01**: Threshold/social-recovery scheme for the main wallet
+- **ADV-02**: Aggregated registry topic design for publisher-scale child fan-out
 
 ## Out of Scope
 
+Explicitly excluded. Documented to prevent scope creep.
+
 | Feature | Reason |
 |---------|--------|
-| Full rewrite of ipfs-bitswap | Audit and fix only — preserve existing protocol behavior |
-| Thread-safety audit of other thirdparty IPFS libs (ipfs-lite-cpp, ipfs-pubsub) | Scope limited to ipfs-bitswap per idea document |
-| Performance optimization not related to thread safety | Separate concern |
-| SuperGenius-wide thread-safety audit | Only Bitswap integration points |
-| Replacing Boost.Asio with alternative async framework | Would ripple through entire codebase |
+| C++ implementation of the feature | This milestone produces design docs only; implementation follows separately |
+| Cross-application shared child keys | Anti-feature — compromise of any app compromises all shared assets (proposal §Sharing); safe default is one child per app |
+| Changes to existing token economics / reward math | Reuse existing escrow split mechanics |
+| Main-wallet UI implementation | Described conceptually only; UI build is out of scope |
+| ipfs-bitswap thread-safety work | Separate completed project (archived at `.planning-archive/bitswap/`) |
+| HD-derived child keys from the main seed | Rejected — couples compromise, violates bounded-compromise goal |
 
 ## Traceability
 
-Which phases cover which requirements. Updated during roadmap creation.
+Which phases cover which requirements. Populated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| AUDIT-01 | Phase 1 | Complete |
-| AUDIT-02 | Phase 1 | Complete |
-| AUDIT-03 | Phase 1 | Complete |
-| AUDIT-04 | Phase 1 | Complete |
-| AUDIT-05 | Phase 1 | Complete |
-| AUDIT-06 | Phase 1 | Complete |
-| FIX-01 | Phase 2 | Pending |
-| FIX-02 | Phase 2 | Pending |
-| FIX-03 | Phase 2 | Pending |
-| FIX-04 | Phase 2 | Pending |
-| FIX-05 | Phase 2 | Pending |
-| CONS-01 | Phase 3 | Pending |
-| CONS-02 | Phase 3 | Pending |
-| CONS-03 | Phase 3 | Pending |
-| CONS-04 | Phase 3 | Pending |
-| TEST-01 | Phase 2 | Pending |
-| TEST-02 | Phase 2 | Pending |
-| TEST-03 | Phase 2 | Pending |
-| DOCS-01 | Phase 2 | Pending |
-| DOCS-02 | Phase 3 | Pending |
-| DOCS-03 | Phase 2 | Pending |
+| IDENT-01 | TBD | Pending |
+| IDENT-02 | TBD | Pending |
+| IDENT-03 | TBD | Pending |
+| IDENT-04 | TBD | Pending |
+| REG-01 | TBD | Pending |
+| REG-02 | TBD | Pending |
+| REG-03 | TBD | Pending |
+| REG-04 | TBD | Pending |
+| REG-05 | TBD | Pending |
+| CONS-01 | TBD | Pending |
+| CONS-02 | TBD | Pending |
+| CONS-03 | TBD | Pending |
+| CONS-04 | TBD | Pending |
+| CONS-05 | TBD | Pending |
+| CONS-06 | TBD | Pending |
+| SYNC-01 | TBD | Pending |
+| SYNC-02 | TBD | Pending |
+| SYNC-03 | TBD | Pending |
+| SYNC-04 | TBD | Pending |
+| SYNC-05 | TBD | Pending |
+| DISC-01 | TBD | Pending |
+| DISC-02 | TBD | Pending |
+| DISC-03 | TBD | Pending |
+| RWD-01 | TBD | Pending |
+| RWD-02 | TBD | Pending |
+| RWD-03 | TBD | Pending |
+| LIFE-01 | TBD | Pending |
+| LIFE-02 | TBD | Pending |
+| LIFE-03 | TBD | Pending |
+| LIFE-04 | TBD | Pending |
 
 **Coverage:**
-- v1 requirements: 21 total
-- Mapped to phases: 21
-- Unmapped: 0
+- v1 requirements: 30 total
+- Mapped to phases: 0 (populated by roadmap)
+- Unmapped: 30 ⚠️
 
 ---
-*Requirements defined: 2026-07-08*
-*Last updated: 2026-07-08 after initial definition*
+*Requirements defined: 2026-07-13*
+*Last updated: 2026-07-13 after initial definition*
