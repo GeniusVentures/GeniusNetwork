@@ -1,19 +1,20 @@
 <!-- GSD:project-start source:PROJECT.md -->
 ## Project
 
-**Genius Network — IPFS Bitswap Thread Safety**
+**GNUS Child Wallet Design**
 
-A focused effort to audit and harden the `thirdparty/ipfs-bitswap` C++ library for thread safety, then propagate any required API changes to SuperGenius and AsyncIOManager — the two consumers of ipfs-bitswap in the Genius Network decentralized AI/ML blockchain node. Bitswap is the data exchange protocol that moves blocks between IPFS peers; thread-safety defects here can cause data races, crashes, or silent corruption in a multi-threaded asynchronous node.
+A design-documentation effort that produces implementation-ready design documents for **child wallets** (subwallets) in the GNUS SuperGenius node, grounded in the current SuperGenius codebase. Games integrating the GNUS SDK will operate independent child wallets that can earn GNUS, hold and transfer assets, and optionally register a main wallet — without ever exposing the main wallet's private key. The documents detail how a child-wallet registration broadcasts to the main wallet's pubsub channel, how CRDT backing persists the registration for consensus-visible parent-child authority, and how the main wallet subscribes to child pubsub channels to sync CRDT state and read child balances.
 
-**Core Value:** All concurrent access to IPFS Bitswap state is provably free of data races — verified through static analysis, code audit, and runtime tests — ensuring the CRDT/storage layer never corrupts or loses blocks under concurrent load.
+**Core Value:** The design documents must map every child-wallet behavior — registration, discovery, funding, recovery, and consensus authority — onto concrete SuperGenius anchor points (GeniusAccount, TransactionManager, CRDT/GlobalDB, PubSubBroadcasterExt, consensus validation) so a future implementation can proceed directly from the docs without re-deriving how the existing system works.
 
 ### Constraints
 
-- **Tech stack:** C++17, CMake, Boost.Asio, libp2p, existing thirdparty build system
-- **Compatibility:** Changes to ipfs-bitswap must not break SuperGenius or AsyncIOManager builds on any supported platform (Windows x64, Linux, macOS, iOS, Android)
-- **Build system:** ipfs-bitswap is built via `thirdparty/build/{Platform}/CMakeLists.txt`; any new files or dependencies must be registered there
-- **Testing:** GTest testing framework; TSAN/Helgrind recommended for data-race detection
-- **Coding standard:** Corelinux-derived C++ style per `Coding Standards.md` — Ullman braces, PascalCase types, `m_` member prefix
+- **Tech stack**: C++17/C++20, CMake, Boost.Asio, libp2p, Protocol Buffers — must match existing SuperGenius conventions
+- **Coding standard**: Corelinux-derived C++ style per `Coding Standards.md` — Ullman braces, PascalCase types, `m_`/trailing-underscore member prefix; PascalCase headers
+- **Compatibility**: Proposed proto/API changes must not break existing SuperGenius, GeniusSDK, or GeniusWallet builds on any supported platform
+- **Security**: Main-wallet private key must never enter the game/child process; compromise of a child wallet must be bounded to that child's assets
+- **Consensus**: Parent-child authority must be enforced by consensus, not only by wallet UI or local metadata
+- **Serialization**: All wire formats use Protocol Buffers; new records extend existing `.proto` files with backward compatibility
 <!-- GSD:project-end -->
 
 <!-- GSD:stack-start source:codebase/STACK.md -->

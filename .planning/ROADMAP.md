@@ -1,66 +1,80 @@
-# Roadmap: Genius Network — IPFS Bitswap Thread Safety
+# Roadmap: GNUS Child Wallet Design
 
-**Created:** 2026-07-08
+**Created:** 2026-07-13
 **Granularity:** Coarse (3 phases)
 **Project Mode:** Vertical MVP
 
----
+## Overview
 
-## Phase Overview
+This milestone produces implementation-ready design documents for child wallets in the GNUS SuperGenius node. The journey moves from the foundational child-wallet identity and registration protocol (Phase 1), through the consensus-visible CRDT/pubsub persistence and the parent-child authority rules that make the model secure (Phase 2), to the main-wallet discovery, reward policy, and lifecycle/change flows that complete the experience (Phase 3). Each phase delivers reviewable design documents grounded in named SuperGenius anchor points, ordered by dependency so every later document builds on a defined earlier one.
 
-| # | Phase | Goal | Requirements | Success Criteria |
-|---|-------|------|--------------|------------------|
-| 1 | Audit | ✓ Complete | AUDIT-01..06 | 5/5 met |
-| 2 | Fix & Test | 3/3 | Complete   | 2026-07-09 |
-| 3 | Consumer Integration | 1/1 | Complete   | 2026-07-09 |
+## Phases
 
----
+**Phase Numbering:**
+- Integer phases (1, 2, 3): Planned milestone work
+- Decimal phases (2.1, 2.2): Urgent insertions (marked with INSERTED)
 
-### Phase 1: Audit
+- [ ] **Phase 1: Child Identity & Registration Protocol** - Design the independent child-wallet identity and the dual-signature registration record + proto schema
+- [ ] **Phase 2: CRDT Persistence, PubSub & Consensus Authority** - Design consensus-visible registration storage, broadcast/sync, and the parent-child authority rules
+- [ ] **Phase 3: Discovery, Rewards & Lifecycle** - Design main-wallet discovery/monitoring, per-child reward policy, and lifecycle/change flows
 
-**Goal:** Complete thread-safety analysis of ipfs-bitswap-cpp — identify every shared mutable state location, synchronization gap, and concurrency boundary.
+## Phase Details
+
+### Phase 1: Child Identity & Registration Protocol
+**Goal**: Produce design documents defining the child-wallet identity model and the dual-signature registration protocol with additive, backward-compatible proto schema changes.
 **Mode:** mvp
+**Depends on**: Nothing (first phase)
+**Requirements**: IDENT-01, IDENT-02, IDENT-03, IDENT-04, REG-01, REG-02, REG-03, REG-04, REG-05
+**Success Criteria** (what must be TRUE):
+  1. A design document specifies the child-wallet identity model (independent secp256k1 keypair, own nonce, standalone creation, UTXO ownership) with named `GeniusAccount`/`GeniusNode`/`GeniusUTXO` anchor points, traceable to IDENT-01..04.
+  2. A design document specifies the registration record schema and dual-signature protocol (child + main signatures, sequence number, metadata), traceable to REG-01, REG-02.
+  3. A design document specifies additive Protocol Buffer changes to `SGTransaction.proto` with a backward-compatibility matrix, traceable to REG-03.
+  4. The design specifies the out-of-process main-signing flow and monotonic per-child sequence numbering for replay protection, traceable to REG-04, REG-05.
+**Plans**: TBD
 
-**Requirements:** AUDIT-01, AUDIT-02, AUDIT-03, AUDIT-04, AUDIT-05, AUDIT-06
+Plans:
+- [ ] 01-01: Child-wallet identity & keypair model design
+- [ ] 01-02: Registration record schema + dual-signature protocol + proto changes
 
-**Success Criteria:**
-1. Concurrency map document exists covering all shared mutable state in ipfs-bitswap-cpp source files
-2. Every shared state location is classified as: mutex-guarded, atomic, strand-confined, or FLAGGED (unprotected)
-3. All lock usage reviewed for deadlock, re-entrancy, and lock-across-async violations — documented
-4. All atomic operations reviewed for memory ordering and compound-operation correctness
-5. All third-party boundary crossings (libp2p→Bitswap, Bitswap→AsyncIOManager, CRDT→Bitswap, Bitswap→RocksDB) traced for thread context assumptions
-
----
-
-### Phase 2: Fix & Test
-
-**Goal:** Apply synchronization fixes to all identified issues, set up ThreadSanitizer testing, and verify zero data races under concurrent load.
+### Phase 2: CRDT Persistence, PubSub & Consensus Authority
+**Goal**: Produce design documents for persisting the registration record in consensus-visible CRDT state, broadcasting/subscribing over pubsub, and enforcing all parent-child authority rules.
 **Mode:** mvp
+**Depends on**: Phase 1
+**Requirements**: SYNC-01, SYNC-02, SYNC-03, SYNC-04, SYNC-05, CONS-01, CONS-02, CONS-03, CONS-04, CONS-05, CONS-06
+**Success Criteria** (what must be TRUE):
+  1. A design document specifies the CRDT registry namespace/key layout and validating element filter in `globaldb`/`TransactionManager`, traceable to SYNC-01, SYNC-02.
+  2. A design document specifies registration broadcast on the main's pubsub channel and the main subscribing to child channel(s) for CRDT balance sync via `PubSubBroadcasterExt`, with authority derived only from signatures+consensus (not topic membership), traceable to SYNC-03, SYNC-04, SYNC-05.
+  3. A design document specifies all six consensus authority rules — main→child fund, destination-restricted recovery, child→arbitrary/main, child→developer, and the explicit child-cannot-spend-main rejection — mapped to `ValidateTransactionForConsensus`/`GeniusInputValidator`/`CheckTransactionAuthorization`, traceable to CONS-01..06.
+  4. The design explicitly resolves the CRDT eventual-consistency vs consensus-ordering tension (seq + consensus order) and separates delegated authority from UTXO ownership checks.
+**Plans**: TBD
 
-**Requirements:** FIX-01, FIX-02, FIX-03, FIX-04, FIX-05, TEST-01, TEST-02, TEST-03, DOCS-01, DOCS-03
+Plans:
+- [ ] 02-01: CRDT registry namespace + pubsub broadcast/subscription design
+- [ ] 02-02: Consensus parent-child authority rules design
 
-**Success Criteria:**
-1. All FLAGGED shared state from Phase 1 is protected by mutex, atomic, or strand confinement
-2. All deadlock risks and lock-across-async violations resolved
-3. TSAN build configuration working for ipfs-bitswap-cpp target
-4. GTest concurrent stress tests pass with zero TSAN data-race reports
-5. Bitswap throughput benchmark shows no significant regression from synchronization additions
-
----
-
-### Phase 3: Consumer Integration
-
-**Goal:** Update SuperGenius and AsyncIOManager to match any Bitswap API or synchronization contract changes, verify all integration points.
+### Phase 3: Discovery, Rewards & Lifecycle
+**Goal**: Produce design documents for main-wallet discovery/monitoring, per-child processing-reward policy, and the lifecycle/change flows with replay-safe conflict resolution.
 **Mode:** mvp
+**Depends on**: Phase 2
+**Requirements**: DISC-01, DISC-02, DISC-03, RWD-01, RWD-02, RWD-03, LIFE-01, LIFE-02, LIFE-03, LIFE-04
+**Success Criteria** (what must be TRUE):
+  1. A design document specifies how a main wallet discovers registered children and the per-child information it displays and actions it can take (fund, recover, inspect, revoke/detach), traceable to DISC-01..03.
+  2. A design document specifies per-child reward policy resolution for standalone and registered children, hold-time policy pinning, and authenticated dev-wallet/split updates, reusing escrow `HoldEscrow`/`PayEscrow`, traceable to RWD-01..03.
+  3. A design document specifies the lifecycle state machine and replace/remove/detach flows with "supersedes seq N" linkage and deterministic conflict resolution, traceable to LIFE-01, LIFE-02, LIFE-04.
+  4. The main-replacement policy fork (require existing-main consent vs child-only) is decided and documented with rationale, traceable to LIFE-03.
+**Plans**: TBD
 
-**Requirements:** CONS-01, CONS-02, CONS-03, CONS-04, DOCS-02
+Plans:
+- [ ] 03-01: Discovery & monitoring design
+- [ ] 03-02: Reward policy + lifecycle/change-flow design
 
-**Success Criteria:**
-1. SuperGenius builds and links successfully with updated ipfs-bitswap-cpp
-2. AsyncIOManager builds and links successfully with updated ipfs-bitswap-cpp
-3. CRDT layer Bitswap integration verified correct with updated threading model
-4. AsyncIOManager event-loop integration verified correct — no strand violations at Bitswap boundary
+## Progress
 
----
+**Execution Order:**
+Phases execute in numeric order: 1 → 2 → 3
 
-*Roadmap created: 2026-07-08*
+| Phase | Plans Complete | Status | Completed |
+|-------|----------------|--------|-----------|
+| 1. Child Identity & Registration Protocol | 0/2 | Not started | - |
+| 2. CRDT Persistence, PubSub & Consensus Authority | 0/2 | Not started | - |
+| 3. Discovery, Rewards & Lifecycle | 0/2 | Not started | - |
