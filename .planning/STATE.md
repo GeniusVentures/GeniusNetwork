@@ -64,10 +64,11 @@ Recent decisions affecting current work:
 
 - Init: Deliverable is design documents, not implementation
 - Init: Child wallet is a fully independent keypair (not HD-derived from main)
-- Init: Registration recorded in consensus-visible CRDT state; dual-signature required
-- [Phase ?]: D-01: Child-ness is emergent — no account-type field or creation-time flag in GeniusAccount — Emergent identity avoids schema changes; child-ness determined by consensus-visible registration record
-- [Phase ?]: D-02: UTXO ownership via owner_address only — no new ownership scheme needed — Child UTXOs are distinguishable by owner_address alone; GeniusUTXO.hpp unchanged
-- [Phase ?]: D-03: Independent nonce tracking via existing GeniusAccount nonce machinery — Separate GeniusAccount instance = separate nonce counter; no new nonce infrastructure needed
+- Init: Registration recorded in consensus-visible CRDT state
+- [Phase 1]: D-01: Child-ness is emergent — no account-type field or creation-time flag in GeniusAccount — Emergent identity avoids schema changes; child-ness determined by consensus-visible registration record
+- [Phase 1]: D-02: UTXO ownership via owner_address only — no new ownership scheme needed — Child UTXOs are distinguishable by owner_address alone; GeniusUTXO.hpp unchanged
+- [Phase 1]: D-03: Independent nonce tracking via existing GeniusAccount nonce machinery — Separate GeniusAccount instance = separate nonce counter; no new nonce infrastructure needed
+- [Phase 1]: D-04/D-05: Registration is child-signed-only (dual-signature REVERSED) — Main private key never enters child process; unsolicited claims bounded to discovery spam, grant zero authority
 
 ### Pending Todos
 
@@ -88,6 +89,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-07-13T22:16:15.208Z
-Stopped at: Completed 01-01-PLAN.md
+Last session: 2026-07-13
+Stopped at: Phase 1 complete (2/2), verified — ready to plan Phase 2
 Resume file: None
