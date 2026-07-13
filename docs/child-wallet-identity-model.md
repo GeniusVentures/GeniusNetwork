@@ -176,3 +176,174 @@ The identity model does **not** define the state machine transitions or consensu
 - `GeniusAccount` factory methods: `SuperGenius/src/account/GeniusAccount.hpp:83-131`
 - `GNUS_Subwallet_Architecture_Proposal.md` §High-Level Concept, §Core Properties, §Lifecycle States
 - Phase 01 Context (`01-CONTEXT.md`): decisions D-01, D-03
+
+---
+
+## Nonce Tracking
+
+A child wallet tracks its own per-account nonce independently of any other wallet. Because the child is a separate `GeniusAccount` instance, its nonce machinery is naturally distinct from the main wallet's nonce.
+
+### Per-Account Nonce Isolation
+
+Every `GeniusAccount` has its own nonce state, comprising:
+
+| Component | Location | Purpose |
+|-----------|----------|---------|
+| `GetProposedNonce()` | `GeniusAccount.hpp:279` | Returns the next available nonce without reserving it. Useful for previewing what nonce would be assigned. |
+| `ReserveNextNonce()` | `GeniusAccount.hpp:285` | Atomically reserves and returns the next nonce. Called when constructing any transaction. |
+| `ReleaseNonce(uint64_t)` | `GeniusAccount.hpp:291` | Returns a previously reserved nonce to the pool. Used when a transaction is abandoned or rejected. |
+| `confirmed_nonces_` map | `GeniusAccount.hpp:392` | Tracks confirmed nonces from peers. Updated after consensus accepts a transaction. |
+| `pending_nonces_` set | `GeniusAccount.hpp:394` | Reserved but not yet confirmed nonces (internal). |
+
+Because the child wallet has its own `GeniusAccount` instance, these counters are scoped to the child account only. A child's `GetProposedNonce()` returning 7 and a main wallet's `GetProposedNonce()` returning 7 refer to unrelated counters in separate `GeniusAccount` instances.
+
+### Nonce Lifecycle
+
+The child wallet uses the standard nonce flow for every transaction it creates:
+
+1. **Preview:** The child calls `GetProposedNonce()` to inspect the next nonce without reserving. This is non-mutating and safe to call at any time.
+
+2. **Reserve:** The child calls `ReserveNextNonce()` to atomically claim the next nonce. The returned `uint64_t` value is embedded in `DAGStruct.nonce` (`SGTransaction.proto:10`) when constructing the transaction proto.
+
+3. **Sign and Submit:** The transaction is hashed (via `GeniusTransaction::FillHash()`), signed (via `GeniusAccount::Sign()`), and submitted through the standard `TransactionManager` path.
+
+4. **Confirm:** After consensus validates and persists the transaction, the `confirmed_nonces_` map is updated. The nonce is now permanently consumed for the child account.
+
+5. **Release (abandoned):** If the transaction is rejected or the child decides not to submit it, `ReleaseNonce(nonce)` returns the nonce to the pool so it can be reassigned.
+
+### Registration Nonce Consumption
+
+Registration transactions consume a child nonce just like any other transaction. The `RegistrationTx` embeds `DAGStruct` with the child's `ReserveNextNonce()` value in `dag_struct.nonce`. Additionally, `RegistrationTx` carries a dedicated `sequence` field for registration lineage ordering — this is separate from the account nonce and is documented in the registration protocol design document (Plan 01-02, REG-05).
+
+### Design Rule: No New Nonce Machinery
+
+No new nonce infrastructure is needed for child wallets. The existing per-account nonce system in `GeniusAccount` works unchanged:
+
+- `GeniusAccount.hpp` is **not modified** — the nonce methods (`GetProposedNonce`, `ReserveNextNonce`, `ReleaseNonce`) are used as-is.
+- `SGTransaction.proto` is **not modified** for nonce purposes — `DAGStruct.nonce` (field 4, line 10) carries the nonce for all transaction types including child transactions.
+- The `TransactionManager` nonce validation path checks nonce ordering and duplication — child transactions flow through this same path.
+
+### Traceability
+
+IDENT-02 is satisfied by this section: the design specifies independent nonce tracking for child wallets distinct from the main wallet, mapped to `GeniusAccount::GetProposedNonce` (`GeniusAccount.hpp:279`), `ReserveNextNonce` (`GeniusAccount.hpp:285`), `confirmed_nonces_` (`GeniusAccount.hpp:392`), and `DAGStruct.nonce` (`SGTransaction.proto:10`).
+
+---
+
+## UTXO Ownership
+
+A child wallet owns UTXOs via the standard `UTXOEntryRecord.owner_address` field (`SGTransaction.proto:57`). The child's address (128-hex, derived from its independent secp256k1 public key per §2) is set as the `owner_address` when UTXOs are created for that child. No new ownership scheme is needed.
+
+### How Ownership Works
+
+The UTXO ownership model in SuperGenius is address-based:
+
+```
+message UTXOEntryRecord {
+    UTXO utxo = 1;
+    string owner_address = 2;    // ← 128-hex address, no "0x" prefix
+    UTXOEntryState state = 3;
+    uint64 created_epoch = 4;
+    ...
+}
+```
+
+(`SGTransaction.proto:54-64`)
+
+A UTXO is "owned" by the address in `owner_address`. The UTXO subsystem does not distinguish between addresses that belong to main wallets, child wallets, developer wallets, or any other account type — ownership is purely address-based.
+
+### Child UTXO Lifecycle
+
+1. **Receive funds:** When another wallet (main, external, or another child) transfers funds to the child's address, a new `UTXOEntryRecord` is created with `owner_address` set to the child's 128-hex address. The transfer transaction is signed by the sender (not the child).
+
+2. **Query UTXOs:** The child queries its UTXOs via the standard `GeniusAccount::RequestUTXOs()` method (`GeniusAccount.hpp:317-319`), which filters by address. Alternatively, the `UTXOManager` (`GeniusAccount.hpp:344-352`) provides UTXO access. The query returns all `UTXOEntryRecord` entries where `owner_address == child_address`.
+
+3. **Spend UTXOs:** The child creates a transaction referencing its owned UTXOs as inputs via `GeniusAccount::CreateInputsFromUTXOs()` (`GeniusAccount.hpp:223`). This method builds `InputUTXOInfo` descriptors (`UTXOStructs.hpp:35-45`) with the child's signature authorizing each input's spend.
+
+4. **Consensus validation:** Consensus verifies that:
+   - The child's signature is valid for each input UTXO (standard `VerifySignature` check).
+   - The `owner_address` of each input UTXO matches the child's address (standard ownership check).
+   - The transaction's `DAGStruct.source_addr` matches the child's address.
+   These validation steps are part of the existing `TransactionManager` validation path — no new rules are added.
+
+5. **Output UTXOs:** Output UTXOs from child transactions have `owner_address` set to the destination addresses. These may be the child itself (self-transfer or change), the main wallet (if registered), an external address, or a developer wallet.
+
+### The `GeniusUTXO` Class
+
+The `GeniusUTXO` class (`SuperGenius/src/account/GeniusUTXO.hpp`) is the in-memory representation of a spendable UTXO:
+
+| Member | Type | Purpose |
+|--------|------|---------|
+| `outpoint_` | `OutPoint` | Producing transaction hash + output index (`GeniusUTXO.hpp:21-35`) |
+| `amount_` | `uint64_t` | Amount carried by the output |
+| `token_id_` | `TokenID` | Token identifier |
+| `owner_address_` | `std::string` | Address that owns or can spend the output (`GeniusUTXO.hpp:154`) |
+
+The `owner_address_` member is set via `SetOwnerAddress()` (`GeniusUTXO.hpp:91-94`) and read via `GetOwnerAddress()` (`GeniusUTXO.hpp:100-103`). This is the same field used by all wallets — no special "child owner" variant exists.
+
+### Design Rule: No UTXO Schema Changes
+
+No UTXO source files are modified for child-wallet identity:
+
+- `GeniusUTXO.hpp` is **not modified** — the `owner_address_` field serves child wallets and main wallets identically.
+- `UTXOStructs.hpp` is **not modified** — no new structs or address types are needed.
+- `SGTransaction.proto` `UTXOEntryRecord` is **not modified** — `owner_address` (field 2, string) carries the child's address the same way it carries any wallet's address.
+
+The only difference between a child-owned UTXO and a main-wallet-owned UTXO is semantic: the `owner_address` happens to be a child's address rather than a main wallet's address. The UTXO layer does not distinguish and does not need to distinguish.
+
+### Distinguishability
+
+Child-owned assets are distinguishable by `owner_address` alone:
+
+- Query `UTXOEntryRecord` where `owner_address == child_address` → returns all child-owned UTXOs.
+- Query `UTXOEntryRecord` where `owner_address == main_address` → returns all main-wallet-owned UTXOs.
+
+This works identically for any address. The main wallet, if it knows the child's address (obtained through registration discovery — Phase 2), can query the child's UTXOs without possessing the child's private key. The child's balance is simply the sum of amounts in its owned UTXOs.
+
+### Traceability
+
+IDENT-04 is satisfied by this section: the design specifies UTXO ownership for child wallets so child-owned assets are distinguishable, mapped to `UTXOEntryRecord.owner_address` (`SGTransaction.proto:57`) and `GeniusUTXO::owner_address_` (`GeniusUTXO.hpp:154`).
+
+---
+
+## Requirement Traceability
+
+| Requirement | Section | Anchor Points | Status |
+|-------------|---------|---------------|--------|
+| IDENT-01 | § Keypair & Address | `GeniusAccount::eth_keypair_` (`GeniusAccount.hpp:391`), `EthereumKeyGenerator` (`ProofSystem/EthereumKeyGenerator.hpp`), `IsValidPublicKey` (`GeniusAccount.hpp:152`), `NormalizeAddress` (`GeniusAccount.hpp:144`) | Included |
+| IDENT-02 | § Nonce Tracking | `GetProposedNonce` (`GeniusAccount.hpp:279`), `ReserveNextNonce` (`GeniusAccount.hpp:285`), `ReleaseNonce` (`GeniusAccount.hpp:291`), `confirmed_nonces_` (`GeniusAccount.hpp:392`), `DAGStruct.nonce` (`SGTransaction.proto:10`) | Included |
+| IDENT-03 | § Wallet Creation & Lifecycle | `GeniusNode::New` (`GeniusNode.hpp:126`), `AccountSource{NewAccount{}}` (`GeniusNode.hpp:88-107`), `GeniusAccount::New` (`GeniusAccount.hpp:83-85`) | Included |
+| IDENT-04 | § UTXO Ownership | `UTXOEntryRecord.owner_address` (`SGTransaction.proto:57`), `GeniusUTXO::owner_address_` (`GeniusUTXO.hpp:154`), `GeniusUTXO::SetOwnerAddress`/`GetOwnerAddress` (`GeniusUTXO.hpp:91-103`) | Included |
+
+### Design Decisions Reflected
+
+| Decision | Section | How Reflected |
+|----------|---------|---------------|
+| D-01 | §1 Overview | Child-ness is emergent — no account-type field or creation-time flag. `GeniusAccount.hpp` and `GeniusNode.hpp` untouched. |
+| D-02 | §5 UTXO Ownership | UTXO ownership via `owner_address` only — no new ownership scheme. `GeniusUTXO.hpp` and `UTXOStructs.hpp` untouched. |
+| D-03 | §4 Nonce Tracking | Independent nonce via existing `GetProposedNonce`/`ReserveNextNonce` — separate `GeniusAccount` = separate nonce counter. |
+
+### Files NOT Modified
+
+| File | Reason |
+|------|--------|
+| `SuperGenius/src/account/GeniusAccount.hpp` | All identity fields (`eth_keypair_`, nonce methods, signing, address validation) used as-is. Child-ness is emergent (D-01). |
+| `SuperGenius/src/account/GeniusNode.hpp` | All creation paths (`AccountSource` variants, `GeniusNode::New`) used as-is. No new variant needed for child wallets. |
+| `SuperGenius/src/account/GeniusUTXO.hpp` | UTXO ownership via `owner_address_` is address-based — no account-type distinction needed (D-02). |
+| `SuperGenius/src/account/UTXOStructs.hpp` | Existing input/output structs handle child UTXOs identically to any wallet. |
+| `SuperGenius/src/account/proto/SGTransaction.proto` | `UTXOEntryRecord.owner_address` and `DAGStruct.nonce` used without modification. |
+
+### Phase Hand-Offs
+
+The following concerns are out of scope for the identity model and deferred to later phases:
+
+| Concern | Phase | Requirements |
+|---------|-------|-------------|
+| Registration CRDT namespace/key layout + element filter | Phase 2 | SYNC-01, SYNC-02 |
+| Pubsub broadcast of registration + main subscribing to child channels | Phase 2 | SYNC-03, SYNC-04, SYNC-05 |
+| Consensus authority rules (parent-child: fund, recover, transfer, reject) | Phase 2 | CONS-01..06 |
+| Processing-reward policy for child wallets | Phase 3 | RWD-01..03 |
+| Lifecycle state machine + replace/detach/revoke flows | Phase 3 | LIFE-01..04 |
+| Platform "Connect GNUS Wallet" UI flows | v2 | PLAT-01, PLAT-02 |
+
+The registration protocol (carrier tx, proto schema, monotonic sequencing) is documented in the next design document — Plan 01-02.
+
