@@ -383,3 +383,163 @@ REG-04 is satisfied by this section: the design specifies the out-of-process pub
 |-------------|---------|----------|
 | REG-02 | §5.1–5.4 | ⚠ REVERSED — child-signed-only; main does NOT counter-sign. Security impact analysis documents bounded risk (discovery spam only, zero authority grant). Flag for requirements update at phase transition. |
 | REG-04 | §5.5 | Connect flow delivers main pubkey only; transport-agnostic handshake; main private key never enters child process. Platform UI deferred to v2 (PLAT-01, PLAT-02). |
+
+---
+
+## 6. Sequence Numbering & Replay Protection (REG-05)
+
+RegistrationTx carries two independent counters serving different purposes. This dual-counter design (per D-09) separates account transaction ordering from registration lineage ordering.
+
+### 6.1 Dual Counter Design
+
+| Counter | Scope | Type | Purpose |
+|---------|-------|------|---------|
+| `DAGStruct.nonce` | Per-account (child wallet) | `uint64` | Transaction ordering. Every transaction (transfer, registration, escrow) from the child account consumes a nonce. Drives the existing `TransactionManager` nonce validation and prevents replay of **any** transaction from the same account. Sourced from `GeniusAccount::ReserveNextNonce()` (`GeniusAccount.hpp:285`). |
+| `sequence` | Per-child, registration-only | `uint64` | Registration lineage. Scoped exclusively to registration events for this child. The first registration = 1; replacements increment the sequence to 2, 3, etc. This separates registration lineage from account tx ordering. |
+
+#### Why Both Are Needed (Pitfall: Conflating Nonce with Sequence)
+
+If `RegistrationTx` used only `DAGStruct.nonce`:
+
+- A child's normal transfer transactions could "push out" a registration — the nonce is consumed by a transfer, and the registration cannot reuse it. The child would need to carefully interleave registration attempts with transfer activity, coupling registration logic to general transaction flow.
+- The nonce is account-global — it cannot express "this is the Nth registration" independently of the total transaction count.
+
+If `RegistrationTx` used only `sequence` without `nonce`:
+
+- The registration would bypass the standard per-account tx ordering that `TransactionManager` expects.
+- Consensus would need a separate ordering mechanism just for registrations, duplicating the well-tested nonce infrastructure.
+
+**Two counters = two independent ordering domains.** `DAGStruct.nonce` ensures the registration is a valid transaction in the child's account chain. `sequence` ensures the registration's position in the child's registration lineage is unambiguous.
+
+### 6.2 Authoritative Registration Selection (Phase 2 Hand-Off)
+
+Consensus selects the registration with the highest valid `sequence` as the authoritative registration for a child. This is a Phase 2 consensus-ordering mechanism (SYNC-01, CONS-01).
+
+If two registrations arrive with equal `sequence` values, a **tie-break rule** is needed (e.g., highest `nonce`, lowest tx hash, validator vote). The tie-break rule and the exact consensus-ordering mechanism are **designed in Phase 2** — not here.
+
+Phase 1 defines:
+
+- The `sequence` field exists and is `uint64`.
+- It is monotonic per-child — set by the child wallet when constructing the `RegistrationTx`, sequentially incrementing from its last used sequence.
+- Consensus will select the highest valid sequence as authoritative (Phase 2).
+- The tie-break rule is a Phase 2 hand-off.
+
+### 6.3 Replay Protection
+
+`RegistrationTx` has defense-in-depth against replay attacks, combining two independent validation rules:
+
+#### Nonce-Based Replay Protection (Phase 1 — Existing)
+
+Consensus rejects `RegistrationTx` where `DAGStruct.nonce ≤ confirmed_nonce` for the child account. This is the existing `TransactionManager` nonce validation — it prevents replay of the exact same `RegistrationTx` (same nonce) and prevents the child from reusing a nonce that has already been consumed by any transaction type.
+
+This protection is inherited from the `GeniusTransaction` base class. No new code is needed.
+
+#### Sequence-Based Replay Protection (Phase 2)
+
+Consensus will reject `RegistrationTx` where `sequence ≤ last_confirmed_sequence` for the same child. This prevents replay of an old registration after a newer registration with a higher sequence is already confirmed.
+
+This protection requires Phase 2 consensus logic, derived from CRDT registration state (`registry/<child_address>/` namespace). Phase 1 defines the field; Phase 2 enforces the validation rule.
+
+#### Defense-in-Depth
+
+| Attack | Nonce blocks? | Sequence blocks? |
+|--------|:---:|:---:|
+| Replay exact same RegistrationTx | ✓ (same nonce rejected) | ✓ (same sequence rejected) |
+| Replay old registration after child sends transfers | ✓ (nonce already consumed by transfer) | ✓ (sequence ≤ last confirmed) |
+| Replay old registration at a new nonce | — (new nonce is valid) | ✓ (sequence ≤ last confirmed) |
+| Spam with many registrations at different nonces | — (each nonce is distinct) | — (each gets a new sequence — handled by authoritative selection) |
+
+The combination of nonce-based account ordering (Phase 1) and sequence-based registration lineage (Phase 2) provides defense-in-depth: an attacker must defeat both counters to successfully replay a registration.
+
+### Traceability
+
+REG-05 is satisfied by this section: the design specifies monotonic per-child sequence numbering, the dual-counter design (`DAGStruct.nonce` + `sequence`), the authoritative selection concept (highest valid sequence), and replay protection at both nonce and sequence layers. The consensus-ordering mechanism and tie-break rule are explicitly deferred to Phase 2.
+
+---
+
+## 7. Backward-Compatibility Matrix (REG-03)
+
+The proto changes defined in §2 and §3 are purely additive. This section verifies backward-compatibility across all relevant scenarios.
+
+### Compatibility Table
+
+| # | Scenario | Compatible? | Why |
+|---|----------|:-----------:|-----|
+| 1 | Old node receives new RegistrationTx | ✓ Yes | proto3 ignores unknown message types in a oneof — the unknown arm is treated as if it were not set. Deserialization falls through the `DeSerializeEmbeddedTransaction` switch to the `TRANSACTION_NOT_SET` default case, returning `std::errc::invalid_argument`. The old node does not crash, corrupt state, or misinterpret the message. |
+| 2 | New node receives old message (no RegistrationTx) | ✓ Yes | The `EmbeddedTransaction.transaction_case()` returns `TRANSACTION_NOT_SET` when no known oneof arm matches. The new node's switch falls through to the default case, identical to existing handling for unknown/empty transactions. No crash, no state corruption. |
+| 3 | Old wallet/GeniusSDK parses new RegistrationMetadata | ✓ Yes | proto3 unknown fields are preserved but ignored by default. An old wallet parsing a message containing `RegistrationMetadata` fields will skip them — they are not accessible via the old generated code but do not cause parse errors. |
+| 4 | New node reads old CRDT state (no registration records) | ✓ Yes | No registration records → no children. The emergent identity model (per IDENT-01, `docs/child-wallet-identity-model.md` §1) correctly interprets "no registration = not a child." No special case needed. |
+| 5 | Renumber DAGStruct fields inside RegistrationTx | ✗ NO | `DAGStruct` is a **shared** message used by ALL existing tx types (`TransferTx`, `EscrowTx`, `MintTx`, `MintTxV2`, `MigrationTx`, `ProcessingTx` all use `DAGStruct dag_struct = 1`). Changing `DAGStruct` field numbers or semantics breaks every existing transaction type on every deployed node. The `RegistrationTx` uses `DAGStruct dag_struct = 1` — it references the shared type; it does **not** redefine it. |
+| 6 | Change existing TransferTx/MintTx/EscrowTx field numbers | ✗ NO | Changing field numbers in existing message definitions breaks all deployed nodes running older versions. The proto changes for RegistrationTx are purely additive: new messages appended at the end of `SGTransaction.proto`, new oneof arm added at the end of `EmbeddedTransaction.transaction`. No existing message is modified. |
+| 7 | Old node validates RegistrationTx signature | ✓ Yes | `GeniusAccount::VerifySignature` (`GeniusAccount.hpp:207`) validates secp256k1 ECDSA signatures generically — it does not inspect the transaction type. An old node can verify the child's signature on a `RegistrationTx` even if it cannot interpret the message type, because signature verification only requires the signer's address, the signature bytes, and the signed data (`data_hash`). |
+
+### Summary
+
+Rows 1–4 and 7 are compatible by proto3 design. Rows 5–6 are the **only breaking scenarios** — and they are explicitly avoided by the additive-only design:
+
+- **No existing field number is renumbered.** `RegistrationTx` fields 1–4 and `RegistrationMetadata` fields 1–4 are new within their respective message scopes.
+- **No existing message is modified.** `TransferTx`, `EscrowTx`, `MintTx`, `MintTxV2`, `MigrationTx`, `ProcessingTx`, `EscrowReleaseTx`, `DAGStruct`, `UTXOEntryRecord` — all untouched.
+- **No shared type (`DAGStruct`) is changed.** `DAGStruct` field numbers 1–8 (type, previous_hash, source_addr, nonce, timestamp, uncle_hash, data_hash, signature) are unchanged.
+- **The oneof arm is appended, not inserted.** `registration = 8` is the last arm in the `EmbeddedTransaction.transaction` oneof; arms 1–7 are unchanged.
+
+### Traceability
+
+REG-03 is satisfied by this section (7-scenario backward-compatibility matrix) combined with the proto changes defined in §2 (additive messages appended to `SGTransaction.proto`) and §3 (additive oneof arm in `Consensus.proto`).
+
+---
+
+## 8. Requirement Traceability
+
+| Requirement | Section | Anchor Points | Notes |
+|-------------|---------|---------------|-------|
+| REG-01 | §2 Proto Schema, §4 C++ Subclass | `SGTransaction.proto` `RegistrationTx` / `RegistrationMetadata` messages; `RegistrationTransaction.hpp/.cpp`; `GeniusTransaction.hpp` base class | Schema fully specified with field-by-field explanation (8 fields total: 4 + 4). C++ subclass design includes constructor, factory, serializers, deserializer, and dispatch. |
+| REG-02 | §5.1–5.4 Signing Protocol | Decisions D-04/D-05; `GeniusAccount::Sign` (`GeniusAccount.hpp:216`); `GeniusTransaction::MakeSignature` (`GeniusTransaction.hpp:256`) | ⚠ **REVERSED** — child-signed-only; main does NOT counter-sign. Security impact documented: any child can claim any main (bounded to discovery spam, zero authority grant). Flag for requirements update at phase transition. |
+| REG-03 | §2 Proto Schema, §3 Oneof Dispatch, §7 Backward-Compat Matrix | `SGTransaction.proto` (additive messages); `Consensus.proto` `EmbeddedTransaction` oneof (field 8); `TransactionManager::DeSerializeEmbeddedTransaction` dispatch | Additive-only; 7-scenario backward-compatibility matrix; no renumbering of existing fields; field audit recorded (fields 1-7 used, field 8 proposed). |
+| REG-04 | §5.5 Connect Flow | Decision D-10; transport-agnostic handshake; `GeniusAccount::IsValidPublicKey` (`GeniusAccount.hpp:152`) | Main pubkey only; main private key never enters child process; platform UI deferred to v2 (PLAT-01, PLAT-02). |
+| REG-05 | §6 Sequence Numbering | `DAGStruct.nonce` (`SGTransaction.proto:10`); `RegistrationTx.sequence`; `GeniusAccount::ReserveNextNonce` (`GeniusAccount.hpp:285`); Phase 2 hand-off (SYNC-01, CONS-01) | Dual-counter design (`nonce` + `sequence`); replay protection at both layers; authoritative registration = highest valid sequence; tie-break + consensus-ordering = Phase 2 hand-off. |
+
+### Phase 2 & 3 Hand-Offs
+
+The following concepts are explicitly deferred — they are referenced in this document as future work, not designed here:
+
+| Concern | Phase | Requirements | Hand-Off Point |
+|---------|-------|-------------|-----------------|
+| CRDT registration namespace/key layout + validating element filter | Phase 2 | SYNC-01, SYNC-02 | §1 Overview (D-07), §4 C++ Subclass (GetTransactionSpecificPath) |
+| Pubsub broadcast of registration + main subscribing to child channels | Phase 2 | SYNC-03, SYNC-04, SYNC-05 | §1 Overview |
+| All consensus authority rules (main→child fund, recovery, transfer, reject) | Phase 2 | CONS-01..06 | §5.3 Security Impact Analysis |
+| Registration sequence tie-break rule + consensus-ordering mechanism | Phase 2 | SYNC-01, CONS-01 | §6.2 Authoritative Registration Selection |
+| Metadata/reward-policy update rules (authenticated dev-wallet/split changes) | Phase 3 | RWD-03 | §2 RegistrationMetadata field docs |
+| Lifecycle state machine + replace/detach/revoke change-flows | Phase 3 | LIFE-01..04 | §5.3 (v2 hardening path reference) |
+| Platform "Connect GNUS Wallet" UI flows | v2 | PLAT-01, PLAT-02 | §5.5 Connect Flow |
+
+### Cross-Reference Review
+
+- All references to the identity model document (`docs/child-wallet-identity-model.md`) are consistent with D-01 (emergent identity), D-02 (UTXO ownership), D-03 (independent nonce). The identity doc's §4 (nonce tracking) and §5 (UTXO ownership) are the canonical references for `DAGStruct.nonce` and `owner_address` behavior.
+- Every SuperGenius anchor point includes a file path AND a concrete identifier (field name, method signature, or line number). Key anchor points:
+  - `GeniusAccount.hpp:152` — `IsValidPublicKey` (address validation for `main_address`)
+  - `GeniusAccount.hpp:207` — `VerifySignature` (signature validation for child-signed tx)
+  - `GeniusAccount.hpp:216` — `Sign` (child signing)
+  - `GeniusAccount.hpp:285` — `ReserveNextNonce` (nonce reservation)
+  - `GeniusTransaction.hpp:243-277` — `FillHash`, `MakeSignature`, `CheckSignature`, `GetSlotID`
+  - `GeniusTransaction.hpp:294-297` — `RegisterDeserializer`
+  - `MintTransaction.cpp:11-93` — constructor, serialization, deserialization, factory patterns
+  - `EscrowTransaction.cpp:60-62,95-98` — string field serialization patterns
+  - `TransactionManager.cpp:~1434` — deserializer registration site
+  - `TransactionManager.cpp:~1445` — `DeSerializeEmbeddedTransaction` switch dispatch
+  - `SGTransaction.proto:5-15` — `DAGStruct` definition
+  - `SGTransaction.proto:54-64` — `UTXOEntryRecord` (ownership model)
+  - `Consensus.proto:70-80` — `EmbeddedTransaction` oneof (verified fields 1-7 used)
+- No Phase 2 or Phase 3 concept is described as "designed here" — all hand-offs are explicitly marked with the target phase and requirement IDs.
+- The REG-02 reversal appears in **three places**: §5.2 (the signing model), §5.3 (impact analysis), and §8 (traceability table with ⚠ REVERSED flag).
+
+### No Deferred Ideas Leaked
+
+The following concepts are kept strictly out of this document (deferred to Phases 2–3 or v2):
+
+- ❌ CRDT namespace/key layout or element filter design — Phase 2
+- ❌ Pubsub broadcast/subscription topics or channel management — Phase 2
+- ❌ Consensus authority rules (any fund/recover/transfer/reject rule) — Phase 2
+- ❌ Registration sequence tie-break rule — Phase 2
+- ❌ Lifecycle state machine or transition rules — Phase 3
+- ❌ Authenticated metadata/dev-wallet update rules — Phase 3
+- ❌ Platform "Connect GNUS Wallet" UI implementation — v2
