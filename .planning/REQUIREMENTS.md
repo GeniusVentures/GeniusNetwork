@@ -18,11 +18,11 @@ Requirements for the initial design-document set. Each maps to a roadmap phase.
 
 ### Registration
 
-- [ ] **REG-01**: Design specifies the registration record schema (child pubkey, main pubkey, both signatures, sequence number, timestamp, optional game/publisher/dev-wallet/split metadata)
-- [ ] **REG-02**: Design specifies the dual-signature registration protocol requiring both child and main signatures over the canonical record
-- [ ] **REG-03**: Design specifies additive Protocol Buffer schema changes (new `RegistrationTx`/`RegistrationRecord` messages/oneof arm) in `SGTransaction.proto` with a backward-compatibility matrix
-- [ ] **REG-04**: Design specifies the out-of-process main-wallet signing flow so the main private key never enters the game/child process
-- [ ] **REG-05**: Design specifies monotonic per-child sequence numbering and consensus-based replay/reorder protection
+- [x] **REG-01**: Design specifies the registration record schema (child pubkey, main pubkey, both signatures, sequence number, timestamp, optional game/publisher/dev-wallet/split metadata)
+- [x] **REG-02**: Design specifies the dual-signature registration protocol requiring both child and main signatures over the canonical record
+- [x] **REG-03**: Design specifies additive Protocol Buffer schema changes (new `RegistrationTx`/`RegistrationRecord` messages/oneof arm) in `SGTransaction.proto` with a backward-compatibility matrix
+- [x] **REG-04**: Design specifies the out-of-process main-wallet signing flow so the main private key never enters the game/child process
+- [x] **REG-05**: Design specifies monotonic per-child sequence numbering and consensus-based replay/reorder protection
 
 ### Consensus
 
@@ -97,11 +97,11 @@ Which phases cover which requirements. Populated during roadmap creation.
 | IDENT-02 | Phase 1 | Complete |
 | IDENT-03 | Phase 1 | Complete |
 | IDENT-04 | Phase 1 | Complete |
-| REG-01 | Phase 1 | Pending |
-| REG-02 | Phase 1 | Pending |
-| REG-03 | Phase 1 | Pending |
-| REG-04 | Phase 1 | Pending |
-| REG-05 | Phase 1 | Pending |
+| REG-01 | Phase 1 | Complete |
+| REG-02 | Phase 1 | Complete |
+| REG-03 | Phase 1 | Complete |
+| REG-04 | Phase 1 | Complete |
+| REG-05 | Phase 1 | Complete |
 | CONS-01 | Phase 2 | Pending |
 | CONS-02 | Phase 2 | Pending |
 | CONS-03 | Phase 2 | Pending |
