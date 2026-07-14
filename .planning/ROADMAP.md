@@ -76,7 +76,7 @@ Plans:
 Plans:
 
 - [x] 03-01-PLAN.md — Discovery & monitoring design: push-primary/poll-fallback discovery via AccountMessenger, per-child information aggregation, main-wallet action mappings (DISC-01..03)
-- [ ] 03-02-PLAN.md — Reward policy + lifecycle/change-flow design: dual-source reward resolution, hold-time pinning, 4-state lifecycle machine, detach/revoke/replace-main flows with supersedes-sequence conflict resolution (RWD-01..03, LIFE-01..04)
+- [x] 03-02-PLAN.md — Reward policy + lifecycle/change-flow design: dual-source reward resolution, hold-time pinning, 4-state lifecycle machine, detach/revoke/replace-main flows with supersedes-sequence conflict resolution (RWD-01..03, LIFE-01..04)
 
 ## Progress
 

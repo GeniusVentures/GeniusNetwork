@@ -2,15 +2,15 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: executing
-last_updated: "2026-07-14T01:50:29.019Z"
+status: verifying
+last_updated: "2026-07-14T02:00:27.335Z"
 last_activity: 2026-07-14
 progress:
   total_phases: 3
-  completed_phases: 2
+  completed_phases: 3
   total_plans: 6
-  completed_plans: 5
-  percent: 67
+  completed_plans: 6
+  percent: 100
 ---
 
 # Project State
@@ -26,10 +26,10 @@ See: .planning/PROJECT.md (updated 2026-07-13)
 
 Phase: 03 (discovery-rewards-lifecycle) — EXECUTING
 Plan: 2 of 2
-Status: Ready to execute
+Status: Phase complete — ready for verification
 Last activity: 2026-07-14
 
-Progress: [████████░░] 83%
+Progress: [██████████] 100%
 
 ## Performance Metrics
 
@@ -54,6 +54,7 @@ Progress: [████████░░] 83%
 | Phase 01-child-identity-registration-protocol P01-01 | 3min | 2 tasks | 1 files |
 | Phase 01-child-identity-registration-protocol P02 | 3min | 3 tasks | 1 files |
 | Phase 03-discovery-rewards-lifecycle P01 | 11min | 2 tasks | 1 files |
+| Phase 03-discovery-rewards-lifecycle P02 | 6min | 2 tasks | 1 files |
 
 ## Accumulated Context
 
@@ -70,6 +71,10 @@ Recent decisions affecting current work:
 - [Phase 1]: D-03: Independent nonce tracking via existing GeniusAccount nonce machinery — Separate GeniusAccount instance = separate nonce counter; no new nonce infrastructure needed
 - [Phase 1]: D-04/D-05: Registration is child-signed-only (dual-signature REVERSED) — Main private key never enters child process; unsolicited claims bounded to discovery spam, grant zero authority
 - [Phase 03-discovery-rewards-lifecycle]: Discovery polling uses AccountMessenger request/response pattern (NOT messaging_watcher) — reuses existing HandleNonceRequest/HandleNonceResponse pattern — AccountMessenger already has OnRequest/OnResponse dispatch, worker-thread queuing, timeout management, signed messages, and response collection; extending it requires 2 proto additions + 2 handler methods vs hundreds of lines of new infrastructure on messaging_watcher
+- [Phase ?]: Policy-source selection at GeniusNode level: TransactionManager::HoldEscrow is policy-agnostic; caller resolves source from certified reg/ CRDT or DevConfig_st based on child registration status (Phase 03-02)
+- [Phase ?]: Hold-time pinning requires zero Phase 3 changes: EscrowTransaction immutability at EscrowTransaction.hpp:122-131 + PayEscrow stored reads at TransactionManager.cpp:846-875 is existing behavior. Design doc documents as verified invariant.
+- [Phase ?]: Main replacement is child-only (D-37): old-main consent creates deadlock risk if old main key lost; consistent with child-owned identity model (D-04/D-05).
+- [Phase ?]: First-class RevokeTx recommended as GeniusTransaction subclass (revoke=9 in EmbeddedTransaction oneof). NOT a flagged transfer for cleaner audit trail and dedicated CheckParentChildAuthority path.
 
 ### Pending Todos
 
@@ -90,6 +95,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-07-14T01:50:20.001Z
-Stopped at: Completed 03-01-PLAN.md
+Last session: 2026-07-14T02:00:27.328Z
+Stopped at: Completed 03-02-PLAN.md
 Resume file: None

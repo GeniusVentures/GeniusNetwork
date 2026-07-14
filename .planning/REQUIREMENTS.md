@@ -49,16 +49,16 @@ Requirements for the initial design-document set. Each maps to a roadmap phase.
 
 ### Rewards
 
-- [ ] **RWD-01**: Design specifies per-child processing-reward policy (`dev_addr`, `peers_cut`) resolution for both standalone and registered children, reusing escrow `HoldEscrow`/`PayEscrow`
-- [ ] **RWD-02**: Design specifies pinning the reward policy at escrow-hold time so mid-flight policy changes do not affect in-progress payouts
-- [ ] **RWD-03**: Design specifies authenticated update rules for the developer wallet and cut ratio
+- [x] **RWD-01**: Design specifies per-child processing-reward policy (`dev_addr`, `peers_cut`) resolution for both standalone and registered children, reusing escrow `HoldEscrow`/`PayEscrow`
+- [x] **RWD-02**: Design specifies pinning the reward policy at escrow-hold time so mid-flight policy changes do not affect in-progress payouts
+- [x] **RWD-03**: Design specifies authenticated update rules for the developer wallet and cut ratio
 
 ### Lifecycle
 
-- [ ] **LIFE-01**: Design specifies the child-wallet lifecycle state machine (standalone, registration-pending, registered, detached, revoked, closed) and valid transitions
-- [ ] **LIFE-02**: Design specifies replace/remove-main flows with a "supersedes sequence N" linkage and deterministic (seq, tie-break) conflict resolution to prevent split-brain
-- [ ] **LIFE-03**: Design decides and documents the main-replacement policy fork (require existing-main consent vs allow child-only replacement) with rationale
-- [ ] **LIFE-04**: Design specifies that detaching a main wallet leaves the child a valid standalone wallet unless explicitly defined otherwise
+- [x] **LIFE-01**: Design specifies the child-wallet lifecycle state machine (standalone, registration-pending, registered, detached, revoked, closed) and valid transitions
+- [x] **LIFE-02**: Design specifies replace/remove-main flows with a "supersedes sequence N" linkage and deterministic (seq, tie-break) conflict resolution to prevent split-brain
+- [x] **LIFE-03**: Design decides and documents the main-replacement policy fork (require existing-main consent vs allow child-only replacement) with rationale
+- [x] **LIFE-04**: Design specifies that detaching a main wallet leaves the child a valid standalone wallet unless explicitly defined otherwise
 
 ## v2 Requirements
 
@@ -116,13 +116,13 @@ Which phases cover which requirements. Populated during roadmap creation.
 | DISC-01 | Phase 3 | Complete |
 | DISC-02 | Phase 3 | Complete |
 | DISC-03 | Phase 3 | Complete |
-| RWD-01 | Phase 3 | Pending |
-| RWD-02 | Phase 3 | Pending |
-| RWD-03 | Phase 3 | Pending |
-| LIFE-01 | Phase 3 | Pending |
-| LIFE-02 | Phase 3 | Pending |
-| LIFE-03 | Phase 3 | Pending |
-| LIFE-04 | Phase 3 | Pending |
+| RWD-01 | Phase 3 | Complete |
+| RWD-02 | Phase 3 | Complete |
+| RWD-03 | Phase 3 | Complete |
+| LIFE-01 | Phase 3 | Complete |
+| LIFE-02 | Phase 3 | Complete |
+| LIFE-03 | Phase 3 | Complete |
+| LIFE-04 | Phase 3 | Complete |
 
 **Coverage:**
 - v1 requirements: 30 total
