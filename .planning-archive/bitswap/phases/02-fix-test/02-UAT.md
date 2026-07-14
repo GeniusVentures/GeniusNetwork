@@ -1,5 +1,5 @@
 ---
-status: partial
+status: diagnosed
 phase: 02-fix-test
 source: 01-SUMMARY.md, 02-SUMMARY.md, 03-SUMMARY.md
 started: 2026-07-09T14:13:10-04:00
@@ -90,7 +90,10 @@ blocked: 8
   reason: "User reported: bitswap.cpp(993,50): error C4573: 'sgns::ipfs_bitswap::Bitswap::handleQueuedBlockResult' requires the compiler to capture 'this' but the current default capture mode does not allow it. error C2352: a call of a non-static member function requires an object"
   severity: blocker
   test: 1
-  root_cause: ""
-  artifacts: []
-  missing: []
+  root_cause: "Inner dispatch lambda at line 992 in processRequestQueue calls handleQueuedBlockResult() (non-static member function) but capture list [ctx, nextCid, result] omitted `this`. MSVC requires explicit `this` capture when calling member functions from lambdas. Only 1 of 6 dispatch/post lambdas has this bug — the other 5 correctly capture `this` or use `self` (shared_ptr)."
+  artifacts:
+    - path: "thirdparty/ipfs-bitswap-cpp/src/bitswap.cpp"
+      issue: "Line 992: capture list [ctx, nextCid, result = std::move(result)] missing `this`"
+  missing:
+    - "Add `this` to capture list at line 992: [this, ctx, nextCid, result = std::move(result)]"
   debug_session: ""
