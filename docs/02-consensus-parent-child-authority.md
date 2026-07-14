@@ -426,3 +426,292 @@ The rejection is **independent of parent-child authority** — it is a pure UTXO
 This design does NOT modify `GeniusInputValidator.cpp`. No line is added, removed, or altered. The file is documented as-is for traceability — to satisfy CONS-05, we point at the existing enforcement and add a test, not modify the validator.
 
 The escrow exception at `GeniusInputValidator.cpp:421-424` remains the sole deviation from `payload_owner == src_address`. The main-recover-from-child flow (CONS-02) introduces a scenario where the signer (main) is NOT the UTXO owner (child), but this exception is handled through the gate 2.5→gate 5 signaling mechanism described in §7 — it does NOT modify GeniusInputValidator.cpp's validation logic.
+
+---
+
+## 6. RegistrationTx Field Validation in Consensus Pipeline
+
+### The Gap
+
+RegistrationTx passes through `CheckTransactionWellFormed` (type exists in `transaction_parsers` at `TransactionManager.cpp:4306-4358`) and `CheckTransactionTypeRules` (no UTXO parameters → passes by default at `TransactionManager.cpp:4592` with `return true`). Its semantic fields — `main_address` validity and `sequence > 0` — are validated only in `FilterRegistration` (CRDT level, per `docs/02-crdt-registry-pubsub.md` §3, D-13 gate 4) but NOT in the consensus pipeline.
+
+This creates a gap: the CRDT filter runs on a peer's local (possibly stale) state. Consensus validators independently validate the transaction and should not rely solely on the CRDT filter's validation for semantic correctness. Per Pitfall 5 (RESEARCH.md), the design must ensure RegistrationTx fields are validated at both the CRDT filter level AND the consensus level for defense-in-depth.
+
+### Recommendation: Add RegistrationTx Validation to `CheckTransactionTypeRules`
+
+Add a RegistrationTx validation branch to `CheckTransactionTypeRules` at `TransactionManager.cpp:4558-4593` for defense-in-depth. The insertion point is after the existing `HasUTXOParameters()` check (currently at line 4594 in the pipeline but conceptually at line 4588 in the method body) and before the default `return true` at line 4592:
+
+```cpp
+// Source: TransactionManager.cpp:4558-4593 (existing structure)
+bool TransactionManager::CheckTransactionTypeRules(
+    const std::shared_ptr<GeniusTransaction> &tx ) const
+{
+    if ( !tx ) { /* ... */ return false; }
+
+    if ( tx->HasUTXOParameters() )
+    {
+        // ... existing UTXO params validation (lines 4585-4590) ...
+        return validator.ValidateUTXOParameters( /* ... */ );
+    }
+
+    // ★ RECOMMENDED ADDITION: Insert RegistrationTx validation here ★
+    // Before the default return true at line 4592:
+    if ( tx->GetType() == "registration" )
+    {
+        auto reg_tx = std::dynamic_pointer_cast<RegistrationTransaction>( tx );
+        if ( !reg_tx )
+        {
+            TransactionManagerLogger()->error(
+                "[{} - full: {}] {}: RegistrationTx cast failed tx={}",
+                account_m->GetAddress().substr( 0, 8 ), full_node_m,
+                __func__, tx->GetHash() );
+            return false;
+        }
+
+        // Validate main_address is a valid public key
+        if ( !GeniusAccount::IsValidPublicKey( reg_tx->GetMainAddress() ) )
+        {
+            TransactionManagerLogger()->error(
+                "[{} - full: {}] {}: Invalid main_address in RegistrationTx tx={}",
+                account_m->GetAddress().substr( 0, 8 ), full_node_m,
+                __func__, tx->GetHash() );
+            return false;
+        }
+
+        // Validate sequence > 0
+        if ( reg_tx->GetSequence() == 0 )
+        {
+            TransactionManagerLogger()->error(
+                "[{} - full: {}] {}: Zero sequence in RegistrationTx tx={}",
+                account_m->GetAddress().substr( 0, 8 ), full_node_m,
+                __func__, tx->GetHash() );
+            return false;
+        }
+
+        return true;
+    }
+
+    return true;  // Line 4592: all other non-UTXO txs pass by default
+}
+```
+
+**Validation Items:**
+
+| Check | Method | Anchor Point | Rationale |
+|-------|--------|--------------|-----------|
+| `main_address` valid | `GeniusAccount::IsValidPublicKey()` | `GeniusAccount.hpp:152` | Rejects malformed or empty main addresses. 128-hex, no "0x" prefix. |
+| `sequence > 0` | `reg_tx->GetSequence()` | `RegistrationTx.sequence` (Plan 01-02, `docs/registration-protocol.md` §2) | Zero sequence = uninitialized. First registration = 1. |
+
+### Defense-in-Depth Rationale
+
+`FilterRegistration` validates the same fields at the CRDT filter level (per D-13 gate 4, `docs/02-crdt-registry-pubsub.md` §3). This recommendation adds the **same validation at the consensus level** for independent verification:
+
+| Layer | Validates `main_address`? | Validates `sequence > 0`? | State Dependence |
+|-------|---------------------------|---------------------------|-----------------|
+| `FilterRegistration` (CRDT filter) | ✓ | ✓ | Runs on peer's local (possibly stale) CRDT |
+| `CheckTransactionTypeRules` (consensus) | ✓ (recommended) | ✓ (recommended) | Runs during consensus validation (current state) |
+
+Even if CRDT state is stale and the filter missed a malformed entry, the consensus path catches it. Both layers validate independently — defense-in-depth.
+
+### Existing CheckTransactionWellFormed Validation
+
+`CheckTransactionWellFormed` at `TransactionManager.cpp:4306-4358` already validates basic tx structure that applies to RegistrationTx:
+
+- Hash not empty and valid (`tx.GetHash().empty() || !tx.CheckHash()`)
+- Source address not empty (`tx.GetSrcAddress().empty()`)
+- Timestamp non-zero (`tx.GetTimestamp() == 0`)
+- Type exists in `transaction_parsers` map (line 4343)
+
+RegistrationTx passes all of these (provided its parser is registered in `transaction_parsers` per Phase 1 hand-off). No changes to `CheckTransactionWellFormed` are needed.
+
+### Non-Interaction with CheckParentChildAuthority
+
+The gate 2.5 (`CheckParentChildAuthority`) does NOT validate RegistrationTx fields — that is not its responsibility. The separation of concerns is:
+
+| Gate | Validates RegistrationTx? | Responsibility |
+|------|---------------------------|----------------|
+| `CheckTransactionWellFormed` (gate 1) | Basic structure (hash, src, timestamp, type) | All tx types |
+| `CheckTransactionAuthorization` (gate 2) | Signature | All tx types |
+| `CheckParentChildAuthority` (gate 2.5) | **No** — only fires for `"transfer"` type | Delegated authority |
+| `CheckTransactionTypeRules` (gate 5) | `main_address` validity, `sequence > 0` (recommended) | Type-specific rules |
+
+`FilterRegistration` (CRDT filter) and `CheckTransactionTypeRules` (consensus validation) are the two validation points for RegistrationTx fields — both are independent of the parent-child authority gate.
+
+---
+
+## 7. Rule Summary Matrix & Pipeline Trace
+
+### Rule Summary Matrix
+
+| Rule ID | Transaction | Who Signs | Gate Action | Existing Code | New Code |
+|---------|------------|-----------|-------------|---------------|----------|
+| **CONS-01** | Main→Child fund | Main | Verify `reg/{dst_child}` record links child to this main + certified → `Approve()` | `CheckTransactionAuthorization` at `TransactionManager.cpp:4361` (main sig) | `CheckParentChildAuthority` reads `reg/{dst_child}` → verifies `main_address == src` |
+| **CONS-02** | Main-recover-from-child | Main | Verify `reg/{src_child}` record links src child to this main + certified + `dst == main_address` → `Approve()`; else `Reject()` | `CheckTransactionAuthorization` at `TransactionManager.cpp:4361` (main sig) | `CheckParentChildAuthority` reads `reg/{src_child}` → verifies `main_address == dst` (D-21) |
+| **CONS-03** | Child→Arbitrary / Child→Main | Child | Short-circuit → `Approve()` (existing child sig check handles it) | `CheckTransactionAuthorization` at `TransactionManager.cpp:4361` (child sig) + `ValidateWitness` at `GeniusInputValidator.cpp:419` (ownership) | None |
+| **CONS-04** | Child→Developer | Child | Same as CONS-03 — child-signed, short-circuit → `Approve()` | `GeniusNode::PayDev` (existing) + `ValidateWitness` at `GeniusInputValidator.cpp:419` (ownership) | None |
+| **CONS-05** | Child→spend-main-UTXO | Child | Gate passes (child-signed), but `ValidateWitness` owner_address check REJECTS at gate 5 | `GeniusInputValidator.cpp:419-432` (`payload_owner != src_address`; `delegated_escrow_spend` at line 421 is sole exception) | None — documented as invariant |
+| **CONS-06** | Authority vs UTXO separation | N/A | `CheckParentChildAuthority` is a separate gate; `CheckTransactionAuthorization` and `ValidateWitness` unchanged | `CheckTransactionAuthorization` at `TransactionManager.cpp:4361` (sig-only) + `ValidateWitness` at `GeniusInputValidator.cpp:419` (ownership) | `CheckParentChildAuthority` (state-dependent authority, new gate) |
+
+### Full Transaction Lifecycle Trace: Main→Child Fund (CONS-01)
+
+1. **Transaction construction:** Main constructs tx with `src=main_addr, dst=child_addr, type="transfer"`, calls `FillHash()`, signs with main key via `MakeSignature()`
+
+2. **Submission:** `SendTransactionItem` at `TransactionManager.cpp:1127` — writes CRDT at `tx/{hash}`, collects topics (`full_node_topic_m` + `account_m->GetAddress()`), commits CRDT transaction
+
+3. **Consensus proposal:** `CreateConsensusProposal` at `Consensus.hpp:410` → `SubmitProposal` at `TransactionManager.cpp:1305` → `sgns.nonce.v1` subject
+
+4. **Consensus validation entry:** `HandleNonceConsensusSubject` at `TransactionManager.cpp:3901` — deserialize, hash binding, nonce match, account match → `ValidateTransactionForConsensus`
+
+5. **Gate 1 — `CheckTransactionWellFormed` (`TransactionManager.cpp:4306-4358`):** PASS — `"transfer"` in `transaction_parsers`, hash valid, source non-empty, timestamp non-zero
+
+6. **Gate 2 — `CheckTransactionAuthorization` (`TransactionManager.cpp:4361-4383`):** PASS — main key signature verified via `tx.CheckSignature()`
+
+7. **Gate 2.5 — `CheckParentChildAuthority` (new):**
+   - `tx.GetType() == "transfer"` → YES, gate applies
+   - Signer = main (src = main_addr)
+   - Read `reg/{dst_child}` from CRDT via `GlobalDB::Get(HierarchicalKey("/bc-{net}/reg/" + child_addr))`
+   - Found: certified record with `main_address == src` (child registered this main)
+   - → `Approve()`
+
+8. **Gate 3 — `CheckTransactionTimestamp` (`TransactionManager.cpp:4255`):** PASS — timestamp within valid range
+
+9. **Gate 4 — `EvaluateTransactionReplayProtection` (`TransactionManager.cpp:4257-4259`):** PASS — main's nonce is correct (no replay)
+
+10. **Gate 5 — `CheckTransactionTypeRules` (`TransactionManager.cpp:4558-4593`):** `ValidateUTXOParameters` → PASS — main owns the UTXOs (`payload_owner == src_address`)
+
+11. **Gate 6 — `return ValidationResult::Approve()` (`TransactionManager.cpp:4261`):** PASS → consensus certificate → `OnConsensusCertificate` at `TransactionManager.cpp:3768` → `ChangeTransactionState(tx, CONFIRMED)` → **CONFIRMED**
+
+### Full Transaction Lifecycle Trace: Main-Recover-from-Child (CONS-02)
+
+1. **Transaction construction:** Main constructs tx with `src=child_addr, dst=main_addr, type="transfer"`, signs with main key (NOT child key). The tx claims `src=child_addr` but the signer is the main — this IS the delegated authority pattern.
+
+2. **Submission:** Same path as fund (steps 2-4 above)
+
+3. **Gate 1 — `CheckTransactionWellFormed`:** PASS
+
+4. **Gate 2 — `CheckTransactionAuthorization`:** PASS — main key signature verified. Note: the signature is against the main key, NOT the child key. The tx declares `src=child_addr` but the signer is `main_addr`. This is correct — the main is exercising delegated authority.
+
+5. **Gate 2.5 — `CheckParentChildAuthority`:**
+   - `tx.GetType() == "transfer"` → YES
+   - Signer = main (verified by gate 2)
+   - `src` = child address (tx claims child as source)
+   - Read `reg/{src_child}` from CRDT → finds certified record with `main_address` matching signer
+   - Direction = recover (main signed, src is the child)
+   - **D-21 check:** `dst == main_address` (from reg/ record)? YES
+   - → `Approve()` AND **sets delegated-authority flag on tx**
+
+6. **Gate 3 — `CheckTransactionTimestamp`:** PASS
+
+7. **Gate 4 — `EvaluateTransactionReplayProtection`:** PASS — the account used for nonce tracking depends on implementation. Recommendation: use main's nonce chain for main-signed delegated txs. The main signs → main's nonce is consumed.
+
+8. **Gate 5 — `CheckTransactionTypeRules` → `ValidateUTXOParameters` → `ValidateWitness`:**
+   - Child's UTXOs: `payload_owner` = child_addr
+   - `payload_owner` (child) != `tx->GetSrcAddress()` (also child — wait, `src_address` IS the child)
+   - Actually: the UTXO is owned by the child (`payload_owner == child_addr`). The tx's `src_address` is also `child_addr`. So `payload_owner == src_address` → PASSES the basic check.
+   - The delegated-authority flag set by gate 2.5 is NOT needed for `ValidateWitness` in this case — the child owns the UTXOs, and the tx declares `src=child_addr`. The UTXO ownership check passes naturally because the source address matches the UTXO owner.
+   - **Key insight:** For main-recover-from-child, the main signs but the tx declares `src=child_addr`. The UTXOs are owned by `child_addr`. So `payload_owner == src_address` → PASSES. The delegated-authority check is about WHO CAN SIGN a tx from the child's address — `CheckParentChildAuthority` (gate 2.5) grants this. `ValidateWitness` (gate 5) doesn't need to know about delegation because the UTXO owner matches the source address.
+
+9. **Gate 6 — `Approve()`:** PASS → consensus certificate → **CONFIRMED**
+
+#### Interaction Between Gate 2.5 and Gate 5
+
+The design relies on an important property: for main-recover-from-child, the tx declares `src=child_addr` (the UTXO owner), and the UTXOs are indeed owned by `child_addr`. Therefore `ValidateWitness` sees `payload_owner == src_address` → passes trivially. The authorized signer (main) is different from the tx source, but that was already checked by gate 2 (`CheckTransactionAuthorization` verified the main's signature) and gate 2.5 (`CheckParentChildAuthority` verified the main has delegated authority for this child).
+
+**The gate interaction model:**
+
+| Check | Main→Child fund | Main-recover-from-child |
+|-------|-----------------|------------------------|
+| `CheckTransactionAuthorization` (gate 2) | Main sig = main src → PASS | Main sig → PASS |
+| `CheckParentChildAuthority` (gate 2.5) | `reg/{dst_child}` confirms relationship → `Approve()` | `reg/{src_child}` confirms relationship + `dst==main_addr` → `Approve()` |
+| `ValidateWitness` (gate 5) | `payload_owner` (main) == `src_address` (main) → PASS | `payload_owner` (child) == `src_address` (child) → PASS |
+| **Result** | Main owns UTXOs, signs, funds child | Main signs as child's delegate, UTXOs owned by child, `src_address` matches child → UTXO ownership check passes naturally |
+
+**No special flag needed** — the delegated-authority flag discussed in earlier sections is NOT required for `ValidateWitness`. The UTXO ownership check passes because the tx's `src_address` matches the UTXO's `owner_address`. The authority gate (gate 2.5) ensures the signer is authorized to sign for that address. The two checks remain orthogonal (CONS-06).
+
+### Consensus-Ordering Integration
+
+The `reg/` record used by `CheckParentChildAuthority` must be certified (D-26, per `docs/02-crdt-registry-pubsub.md` §6-7). The certified status is tracked via `CONFIRMED` in `tx_processed_m` at `TransactionManager.hpp:71-80`. The certification flow:
+
+1. RegistrationTx flows through consensus (`sgns.nonce.v1` subject, `HandleNonceConsensusSubject` at `TransactionManager.cpp:3901`)
+2. Consensus validators approve → certificate issued
+3. `OnConsensusCertificate` at `TransactionManager.cpp:3768` → `ChangeTransactionState(tx, CONFIRMED)` → marks cert status
+4. `IsRegistrationCertified(child_addr)` checks `tx_processed_m` for `CONFIRMED` status
+5. `CheckParentChildAuthority` calls `IsRegistrationCertified()` before applying authority rules
+
+Uncertified registrations → treated as no relationship → gate returns `Approve()` → the tx proceeds without parent-child authority → if it was a main-recover tx, `CheckParentChildAuthority` doesn't grant authority → gate 2 returns `Approve()` (main sig valid) but gate 5 (`ValidateWitness`) sees `src_address` (child) with main signer → actually this scenario is complex. Re-reading: if registration is uncertified, gate 2.5 returns `Approve()` without setting any authority. The tx proceeds to gate 5. The main signed a tx with `src=child_addr`. UTXOs are owned by child. `payload_owner == src_address`? YES (child == child). So it passes. The main could recover from an uncertified child! This is the Pitfall 2 scenario from RESEARCH.md.
+
+**CRITICAL:** The gate returns `Approve()` but without authority grant for uncertified registrations. However, the UTXO ownership check at gate 5 passes because `src_address == payload_owner` (both are child_addr). The protection against uncertified recovery is NOT at the UTXO ownership level — it MUST be at the authority gate level. The gate must REJECT (not Approve) when a main-signed tx claims `src=child_addr` but the registration is uncertified:
+
+**Corrected gate behavior for uncertified registrations:**
+- If main signed, src is child address, reg/ record exists but is **NOT certified** → **`Reject()`** (not `Approve()`)
+- If main signed, src is child address, NO reg/ record exists → `Approve()` (the tx proceeds, but `ValidateWitness` will reject because the signer is not the UTXO owner... actually, same issue — `src_address` IS the child address, so `payload_owner == src_address` passes)
+- **Resolution:** The gate MUST reject when main-signed from a child address and the registration is uncertified. The safe default is: no certified registration → no delegated authority → **reject** main-signed-from-child-address transfers.
+
+This correction is essential. The gate logic for uncertified registrations must be:
+
+```
+if (main_signed && src_is_child) {
+    if (!has_certified_registration(src)) {
+        return REJECT;  // No certified reg → no delegated authority
+    }
+    // ... apply recovery rules (D-21 dst check) ...
+}
+```
+
+Cross-reference to `docs/02-crdt-registry-pubsub.md` §6: certified status is the gatekeeper. No certified registration → no authority.
+
+---
+
+## 8. Requirement Traceability & Decision Compliance
+
+### Requirement Traceability
+
+| Req ID | Description | Anchor Point(s) | Section |
+|--------|-------------|-----------------|---------|
+| **CONS-01** | Main→child funding rule (main sig + registered child) | `CheckParentChildAuthority` reads `reg/{dst_child}`; `CheckTransactionAuthorization` at `TransactionManager.cpp:4361` | §4 |
+| **CONS-02** | Main-recover-from-child with destination restricted to registered main address | `CheckParentChildAuthority` reads `reg/{src_child}`; hard `dst == main_address` check (D-21); uncertified registration → `Reject()` | §4, §7 |
+| **CONS-03** | Child→arbitrary-address and child→main transfer rules | `CheckTransactionAuthorization` at `TransactionManager.cpp:4361` (child sig) + `ValidateWitness` at `GeniusInputValidator.cpp:419` (ownership); gate short-circuits child-signed txs | §4 |
+| **CONS-04** | Child→registered-developer-wallet payment rule | `GeniusNode::PayDev` (existing); child-signed tx, gate short-circuits | §4 |
+| **CONS-05** | Explicit rejection: child key cannot authorize spending main-wallet funds | `ValidateWitness` at `GeniusInputValidator.cpp:419-432` (`payload_owner != src_address`); `delegated_escrow_spend` at line 421 is sole exception; negative test spec provided | §5 |
+| **CONS-06** | Hierarchical authority layer separate from UTXO ownership checks | `CheckParentChildAuthority` = new gate; `CheckTransactionAuthorization` unchanged at `TransactionManager.cpp:4361` (sig-only); `ValidateWitness` unchanged at `GeniusInputValidator.cpp:419`; gate reads CRDT state, ownership checks read UTXO payload | §2 |
+
+### Decision Compliance
+
+| Decision | Description | Section | Status |
+|----------|-------------|---------|--------|
+| **D-19** | `CheckParentChildAuthority` gates between authorization and timestamp in `ValidateTransactionForConsensus`; only fires for `"transfer"` type | §2 | **Included** |
+| **D-20** | Rule dispatch reuses existing `"transfer"` tx type; no new tx types; gate checks signer, reg/ record, certified status; direction determines fund vs recover | §3 | **Included** |
+| **D-21** | Main-recover-from-child: hard `dst == main_address` restriction (recovery ≠ seizure) | §4 | **Included** |
+| **D-22** | Child-cannot-spend-main: enforced by existing `ValidateWitness` owner_address check at `GeniusInputValidator.cpp:419-432`; documented as invariant + negative test spec; no new code needed | §5 | **Included** |
+| **D-23** | CONS-06: hierarchical authority orthogonal to UTXO ownership; `CheckParentChildAuthority` separate from `CheckTransactionAuthorization` at `TransactionManager.cpp:4361`; existing ownership checks unchanged | §2 | **Included** |
+
+### CRDT-Dependent Decisions (Covered in Plan 02-01)
+
+The following decisions are covered in `docs/02-crdt-registry-pubsub.md` (Phase 02 Plan 01) but are explicitly cross-referenced here because the authority gate depends on them:
+
+| Decision | Description | Plan 02-01 Section | Referenced Here |
+|----------|-------------|---------------------|-----------------|
+| D-11 | `reg/` namespace only; `FilterRegistration` on TransactionManager | §1, §3 | §1 (cross-reference) |
+| D-12 | `reg/{child_addr}` single-key layout | §2 | §3, §4 (CRDT read during gate) |
+| D-13 | `FilterRegistration` rejection gates (deser, sig, seq, well-formed) | §3 | §6 (defense-in-depth validation) |
+| D-14 | CRDT value = full RegistrationTx protobuf | §2 | §3 (self-contained reg/ records) |
+| D-26 | Certified status flag; main only acts on certified registrations | §6 | §3, §7 (gate MUST check certification) |
+
+### Deferred Items
+
+The following Phase 3 and v2 requirements are explicitly deferred — they are NOT covered by this document:
+
+| Phase | Req IDs | Concern |
+|-------|---------|---------|
+| Phase 3 | DISC-01, DISC-02, DISC-03 | Main-wallet discovery/monitoring UI: per-child balance, assets, game, publisher, dev wallet, cut ratio, activity, status |
+| Phase 3 | RWD-01, RWD-02, RWD-03 | Per-child processing-reward policy: dev_addr/peers_cut resolution, hold-time pinning, authenticated update rules |
+| Phase 3 | LIFE-01, LIFE-02, LIFE-03, LIFE-04 | Lifecycle state machine: replace, detach, revoke, close change-flows; "supersedes seq N" mechanics; main-replacement policy fork |
+| v2 | PLAT-01, PLAT-02 | Platform "Connect GNUS Wallet" UI flows (Android, iOS, Windows, macOS, Linux) |
+| v2 | ADV-02 | Aggregated registry topic for publisher-scale child fan-out |
+
+---
+
+*Document: 02-consensus-parent-child-authority.md*
+*Phase: 02 — CRDT Persistence, PubSub & Consensus Authority*
+*Plan: 02-02*
+*Completed: 2026-07-13*
