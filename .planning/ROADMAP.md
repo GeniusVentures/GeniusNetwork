@@ -53,12 +53,12 @@ Plans:
   3. A design document specifies all six consensus authority rules — main→child fund, destination-restricted recovery, child→arbitrary/main, child→developer, and the explicit child-cannot-spend-main rejection — mapped to `ValidateTransactionForConsensus`/`GeniusInputValidator`/`CheckTransactionAuthorization`, traceable to CONS-01..06.
   4. The design explicitly resolves the CRDT eventual-consistency vs consensus-ordering tension (seq + consensus order) and separates delegated authority from UTXO ownership checks.
 
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
 
-- [ ] 02-01: CRDT registry namespace + pubsub broadcast/subscription design
-- [ ] 02-02: Consensus parent-child authority rules design
+- [ ] 02-01-PLAN.md — CRDT reg/ namespace, FilterRegistration design, pubsub broadcast/subscription, certified status flag, ordering resolution (SYNC-01..05)
+- [ ] 02-02-PLAN.md — CheckParentChildAuthority gate integration, 6 consensus rules, child-cannot-spend-main invariant, rule summary matrix, field validation (CONS-01..06)
 
 ### Phase 3: Discovery, Rewards & Lifecycle
 
