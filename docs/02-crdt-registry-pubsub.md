@@ -508,3 +508,461 @@ PubSub notification (untrusted)
 
 An unresolvable pubsub notification is silently discarded — it does not create a phantom registration. CRDT DAG sync (graphsync) propagates the full record independently of pubsub; if the CID can't be resolved, the registration will eventually arrive through standard CRDT sync.
 
+---
+
+## 5. CRDT Write → Consensus Flow (D-24)
+
+### D-24: RegistrationTx Through Full Consensus
+
+RegistrationTx flows through **full consensus** — the same `SubmitProposal → validator quorum → certificate` path as `TransferTx`. It reuses the existing **`sgns.nonce.v1`** consensus subject (no new subject type needed):
+
+```cpp
+// Source: Consensus.hpp:37
+static constexpr std::string_view NONCE_SUBJECT_TYPE = "sgns.nonce.v1";
+```
+
+The RegistrationTx's `DAGStruct.nonce` chains through the account's nonce sequence; the dedicated `sequence` field provides registration-specific lineage ordering within that chain. D-24 avoids creating a new subject type — the existing `sgns.nonce.v1` handler, slot-key handler, and certificate handler all apply to RegistrationTx without modification.
+
+### SendTransactionItem Flow for RegistrationTx
+
+The `SendTransactionItem` method (`TransactionManager.cpp:1127-1311`) handles CRDT persistence, pubsub notification, and consensus submission. For RegistrationTx, the flow differs from `TransferTx` in key aspects:
+
+**Step 1 — Serialize:**
+
+```cpp
+auto tx_data = transaction->SerializeByteVector();
+// RegistrationTx protobuf bytes → CRDT Buffer
+```
+
+**Step 2 — CRDT key construction (NOT `GetTransactionPath`):**
+
+```cpp
+// For TransferTx: GetTransactionPath() → "/bc-963/tx/{hash}"
+// For RegistrationTx: GetBlockChainBase() + "reg/" + child_addr
+HierarchicalKey tx_key(GetBlockChainBase() + "reg/" + child_addr);
+```
+
+This is the critical difference: RegistrationTx uses the `reg/` namespace key, not the `tx/` key. The `GetTransactionPath()` method (`TransactionManager.cpp:1323-1340`) returns `"tx/" + hash` — it must NOT be used for RegistrationTx.
+
+**Step 3 — CRDT write (no paired proof key):**
+
+```cpp
+crdt::GlobalDB::Buffer data_transaction;
+data_transaction.put(tx_data);
+BOOST_OUTCOME_TRY(crdt_transaction->Put(std::move(tx_key), std::move(data_transaction)));
+// NO proof key — reg/ has no paired namespace (D-13)
+```
+
+Compare to `TransferTx` which writes both `tx/{hash}` AND `proof/{hash}` keys. RegistrationTx writes only the `reg/{child_addr}` key.
+
+**Step 4 — Topic collection (includes main_address for pubsub discovery):**
+
+```cpp
+std::unordered_set<std::string> topicSet;
+topicSet.emplace(full_node_topic_m);       // full nodes receive delta via CRDT sync
+topicSet.emplace(account_m->GetAddress()); // child's own address topic
+topicSet.emplace(main_address);            // NEW (D-15): main's address topic for discovery
+```
+
+The `main_address` topic is new for RegistrationTx. Topics are collected before CRDT commit.
+
+**Step 5 — CRDT commit with topic set:**
+
+```cpp
+BOOST_OUTCOME_TRY(crdt_transaction->Commit(topicSet));
+```
+
+This publishes the CRDT delta on ALL topics in the set. The `Commit` call:
+- Triggers pubsub notification on `main_address` topic (discovery shortcut for the main)
+- Triggers pubsub notification on `account_m->GetAddress()` topic (own address, existing behavior)
+- Triggers CRDT DAG sync on `full_node_topic_m` (propagation to full nodes)
+- The DAG sync propagates the `reg/` element to all peers independently of topic-specific pubsub
+
+**Step 6 — Consensus proposal creation:**
+
+```cpp
+BOOST_OUTCOME_TRY(auto &&proposal,
+    blockchain_->CreateConsensusProposal(
+        transaction->GetSrcAddress(),   // child address (source)
+        transaction->GetNonce(),        // DAGStruct.nonce
+        transaction->GetHash(),         // DAGStruct hash
+        embedded_tx,                     // SerializeToEmbeddedTransaction()
+        std::nullopt,                    // utxo_commitment — RegistrationTx has NO UTXOs
+        std::nullopt));                  // utxo_witness — RegistrationTx has NO UTXOs
+```
+
+Both `utxo_commitment` and `utxo_witness` are always `std::nullopt` for RegistrationTx. The `CreateNonceSubject` signature from `Consensus.hpp:410-416` accepts `std::optional` for these fields — RegistrationTx simply passes `std::nullopt` for both.
+
+**Step 7 — State transition:**
+
+```cpp
+BOOST_OUTCOME_TRY(ChangeTransactionState(transaction, TransactionStatus::SENDING));
+```
+
+At `TransactionManager.cpp:~1299`. This follows the standard lifecycle: `CREATED → SENDING` (see `TransactionManager.hpp:71-80` for the `TransactionStatus` enum).
+
+**Step 8 — Consensus submission:**
+
+```cpp
+BOOST_OUTCOME_TRY(blockchain_->SubmitProposal(proposal));
+```
+
+At `TransactionManager.cpp:~1307`. The proposal enters the `sgns.nonce.v1` subject handler chain.
+
+### Consensus Subject Handler Path
+
+RegistrationTx reuses the existing `sgns.nonce.v1` subject handler registered at `TransactionManager.cpp:149-159`:
+
+```cpp
+// Source: TransactionManager.cpp:149-159
+instance->blockchain_->RegisterSubjectHandler(
+    NONCE_SUBJECT_TYPE,  // "sgns.nonce.v1"
+    [weak_ptr(...)](const ConsensusManager::Subject &subject)
+        -> outcome::result<ConsensusManager::ValidationResult>
+    { if (auto strong = weak_ptr.lock()) return strong->HandleNonceConsensusSubject(subject);
+      return outcome::failure(std::errc::owner_dead); });
+```
+
+`HandleNonceConsensusSubject` (`TransactionManager.cpp:3901+`) processes the subject:
+
+1. **Deserialize** from `EmbeddedTransaction` oneof → RegistrationTx
+2. **Hash binding check:** `tx->GetHash() == subject.tx_hash`
+3. **Nonce match:** `tracked_nonce == subject.nonce`
+4. **Account match:** `tx->GetSrcAddress() == subject.account_id`
+5. **Validate:** `ValidateTransactionForConsensus(tx)` — which includes `CheckParentChildAuthority` (Phase 02 Plan 02)
+
+The existing `RegisterSlotKeyHandler` at `TransactionManager.cpp:684-697` handles slot assignment for RegistrationTx — same nonce subject type → same slot-key handler.
+
+### RegistrationTx-Specific Differences from TransferTx
+
+| Aspect | TransferTx | RegistrationTx |
+|--------|------------|----------------|
+| CRDT key | `tx/{hash}` via `GetTransactionPath()` | `reg/{child_addr}` via `GetBlockChainBase() + "reg/" + child_addr` |
+| Topics | `full_node_topic_m` + `account_m->GetAddress()` | Same + `main_address` (pubsub discovery per D-15) |
+| UTXO commitment | Actual UTXO Merkle commitment | Always `std::nullopt` |
+| UTXO witness | Actual witness proof | Always `std::nullopt` |
+| Paired CRDT key | `proof/{hash}` (paired namespace) | None (`reg/` has no paired namespace) |
+| Consensus subject | `sgns.nonce.v1` | Same (`sgns.nonce.v1`) |
+
+### Full-Node Topic for Registration Propagation
+
+RegistrationTx includes `full_node_topic_m` in its topic set, ensuring full nodes receive the `reg/` delta via CRDT sync regardless of per-main-address topic subscriptions. The pubsub notification on the main's topic is a **discovery shortcut** for the specific main, not the primary propagation mechanism. Full nodes rely on CRDT DAG sync (graphsync) for `reg/` namespace synchronization, identical to how they sync `tx/` and `proof/` namespaces.
+
+---
+
+## 6. Certified Status Flag Design (D-26)
+
+### Two-Tier Model: Optimistic CRDT + Authoritative Consensus
+
+The `reg/` CRDT filter **accepts pre-certificate** — the RegistrationTx enters the local CRDT immediately upon passing the four FilterRegistration gates (deserialize, signature, sequence, well-formed). This is **optimistic storage** (same pattern as `tx/` entries).
+
+However, CRDT acceptance does **not** make the registration authoritative. A separate **certified status flag** marks whether consensus has confirmed the registration. The main wallet **only acts on certified registrations** — uncertified `reg/` entries are optimistic storage, not authoritative state (D-26).
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│ Two-Tier Model                                                   │
+│                                                                  │
+│  CRDT Tier (optimistic):                                         │
+│    FilterRegistration accepts well-formed RegistrationTx         │
+│    Data propagates via DAG sync to all peers                     │
+│    EVENTUAL consistency — different peers see different states   │
+│                                                                  │
+│  Consensus Tier (authoritative):                                 │
+│    Nonce chain certifies exactly one RegistrationTx per nonce    │
+│    OnConsensusCertificate marks it CONFIRMED                     │
+│    Downstream authority rules only read certified state          │
+│    TOTAL ordering — consensus certificate provides finality      │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+### Three Implementation Options
+
+Three options exist for the certified status flag (from `02-RESEARCH.md` open question 1):
+
+| Option | Mechanism | Durability | Cleanup Needed | Match with Existing Pattern |
+|--------|-----------|------------|----------------|----------------------------|
+| **A** | Separate CRDT key: `/bc-{net}/reg-cert/{child_addr}` = certificate CID | Survives restarts | Needs cleanup on detach (Phase 3 LIFE-04) | New pattern — no existing analog |
+| **B** | In-band field: `certified = true` in RegistrationTx proto | Survives restarts | Requires re-serialization on certificate | Mutates serialized protobuf — fragile |
+| **C** | In-memory map: `tx_processed_m` keyed by child_addr, CONFIRMED status | Lost on restart — must rebuild | None (in-memory) | **Matches existing `ChangeTransactionState` CONFIRMED pattern** |
+
+**Option A (Separate CRDT Key):**
+
+```cpp
+// Write on certificate receipt:
+HierarchicalKey cert_key(GetBlockChainBase() + "reg-cert/" + child_addr);
+crdt::GlobalDB::Buffer cert_data;
+cert_data.put(certificate_cid);
+globaldb_m->Put(std::move(cert_key), std::move(cert_data));
+
+// Query:
+auto cert_result = globaldb_m->Get(HierarchicalKey(GetBlockChainBase() + "reg-cert/" + child_addr));
+bool is_certified = cert_result.has_value();
+```
+
+Durable across restarts. Needs cleanup when a child is detached (LIFE-04, Phase 3).
+
+**Option B (In-Band Field):**
+
+```cpp
+// On certificate receipt: re-serialize RegistrationTx with certified=true
+registration_tx.set_certified(true);
+auto updated_bytes = registration_tx.SerializeByteVector();
+globaldb_m->Put(HierarchicalKey(reg_key), Buffer(updated_bytes));
+```
+
+Self-contained but mutates the serialized protobuf. Any field addition modifies the CRDT CID — subsequent CID lookups would resolve to a different CRDT node than the original.
+
+**Option C (In-Memory Map):**
+
+```cpp
+// On certificate receipt:
+tx_processed_m[child_addr] = TransactionStatus::CONFIRMED;
+
+// Query:
+bool is_certified = (tx_processed_m.find(child_addr) != tx_processed_m.end() &&
+                     tx_processed_m[child_addr] == TransactionStatus::CONFIRMED);
+```
+
+Matches the existing `ChangeTransactionState` pattern exactly. The `OnConsensusCertificate` callback (`TransactionManager.cpp:3655-3752`) already calls `ChangeTransactionState(tx, CONFIRMED)` for all tx types; RegistrationTx follows this identical lifecycle.
+
+### Recommendation: Option C + Option A
+
+**Primary: Option C (in-memory `tx_processed_m` with CONFIRMED status).**
+
+This is the canonical authoritative source and matches the existing `ChangeTransactionState` pattern (`TransactionManager.cpp:5110-5184`):
+
+```cpp
+// Source: TransactionManager.cpp:5110-5184
+// OnConsensusCertificate calls:
+auto result = ChangeTransactionState(tx, TransactionStatus::CONFIRMED);
+// CONFIRMED status in tx_processed_m IS the certified-status flag for ALL transaction types
+```
+
+**Backup: Option A (separate CRDT key `/bc-{net}/reg-cert/{child_addr}`).**
+
+For durability across restarts, a small separate CRDT key stores the certificate CID as a queryable backup. On restart, `tx_processed_m` (which is in-memory) is rebuilt by scanning `reg-cert/` entries. The `reg-cert/` key is a secondary durable store; the in-memory map remains the primary authoritative source during operation.
+
+### OnConsensusCertificate Extension
+
+The existing certificate callback at `TransactionManager.cpp:3655-3752` dispatches on `NONCE_SUBJECT_TYPE`. When the nonce subject carries a RegistrationTx:
+
+```cpp
+// Source: TransactionManager.cpp:3655-3752 (pattern)
+outcome::result<ConsensusManager::Check> TransactionManager::OnConsensusCertificate(
+    const std::string &tx_hash, const ConsensusCertificate &certificate)
+{
+    auto tx = GetTransactionByHash(tx_hash);
+    if (!tx) {
+        // CONFLICT-01: Standalone validator without local tx state.
+        // Deserialize from certificate's embedded proposal.
+        auto nonce_subject_result = ConsensusManager::DecodeNonceSubject(
+            certificate.proposal().subject());
+        // ... fallback deserialization from certificate ...
+        auto result = ChangeTransactionState(tx, TransactionStatus::CONFIRMED);
+    } else {
+        // TRACK-01: Confirm via ChangeTransactionState lifecycle
+        auto result = ChangeTransactionState(tx, TransactionStatus::CONFIRMED);
+    }
+    // Returns ConsensusManager::Check::Approve
+}
+```
+
+For RegistrationTx, the callback additionally:
+1. **Deserializes** RegistrationTx from the certificate's embedded proposal
+2. **Calls `ChangeTransactionState(reg_tx, TransactionStatus::CONFIRMED)`** — same path as all other tx types (`TransactionManager.cpp:5110-5184`)
+3. **Sets certified flag:** updates `tx_processed_m` entry with CONFIRMED status (Option C)
+4. **Optionally writes `/bc-{net}/reg-cert/{child_addr}`** CRDT entry with certificate CID (Option A backup)
+
+The `CONFIRMED` status in `tx_processed_m` IS the certified-status flag for all transaction types including RegistrationTx. The `TransactionStatus` state machine from `TransactionManager.hpp:71-80`:
+
+```
+CREATED → SENDING → VERIFYING → CONFIRMED
+```
+
+RegistrationTx follows this identical lifecycle.
+
+### Certified-Status Check for Downstream Consumers
+
+The `CheckParentChildAuthority` gate (Phase 02 Plan 02) must call `IsRegistrationCertified(child_addr)` before applying parent-child authority rules:
+
+```cpp
+bool IsRegistrationCertified(const std::string &child_addr) const {
+    // Primary: check in-memory tx_processed_m for CONFIRMED status
+    auto it = tx_processed_m.find(child_addr);
+    if (it != tx_processed_m.end() && it->second == TransactionStatus::CONFIRMED) {
+        return true;
+    }
+    // Fallback (on restart): check reg-cert/ CRDT key for certificate CID
+    auto cert_result = globaldb_m->Get(HierarchicalKey(GetBlockChainBase() + "reg-cert/" + child_addr));
+    return cert_result.has_value();
+}
+```
+
+**Certification gate behavior:**
+- **Uncertified entries** → treated as no relationship → parent-child authority rules do NOT apply
+- **Certified entries** → authority rules apply per CONS-01..06
+
+This directly addresses Pitfall 2 (`02-RESEARCH.md`): the authority gate must never read uncertified CRDT and authorize unconfirmed registrations. The certified-status check is the final gate between optimistic storage and authoritative state.
+
+### Design Authority
+
+The certified status flag design is grounded in:
+
+- **`OnConsensusCertificate`** (`TransactionManager.cpp:3655-3752`) — certificate callback pattern
+- **`ChangeTransactionState`** (`TransactionManager.cpp:5110-5184`) — CONFIRMED state transition
+- **`TransactionStatus` enum** (`TransactionManager.hpp:71-80`) — CREATED → SENDING → VERIFYING → CONFIRMED lifecycle
+- **D-26** (`02-CONTEXT.md`) — pre-certificate accept + certified status flag requirement
+- **Pitfall 2** (`02-RESEARCH.md` lines 451-460) — uncertified CRDT authority gate protection
+
+---
+
+## 7. CRDT vs Consensus Ordering Resolution (D-25, D-26)
+
+### Core Tension
+
+CRDT is **eventually consistent** — different peers see different states at different times. Authority decisions must be **totally ordered** and fork-free. A peer that hasn't yet received the latest CRDT delta must not make authority decisions based on stale registration state.
+
+This document resolves the tension through a **two-tier model** that separates *data propagation* (CRDT) from *authority ordering* (consensus).
+
+### Tier 1 — Nonce Chain (Consensus Ordering)
+
+RegistrationTx carries `DAGStruct.nonce` (field 4 in `DAGStruct`, per `SGTransaction.proto:10`). The nonce chain (`sgns.nonce.v1`) provides total ordering:
+
+- Each RegistrationTx occupies a specific nonce slot in the child's account chain
+- The nonce chain prevents two transactions at the same nonce from both being certified
+- The consensus certificate at a given nonce is the authoritative record of what happened at that nonce
+
+### Tier 2 — Sequence (Registration Lineage)
+
+RegistrationTx carries `sequence` (field 3 in RegistrationTx, per `docs/registration-protocol.md` §2). The `reg/` CRDT filter rejects lower-or-equal sequences as best-effort optimization.
+
+Sequence monotonicity is enforced at the consensus level by the nonce chain — you cannot get two competing sequences certified at the same nonce. The two counters serve different purposes:
+
+| Counter | Scope | Enforced By | Purpose |
+|---------|-------|-------------|---------|
+| `DAGStruct.nonce` | Account-global (all tx types) | Nonce chain (`sgns.nonce.v1`) | Transaction ordering in the account's nonce chain |
+| `sequence` | Registration-specific | `reg/` filter (best-effort) + consensus (authoritative) | Registration lineage ordering |
+
+This dual-counter design (established in Phase 1 per D-09) separates account transaction ordering from registration lineage ordering. Normal transfers don't consume registration lineage slots; registrations don't bypass nonce ordering.
+
+### Tie-Break Semantics (D-25): First-to-Consensus Wins
+
+For competing registrations — two RegistrationTx with the same `sequence` but different `nonce` values:
+
+1. Both are submitted at different nonce slots in the child's account chain
+2. The first to receive a consensus certificate at its nonce is authoritative
+3. The nonce chain inherently prevents both from being certified (single nonce slot per account at any given nonce)
+4. The `reg/` filter then rejects any subsequent attempt with the same sequence (sequence not strictly higher per D-13 gate 3)
+
+**Result:** Deterministic winner — the one that reached consensus first. This is **NOT** a "first-to-CRDT wins" model. Consensus ordering, not CRDT arrival order, determines the winner.
+
+```
+Scenario: Two RegistrationTx with sequence=3, at nonce=7 and nonce=8
+
+  Nonce 7: RegistrationTx(seq=3, main=A)
+    → First to be certified ✓ → reg/{child} updated to seq=3, main=A
+
+  Nonce 8: RegistrationTx(seq=3, main=B)
+    → Nonce chain certifies at nonce=8 → FilterRegistration rejects (3 ≤ 3)
+    → reg/{child} unchanged — main=A remains registered
+```
+
+### CRDT Tier vs Consensus Tier (D-26 Restatement)
+
+| Property | CRDT Tier | Consensus Tier |
+|----------|-----------|----------------|
+| **Role** | Data storage and propagation | Authority and ordering |
+| **Consistency** | Eventual (different peers see different states at different times) | Total (consensus certificate provides finality) |
+| **Registration acceptance** | FilterRegistration gates: deserialize, signature, sequence, well-formed | Consensus validation: `ValidateTransactionForConsensus` pipeline including `CheckParentChildAuthority` |
+| **Registration state** | Optimistic — `reg/` stores pre-certificate | Authoritative — `CONFIRMED` status marks certified registrations |
+| **Actionability** | Stored, propagated, visible to all peers | Only certified registrations are actionable by authority gates |
+| **Tie-break** | N/A — CRDT accepts first valid delta locally | First-to-consensus wins (D-25); nonce chain prevents double-certification |
+| **Recovery** | Self-healing through DAG sync | Certificate chain provides immutable history |
+
+This cleanly resolves the tension:
+- **CRDT handles data propagation and availability** — the registration record is stored immediately and propagated to all peers
+- **Consensus handles authority and fork prevention** — the nonce chain provides total ordering; the certificate marks authoritative state
+
+### Cross-Reference: Phase 1 Dual-Counter Design
+
+`docs/registration-protocol.md` §6 (Sequence Numbering & Replay Protection) establishes the dual-counter design:
+
+> "Two counters = two independent ordering domains. `DAGStruct.nonce` ensures the registration is a valid transaction in the child's account chain. `sequence` ensures the registration's position in the child's registration lineage is unambiguous."
+
+This section (Phase 2) defines how those two counters interact:
+- **Nonce** gates consensus ordering — first-to-certificate at a given nonce is the winner
+- **Sequence** gates registration lineage — higher sequences supersede lower ones; the nonce chain guarantees that only one registration can be certified per nonce, making sequence competition determinate
+
+### Phase 2 Success Criterion 4
+
+> "The design explicitly resolves the CRDT eventual-consistency vs consensus-ordering tension (seq + consensus order)."
+
+This section satisfies that criterion: the two-tier model cleanly separates CRDT availability (optimistic storage, DAG sync propagation) from consensus authority (nonce-chain ordering, certificate finality). The sequence field provides intra-registration lineage; the nonce chain provides inter-transaction ordering. Together they resolve the ordering tension without sacrificing availability or safety.
+
+---
+
+## 8. Requirement Traceability & Decision Compliance
+
+### Requirement Traceability
+
+| Req ID | Description | Anchor Point(s) | Section |
+|--------|-------------|-----------------|---------|
+| SYNC-01 | CRDT namespace/key layout for registration record in `globaldb` | `GetBlockChainBase()` + `"reg/"` + `child_addr`; `HierarchicalKey`; filter regex `^/?/bc-{net}/reg/([^/]+)`; `TransactionManager.cpp:1356-1368` | §2 |
+| SYNC-02 | CRDT element filter validates and persists registration deltas in `TransactionManager` | `FilterRegistration` method + `RegisterElementFilter` registration block (`TransactionManager.cpp:187-235`) + four rejection gates (D-13): deserialize, signature, sequence, well-formed | §3 |
+| SYNC-03 | Registration broadcast on main wallet's pubsub channel via `PubSubBroadcasterExt` | `AddBroadcastTopic(main_address)` in `SendTransactionItem`; CID-only payload (D-18); `pubsub_broadcaster_ext.hpp:68-74`; `TransactionManager.cpp:1163-1166` | §4 |
+| SYNC-04 | Main wallet subscribes to child pubsub channels and syncs CRDT for balances | `AddListenTopic(child_address)`; main merges child CRDT deltas without child private key; `pubsub_broadcaster_ext.hpp:287`; `TransactionManager.cpp:~355` | §4 |
+| SYNC-05 | Authority derived from signatures+consensus, not pubsub topic membership | "Authority is NEVER derived from topic membership" (D-16); validation chain: pubsub → CID resolution → CRDT fetch → certification check → authority gate | §4 |
+
+### Decision Compliance
+
+| Decision | Description | Section | Status |
+|----------|-------------|---------|--------|
+| D-11 | `reg/` namespace only; `FilterRegistration` method; regex `^/?/bc-{net}/reg/([^/]+)` | §2, §3 | Included |
+| D-12 | Single key per child: `reg/{child_addr}`, updated in-place | §2 | Included |
+| D-13 | Four rejection gates; no cascade-delete (`reg/` has no paired namespace) | §3 | Included |
+| D-14 | CRDT value = full RegistrationTx protobuf | §2 | Included |
+| D-15 | Registration broadcast: CID on `main_address` topic + CRDT write | §4, §5 | Included |
+| D-16 | Main discovery: pubsub triggers `AddListenTopic`; authority not from topic | §4 | Included |
+| D-17 | Ongoing sync: main subscribes to `child_address` topic, merges CRDT deltas | §4 | Included |
+| D-18 | Pubsub payload = RegistrationTx CID/hash only (not full protobuf) | §4 | Included |
+| D-24 | RegistrationTx flows through full consensus, reuses `sgns.nonce.v1` | §5 | Included |
+| D-25 | Tie-break: first-to-consensus wins; nonce chain prevents double-cert | §7 | Included |
+| D-26 | Certified status flag; two-tier CRDT+consensus model; pre-certificate accept | §6, §7 | Included |
+
+All 11 decisions (D-11 through D-18, D-24 through D-26) are reflected in this document.
+
+### Phase 2 Cross-Reference
+
+Decisions D-19 through D-23 (consensus authority rules) are covered in Phase 02 Plan 02 (`docs/02-consensus-parent-child-authority.md`). However, D-26's certified-status check is referenced here in §6 because `CheckParentChildAuthority` must verify certification before acting.
+
+### Explicitly Deferred to Phase 3
+
+The following items are explicitly **out of scope** for Phase 2 and deferred to Phase 3:
+
+| Phase 3 Requirement | Description |
+|---------------------|-------------|
+| DISC-01 | Main wallet discovery display — listing registered children with their addresses and status |
+| DISC-02 | Per-child balance, asset, and transaction history display |
+| DISC-03 | Game/publisher grouping and developer wallet display for each child |
+| RWD-01 | Per-child reward policy resolution (`dev_addr`/`peers_cut`) |
+| RWD-02 | Hold-time pinning for child reward distribution |
+| RWD-03 | Authenticated dev-wallet/split update rules |
+| LIFE-01 | Lifecycle state machine: standalone → pending → registered → detached/revoked/closed |
+| LIFE-02 | Registration change flows: replace/remove main wallet |
+| LIFE-03 | Main-replacement policy fork (existing-main consent vs child-only) |
+| LIFE-04 | Detached child as standalone wallet; cleanup of `reg-cert/` entries |
+
+### Version-Level Deferral
+
+| ID | Description | Target |
+|----|-------------|--------|
+| PLAT-01 | "Connect GNUS Wallet" UI flows (Android/iOS) | v2 |
+| PLAT-02 | "Connect GNUS Wallet" UI flows (desktop: Windows, macOS, Linux) | v2 |
+| ADV-01 | Cross-application shared child keys | Anti-feature — excluded |
+| ADV-02 | Aggregated registry topic for publisher-scale child fan-out | v2 |
+
+---
+
+*Document: Phase 02, Plan 02-01*
+*Requirements: SYNC-01 through SYNC-05*
+*Decisions: D-11 through D-18, D-24 through D-26*
