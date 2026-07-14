@@ -75,7 +75,7 @@ Plans:
 **Plans**: 2 plans
 Plans:
 
-- [ ] 03-01-PLAN.md — Discovery & monitoring design: push-primary/poll-fallback discovery via AccountMessenger, per-child information aggregation, main-wallet action mappings (DISC-01..03)
+- [x] 03-01-PLAN.md — Discovery & monitoring design: push-primary/poll-fallback discovery via AccountMessenger, per-child information aggregation, main-wallet action mappings (DISC-01..03)
 - [ ] 03-02-PLAN.md — Reward policy + lifecycle/change-flow design: dual-source reward resolution, hold-time pinning, 4-state lifecycle machine, detach/revoke/replace-main flows with supersedes-sequence conflict resolution (RWD-01..03, LIFE-01..04)
 
 ## Progress
@@ -87,4 +87,4 @@ Phases execute in numeric order: 1 → 2 → 3
 |-------|----------------|--------|-----------|
 | 1. Child Identity & Registration Protocol | 2/2 | Complete    | 2026-07-13 |
 | 2. CRDT Persistence, PubSub & Consensus Authority | 2/2 | Complete   | 2026-07-14 |
-| 3. Discovery, Rewards & Lifecycle | 0/2 | Not started | - |
+| 3. Discovery, Rewards & Lifecycle | 1/2 | In Progress|  |

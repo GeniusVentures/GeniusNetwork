@@ -43,9 +43,9 @@ Requirements for the initial design-document set. Each maps to a roadmap phase.
 
 ### Discovery
 
-- [ ] **DISC-01**: Design specifies how a main wallet discovers all child wallets registered to it from consensus-visible CRDT state
-- [ ] **DISC-02**: Design specifies the per-child information a main wallet displays (balance, assets, game, publisher, developer wallet, cut ratio, registration date, activity, status)
-- [ ] **DISC-03**: Design specifies main-wallet actions over discovered children (fund, recover, inspect history, view assets, revoke/detach) mapped to consensus rules
+- [x] **DISC-01**: Design specifies how a main wallet discovers all child wallets registered to it from consensus-visible CRDT state
+- [x] **DISC-02**: Design specifies the per-child information a main wallet displays (balance, assets, game, publisher, developer wallet, cut ratio, registration date, activity, status)
+- [x] **DISC-03**: Design specifies main-wallet actions over discovered children (fund, recover, inspect history, view assets, revoke/detach) mapped to consensus rules
 
 ### Rewards
 
@@ -113,9 +113,9 @@ Which phases cover which requirements. Populated during roadmap creation.
 | SYNC-03 | Phase 2 | Pending |
 | SYNC-04 | Phase 2 | Pending |
 | SYNC-05 | Phase 2 | Pending |
-| DISC-01 | Phase 3 | Pending |
-| DISC-02 | Phase 3 | Pending |
-| DISC-03 | Phase 3 | Pending |
+| DISC-01 | Phase 3 | Complete |
+| DISC-02 | Phase 3 | Complete |
+| DISC-03 | Phase 3 | Complete |
 | RWD-01 | Phase 3 | Pending |
 | RWD-02 | Phase 3 | Pending |
 | RWD-03 | Phase 3 | Pending |
