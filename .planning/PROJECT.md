@@ -24,16 +24,16 @@ The design documents must map every child-wallet behavior — registration, disc
 - ✓ Escrow-based processing reward split (`peers_cut` + `dev_addr`) via HoldEscrow/PayEscrow — existing
 - ✓ Design doc: child-wallet identity & keypair model (independent keypair, nonce tracking, address derivation) mapped to `GeniusAccount`/`GeniusNode` — validated in Phase 1 (`docs/child-wallet-identity-model.md`, IDENT-01..04)
 - ✓ Design doc: child-signed registration protocol (child-signed-only registration record per D-04/D-05, sequence numbering, additive proto schema) with proto additions to `SGTransaction.proto`/`Consensus.proto` — validated in Phase 1 (`docs/registration-protocol.md`, REG-01..05)
+- ✓ Design doc: main-wallet discovery & monitoring (push-primary/poll-fallback via `AccountMessenger`, per-child information aggregation, main-wallet action mappings) — validated in Phase 3 (`docs/03-01-discovery-monitoring.md`, DISC-01..03)
+- ✓ Design doc: processing-reward policy for child wallets (dual-source resolution, hold-time pinning via existing escrow immutability, child-authenticated policy updates) — validated in Phase 3 (`docs/03-02-reward-policy-lifecycle.md`, RWD-01..03)
+- ✓ Design doc: lifecycle & registration-change flows (4-state machine, child-initiated detach, first-class `RevokeTx`, child-only replace-main, supersedes-sequence conflict resolution) — validated in Phase 3 (`docs/03-02-reward-policy-lifecycle.md`, LIFE-01..04)
 
 ### Active
 
 <!-- Design documents to produce. Each is a hypothesis until reviewed and adopted. -->
 
 - [ ] Design doc: registration broadcast over the main wallet's pubsub channel and CRDT namespace/key layout that persists the registration record
-- [ ] Design doc: main-wallet discovery & monitoring — subscribing to child pubsub channels, CRDT sync, and reading child balances/assets without the child private key
 - [ ] Design doc: consensus rules for parent-child authority (main→child fund, main-recover-from-child, child→arbitrary, child→developer, reject child-spends-main) mapped to `ValidateTransactionForConsensus`/`ValidateWitnessForConsensus`
-- [ ] Design doc: processing-reward policy for child wallets (per-child `dev_addr`/`peers_cut`, standalone vs registered) mapped to escrow HoldEscrow/PayEscrow
-- [ ] Design doc: lifecycle & registration-change flows (standalone → pending → registered → detached/revoked/closed; replace/remove main wallet; replay protection)
 
 ### Out of Scope
 
@@ -76,8 +76,8 @@ The design documents must map every child-wallet behavior — registration, disc
 | Child wallet is a fully independent keypair (not derived from main) | Matches proposal; bounds compromise scope; child usable standalone | ✓ Adopted (Phase 1) |
 | Registration recorded in consensus-visible CRDT state | Enables main-wallet discovery/monitoring and consensus-enforced authority | — Pending |
 | Registration is child-signed-only (dual-signature REVERSED by D-04/D-05) | Main private key never enters child process; unsolicited claims bounded to discovery spam, grant zero authority | ✓ Adopted (Phase 1) |
-| Main wallet subscribes to child pubsub channels for CRDT balance sync | User-specified sync model; reuses existing PubSubBroadcasterExt/GlobalDB | — Pending |
-| Reuse escrow reward-split mechanics for child processing rewards | Avoids new token economics; per-child `dev_addr`/`peers_cut` config | — Pending |
+| Main wallet subscribes to child pubsub channels for CRDT balance sync | User-specified sync model; reuses existing PubSubBroadcasterExt/GlobalDB | ✓ Adopted (Phase 3) — push-primary/poll-fallback via `AccountMessenger` |
+| Reuse escrow reward-split mechanics for child processing rewards | Avoids new token economics; per-child `dev_addr`/`peers_cut` config | ✓ Adopted (Phase 3) — hold-time pinning via existing escrow immutability |
 
 ## Evolution
 
@@ -97,4 +97,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-07-13 after Phase 1 completion*
+*Last updated: 2026-07-14 after Phase 3 completion — discovery/monitoring, reward policy, and lifecycle/change-flow design docs delivered (all 10 Phase 3 requirements verified)*
