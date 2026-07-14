@@ -54,7 +54,6 @@ Plans:
   4. The design explicitly resolves the CRDT eventual-consistency vs consensus-ordering tension (seq + consensus order) and separates delegated authority from UTXO ownership checks.
 
 **Plans**: 2 plans
-
 Plans:
 
 - [ ] 02-01-PLAN.md — CRDT reg/ namespace, FilterRegistration design, pubsub broadcast/subscription, certified status flag, ordering resolution (SYNC-01..05)

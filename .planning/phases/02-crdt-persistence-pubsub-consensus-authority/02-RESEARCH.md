@@ -660,7 +660,7 @@ BOOST_OUTCOME_TRY(blockchain_->SubmitProposal(proposal));
 | A5 | `AddListenTopic(child_address)` on the main node will successfully subscribe to CRDT deltas published on the child's address topic | Architecture Patterns | LOW — The child's `TransactionManager::SendTransactionItem` already publishes to `account_m->GetAddress()` (line 1166). The main subscribing to the same topic will receive those deltas. Verified in this session. |
 | A6 | The `GeniusTransaction::CheckSignature()` path (inherited by RegistrationTx) correctly validates child-signed-only registrations per D-04 | Standard Stack | LOW — RegistrationTx embeds `DAGStruct dag_struct = 1` which carries `source_addr` and `signature`. `CheckSignature` verifies the signature against `source_addr`. The child's signature is the only signature on the tx. Verified in this session. |
 
-## Open Questions
+## Open Questions (RESOLVED)
 
 1. **Certified status flag implementation**
    - What we know: D-26 requires a certified status/flag to distinguish consensus-confirmed registrations from optimistic CRDT entries. Three options exist (separate CRDT key, in-band field, in-memory map).
