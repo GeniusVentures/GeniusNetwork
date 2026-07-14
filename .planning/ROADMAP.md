@@ -16,7 +16,7 @@ This milestone produces implementation-ready design documents for child wallets 
 - Decimal phases (2.1, 2.2): Urgent insertions (marked with INSERTED)
 
 - [x] **Phase 1: Child Identity & Registration Protocol** - Design the independent child-wallet identity and the child-signed registration record + proto schema (REG-02 dual-signature reversed per D-04/D-05) (completed 2026-07-13)
-- [ ] **Phase 2: CRDT Persistence, PubSub & Consensus Authority** - Design consensus-visible registration storage, broadcast/sync, and the parent-child authority rules
+- [x] **Phase 2: CRDT Persistence, PubSub & Consensus Authority** - Design consensus-visible registration storage, broadcast/sync, and the parent-child authority rules (completed 2026-07-14)
 - [ ] **Phase 3: Discovery, Rewards & Lifecycle** - Design main-wallet discovery/monitoring, per-child reward policy, and lifecycle/change flows
 
 ## Phase Details
@@ -56,8 +56,8 @@ Plans:
 **Plans**: 2 plans
 Plans:
 
-- [ ] 02-01-PLAN.md — CRDT reg/ namespace, FilterRegistration design, pubsub broadcast/subscription, certified status flag, ordering resolution (SYNC-01..05)
-- [ ] 02-02-PLAN.md — CheckParentChildAuthority gate integration, 6 consensus rules, child-cannot-spend-main invariant, rule summary matrix, field validation (CONS-01..06)
+- [x] 02-01-PLAN.md — CRDT reg/ namespace, FilterRegistration design, pubsub broadcast/subscription, certified status flag, ordering resolution (SYNC-01..05)
+- [x] 02-02-PLAN.md — CheckParentChildAuthority gate integration, 6 consensus rules, child-cannot-spend-main invariant, rule summary matrix, field validation (CONS-01..06)
 
 ### Phase 3: Discovery, Rewards & Lifecycle
 
@@ -87,5 +87,5 @@ Phases execute in numeric order: 1 → 2 → 3
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Child Identity & Registration Protocol | 2/2 | Complete    | 2026-07-13 |
-| 2. CRDT Persistence, PubSub & Consensus Authority | 0/2 | Not started | - |
+| 2. CRDT Persistence, PubSub & Consensus Authority | 2/2 | Complete   | 2026-07-14 |
 | 3. Discovery, Rewards & Lifecycle | 0/2 | Not started | - |
