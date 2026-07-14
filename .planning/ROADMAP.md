@@ -17,7 +17,7 @@ This milestone produces implementation-ready design documents for child wallets 
 
 - [x] **Phase 1: Child Identity & Registration Protocol** - Design the independent child-wallet identity and the child-signed registration record + proto schema (REG-02 dual-signature reversed per D-04/D-05) (completed 2026-07-13)
 - [x] **Phase 2: CRDT Persistence, PubSub & Consensus Authority** - Design consensus-visible registration storage, broadcast/sync, and the parent-child authority rules (completed 2026-07-14)
-- [ ] **Phase 3: Discovery, Rewards & Lifecycle** - Design main-wallet discovery/monitoring, per-child reward policy, and lifecycle/change flows
+- [x] **Phase 3: Discovery, Rewards & Lifecycle** - Design main-wallet discovery/monitoring, per-child reward policy, and lifecycle/change flows (completed 2026-07-14)
 
 ## Phase Details
 
@@ -87,4 +87,4 @@ Phases execute in numeric order: 1 → 2 → 3
 |-------|----------------|--------|-----------|
 | 1. Child Identity & Registration Protocol | 2/2 | Complete    | 2026-07-13 |
 | 2. CRDT Persistence, PubSub & Consensus Authority | 2/2 | Complete   | 2026-07-14 |
-| 3. Discovery, Rewards & Lifecycle | 1/2 | In Progress|  |
+| 3. Discovery, Rewards & Lifecycle | 2/2 | Complete    | 2026-07-14 |
