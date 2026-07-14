@@ -18,7 +18,7 @@ stopped_at: Milestone complete (Phase 03 was final phase)
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-07-13)
+See: .planning/PROJECT.md (updated 2026-07-14)
 
 **Core value:** Design documents map every child-wallet behavior onto concrete SuperGenius anchor points so future implementation can proceed directly.
 **Current focus:** Milestone complete
@@ -84,8 +84,9 @@ None yet.
 
 ### Blockers/Concerns
 
-- SuperGenius has NO existing hierarchical/role-based account authority — Phase 2 must design a new consensus authority layer (authorization is signature-only today).
-- CRDT eventual-consistency vs replay/authority ordering is the central design risk (see research/PITFALLS.md).
+- ✓ Resolved [Phase 2]: Parent-child consensus authority layer designed (child-signed authority model, ValidateTransactionForConsensus path) — SuperGenius's signature-only authorization gap is now addressed in the design docs.
+- CRDT eventual-consistency vs replay/authority ordering — central design risk, now addressed in the design via supersedes-sequence + nonce-chain first-to-consensus-wins conflict resolution (Phase 03-02); revisit if implementation surfaces ordering edge cases (see research/PITFALLS.md).
+- ⚠ Open (code review, advisory): Phase 03 code review flagged 1 critical finding (child-address proto field mapping) — see 03-REVIEW.md; resolve before implementation via `/gsd-code-review 03 --fix`.
 
 ## Deferred Items
 
@@ -97,6 +98,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-07-14T02:00:27.328Z
-Stopped at: Completed 03-02-PLAN.md
+Last session: 2026-07-14
+Stopped at: Phase 03 complete — Milestone v1.0 complete (all 3 phases, 6 plans), ready to archive
 Resume file: None
