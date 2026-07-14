@@ -73,7 +73,6 @@ Plans:
   4. The main-replacement policy fork (require existing-main consent vs child-only) is decided and documented with rationale, traceable to LIFE-03.
 
 **Plans**: 2 plans
-
 Plans:
 
 - [ ] 03-01-PLAN.md — Discovery & monitoring design: push-primary/poll-fallback discovery via AccountMessenger, per-child information aggregation, main-wallet action mappings (DISC-01..03)

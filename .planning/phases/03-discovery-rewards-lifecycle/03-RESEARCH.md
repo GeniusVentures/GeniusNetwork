@@ -612,7 +612,7 @@ escrow_tx->GetDevAddress();  // reads dev_addr_ (not reg/ CRDT)
 | A4 | The `HandleChildDiscoveryRequest` handler can efficiently scan `reg/` CRDT keys by prefix without a full table scan | Discovery Polling | If GlobalDB does not support prefix scans on `HierarchicalKey`, the handler will need to iterate all `reg/` keys, which may be slow for large registries |
 | A5 | The `dev_config_` `DevConfig_st` struct is accessible at the `GeniusNode` level for policy-source selection in `HoldEscrow`/`PayDev` | Reward Policy | If the `DevConfig_st` is not thread-safe or available at the right call site, the design may need an interface change to pass policy source |
 
-## Open Questions
+## Open Questions (RESOLVED)
 
 1. **RegistrationTx proto field 4 (RegistrationMetadata) actual definition**
    - What we know: Phase 1 D-08 specifies `RegistrationMetadata` with `game_id`, `publisher_id`, `dev_wallet`, `peers_cut`. The CONTEXT.md canonical refs reference this.
