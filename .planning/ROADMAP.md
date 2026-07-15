@@ -38,11 +38,11 @@ Phase execution history archived at `.planning/milestones/v1.0-phases/`.
   2. `RegistrationTransaction` C++ subclass compiles and links: `New()` factory constructs and `FillHash`-es a valid tx; `SerializeToEmbeddedTransaction`/`SerializeByteVector` produce correct protobuf bytes; static `DeSerializeByteVector` round-trips the bytes back to an equivalent `RegistrationTransaction`; deserializer registration (`"registration"`, `&RegistrationTransaction::DeSerializeByteVector`) is called at static-init and `case EmbeddedTransaction::kRegistration` dispatches in `TransactionManager::DeSerializeEmbeddedTransaction`.
   3. A child wallet creates a `RegistrationTransaction` via the `New()` factory, signs it child-only via `MakeSignature(*child_account)`, and submits through `TransactionManager::SendTransactionItem` — the submission consumes a `DAGStruct.nonce` from the child's `GeniusAccount`, carries a monotonic per-child `sequence`, and the `TransactionManager` nonce validation and `CheckSignature` pass (observable via a GTest unit test asserting `SENDING` status and valid `DAGStruct` fields).
 
-**Plans:** 2 plans
+**Plans:** 1/2 plans executed
 Plans:
 **Wave 1**
 
-- [ ] 04-01-PLAN.md — Registration Proto & C++ Subclass: proto schema additions (RegistrationTx, RegistrationMetadata, registration = 8 oneof), RegistrationTransaction C++ subclass (factory, serialization, deserialization, static Register), CMakeLists integration, unit test proving round-trip
+- [x] 04-01-PLAN.md — Registration Proto & C++ Subclass: proto schema additions (RegistrationTx, RegistrationMetadata, registration = 8 oneof), RegistrationTransaction C++ subclass (factory, serialization, deserialization, static Register), CMakeLists integration, unit test proving round-trip
 
 **Wave 2** *(blocked on Wave 1 completion)*
 
@@ -76,5 +76,5 @@ Plans:
 | 1. Child Identity & Registration Protocol | v1.0 | 2/2 | Complete | 2026-07-13 |
 | 2. CRDT Persistence, PubSub & Consensus Authority | v1.0 | 2/2 | Complete | 2026-07-14 |
 | 3. Discovery, Rewards & Lifecycle | v1.0 | 2/2 | Complete | 2026-07-14 |
-| 4. Registration Proto & Transaction | v2.0 | 0/2 | Planned | 2026-07-15 |
+| 4. Registration Proto & Transaction | v2.0 | 1/2 | In Progress|  |
 | 5. CRDT Persistence, PubSub & Integration Test | v2.0 | 0/0 | Not started | — |
