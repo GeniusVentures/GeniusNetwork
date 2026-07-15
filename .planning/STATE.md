@@ -7,10 +7,10 @@ last_updated: "2026-07-15T23:05:07.074Z"
 last_activity: 2026-07-15
 progress:
   total_phases: 2
-  completed_phases: 0
+  completed_phases: 1
   total_plans: 2
-  completed_plans: 1
-  percent: 0
+  completed_plans: 2
+  percent: 50
 ---
 
 # Project State
@@ -24,10 +24,10 @@ See: .planning/PROJECT.md (updated 2026-07-15)
 
 ## Current Position
 
-Phase: 04 (registration-proto-transaction) — EXECUTING
-Plan: 2 of 2
-Status: Ready to execute
+Phase: 04 (registration-proto-transaction) — COMPLETE (2/2 plans)
 Last activity: 2026-07-15
+
+Next: Phase 5 (crdt-persistence-pubsub-integration-test)
 
 ## Performance Metrics
 
@@ -54,6 +54,8 @@ Last activity: 2026-07-15
 | Phase 01-child-identity-registration-protocol P02 | 3min | 3 tasks | 1 files |
 | Phase 03-discovery-rewards-lifecycle P01 | 11min | 2 tasks | 1 files |
 | Phase 03-discovery-rewards-lifecycle P02 | 6min | 2 tasks | 1 files |
+| Phase 04-registration-proto-transaction P01 | 5min | 3 tasks | 6 files |
+| Phase 04-registration-proto-transaction P02 | 12min | 3 tasks | 6 files |
 
 ## Accumulated Context
 
@@ -70,6 +72,10 @@ Recent decisions affecting current work:
 - [Phase 1]: D-03: Independent nonce tracking via existing GeniusAccount nonce machinery
 - [Phase 1]: D-04/D-05: Registration is child-signed-only (dual-signature REVERSED) — Main private key never enters child process; unsolicited claims bounded to discovery spam, grant zero authority
 - [Milestone]: v2.0 scope excludes consensus authority gate (CONS-01..06 `CheckParentChildAuthority`) — designed in v1.0, implementation deferred to later milestone; RegistrationTx flows through full consensus (`sgns.nonce.v1`, `OnConsensusCertificate` → CONFIRMED) but authority gate is NOT installed
+- [Phase 4 Plan 02]: FilterRegistration is private (mirrors FilterTransaction/FilterProof convention); tested via friend accessor class RegistrationE2ETestAccess
+- [Phase 4 Plan 02]: reg/ CRDT path diversion implemented as type-check in SendTransactionItem — RegistrationTx writes to GetBlockChainBase()+"reg/"+child_addr, never tx/ namespace
+- [Phase 4 Plan 02]: Phase 4 FilterRegistration implements gates a-c (deserialization, signature, malformed address); sequence monotonicity gate deferred to Phase 5 per D-44
+- [Phase 4 Plan 02]: E2E test skips ChildRegistrationEndToEnd when TM can't reach READY (isolated test environment); FilterRegistration tests validate independently
 
 ### Pending Todos
 
