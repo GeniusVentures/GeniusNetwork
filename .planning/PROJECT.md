@@ -1,8 +1,8 @@
-# GNUS Child Wallet Design
+# GNUS Child Wallet
 
 ## What This Is
 
-A design-documentation effort that produces implementation-ready design documents for **child wallets** (subwallets) in the GNUS SuperGenius node, grounded in the current SuperGenius codebase. Games integrating the GNUS SDK will operate independent child wallets that can earn GNUS, hold and transfer assets, and optionally register a main wallet — without ever exposing the main wallet's private key. The documents detail how a child-wallet registration broadcasts to the main wallet's pubsub channel, how CRDT backing persists the registration for consensus-visible parent-child authority, and how the main wallet subscribes to child pubsub channels to sync CRDT state and read child balances.
+Child wallets (subwallets) for the GNUS SuperGenius node. Games integrating the GNUS SDK operate independent child wallets that can earn GNUS, hold and transfer assets, and optionally register a main wallet — without ever exposing the main wallet's private key. v1.0 shipped implementation-ready design documents (`docs/`) grounded in SuperGenius anchor points; v2.0 implements the first slice — child-signed registration with CRDT persistence, pubsub broadcast, and a multi-node integration test.
 
 ## Core Value
 
@@ -32,20 +32,34 @@ The design documents must map every child-wallet behavior — registration, disc
 
 ### Active
 
-<!-- v1.0 design milestone complete. Next milestone: implementation. -->
+<!-- v2.0 implementation milestone scope. -->
 
-(None — v1.0 design milestone shipped; v2.0 implementation milestone starting)
+- [ ] Child-wallet registration implemented in SuperGenius per `docs/registration-protocol.md` (RegistrationTx proto, C++ transaction class, child-signed-only protocol, sequence numbering)
+- [ ] Registration persisted in consensus-visible `reg/` CRDT namespace with validating element filter, broadcast on the main wallet's pubsub channel per `docs/02-crdt-registry-pubsub.md`
+- [ ] Multi-node integration test: genesis node + two nodes; one node registers as a child of the other; registration propagates and is discoverable from the main node
 
 ### Out of Scope
 
 <!-- Explicit boundaries. -->
 
-- Implementation of the child-wallet feature in C++ — this milestone produces design docs only; implementation follows separately
-- Platform "Connect GNUS Wallet" UI flows (Android/iOS/desktop) — referenced as integration context, not designed here
-- GeniusWallet Flutter app changes — main-wallet UI display is described conceptually, not designed
+- Consensus authority rules (CONS-01..06 `CheckParentChildAuthority` gate) — designed in v1.0, implementation deferred to a later milestone; v2.0 delivers registration only
+- Discovery UI, reward-policy, and lifecycle/change-flow implementation — later milestones per `docs/03-*.md`
+- Platform "Connect GNUS Wallet" UI flows (Android/iOS/desktop) — referenced as integration context, not built here
+- GeniusWallet Flutter app changes — main-wallet UI display is described conceptually, not built
 - Cross-application shared child wallets (one key across multiple apps) — noted as an anti-pattern; safe default is one child wallet per application
 - Changes to the existing token economics or reward math — reuse existing escrow split mechanics
 - ipfs-bitswap thread-safety work — separate, completed project (archived under `.planning-archive/bitswap/`)
+
+## Current Milestone: v2.0 Registration Implementation
+
+**Goal:** Implement the first phase of the child-wallet design — child-signed registration — in the SuperGenius node, proven by a multi-node integration test.
+
+**Target features:**
+- Additive `RegistrationTx` proto schema and `RegistrationTransaction` C++ class per `docs/registration-protocol.md`
+- Child-side registration API (create, sign child-only, submit) with monotonic per-child sequence numbering
+- `reg/` CRDT namespace persistence with `FilterRegistration` validation gate and pubsub broadcast on the main wallet's channel
+- Main-node read path: discover a child registration from consensus-visible CRDT state
+- Integration test: genesis node + two nodes; node B registers as child of node A; registration propagates and validates (plus negative tests)
 
 ## Context
 
@@ -98,4 +112,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-07-15 after v1.0 milestone completion — all 30 design requirements verified across 3 phases; 6 design docs in `docs/`*
+*Last updated: 2026-07-15 after starting milestone v2.0 Registration Implementation*
