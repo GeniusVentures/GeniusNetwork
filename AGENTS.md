@@ -1,9 +1,9 @@
 <!-- GSD:project-start source:PROJECT.md -->
 ## Project
 
-**GNUS Child Wallet Design**
+**GNUS Child Wallet**
 
-A design-documentation effort that produces implementation-ready design documents for **child wallets** (subwallets) in the GNUS SuperGenius node, grounded in the current SuperGenius codebase. Games integrating the GNUS SDK will operate independent child wallets that can earn GNUS, hold and transfer assets, and optionally register a main wallet — without ever exposing the main wallet's private key. The documents detail how a child-wallet registration broadcasts to the main wallet's pubsub channel, how CRDT backing persists the registration for consensus-visible parent-child authority, and how the main wallet subscribes to child pubsub channels to sync CRDT state and read child balances.
+Child wallets (subwallets) for the GNUS SuperGenius node. Games integrating the GNUS SDK operate independent child wallets that can earn GNUS, hold and transfer assets, and optionally register a main wallet — without ever exposing the main wallet's private key. v1.0 shipped implementation-ready design documents (`docs/`) grounded in SuperGenius anchor points; v2.0 implements the first slice — child-signed registration with CRDT persistence, pubsub broadcast, and a multi-node integration test.
 
 **Core Value:** The design documents must map every child-wallet behavior — registration, discovery, funding, recovery, and consensus authority — onto concrete SuperGenius anchor points (GeniusAccount, TransactionManager, CRDT/GlobalDB, PubSubBroadcasterExt, consensus validation) so a future implementation can proceed directly from the docs without re-deriving how the existing system works.
 

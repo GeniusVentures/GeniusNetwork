@@ -3,10 +3,10 @@ gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: Registration Implementation
 status: planning
-last_updated: "2026-07-15T21:03:42.983Z"
+last_updated: "2026-07-15T22:00:00.000Z"
 last_activity: 2026-07-15
 progress:
-  total_phases: 0
+  total_phases: 2
   completed_phases: 0
   total_plans: 0
   completed_plans: 0
@@ -17,23 +17,23 @@ progress:
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-07-14)
+See: .planning/PROJECT.md (updated 2026-07-15)
 
-**Core value:** Design documents map every child-wallet behavior onto concrete SuperGenius anchor points so future implementation can proceed directly.
-**Current focus:** Milestone complete
+**Core value:** The design documents must map every child-wallet behavior — registration, discovery, funding, recovery, and consensus authority — onto concrete SuperGenius anchor points so a future implementation can proceed directly from the docs without re-deriving how the existing system works.
+**Current focus:** v2.0 Registration Implementation — child-signed registration tx, CRDT persistence, pubsub broadcast, multi-node integration test
 
 ## Current Position
 
-Phase: Not started (defining requirements)
+Phase: 4 — Registration Proto & Transaction (not started)
 Plan: —
-Status: Defining requirements
-Last activity: 2026-07-15 — Milestone v2.0 started
+Status: Roadmap created — awaiting phase planning
+Last activity: 2026-07-15 — Roadmap created for v2.0 (Phases 4-5)
 
 ## Performance Metrics
 
 **Velocity:**
 
-- Total plans completed: 4
+- Total plans completed: 4 (v1.0 design phases)
 - Average duration: —
 - Total execution time: —
 
@@ -65,15 +65,11 @@ Recent decisions affecting current work:
 - Init: Deliverable is design documents, not implementation
 - Init: Child wallet is a fully independent keypair (not HD-derived from main)
 - Init: Registration recorded in consensus-visible CRDT state
-- [Phase 1]: D-01: Child-ness is emergent — no account-type field or creation-time flag in GeniusAccount — Emergent identity avoids schema changes; child-ness determined by consensus-visible registration record
-- [Phase 1]: D-02: UTXO ownership via owner_address only — no new ownership scheme needed — Child UTXOs are distinguishable by owner_address alone; GeniusUTXO.hpp unchanged
-- [Phase 1]: D-03: Independent nonce tracking via existing GeniusAccount nonce machinery — Separate GeniusAccount instance = separate nonce counter; no new nonce infrastructure needed
+- [Phase 1]: D-01: Child-ness is emergent — no account-type field or creation-time flag in GeniusAccount
+- [Phase 1]: D-02: UTXO ownership via owner_address only — no new ownership scheme needed
+- [Phase 1]: D-03: Independent nonce tracking via existing GeniusAccount nonce machinery
 - [Phase 1]: D-04/D-05: Registration is child-signed-only (dual-signature REVERSED) — Main private key never enters child process; unsolicited claims bounded to discovery spam, grant zero authority
-- [Phase 03-discovery-rewards-lifecycle]: Discovery polling uses AccountMessenger request/response pattern (NOT messaging_watcher) — reuses existing HandleNonceRequest/HandleNonceResponse pattern — AccountMessenger already has OnRequest/OnResponse dispatch, worker-thread queuing, timeout management, signed messages, and response collection; extending it requires 2 proto additions + 2 handler methods vs hundreds of lines of new infrastructure on messaging_watcher
-- [Phase ?]: Policy-source selection at GeniusNode level: TransactionManager::HoldEscrow is policy-agnostic; caller resolves source from certified reg/ CRDT or DevConfig_st based on child registration status (Phase 03-02)
-- [Phase ?]: Hold-time pinning requires zero Phase 3 changes: EscrowTransaction immutability at EscrowTransaction.hpp:122-131 + PayEscrow stored reads at TransactionManager.cpp:846-875 is existing behavior. Design doc documents as verified invariant.
-- [Phase ?]: Main replacement is child-only (D-37): old-main consent creates deadlock risk if old main key lost; consistent with child-owned identity model (D-04/D-05).
-- [Phase ?]: First-class RevokeTx recommended as GeniusTransaction subclass (revoke=9 in EmbeddedTransaction oneof). NOT a flagged transfer for cleaner audit trail and dedicated CheckParentChildAuthority path.
+- [Milestone]: v2.0 scope excludes consensus authority gate (CONS-01..06 `CheckParentChildAuthority`) — designed in v1.0, implementation deferred to later milestone; RegistrationTx flows through full consensus (`sgns.nonce.v1`, `OnConsensusCertificate` → CONFIRMED) but authority gate is NOT installed
 
 ### Pending Todos
 
@@ -81,9 +77,9 @@ None yet.
 
 ### Blockers/Concerns
 
-- ✓ Resolved [Phase 2]: Parent-child consensus authority layer designed (child-signed authority model, ValidateTransactionForConsensus path) — SuperGenius's signature-only authorization gap is now addressed in the design docs.
-- CRDT eventual-consistency vs replay/authority ordering — central design risk, now addressed in the design via supersedes-sequence + nonce-chain first-to-consensus-wins conflict resolution (Phase 03-02); revisit if implementation surfaces ordering edge cases (see research/PITFALLS.md).
 - ⚠ Open (code review, advisory): Phase 03 code review flagged 1 critical finding (child-address proto field mapping) — see 03-REVIEW.md; resolve before implementation via `/gsd-code-review 03 --fix`.
+- ⚠ RegistrationTx must NOT use `GetTransactionPath()` (which returns `"tx/" + hash`) — uses `GetBlockChainBase() + "reg/" + child_addr` per the design docs. This is a known divergence from the existing `SendTransactionItem` path that must be handled explicitly in the Phase 5 plan.
+- ⚠ CID-only pubsub payload constraint (D-18): pubsub notification carries RegistrationTx CID, NOT full protobuf. Forces CRDT resolution for full content.
 
 ## Deferred Items
 
@@ -91,14 +87,14 @@ Items acknowledged and carried forward from previous milestone close:
 
 | Category | Item | Status | Deferred At |
 |----------|------|--------|-------------|
-| *(none)* | | | |
+| Consensus authority rules (CONS-01..06) | Implement `CheckParentChildAuthority` gate — designed in v1.0 Phase 2, deferred to later milestone | Pending | 2026-07-15 (v2.0 roadmap) |
 
 ## Session Continuity
 
-Last session: 2026-07-14
-Stopped at: Phase 03 complete — Milestone v1.0 complete (all 3 phases, 6 plans), ready to archive
-Resume file: None
+Last session: 2026-07-15
+Stopped at: Roadmap created for v2.0 — Phases 4-5 defined, 11 requirements mapped
+Resume with: `/gsd-plan-phase 4`
 
 ## Operator Next Steps
 
-- Start the next milestone with /gsd-new-milestone
+- Plan Phase 4 with `/gsd-plan-phase 4`

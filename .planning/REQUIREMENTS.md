@@ -60,23 +60,23 @@ Which phases cover which requirements. Populated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| RIMPL-01 | TBD | Pending |
-| RIMPL-02 | TBD | Pending |
-| RIMPL-03 | TBD | Pending |
-| RIMPL-04 | TBD | Pending |
-| RIMPL-05 | TBD | Pending |
-| RIMPL-06 | TBD | Pending |
-| RIMPL-07 | TBD | Pending |
-| TEST-01 | TBD | Pending |
-| TEST-02 | TBD | Pending |
-| TEST-03 | TBD | Pending |
-| TEST-04 | TBD | Pending |
+| RIMPL-01 | Phase 4 | Pending |
+| RIMPL-02 | Phase 4 | Pending |
+| RIMPL-03 | Phase 4 | Pending |
+| RIMPL-04 | Phase 5 | Pending |
+| RIMPL-05 | Phase 5 | Pending |
+| RIMPL-06 | Phase 5 | Pending |
+| RIMPL-07 | Phase 5 | Pending |
+| TEST-01 | Phase 5 | Pending |
+| TEST-02 | Phase 5 | Pending |
+| TEST-03 | Phase 5 | Pending |
+| TEST-04 | Phase 5 | Pending |
 
 **Coverage:**
 - v1 requirements: 11 total
-- Mapped to phases: 0
-- Unmapped: 11 ⚠️ (roadmap pending)
+- Mapped to phases: 11 ✓
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-07-15*
-*Last updated: 2026-07-15 after initial definition*
+*Last updated: 2026-07-15 — roadmap created, Phase 4/5 assignments populated*
