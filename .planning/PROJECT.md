@@ -27,13 +27,14 @@ The design documents must map every child-wallet behavior — registration, disc
 - ✓ Design doc: main-wallet discovery & monitoring (push-primary/poll-fallback via `AccountMessenger`, per-child information aggregation, main-wallet action mappings) — validated in Phase 3 (`docs/03-01-discovery-monitoring.md`, DISC-01..03)
 - ✓ Design doc: processing-reward policy for child wallets (dual-source resolution, hold-time pinning via existing escrow immutability, child-authenticated policy updates) — validated in Phase 3 (`docs/03-02-reward-policy-lifecycle.md`, RWD-01..03)
 - ✓ Design doc: lifecycle & registration-change flows (4-state machine, child-initiated detach, first-class `RevokeTx`, child-only replace-main, supersedes-sequence conflict resolution) — validated in Phase 3 (`docs/03-02-reward-policy-lifecycle.md`, LIFE-01..04)
+- ✓ Design doc: CRDT registry namespace/key layout, `FilterRegistration` element filter, pubsub broadcast/subscription, certified-status two-tier model, ordering resolution — validated in Phase 2 (`docs/02-crdt-registry-pubsub.md`, SYNC-01..05)
+- ✓ Design doc: parent-child consensus authority (`CheckParentChildAuthority` gate, 6 authority rules, child-cannot-spend-main invariant) mapped to `ValidateTransactionForConsensus`/`GeniusInputValidator` — validated in Phase 2 (`docs/02-consensus-parent-child-authority.md`, CONS-01..06)
 
 ### Active
 
-<!-- Design documents to produce. Each is a hypothesis until reviewed and adopted. -->
+<!-- v1.0 design milestone complete. Next milestone: implementation. -->
 
-- [ ] Design doc: registration broadcast over the main wallet's pubsub channel and CRDT namespace/key layout that persists the registration record
-- [ ] Design doc: consensus rules for parent-child authority (main→child fund, main-recover-from-child, child→arbitrary, child→developer, reject child-spends-main) mapped to `ValidateTransactionForConsensus`/`ValidateWitnessForConsensus`
+(None — v1.0 design milestone shipped; v2.0 implementation milestone starting)
 
 ### Out of Scope
 
@@ -72,9 +73,9 @@ The design documents must map every child-wallet behavior — registration, disc
 
 | Decision | Rationale | Outcome |
 |----------|-----------|---------|
-| Deliverable is design documents, not implementation | User intent: produce docs grounded in current code for future implementation | — Pending |
+| Deliverable is design documents, not implementation | User intent: produce docs grounded in current code for future implementation | ✓ Good — 6 design docs shipped in v1.0 |
 | Child wallet is a fully independent keypair (not derived from main) | Matches proposal; bounds compromise scope; child usable standalone | ✓ Adopted (Phase 1) |
-| Registration recorded in consensus-visible CRDT state | Enables main-wallet discovery/monitoring and consensus-enforced authority | — Pending |
+| Registration recorded in consensus-visible CRDT state | Enables main-wallet discovery/monitoring and consensus-enforced authority | ✓ Adopted (Phase 2) — reg/ namespace + certified-status two-tier model |
 | Registration is child-signed-only (dual-signature REVERSED by D-04/D-05) | Main private key never enters child process; unsolicited claims bounded to discovery spam, grant zero authority | ✓ Adopted (Phase 1) |
 | Main wallet subscribes to child pubsub channels for CRDT balance sync | User-specified sync model; reuses existing PubSubBroadcasterExt/GlobalDB | ✓ Adopted (Phase 3) — push-primary/poll-fallback via `AccountMessenger` |
 | Reuse escrow reward-split mechanics for child processing rewards | Avoids new token economics; per-child `dev_addr`/`peers_cut` config | ✓ Adopted (Phase 3) — hold-time pinning via existing escrow immutability |
@@ -97,4 +98,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-07-14 after Phase 3 completion — discovery/monitoring, reward policy, and lifecycle/change-flow design docs delivered (all 10 Phase 3 requirements verified)*
+*Last updated: 2026-07-15 after v1.0 milestone completion — all 30 design requirements verified across 3 phases; 6 design docs in `docs/`*
