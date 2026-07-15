@@ -27,29 +27,37 @@ Phase execution history archived at `.planning/milestones/v1.0-phases/`.
 ## Phase Details
 
 ### Phase 4: Registration Proto & Transaction
+
 **Goal:** The SuperGenius node builds with the new RegistrationTx proto and C++ subclass, and a child wallet can construct, sign, and submit a registration through the existing TransactionManager path.
 **Mode:** mvp
 **Depends on:** Nothing (first phase of v2.0)
 **Requirements:** RIMPL-01, RIMPL-02, RIMPL-03
 **Success Criteria** (what must be TRUE):
+
   1. `SGTransaction.proto` compiles with additive `RegistrationTx` + `RegistrationMetadata` messages, and `Consensus.proto` compiles with the `registration = 8` oneof arm in `EmbeddedTransaction` — existing SuperGenius transfers/mints/escrows continue to serialize, deserialize, and validate identically to pre-change builds on all supported platforms (Windows, Linux, macOS).
   2. `RegistrationTransaction` C++ subclass compiles and links: `New()` factory constructs and `FillHash`-es a valid tx; `SerializeToEmbeddedTransaction`/`SerializeByteVector` produce correct protobuf bytes; static `DeSerializeByteVector` round-trips the bytes back to an equivalent `RegistrationTransaction`; deserializer registration (`"registration"`, `&RegistrationTransaction::DeSerializeByteVector`) is called at static-init and `case EmbeddedTransaction::kRegistration` dispatches in `TransactionManager::DeSerializeEmbeddedTransaction`.
   3. A child wallet creates a `RegistrationTransaction` via the `New()` factory, signs it child-only via `MakeSignature(*child_account)`, and submits through `TransactionManager::SendTransactionItem` — the submission consumes a `DAGStruct.nonce` from the child's `GeniusAccount`, carries a monotonic per-child `sequence`, and the `TransactionManager` nonce validation and `CheckSignature` pass (observable via a GTest unit test asserting `SENDING` status and valid `DAGStruct` fields).
 
 **Plans:** 2 plans
-
 Plans:
+**Wave 1**
+
 - [ ] 04-01-PLAN.md — Registration Proto & C++ Subclass: proto schema additions (RegistrationTx, RegistrationMetadata, registration = 8 oneof), RegistrationTransaction C++ subclass (factory, serialization, deserialization, static Register), CMakeLists integration, unit test proving round-trip
+
+**Wave 2** *(blocked on Wave 1 completion)*
+
 - [ ] 04-02-PLAN.md — TransactionManager Integration & End-to-End Submission: deserializer dispatch (kRegistration case), RegisterChild API + GeniusNode wrapper, SendTransactionItem reg/ path diversion, minimal FilterRegistration (gates a-c per D-44), end-to-end GTest proving child creates/signs/submits → SENDING status
 
 ---
 
 ### Phase 5: CRDT Persistence, PubSub & Integration Test
+
 **Goal:** Accepted registrations persist in consensus-visible CRDT `reg/` state with a validating element filter, broadcast on the main wallet's pubsub channel, and discoverable by the main node — proven correct by a multi-node GTest integration test.
 **Mode:** mvp
 **Depends on:** Phase 4
 **Requirements:** RIMPL-04, RIMPL-05, RIMPL-06, RIMPL-07, TEST-01, TEST-02, TEST-03, TEST-04
 **Success Criteria** (what must be TRUE):
+
   1. `FilterRegistration` is registered on the `reg/` CRDT pattern in `TransactionManager::New()` (parallel to existing `tx/` and `proof/` filters) and validates incoming `reg/` deltas through four gates: deserialization, child signature, sequence monotonicity vs existing `reg/{child_addr}` record, and well-formed checks (`main_address` is valid 128-hex pubkey, `sequence > 0`). Valid `RegistrationTx` elements are accepted (`std::nullopt`); bad signatures, malformed `main_address`, and non-monotonic or zero `sequence` are rejected with tombstone.
   2. An accepted `RegistrationTx` persists as a single CRDT element at key `/bc-{net}/reg/{child_addr}` (full protobuf value) and the child's `SendTransactionItem` flow includes `main_address` in the pubsub topic set — the main node receives a CID notification on its address topic via `PubSubBroadcasterExt` and resolves the full `RegistrationTx` from its local CRDT.
   3. A main node enumerates and reads the child registrations naming it via a CRDT `reg/` scan or direct key lookup — returning child address, main address, sequence, and metadata for each discovered registration (RIMPL-06 read path, observable via an `EXPECT_TRUE` on a `GetRegistrationsForMain(main_addr)` helper in the integration test).
