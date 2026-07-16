@@ -14,10 +14,10 @@ Requirements for this milestone. Each maps to a roadmap phase.
 - [x] **RIMPL-01**: `RegistrationTx` and `RegistrationMetadata` proto messages are added additively to `SGTransaction.proto`, and a `registration = 8` oneof arm is added to `EmbeddedTransaction` in `Consensus.proto`, per `docs/registration-protocol.md` §2–3, without modifying any existing message or breaking existing SuperGenius/GeniusSDK builds
 - [x] **RIMPL-02**: `RegistrationTransaction` C++ subclass of `GeniusTransaction` exists (`New()` factory, `SerializeToEmbeddedTransaction`, `SerializeByteVector`, static `DeSerializeByteVector`), registered via `RegisterDeserializer("registration", ...)` with `case EmbeddedTransaction::kRegistration` dispatch in `TransactionManager::DeSerializeEmbeddedTransaction`, per `docs/registration-protocol.md` §4
 - [x] **RIMPL-03**: A child node can create, child-sign, and submit a registration naming a main wallet address through the existing `TransactionManager` path, consuming a `DAGStruct.nonce` and carrying a monotonic per-child `sequence`, per `docs/registration-protocol.md` §5–6
-- [ ] **RIMPL-04**: Accepted registrations are persisted in the consensus-visible `reg/` CRDT namespace with a validating `FilterRegistration` element filter alongside the existing `tx/` filters in `TransactionManager`, per `docs/02-crdt-registry-pubsub.md`
+- [x] **RIMPL-04**: Accepted registrations are persisted in the consensus-visible `reg/` CRDT namespace with a validating `FilterRegistration` element filter alongside the existing `tx/` filters in `TransactionManager`, per `docs/02-crdt-registry-pubsub.md`
 - [ ] **RIMPL-05**: A registration is broadcast on the main wallet's pubsub channel via `PubSubBroadcasterExt` so the main node's CRDT syncs the registration record without the child's private key
 - [ ] **RIMPL-06**: A main node can enumerate and read the child registrations naming it from CRDT state (discovery read path returning child address, main address, sequence, metadata)
-- [ ] **RIMPL-07**: Invalid registrations — bad child signature, malformed `main_address`, or non-monotonic `sequence` — are rejected by the validating filter and never persisted to `reg/`
+- [x] **RIMPL-07**: Invalid registrations — bad child signature, malformed `main_address`, or non-monotonic `sequence` — are rejected by the validating filter and never persisted to `reg/`
 
 ### Multi-Node Integration Test
 
@@ -63,16 +63,17 @@ Which phases cover which requirements. Populated during roadmap creation.
 | RIMPL-01 | Phase 4 | Complete |
 | RIMPL-02 | Phase 4 | Complete |
 | RIMPL-03 | Phase 4 | Complete |
-| RIMPL-04 | Phase 5 | Pending |
+| RIMPL-04 | Phase 5 | Complete |
 | RIMPL-05 | Phase 5 | Pending |
 | RIMPL-06 | Phase 5 | Pending |
-| RIMPL-07 | Phase 5 | Pending |
+| RIMPL-07 | Phase 5 | Complete |
 | TEST-01 | Phase 5 | Pending |
 | TEST-02 | Phase 5 | Pending |
 | TEST-03 | Phase 5 | Pending |
 | TEST-04 | Phase 5 | Pending |
 
 **Coverage:**
+
 - v1 requirements: 11 total
 - Mapped to phases: 11 ✓
 - Unmapped: 0

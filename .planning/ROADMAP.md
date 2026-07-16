@@ -63,7 +63,7 @@ Phase execution history archived at `.planning/milestones/v1.0-phases/`.
 
 **Wave 1** *(no dependencies)*
 
-- [ ] 05-01-PLAN.md — FilterRegistration Gate (d) + RegisterChild Auto-Derive: complete FilterRegistration with sequence monotonicity gate (d) + sequence > 0 check, RegisterChild 2-arg auto-derive overload delegating to 3-arg, fix Phase 4 advisory warnings (unchecked dynamic_pointer_cast + silent SerializeByteVector) in SendTransactionItem
+- [x] 05-01-PLAN.md — FilterRegistration Gate (d) + RegisterChild Auto-Derive: complete FilterRegistration with sequence monotonicity gate (d) + sequence > 0 check, RegisterChild 2-arg auto-derive overload delegating to 3-arg, fix Phase 4 advisory warnings (unchecked dynamic_pointer_cast + silent SerializeByteVector) in SendTransactionItem
 
 **Wave 2** *(depends on Wave 1)*
 

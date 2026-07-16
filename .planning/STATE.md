@@ -2,15 +2,16 @@
 gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: Registration Implementation
-status: ready_to_plan
-last_updated: "2026-07-16T19:16:35.957Z"
-last_activity: 2026-07-16 -- Phase 05 planning complete
+status: Ready to execute
+stopped_at: Completed 05-crdt-persistence-pubsub-integration-test-01-PLAN.md
+last_updated: "2026-07-16T20:13:04.179Z"
+last_activity: 2026-07-16
 progress:
   total_phases: 2
   completed_phases: 1
   total_plans: 5
-  completed_plans: 2
-  percent: 40
+  completed_plans: 3
+  percent: 50
 ---
 
 # Project State
@@ -20,12 +21,13 @@ progress:
 See: .planning/PROJECT.md (updated 2026-07-16)
 
 **Core value:** The design documents must map every child-wallet behavior — registration, discovery, funding, recovery, and consensus authority — onto concrete SuperGenius anchor points so a future implementation can proceed directly from the docs without re-deriving how the existing system works.
-**Current focus:** Phase 5 — crdt persistence, pubsub & integration test
+**Current focus:** Phase 05 — crdt-persistence-pubsub-integration-test
 
 ## Current Position
 
-Phase: 5
-Last activity: 2026-07-16 -- Phase 05 planning complete
+Phase: 05 (crdt-persistence-pubsub-integration-test) — EXECUTING
+Plan: 2 of 3
+Last activity: 2026-07-16
 
 Next: Phase 5 (crdt-persistence-pubsub-integration-test)
 
@@ -57,6 +59,7 @@ Next: Phase 5 (crdt-persistence-pubsub-integration-test)
 | Phase 03-discovery-rewards-lifecycle P02 | 6min | 2 tasks | 1 files |
 | Phase 04-registration-proto-transaction P01 | 5min | 3 tasks | 6 files |
 | Phase 04-registration-proto-transaction P02 | 12min | 3 tasks | 6 files |
+| Phase 05-crdt-persistence-pubsub-integration-test P01 | 11 min | 3 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -78,6 +81,10 @@ Recent decisions affecting current work:
 - [Phase 4 Plan 02]: Phase 4 FilterRegistration implements gates a-c (deserialization, signature, malformed address); sequence monotonicity gate deferred to Phase 5 per D-44
 - [Phase 4 debug]: ChildRegistrationEndToEnd runs for real (skip path removed) — E2E fixture runs io_context on a worker thread and boots TM with full_node=true (sanctioned isolated-boot path in CheckNonce); genesis registration nonce is 0 for a fresh account
 - [Phase 4 debug]: CRDTFixture assigns a unique libp2p port per instance (40001 + fixture_id % 1000) — never rebinds a fixed port across test fixtures
+- [Phase ?]: Gate (d) reads stored record via direct CRDT Get inside FilterRegistration per D-46
+- [Phase 05-crdt-persistence-pubsub-integration-test]: Gate (d) reads stored record via direct CRDT Get inside FilterRegistration per D-46
+- [Phase 05-crdt-persistence-pubsub-integration-test]: 2-arg overload chosen for RegisterChild auto-derive per D-47
+- [Phase 05-crdt-persistence-pubsub-integration-test]: Graceful skip on corrupt stored CRDT record in gate (d)
 
 ### Pending Todos
 
@@ -103,9 +110,9 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-07-16T08:40:07.719Z
-Stopped at: Phase 5 context gathered
-Resume file: .planning/phases/05-crdt-persistence-pubsub-integration-test/05-CONTEXT.md
+Last session: 2026-07-16T20:13:04.175Z
+Stopped at: Completed 05-crdt-persistence-pubsub-integration-test-01-PLAN.md
+Resume file: None
 
 ## Operator Next Steps
 
