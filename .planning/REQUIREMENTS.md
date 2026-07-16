@@ -21,10 +21,10 @@ Requirements for this milestone. Each maps to a roadmap phase.
 
 ### Multi-Node Integration Test
 
-- [ ] **TEST-01**: Test harness creates a genesis-authorized node plus two peer nodes on an isolated network (following the `multi_account_sync.cpp` `CreateNode` pattern), all reaching ready state
-- [ ] **TEST-02**: Test registers node B as a child of node A via the registration API and asserts the `RegistrationTx` is accepted and processed
-- [ ] **TEST-03**: Test asserts the registration propagates via CRDT/pubsub and node A discovers node B as its registered child (correct child address, main address, sequence)
-- [ ] **TEST-04**: Negative tests assert an invalid registration (tampered signature, replayed/non-monotonic sequence) is rejected and does not appear in node A's discovery view
+- [x] **TEST-01**: Test harness creates a genesis-authorized node plus two peer nodes on an isolated network (following the `multi_account_sync.cpp` `CreateNode` pattern), all reaching ready state
+- [x] **TEST-02**: Test registers node B as a child of node A via the registration API and asserts the `RegistrationTx` is accepted and processed
+- [x] **TEST-03**: Test asserts the registration propagates via CRDT/pubsub and node A discovers node B as its registered child (correct child address, main address, sequence)
+- [x] **TEST-04**: Negative tests assert an invalid registration (tampered signature, replayed/non-monotonic sequence) is rejected and does not appear in node A's discovery view
 
 ## v2 Requirements
 
@@ -67,10 +67,10 @@ Which phases cover which requirements. Populated during roadmap creation.
 | RIMPL-05 | Phase 5 | Complete |
 | RIMPL-06 | Phase 5 | Complete |
 | RIMPL-07 | Phase 5 | Complete |
-| TEST-01 | Phase 5 | Pending |
-| TEST-02 | Phase 5 | Pending |
-| TEST-03 | Phase 5 | Pending |
-| TEST-04 | Phase 5 | Pending |
+| TEST-01 | Phase 5 | Complete |
+| TEST-02 | Phase 5 | Complete |
+| TEST-03 | Phase 5 | Complete |
+| TEST-04 | Phase 5 | Complete |
 
 **Coverage:**
 

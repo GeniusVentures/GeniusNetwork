@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: Registration Implementation
-status: Ready to execute
-stopped_at: Completed 05-crdt-persistence-pubsub-integration-test-01-PLAN.md
-last_updated: "2026-07-16T20:39:01.863Z"
+status: Phase complete — ready for verification
+stopped_at: Completed 05-crdt-persistence-pubsub-integration-test-03-PLAN.md
+last_updated: "2026-07-16T20:59:51.678Z"
 last_activity: 2026-07-16
 progress:
   total_phases: 2
-  completed_phases: 1
+  completed_phases: 2
   total_plans: 5
-  completed_plans: 4
-  percent: 50
+  completed_plans: 5
+  percent: 100
 ---
 
 # Project State
@@ -61,6 +61,7 @@ Next: Phase 5 (crdt-persistence-pubsub-integration-test)
 | Phase 04-registration-proto-transaction P02 | 12min | 3 tasks | 6 files |
 | Phase 05-crdt-persistence-pubsub-integration-test P01 | 11 min | 3 tasks | 5 files |
 | Phase 05-crdt-persistence-pubsub-integration-test P02 | 13min | 2 tasks | 5 files |
+| Phase 05-crdt-persistence-pubsub-integration-test P03 | 8min | 3 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -90,6 +91,10 @@ Recent decisions affecting current work:
 - [Phase ?]: 05-02: CRDT scan pattern
 - [Phase ?]: 05-02: CID handler deserialization
 - [Phase ?]: 05-02: Void callback design
+- [Phase 05-03]: assertWaitForCondition used without bool capture — function returns void (Rule 1 fix from plan template)
+- [Phase 05-03]: Sub-case C non-monotonic test uses pipeline approach (RegisterChild API + pubsub wait) instead of plan's direct-filter-injection approach
+- [Phase 05-03]: Child node account accessed via public account_ member for signing test transactions
+- [Phase 05-03]: Reg_key format: /bc/0/reg/ + child_address — matches default network ID for integration test nodes
 
 ### Pending Todos
 
@@ -115,7 +120,7 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-07-16T20:39:01.859Z
+Last session: 2026-07-16T20:59:51.674Z
 Stopped at: Completed 05-crdt-persistence-pubsub-integration-test-01-PLAN.md
 Resume file: None
 
