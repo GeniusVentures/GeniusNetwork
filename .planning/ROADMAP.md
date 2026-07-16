@@ -59,7 +59,19 @@ Phase execution history archived at `.planning/milestones/v1.0-phases/`.
   3. A main node enumerates and reads the child registrations naming it via a CRDT `reg/` scan or direct key lookup — returning child address, main address, sequence, and metadata for each discovered registration (RIMPL-06 read path, observable via an `EXPECT_TRUE` on a `GetRegistrationsForMain(main_addr)` helper in the integration test).
   4. Multi-node GTest integration test (`SuperGenius/test/src/multiaccount/regtest/child_registration.cpp`, following the `multi_account_sync.cpp` `CreateNode` pattern: genesis-authorized node A + peer node B on an isolated network) asserts that (a) node B's `RegistrationTx` naming node A as main is accepted and processed (TEST-02), (b) the registration propagates via CRDT/pubsub and node A discovers node B as its registered child with correct addresses/sequence (TEST-03), and (c) invalid registrations — tampered child signature, malformed `main_address`, and replayed or non-monotonic `sequence` — are rejected by `FilterRegistration` and never appear in node A's discovery view (TEST-04).
 
-**Plans:** TBD
+**Plans:** 3 plans
+
+**Wave 1** *(no dependencies)*
+
+- [ ] 05-01-PLAN.md — FilterRegistration Gate (d) + RegisterChild Auto-Derive: complete FilterRegistration with sequence monotonicity gate (d) + sequence > 0 check, RegisterChild 2-arg auto-derive overload delegating to 3-arg, fix Phase 4 advisory warnings (unchecked dynamic_pointer_cast + silent SerializeByteVector) in SendTransactionItem
+
+**Wave 2** *(depends on Wave 1)*
+
+- [ ] 05-02-PLAN.md — Discovery Read Path + PubSub CID Handler: RegistrationDiscoveryEntry struct + GetRegistrationsForMain CRDT scan, GeniusNode wrappers, CID notification handler (reg/ NewElementCallback → AddListenTopic follow)
+
+**Wave 3** *(depends on Waves 1-2)*
+
+- [ ] 05-03-PLAN.md — Multi-Node Integration Test: 3-node fixture (genesis + main A + child B), positive test cases (TEST-02 register + TEST-03 discover), negative test cases (TEST-04 tampered signature / malformed main_address / non-monotonic sequence rejected)
 
 > **Test scaffold reference:** The integration test harness follows `SuperGenius/test/src/multiaccount/multi_account_sync.cpp`. Key patterns: `CreateNode(self_addr, dev_addr, token, id, /*isFullNode*/false, /*isProcessor*/false, /*isGenesisAuthorized*/true)` for the genesis node, `CreateNode(self_addr, dev_addr, token, id)` for peer nodes; `WaitForNodeSync(node, timeout)` for CRDT ready-state; test directories isolated via `FILE_PREFIX`-based `boost::dll::program_location()` subdirectories. Registration tests add `RegistrationTransaction::New()` + `MakeSignature` + `SendTransactionItem` onto the existing scaffold.
 
