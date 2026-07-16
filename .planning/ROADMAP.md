@@ -59,7 +59,7 @@ Phase execution history archived at `.planning/milestones/v1.0-phases/`.
   3. A main node enumerates and reads the child registrations naming it via a CRDT `reg/` scan or direct key lookup — returning child address, main address, sequence, and metadata for each discovered registration (RIMPL-06 read path, observable via an `EXPECT_TRUE` on a `GetRegistrationsForMain(main_addr)` helper in the integration test).
   4. Multi-node GTest integration test (`SuperGenius/test/src/multiaccount/regtest/child_registration.cpp`, following the `multi_account_sync.cpp` `CreateNode` pattern: genesis-authorized node A + peer node B on an isolated network) asserts that (a) node B's `RegistrationTx` naming node A as main is accepted and processed (TEST-02), (b) the registration propagates via CRDT/pubsub and node A discovers node B as its registered child with correct addresses/sequence (TEST-03), and (c) invalid registrations — tampered child signature, malformed `main_address`, and replayed or non-monotonic `sequence` — are rejected by `FilterRegistration` and never appear in node A's discovery view (TEST-04).
 
-**Plans:** 3 plans
+**Plans:** 2/3 plans executed
 
 **Wave 1** *(no dependencies)*
 
@@ -67,7 +67,7 @@ Phase execution history archived at `.planning/milestones/v1.0-phases/`.
 
 **Wave 2** *(depends on Wave 1)*
 
-- [ ] 05-02-PLAN.md — Discovery Read Path + PubSub CID Handler: RegistrationDiscoveryEntry struct + GetRegistrationsForMain CRDT scan, GeniusNode wrappers, CID notification handler (reg/ NewElementCallback → AddListenTopic follow)
+- [x] 05-02-PLAN.md — Discovery Read Path + PubSub CID Handler: RegistrationDiscoveryEntry struct + GetRegistrationsForMain CRDT scan, GeniusNode wrappers, CID notification handler (reg/ NewElementCallback → AddListenTopic follow)
 
 **Wave 3** *(depends on Waves 1-2)*
 
@@ -85,4 +85,4 @@ Phase execution history archived at `.planning/milestones/v1.0-phases/`.
 | 2. CRDT Persistence, PubSub & Consensus Authority | v1.0 | 2/2 | Complete | 2026-07-14 |
 | 3. Discovery, Rewards & Lifecycle | v1.0 | 2/2 | Complete | 2026-07-14 |
 | 4. Registration Proto & Transaction | v2.0 | 2/2 | Complete    | 2026-07-16 |
-| 5. CRDT Persistence, PubSub & Integration Test | v2.0 | 0/0 | Not started | — |
+| 5. CRDT Persistence, PubSub & Integration Test | v2.0 | 2/3 | In Progress|  |

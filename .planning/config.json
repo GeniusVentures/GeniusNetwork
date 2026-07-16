@@ -25,7 +25,7 @@
     "tdd_mode": false,
     "human_verify_mode": "end-of-phase",
     "auto_advance": true,
-    "_auto_chain_active": true,
+    "_auto_chain_active": false,
     "node_repair": true,
     "node_repair_budget": 2,
     "ui_phase": true,

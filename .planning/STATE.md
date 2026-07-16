@@ -4,13 +4,13 @@ milestone: v2.0
 milestone_name: Registration Implementation
 status: Ready to execute
 stopped_at: Completed 05-crdt-persistence-pubsub-integration-test-01-PLAN.md
-last_updated: "2026-07-16T20:13:04.179Z"
+last_updated: "2026-07-16T20:39:01.863Z"
 last_activity: 2026-07-16
 progress:
   total_phases: 2
   completed_phases: 1
   total_plans: 5
-  completed_plans: 3
+  completed_plans: 4
   percent: 50
 ---
 
@@ -26,7 +26,7 @@ See: .planning/PROJECT.md (updated 2026-07-16)
 ## Current Position
 
 Phase: 05 (crdt-persistence-pubsub-integration-test) — EXECUTING
-Plan: 2 of 3
+Plan: 3 of 3
 Last activity: 2026-07-16
 
 Next: Phase 5 (crdt-persistence-pubsub-integration-test)
@@ -60,6 +60,7 @@ Next: Phase 5 (crdt-persistence-pubsub-integration-test)
 | Phase 04-registration-proto-transaction P01 | 5min | 3 tasks | 6 files |
 | Phase 04-registration-proto-transaction P02 | 12min | 3 tasks | 6 files |
 | Phase 05-crdt-persistence-pubsub-integration-test P01 | 11 min | 3 tasks | 5 files |
+| Phase 05-crdt-persistence-pubsub-integration-test P02 | 13min | 2 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -85,6 +86,10 @@ Recent decisions affecting current work:
 - [Phase 05-crdt-persistence-pubsub-integration-test]: Gate (d) reads stored record via direct CRDT Get inside FilterRegistration per D-46
 - [Phase 05-crdt-persistence-pubsub-integration-test]: 2-arg overload chosen for RegisterChild auto-derive per D-47
 - [Phase 05-crdt-persistence-pubsub-integration-test]: Graceful skip on corrupt stored CRDT record in gate (d)
+- [Phase ?]: 05-02: RegistrationDiscoveryEntry struct at namespace sgns scope
+- [Phase ?]: 05-02: CRDT scan pattern
+- [Phase ?]: 05-02: CID handler deserialization
+- [Phase ?]: 05-02: Void callback design
 
 ### Pending Todos
 
@@ -110,7 +115,7 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-07-16T20:13:04.175Z
+Last session: 2026-07-16T20:39:01.859Z
 Stopped at: Completed 05-crdt-persistence-pubsub-integration-test-01-PLAN.md
 Resume file: None
 
