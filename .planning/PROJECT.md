@@ -34,7 +34,7 @@ The design documents must map every child-wallet behavior — registration, disc
 
 <!-- v2.0 implementation milestone scope. -->
 
-- [ ] Child-wallet registration implemented in SuperGenius per `docs/registration-protocol.md` (RegistrationTx proto, C++ transaction class, child-signed-only protocol, sequence numbering)
+- ✓ Child-wallet registration implemented in SuperGenius per `docs/registration-protocol.md` (RegistrationTx proto, C++ transaction class, child-signed-only protocol, sequence numbering) — Validated in Phase 4: Registration Proto & Transaction (RIMPL-01..03; E2E GTest proves child creates, signs, and submits through TransactionManager)
 - [ ] Registration persisted in consensus-visible `reg/` CRDT namespace with validating element filter, broadcast on the main wallet's pubsub channel per `docs/02-crdt-registry-pubsub.md`
 - [ ] Multi-node integration test: genesis node + two nodes; one node registers as a child of the other; registration propagates and is discoverable from the main node
 
@@ -112,4 +112,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-07-15 after starting milestone v2.0 Registration Implementation*
+*Last updated: 2026-07-16 after Phase 4 (Registration Proto & Transaction) completion — RegistrationTx proto, RegistrationTransaction class, and child-signed submission path shipped with passing E2E test*
