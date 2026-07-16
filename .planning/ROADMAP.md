@@ -59,7 +59,7 @@ Phase execution history archived at `.planning/milestones/v1.0-phases/`.
   3. A main node enumerates and reads the child registrations naming it via a CRDT `reg/` scan or direct key lookup — returning child address, main address, sequence, and metadata for each discovered registration (RIMPL-06 read path, observable via an `EXPECT_TRUE` on a `GetRegistrationsForMain(main_addr)` helper in the integration test).
   4. Multi-node GTest integration test (`SuperGenius/test/src/multiaccount/regtest/child_registration.cpp`, following the `multi_account_sync.cpp` `CreateNode` pattern: genesis-authorized node A + peer node B on an isolated network) asserts that (a) node B's `RegistrationTx` naming node A as main is accepted and processed (TEST-02), (b) the registration propagates via CRDT/pubsub and node A discovers node B as its registered child with correct addresses/sequence (TEST-03), and (c) invalid registrations — tampered child signature, malformed `main_address`, and replayed or non-monotonic `sequence` — are rejected by `FilterRegistration` and never appear in node A's discovery view (TEST-04).
 
-**Plans:** 3/3 plans complete
+**Plans:** 3/4 plans complete
 
 **Wave 1** *(no dependencies)*
 
@@ -73,6 +73,10 @@ Phase execution history archived at `.planning/milestones/v1.0-phases/`.
 
 - [x] 05-03-PLAN.md — Multi-Node Integration Test: 3-node fixture (genesis + main A + child B), positive test cases (TEST-02 register + TEST-03 discover), negative test cases (TEST-04 tampered signature / malformed main_address / non-monotonic sequence rejected)
 
+**Wave 4** *(gap closure — depends on Waves 1-3)*
+
+- [ ] 05-04-PLAN.md — Gap Closure: Compile Blockers + Signature Test Hardening: add `friend class RegTestAccess;` (CR-01) and `friend class ChildRegistrationIntegrationTest;` (CR-02) friend declarations, replace flaky byte-offset signature tampering with deterministic proto-level DAG signature tampering (WR-02/WR-03), build-and-run verification checkpoint
+
 > **Test scaffold reference:** The integration test harness follows `SuperGenius/test/src/multiaccount/multi_account_sync.cpp`. Key patterns: `CreateNode(self_addr, dev_addr, token, id, /*isFullNode*/false, /*isProcessor*/false, /*isGenesisAuthorized*/true)` for the genesis node, `CreateNode(self_addr, dev_addr, token, id)` for peer nodes; `WaitForNodeSync(node, timeout)` for CRDT ready-state; test directories isolated via `FILE_PREFIX`-based `boost::dll::program_location()` subdirectories. Registration tests add `RegistrationTransaction::New()` + `MakeSignature` + `SendTransactionItem` onto the existing scaffold.
 
 > **Out of scope for v2.0:** Consensus authority rules (CONS-01..06 `CheckParentChildAuthority` gate) — designed in v1.0 Phase 2, implementation deferred to a later milestone. RegistrationTx flows through full consensus (`sgns.nonce.v1` subject, `OnConsensusCertificate` → CONFIRMED) but the parent-child authority gate is NOT installed in `ValidateTransactionForConsensus` in this milestone.
@@ -85,4 +89,4 @@ Phase execution history archived at `.planning/milestones/v1.0-phases/`.
 | 2. CRDT Persistence, PubSub & Consensus Authority | v1.0 | 2/2 | Complete | 2026-07-14 |
 | 3. Discovery, Rewards & Lifecycle | v1.0 | 2/2 | Complete | 2026-07-14 |
 | 4. Registration Proto & Transaction | v2.0 | 2/2 | Complete    | 2026-07-16 |
-| 5. CRDT Persistence, PubSub & Integration Test | v2.0 | 3/3 | Complete   | 2026-07-16 |
+| 5. CRDT Persistence, PubSub & Integration Test | v2.0 | 3/4 | Gap Closure | 2026-07-16 |
