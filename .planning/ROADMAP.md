@@ -72,5 +72,5 @@ Phase execution history archived at `.planning/milestones/v1.0-phases/`.
 | 1. Child Identity & Registration Protocol | v1.0 | 2/2 | Complete | 2026-07-13 |
 | 2. CRDT Persistence, PubSub & Consensus Authority | v1.0 | 2/2 | Complete | 2026-07-14 |
 | 3. Discovery, Rewards & Lifecycle | v1.0 | 2/2 | Complete | 2026-07-14 |
-| 4. Registration Proto & Transaction | v2.0 | 2/2 | Complete   | 2026-07-15 |
+| 4. Registration Proto & Transaction | v2.0 | 2/2 | Complete    | 2026-07-16 |
 | 5. CRDT Persistence, PubSub & Integration Test | v2.0 | 0/0 | Not started | — |
