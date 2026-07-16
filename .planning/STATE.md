@@ -18,7 +18,7 @@ stopped_at: Phase 04 complete (2/2) — ready to discuss Phase 5
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-07-15)
+See: .planning/PROJECT.md (updated 2026-07-16)
 
 **Core value:** The design documents must map every child-wallet behavior — registration, discovery, funding, recovery, and consensus authority — onto concrete SuperGenius anchor points so a future implementation can proceed directly from the docs without re-deriving how the existing system works.
 **Current focus:** Phase 5 — crdt persistence, pubsub & integration test
@@ -77,7 +77,8 @@ Recent decisions affecting current work:
 - [Phase 4 Plan 02]: FilterRegistration is private (mirrors FilterTransaction/FilterProof convention); tested via friend accessor class RegistrationE2ETestAccess
 - [Phase 4 Plan 02]: reg/ CRDT path diversion implemented as type-check in SendTransactionItem — RegistrationTx writes to GetBlockChainBase()+"reg/"+child_addr, never tx/ namespace
 - [Phase 4 Plan 02]: Phase 4 FilterRegistration implements gates a-c (deserialization, signature, malformed address); sequence monotonicity gate deferred to Phase 5 per D-44
-- [Phase 4 Plan 02]: E2E test skips ChildRegistrationEndToEnd when TM can't reach READY (isolated test environment); FilterRegistration tests validate independently
+- [Phase 4 debug]: ChildRegistrationEndToEnd runs for real (skip path removed) — E2E fixture runs io_context on a worker thread and boots TM with full_node=true (sanctioned isolated-boot path in CheckNonce); genesis registration nonce is 0 for a fresh account
+- [Phase 4 debug]: CRDTFixture assigns a unique libp2p port per instance (40001 + fixture_id % 1000) — never rebinds a fixed port across test fixtures
 
 ### Pending Todos
 
@@ -85,8 +86,12 @@ None yet.
 
 ### Blockers/Concerns
 
+- ⚠ Verification debt: 04-HUMAN-UAT.md has 2 pending items (full transaction-suite regression run, clean rebuild of genius_node_test) — review via `/gsd-audit-uat`
+- ⚠ Security gate: security_enforcement is on and Phase 4 has no SECURITY.md — run `/gsd-secure-phase 4` before advancing
+- ⚠ E2E test runtime ~121s per test, bottlenecked by GossipPubSub internal address-refresh/connection-manager timeouts (not port rebinding) — candidate for test-infra tuning in Phase 5
+- ⚠ Open (code review, advisory): Phase 04 review found 3 warnings (unchecked dynamic_pointer_cast in SendTransactionItem diversion, silent SerializeByteVector failure, byte-offset signature tamper test) — see 04-REVIEW.md; fix via `/gsd-code-review 04 --fix`
 - ⚠ Open (code review, advisory): Phase 03 code review flagged 1 critical finding (child-address proto field mapping) — see 03-REVIEW.md; resolve before implementation via `/gsd-code-review 03 --fix`.
-- ⚠ RegistrationTx must NOT use `GetTransactionPath()` (which returns `"tx/" + hash`) — uses `GetBlockChainBase() + "reg/" + child_addr` per the design docs. This is a known divergence from the existing `SendTransactionItem` path that must be handled explicitly in the Phase 5 plan.
+- ⚠ RegistrationTx must NOT use `GetTransactionPath()` (which returns `"tx/" + hash`) — uses `GetBlockChainBase() + "reg/" + child_addr` per the design docs. Implemented in Phase 4 (SendTransactionItem type-check diversion); Phase 5 read path must use the same `reg/` namespace.
 - ⚠ CID-only pubsub payload constraint (D-18): pubsub notification carries RegistrationTx CID, NOT full protobuf. Forces CRDT resolution for full content.
 
 ## Deferred Items
@@ -99,10 +104,11 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-07-15T23:05:07.068Z
-Stopped at: Phase 04 context gathered
-Resume with: `/gsd-plan-phase 4`
+Last session: 2026-07-16T02:30:00.000Z
+Stopped at: Phase 04 complete (2/2 plans, verification approved), ready to discuss Phase 5
+Resume file: None
 
 ## Operator Next Steps
 
-- Plan Phase 4 with `/gsd-plan-phase 4`
+- Discuss Phase 5 with `/gsd-discuss-phase 5`
+- Optional before advancing: `/gsd-secure-phase 4` (security gate), `/gsd-code-review 04 --fix` (3 advisory warnings)
