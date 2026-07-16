@@ -115,6 +115,21 @@ None — all implementations are fully wired. The test cases in registration_tra
 - RegistrationDiscoveryEntry struct is ready for integration test assertions (checking child_addr, main_addr, sequence, metadata in propagation tests)
 - Ready for Plan 03 (multi-node integration test: genesis + main A + child B)
 
+## Self-Check: PASSED
+
+- ✅ SUMMARY.md exists at `.planning/phases/05-crdt-persistence-pubsub-integration-test/05-02-SUMMARY.md`
+- ✅ Submodule commits verified: `2e105f97`, `f1452540`, `e2451ffb`, `9adfc134`
+- ✅ Parent repo commits verified: `ce91866` (SUMMARY.md), `745c94b` (state files)
+- ✅ `RegistrationDiscoveryEntry` struct declared in TransactionManager.hpp at namespace sgns
+- ✅ `TransactionManager::GetRegistrationsForMain` implemented with QueryKeyValues scan
+- ✅ `GeniusNode::GetRegistrationsForMain` wrapper with TRANSACTIONS_NOT_READY guard
+- ✅ `RegElementCallback` registered via RegisterNewElementCallback for reg/ namespace
+- ✅ `globaldb_m->AddListenTopic(child_addr)` in RegElementCallback when main_address matches
+- ✅ Destructor unregisters both callback and filter for reg/ pattern
+- ✅ STATE.md updated with position, decisions, session
+- ✅ ROADMAP.md updated with plan progress
+- ✅ REQUIREMENTS.md updated (RIMPL-05, RIMPL-06 marked complete)
+
 ---
 *Phase: 05-crdt-persistence-pubsub-integration-test*
 *Plan: 02*
