@@ -41,8 +41,54 @@
 - Sessions: 3 phase cycles over 2 days
 - Notable: coarse granularity (3 phases, 2 plans each) fit a docs-only milestone well
 
+## Milestone: v2.0 — Registration Implementation
+
+**Shipped:** 2026-07-17
+**Phases:** 2 | **Plans:** 6
+
+### What Was Built
+
+- `RegistrationTx`/`RegistrationMetadata` proto messages (additive) + `registration = 8` oneof arm; `RegistrationTransaction` C++ subclass with factory, serialization round-trip, deserializer registration — Phase 4
+- `RegisterChild` two-layer API (TransactionManager + GeniusNode) with sequence auto-derive overload; `reg/{child_addr}` CRDT path diversion in `SendTransactionItem` — Phases 4-5
+- Four-gate `FilterRegistration` element filter (deserialization, child signature, well-formed address, sequence monotonicity via direct CRDT Get) — Phases 4-5
+- Discovery read path: `GetRegistrationsForMain` CRDT scan + `RegistrationDiscoveryEntry`; `RegElementCallback` CID notification handler with `AddListenTopic` auto-follow — Phase 5
+- 3-node integration test (`child_registration_test`): register, discover, reject-invalid — all passing alongside 18 Phase 4 regression tests — Phase 5
+
+### What Worked
+
+- v1.0 design docs paid off exactly as intended — implementation proceeded directly from `docs/registration-protocol.md`/`docs/02-crdt-registry-pubsub.md` anchor points with no re-derivation
+- Mirroring existing conventions (TransferTransaction subclass pattern, FilterTransaction do-while(0) tombstone pattern, friend accessor test classes) kept changes idiomatic and reviewable
+- Gap-closure plan (05-04) inserted cleanly to fix compile blockers and flaky tests without disturbing completed waves
+- Phase 4 advisory code-review warnings were folded into the next phase's first plan (05-01) instead of a separate fix cycle
+
+### What Was Inefficient
+
+- Integration test compile blockers (friend-declaration namespace mismatch, wrong proto include paths) only surfaced at the 05-04 build checkpoint — earlier build verification per wave would have caught them sooner
+- E2E tests run ~121s each due to GossipPubSub internal timeouts — test-infra tuning deferred
+- Phase 04 human-verification items (regression run, clean rebuild) lingered until milestone close before being confirmed
+
+### Patterns Established
+
+- CRDT path diversion by transaction type-check in `SendTransactionItem` (reg/ never lands in tx/)
+- Element-filter sequence gate: CRDT Get + DeSerialize + dynamic_pointer_cast + compare
+- Two-layer API convention (TM method + GeniusNode thin wrapper) extended to registration read/write paths
+- Test-access pattern: `XxxTestAccess` friend classes inside `namespace sgns` with static accessors (avoids namespace coupling)
+- Proto-level DAG signature tampering for deterministic negative tests (never byte-offset)
+
+### Key Lessons
+
+- Ship design docs first, then implement: the anchor-point discipline in v1.0 made v2.0 execution near-mechanical (6 plans, ~2,235 LOC, 2 days)
+- Add a build-and-run checkpoint per wave for C++ test targets — static inspection misses namespace/include/link issues
+- Close human-verification items at phase end, not milestone end
+
+### Cost Observations
+
+- Sessions: 2 phase cycles + 1 debug session + gap-closure plan over 2 days
+- Notable: plan durations 5-13 min each; longest cost was the 26-min integration test execution in 05-04
+
 ## Cross-Milestone Trends
 
 | Milestone | Phases | Plans | Duration | Notes |
 |-----------|--------|-------|----------|-------|
 | v1.0 Child Wallet Design | 3 | 6 | 2 days | Design docs only |
+| v2.0 Registration Implementation | 2 | 6 | 2 days | First implementation slice; +2,235/-47 LOC C++ |

@@ -1,5 +1,20 @@
 # Milestones
 
+## v2.0 Registration Implementation (Shipped: 2026-07-17)
+
+**Phases completed:** 2 phases, 6 plans, 14 tasks
+
+**Key accomplishments:**
+
+- Additive RegistrationTx/RegistrationMetadata proto messages, registration=8 oneof arm, RegistrationTransaction C++ subclass, and passing GTest unit test — proven serialization round-trip from wire bytes through factory to embedded transaction and back.
+- Full vertical slice: RegistrationTransaction wired into TransactionManager deserializer dispatch, reg/{child_addr} CRDT path diversion, FilterRegistration element filter with Phase 4 gates, GeniusNode wrapper, and end-to-end GTest proving child-signed registration through the full TM pipeline.
+- FilterRegistration sequence monotonicity gate, RegisterChild auto-derive overload, and Phase 4 advisory fixes in the SendTransactionItem reg/ diversion path
+- GetRegistrationsForMain CRDT scan with RegistrationDiscoveryEntry struct, GeniusNode two-layer wrapper, and RegElementCallback CID notification handler that auto-follows discovered child channels via AddListenTopic
+- Capstone integration test proving child-wallet registration propagates through CRDT/pubsub and is discovered by the main wallet, with negative rejection at the filter level
+- Two friend declarations and proto-level signature tampering unblock the multi-node integration test build; all 3 TEST_F cases pass alongside 18 Phase 4 regression tests.
+
+---
+
 ## v1.0 Child Wallet Design (Shipped: 2026-07-15)
 
 **Phases completed:** 3 phases, 6 plans, 13 tasks
