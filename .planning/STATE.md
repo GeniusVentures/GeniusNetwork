@@ -1,12 +1,16 @@
 ---
+gsd_state_version: 1.0
 milestone: v2.1
-milestone_name: "Main Wallet Child Balance Query"
-status: planning
+milestone_name: Main Wallet Child Balance Query
+status: Defining requirements
+last_updated: "2026-07-17T21:05:36.118Z"
+last_activity: 2026-07-17 — Milestone v2.1 started
 progress:
-  phases_completed: 0
-  phases_total: 1
-  requirements_completed: 0
-  requirements_total: 2
+  total_phases: 1
+  completed_phases: 0
+  total_plans: 0
+  completed_plans: 0
+  percent: 0
 ---
 
 ## Current Position
