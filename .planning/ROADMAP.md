@@ -8,7 +8,7 @@
 
 | # | Phase | Goal | Requirements | Success Criteria |
 |---|-------|------|--------------|------------------|
-| 1 | Child Balance Query | 2/2 | Complete   | 2026-07-17 |
+| 1 | Child Balance Query | 2/2 | Complete    | 2026-07-17 |
 
 ## Phase 1: Child Balance Query
 
