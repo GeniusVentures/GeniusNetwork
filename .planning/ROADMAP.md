@@ -15,10 +15,12 @@
 **Goal:** Allow the main wallet to query a registered child wallet's child token balance from locally-synced CRDT UTXO data, and prove it works with a multi-node integration test.
 
 **Requirements:**
+
 - **BALT-01**: `GeniusNode::GetChildBalance(child_address, token_id)` wraps existing `UTXOManager::GetBalance(token_id, address)` to compute child token balance from synced CRDT
 - **INTG-01**: Multi-node integration test validates end-to-end balance query after registration and funding
 
 **Success Criteria:**
+
 1. `GeniusNode::GetChildBalance(child_address, token_id)` returns correct child token balance computed from locally-synced CRDT UTXOs
 2. Multi-node integration test passes: child registers with main, receives child token funds, main calls GetChildBalance, returned balance matches the funded amount
 3. All existing registration tests (unit + multi-node integration) continue to pass — no regressions
@@ -26,10 +28,16 @@
 **Plans:** 2 plans
 
 Plans:
+**Wave 1**
+
 - [ ] 01-01-PLAN.md — Add GetChildBalance overloads (GeniusNode.hpp/.cpp), mirroring the GetBalance family per D-54–D-60
+
+**Wave 2** *(blocked on Wave 1 completion)*
+
 - [ ] 01-02-PLAN.md — Add multi-node integration test (child_registration.cpp) proving BALT-01 end-to-end per D-63–D-65
 
 **Depends on:**
+
 - v2.0 registration infrastructure (RegistrationTransaction, reg/ CRDT filter, D-49 RegElementCallback pubsub follow)
 - Existing `UTXOManager::GetBalance(token_id, address)` pattern in `GeniusNode`
 
