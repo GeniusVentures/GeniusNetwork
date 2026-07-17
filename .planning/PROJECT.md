@@ -26,11 +26,12 @@ The main wallet must be able to discover, monitor, and manage registered child w
 - ✓ Registration sequence numbering and monotonicity enforcement — v2.0
 - ✓ PubSub broadcast and CRDT sync (reg/ namespace, D-49 RegElementCallback) — v2.0
 - ✓ GetRegistrationsForMain — scans reg/ CRDT and returns discovered children — v2.0
+- ✓ Main wallet queries child token balance from synced CRDT UTXOs (`GeniusNode::GetChildBalance`) — v2.1 Phase 1
+- ✓ Integration test validates balance query after registration + funding (`MainQueriesChildBalance`) — v2.1 Phase 1
 
 ### Active
 
-- [ ] Main wallet queries child token balance from synced CRDT UTXOs
-- [ ] Integration test validates balance query after registration + funding
+None — all v2.1 requirements validated.
 
 ### Out of Scope
 
@@ -63,7 +64,7 @@ The main wallet must be able to discover, monitor, and manage registered child w
 | RegistrationTx as first-class transaction (D-06) | Reuses TransactionManager path identically to TransferTx | ✓ Good |
 | CRDT reg/ namespace (D-11/D-12) | Registration records in `/bc-{net}/reg/{child_addr}`, not `tx/` | ✓ Good |
 | D-49 main follows child's pubsub | RegElementCallback subscribes on reg/ delta arrival | ✓ Good |
-| Balance from synced CRDT (this milestone) | No direct query; use UTXOManager on locally-synced data | — Pending |
+| Balance from synced CRDT (this milestone) | No direct query; use UTXOManager on locally-synced data | ✓ Good |
 
 ## Evolution
 
@@ -83,4 +84,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-07-17 after milestone v2.1 initiation*
+*Last updated: 2026-07-17 after Phase 1 (child-balance-query) completion*
