@@ -1,28 +1,24 @@
 ---
 gsd_state_version: 1.0
-milestone: v2.1
-milestone_name: Main Wallet Child Balance Query
-current_phase: 1
-status: Awaiting next milestone
-stopped_at: Completed 01-02-PLAN.md
-last_updated: "2026-07-17T23:44:24.807Z"
+milestone: v2.2
+milestone_name: GeniusSDK Child Wallet Interfaces
+status: planning
+last_updated: "2026-07-17T23:59:39.986Z"
 last_activity: 2026-07-17
-last_activity_desc: Milestone v2.1 completed and archived
 progress:
-  total_phases: 1
-  completed_phases: 1
-  total_plans: 2
-  completed_plans: 2
-  percent: 100
-current_phase_name: child-balance-query
+  total_phases: 0
+  completed_phases: 0
+  total_plans: 0
+  completed_plans: 0
+  percent: 0
 ---
 
 ## Current Position
 
-Phase: Milestone v2.1 complete
+Phase: Not started (defining requirements)
 Plan: —
-Status: Awaiting next milestone
-Last activity: 2026-07-17 — Milestone v2.1 completed and archived
+Status: Defining requirements
+Last activity: 2026-07-17 — Milestone v2.2 started
 
 ## Project Reference
 

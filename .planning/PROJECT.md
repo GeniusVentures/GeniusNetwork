@@ -12,7 +12,17 @@ The main wallet must be able to discover, monitor, and manage registered child w
 
 **Shipped:** v2.1 Main Wallet Child Balance Query (2026-07-17) — main wallet can now read a registered child wallet's token balance from locally-synced CRDT UTXO data via `GeniusNode::GetChildBalance`, proven end-to-end by a multi-node integration test (child mints → CRDT sync → main queries).
 
-**Next milestone:** Not yet defined — run `/gsd-new-milestone`. Candidates from the deferred backlog below: gRPC/SDK exposure of the balance query (API-01/API-02), multi-token balance (TOK-01), or the full monitoring dashboard (MON-01/MON-02).
+## Current Milestone: v2.2 GeniusSDK Child Wallet Interfaces
+
+**Goal:** Expose `GeniusNode::RegisterChild`, `GetRegistrationsForMain`, and `GetChildBalance` through the public C SDK (`GeniusSDK.h`/`.cpp`) so external games/apps can register a child wallet and query its balance without linking SuperGenius directly.
+
+**Target features:**
+- SDK call to register this node as a child wallet under a main wallet address (wraps `GeniusNode::RegisterChild`, auto-derived sequence)
+- SDK call for a main-side caller to enumerate its registered children (wraps `GeniusNode::GetRegistrationsForMain`)
+- SDK call to query a child wallet's balance (wraps `GeniusNode::GetChildBalance`) — fulfills deferred backlog item API-02
+- `GeniusRegistrationMetadata` C struct mirroring the proto's 4 fields (game_id, publisher_id, dev_wallet, peers_cut) for the registration call
+
+**Explicitly out of scope this milestone:** gRPC endpoint (API-01, deferred further), GeniusWallet Flutter UI wiring, new proto messages.
 
 ## Requirements
 
@@ -28,12 +38,14 @@ The main wallet must be able to discover, monitor, and manage registered child w
 
 ### Active
 
-None — awaiting next milestone's requirements (`/gsd-new-milestone`).
+- [ ] GeniusSDK wrapper exposes child registration (RegisterChild) — v2.2
+- [ ] GeniusSDK wrapper exposes child discovery (GetRegistrationsForMain) — v2.2
+- [ ] GeniusSDK wrapper exposes child balance query (GetChildBalance) — v2.2, fulfills API-02
 
-### Deferred (candidates for next milestone)
+### Deferred (candidates for future milestones)
 
 - MON-01/MON-02: Full monitoring dashboard — per-child balance, all assets/tokens, activity history, escrow status, lifecycle monitoring
-- API-01/API-02: gRPC endpoint + GeniusSDK wrapper exposing child balance query to external callers
+- API-01: gRPC endpoint exposing child registration/balance to external callers (SDK wrapper covered in v2.2 instead)
 - TOK-01: Multi-token balance query (GNUS, child tokens, NFTs) — v2.1 covered child token only
 
 ### Out of Scope
@@ -90,4 +102,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-07-17 after v2.1 milestone completion*
+*Last updated: 2026-07-17 after starting v2.2 milestone*
