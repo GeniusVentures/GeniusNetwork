@@ -1,43 +1,39 @@
-# Roadmap: GNUS Child Wallet
+# Roadmap: GNUS Child Wallet v2.1
 
-## Milestones
+**Milestone:** v2.1 Main Wallet Child Balance Query
+**Created:** 2026-07-17
+**Phase numbering:** Start at Phase 1 (first GSD-tracked milestone)
 
-- ✅ **v1.0 Child Wallet Design** — Phases 1-3 (shipped 2026-07-15)
-- ✅ **v2.0 Registration Implementation** — Phases 4-5 (shipped 2026-07-17)
-- 📋 **Next milestone** — to be defined via `/gsd-new-milestone`
+## Phase Overview
 
-## Phases
+| # | Phase | Goal | Requirements | Success Criteria |
+|---|-------|------|--------------|------------------|
+| 1 | Child Balance Query | Main wallet queries child token balance from synced CRDT UTXOs | BALT-01, INTG-01 | 3 |
 
-<details>
-<summary>✅ v1.0 Child Wallet Design (Phases 1-3) — SHIPPED 2026-07-15</summary>
+## Phase 1: Child Balance Query
 
-- [x] Phase 1: Child Identity & Registration Protocol (2/2 plans) — completed 2026-07-13
-- [x] Phase 2: CRDT Persistence, PubSub & Consensus Authority (2/2 plans) — completed 2026-07-14
-- [x] Phase 3: Discovery, Rewards & Lifecycle (2/2 plans) — completed 2026-07-14
+**Goal:** Allow the main wallet to query a registered child wallet's child token balance from locally-synced CRDT UTXO data, and prove it works with a multi-node integration test.
 
-Full detail archived at `.planning/milestones/v1.0-ROADMAP.md`.
-Phase execution history archived at `.planning/milestones/v1.0-phases/`.
+**Requirements:**
+- **BALT-01**: `GeniusNode::GetChildBalance(child_address, token_id)` wraps existing `UTXOManager::GetBalance(token_id, address)` to compute child token balance from synced CRDT
+- **INTG-01**: Multi-node integration test validates end-to-end balance query after registration and funding
 
-</details>
+**Success Criteria:**
+1. `GeniusNode::GetChildBalance(child_address, token_id)` returns correct child token balance computed from locally-synced CRDT UTXOs
+2. Multi-node integration test passes: child registers with main, receives child token funds, main calls GetChildBalance, returned balance matches the funded amount
+3. All existing registration tests (unit + multi-node integration) continue to pass — no regressions
 
-<details>
-<summary>✅ v2.0 Registration Implementation (Phases 4-5) — SHIPPED 2026-07-17</summary>
+**Depends on:**
+- v2.0 registration infrastructure (RegistrationTransaction, reg/ CRDT filter, D-49 RegElementCallback pubsub follow)
+- Existing `UTXOManager::GetBalance(token_id, address)` pattern in `GeniusNode`
 
-- [x] Phase 4: Registration Proto & Transaction (2/2 plans) — completed 2026-07-16
-- [x] Phase 5: CRDT Persistence, PubSub & Integration Test (4/4 plans) — completed 2026-07-17
+### Implementation Notes
 
-Full detail archived at `.planning/milestones/v2.0-ROADMAP.md`.
-Requirements archived at `.planning/milestones/v2.0-REQUIREMENTS.md`.
-Phase execution history archived at `.planning/milestones/v2.0-phases/`.
+- **No new proto messages needed** — balance is computed in-memory from existing UTXO data synced via CRDT
+- **No gRPC endpoint** — node-internal only; API layer deferred
+- **Follow existing pattern**: `GeniusNode::GetBalance(token_id, address)` already delegates to `UTXOManager::GetBalance(token_id, address)` — `GetChildBalance` just targets a different address
+- **Integration test pattern**: Follow existing `child_registration.cpp` multi-node test structure — spin up 3 nodes, register child with main, fund child, query balance, assert
+- **CRDT sync is already active**: D-49 RegElementCallback subscribes main to child's pubsub topic on registration arrival, so child UTXOs are already syncing to main's local CRDT
 
-</details>
-
-## Progress
-
-| Phase | Milestone | Plans Complete | Status | Completed |
-|-------|-----------|----------------|--------|-----------|
-| 1. Child Identity & Registration Protocol | v1.0 | 2/2 | Complete | 2026-07-13 |
-| 2. CRDT Persistence, PubSub & Consensus Authority | v1.0 | 2/2 | Complete | 2026-07-14 |
-| 3. Discovery, Rewards & Lifecycle | v1.0 | 2/2 | Complete | 2026-07-14 |
-| 4. Registration Proto & Transaction | v2.0 | 2/2 | Complete | 2026-07-16 |
-| 5. CRDT Persistence, PubSub & Integration Test | v2.0 | 4/4 | Complete | 2026-07-17 |
+---
+*Roadmap created: 2026-07-17*
