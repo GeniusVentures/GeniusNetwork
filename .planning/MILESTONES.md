@@ -1,5 +1,16 @@
 # Milestones
 
+## v2.1 Main Wallet Child Balance Query (Shipped: 2026-07-17)
+
+**Phases completed:** 1 phases, 2 plans, 4 tasks
+
+**Key accomplishments:**
+
+- Added `GeniusNode::GetChildBalance` (token-filtered and all-tokens overloads) as thin aliases over the existing `UTXOManager::GetBalance` family, with the child-first/token-first argument-order swap at the delegation boundary — verified by a clean `genius_node_test` build.
+- Added `TEST_F(ChildRegistrationIntegrationTest, MainQueriesChildBalance)` proving end-to-end that a child node's mint propagates via CRDT sync to a balance the main node can read through `GetChildBalance` — all 4 cases in `child_registration_test` pass (GTest level), completing ROADMAP Phase 1.
+
+---
+
 ## v2.0 Registration Implementation (Shipped: 2026-07-17)
 
 **Phases completed:** 2 phases, 6 plans, 14 tasks

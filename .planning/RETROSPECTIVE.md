@@ -86,9 +86,44 @@
 - Sessions: 2 phase cycles + 1 debug session + gap-closure plan over 2 days
 - Notable: plan durations 5-13 min each; longest cost was the 26-min integration test execution in 05-04
 
+## Milestone: v2.1 — Main Wallet Child Balance Query
+
+**Shipped:** 2026-07-17
+**Phases:** 1 | **Plans:** 2
+
+### What Was Built
+
+- `GeniusNode::GetChildBalance` (token-filtered + all-tokens overloads) as thin aliases over the existing `UTXOManager::GetBalance` family, with the child-first/token-first argument-order swap at the delegation boundary — Phase 1, Plan 01
+- `TEST_F(ChildRegistrationIntegrationTest, MainQueriesChildBalance)` proving end-to-end that a child node's mint propagates via CRDT sync to a balance the main node can read via `GetChildBalance` — Phase 1, Plan 02
+
+### What Worked
+
+- v2.0's already-active D-49 CRDT/pubsub sync meant balance query needed zero new sync infrastructure — pure delegation to the existing `UTXOManager::GetBalance` pattern, done in 5 minutes
+- Poll-until-convergence test pattern (previously used only for registration discovery) extended cleanly to UTXO/balance sync
+
+### What Was Inefficient
+
+- The plan's mint `chainid` argument (`"test_05_balance"`) was described as a free-text description but actually selects an `IInputValidator` — cost a full build/run/diagnose cycle to discover it must be the registered `"test"` chainid instead
+
+### Patterns Established
+
+- Balance-family additions stay `GeniusNode`-only, bypassing `TransactionManager`, matching the existing `GetBalance` precedent
+- Child-mints/main-queries integration test pattern: mint via `child_node_`, poll child's own balance, then poll main's `GetChildBalance` until CRDT convergence, before final assertion
+
+### Key Lessons
+
+- When a plan describes a test parameter as a "description string," verify against the actual validator/dispatch code before assuming it's free text — chainid-style arguments are frequently dispatch keys in disguise
+- `child_registration_test.exe` has a pre-existing segfault-on-teardown (after all assertions pass) unrelated to this milestone's changes — reproduces with only pre-v2.1 tests; deferred to a future test-infra/node-shutdown-hygiene phase
+
+### Cost Observations
+
+- Sessions: 1 phase cycle, single day
+- Notable: Plan 01 took 5 min (pure delegation), Plan 02 took 25 min (integration test + one bug-fix cycle)
+
 ## Cross-Milestone Trends
 
 | Milestone | Phases | Plans | Duration | Notes |
 |-----------|--------|-------|----------|-------|
 | v1.0 Child Wallet Design | 3 | 6 | 2 days | Design docs only |
 | v2.0 Registration Implementation | 2 | 6 | 2 days | First implementation slice; +2,235/-47 LOC C++ |
+| v2.1 Main Wallet Child Balance Query | 1 | 2 | 1 day | Thin delegation + integration test; segfault-on-teardown flake deferred |

@@ -8,14 +8,11 @@ Child wallets (subwallets) for the GNUS SuperGenius node. Games integrating the 
 
 The main wallet must be able to discover, monitor, and manage registered child wallets through consensus-visible state — every child-wallet behavior maps onto concrete SuperGenius anchor points (GeniusAccount, TransactionManager, CRDT/GlobalDB, PubSubBroadcasterExt, consensus validation).
 
-## Current Milestone: v2.1 Main Wallet Child Balance Query
+## Current State
 
-**Goal:** Allow the main wallet to query a registered child wallet's child token balance from its synced CRDT data, following the same UTXO summation pattern used for its own balance.
+**Shipped:** v2.1 Main Wallet Child Balance Query (2026-07-17) — main wallet can now read a registered child wallet's token balance from locally-synced CRDT UTXO data via `GeniusNode::GetChildBalance`, proven end-to-end by a multi-node integration test (child mints → CRDT sync → main queries).
 
-**Target features:**
-- `GeniusNode::GetChildBalance(child_address, token_id)` wrapping existing `UTXOManager::GetBalance(token_id, address)`
-- Child token balance computed from synced CRDT UTXOs (no gRPC/SDK in this phase)
-- Multi-node integration test: child registers, receives funds, main queries child balance via CRDT
+**Next milestone:** Not yet defined — run `/gsd-new-milestone`. Candidates from the deferred backlog below: gRPC/SDK exposure of the balance query (API-01/API-02), multi-token balance (TOK-01), or the full monitoring dashboard (MON-01/MON-02).
 
 ## Requirements
 
@@ -31,14 +28,18 @@ The main wallet must be able to discover, monitor, and manage registered child w
 
 ### Active
 
-None — all v2.1 requirements validated.
+None — awaiting next milestone's requirements (`/gsd-new-milestone`).
+
+### Deferred (candidates for next milestone)
+
+- MON-01/MON-02: Full monitoring dashboard — per-child balance, all assets/tokens, activity history, escrow status, lifecycle monitoring
+- API-01/API-02: gRPC endpoint + GeniusSDK wrapper exposing child balance query to external callers
+- TOK-01: Multi-token balance query (GNUS, child tokens, NFTs) — v2.1 covered child token only
 
 ### Out of Scope
 
-- gRPC/SDK balance API — node-internal only this milestone; API layer deferred
-- Full monitoring dashboard (DISC-02: all assets, activity, escrow status) — deferred
-- Multi-token balance — child token only, matching DevConfig TokenID
 - Balance display formatting (FormatTokens/ConvertToChildToken) — deferred to API phase
+- Direct child query (request/response) — balance computed from synced CRDT only, no live query to child node
 
 ## Context
 
@@ -46,6 +47,11 @@ None — all v2.1 requirements validated.
 - v2.0 implemented the first slice: child-signed registration with CRDT persistence, pubsub broadcast, and multi-node integration tests
 - The main node already subscribes to child pubsub topics via D-49 RegElementCallback and syncs the child's CRDT deltas — the UTXO data is already present locally
 - The existing `GeniusNode::GetBalance(token_id, address)` → `UTXOManager::GetBalance(token_id, address)` pattern sums UTXOs filtered by address and token ID — the same mechanism can target a child address
+- v2.1 shipped `GeniusNode::GetChildBalance` (token-filtered + all-tokens overloads) as a thin alias over this pattern, plus a multi-node integration test proving the child-mint → CRDT-sync → main-query round-trip
+
+## Known Issues
+
+- `child_registration_test.exe` segfaults on process teardown (after all GTest assertions pass) — pre-existing lifecycle issue, likely unjoined libp2p/boost::asio threads during node `.reset()`, not caused by v2.1 changes. Reproduces with only the 3 pre-v2.1 test cases. Tracked in `.planning/phases/01-child-balance-query/deferred-items.md`; candidate for a future test-infra/node-shutdown-hygiene phase.
 
 ## Constraints
 
@@ -84,4 +90,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-07-17 after Phase 1 (child-balance-query) completion*
+*Last updated: 2026-07-17 after v2.1 milestone completion*

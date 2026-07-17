@@ -2,12 +2,12 @@
 gsd_state_version: 1.0
 milestone: v2.1
 milestone_name: Main Wallet Child Balance Query
-current_phase: 01
-status: verifying
+current_phase: 1
+status: Awaiting next milestone
 stopped_at: Completed 01-02-PLAN.md
-last_updated: "2026-07-17T22:22:36.082Z"
+last_updated: "2026-07-17T23:44:24.807Z"
 last_activity: 2026-07-17
-last_activity_desc: Phase 01 complete
+last_activity_desc: Milestone v2.1 completed and archived
 progress:
   total_phases: 1
   completed_phases: 1
@@ -19,10 +19,10 @@ current_phase_name: child-balance-query
 
 ## Current Position
 
-Phase: 01
-Plan: Not started
-Status: Phase complete — ready for verification
-Last activity: 2026-07-17 — Phase 01 complete
+Phase: Milestone v2.1 complete
+Plan: —
+Status: Awaiting next milestone
+Last activity: 2026-07-17 — Milestone v2.1 completed and archived
 
 ## Project Reference
 
@@ -49,3 +49,7 @@ See: .planning/PROJECT.md (updated 2026-07-17)
 **Last session:** 2026-07-17T22:15:25.054Z
 **Stopped at:** Completed 01-02-PLAN.md
 **Resume file:** None
+
+## Operator Next Steps
+
+- Start the next milestone with /gsd-new-milestone
