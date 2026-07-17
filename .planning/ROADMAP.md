@@ -23,6 +23,12 @@
 2. Multi-node integration test passes: child registers with main, receives child token funds, main calls GetChildBalance, returned balance matches the funded amount
 3. All existing registration tests (unit + multi-node integration) continue to pass — no regressions
 
+**Plans:** 2 plans
+
+Plans:
+- [ ] 01-01-PLAN.md — Add GetChildBalance overloads (GeniusNode.hpp/.cpp), mirroring the GetBalance family per D-54–D-60
+- [ ] 01-02-PLAN.md — Add multi-node integration test (child_registration.cpp) proving BALT-01 end-to-end per D-63–D-65
+
 **Depends on:**
 - v2.0 registration infrastructure (RegistrationTransaction, reg/ CRDT filter, D-49 RegElementCallback pubsub follow)
 - Existing `UTXOManager::GetBalance(token_id, address)` pattern in `GeniusNode`
