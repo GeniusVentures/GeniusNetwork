@@ -8,7 +8,7 @@
 
 | # | Phase | Goal | Requirements | Success Criteria |
 |---|-------|------|--------------|------------------|
-| 1 | Child Balance Query | Main wallet queries child token balance from synced CRDT UTXOs | BALT-01, INTG-01 | 3 |
+| 1 | Child Balance Query | 1/2 | In Progress|  |
 
 ## Phase 1: Child Balance Query
 
@@ -25,12 +25,12 @@
 2. Multi-node integration test passes: child registers with main, receives child token funds, main calls GetChildBalance, returned balance matches the funded amount
 3. All existing registration tests (unit + multi-node integration) continue to pass — no regressions
 
-**Plans:** 2 plans
+**Plans:** 1/2 plans executed
 
 Plans:
 **Wave 1**
 
-- [ ] 01-01-PLAN.md — Add GetChildBalance overloads (GeniusNode.hpp/.cpp), mirroring the GetBalance family per D-54–D-60
+- [x] 01-01-PLAN.md — Add GetChildBalance overloads (GeniusNode.hpp/.cpp), mirroring the GetBalance family per D-54–D-60
 
 **Wave 2** *(blocked on Wave 1 completion)*
 

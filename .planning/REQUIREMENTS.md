@@ -9,7 +9,7 @@ Requirements for milestone v2.1: Main Wallet Child Balance Query.
 
 ### Balance Query
 
-- [ ] **BALT-01**: Main wallet can query a registered child wallet's child token balance by child address and token ID, computed from locally-synced CRDT UTXOs via the existing `UTXOManager::GetBalance(token_id, address)` pattern
+- [x] **BALT-01**: Main wallet can query a registered child wallet's child token balance by child address and token ID, computed from locally-synced CRDT UTXOs via the existing `UTXOManager::GetBalance(token_id, address)` pattern
 
 ### Integration
 
@@ -48,10 +48,11 @@ Deferred to future milestones.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| BALT-01 | Phase 1 | Pending |
+| BALT-01 | Phase 1 | Complete |
 | INTG-01 | Phase 1 | Pending |
 
 **Coverage:**
+
 - v2.1 requirements: 2 total
 - Mapped to phases: 2
 - Unmapped: 0 ✓

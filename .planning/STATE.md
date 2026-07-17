@@ -2,29 +2,48 @@
 gsd_state_version: 1.0
 milestone: v2.1
 milestone_name: Main Wallet Child Balance Query
-current_phase_name: defining requirements
+current_phase: 01
+current_phase_name: child-balance-query
 status: executing
-last_updated: "2026-07-17T21:42:11.114Z"
+stopped_at: Completed 01-01-PLAN.md
+last_updated: "2026-07-17T21:49:48.453Z"
 last_activity: 2026-07-17
-last_activity_desc: Milestone v2.1 started
+last_activity_desc: Phase 01 execution started
 progress:
   total_phases: 1
   completed_phases: 0
-  total_plans: 0
-  completed_plans: 0
+  total_plans: 2
+  completed_plans: 1
   percent: 0
 ---
 
 ## Current Position
 
-Phase: Not started (defining requirements)
-Plan: —
+Phase: 01 (child-balance-query) — EXECUTING
+Plan: 2 of 2
 Status: Ready to execute
-Last activity: 2026-07-17 — Milestone v2.1 started
+Last activity: 2026-07-17 — Phase 01 execution started
 
 ## Project Reference
 
 See: .planning/PROJECT.md (updated 2026-07-17)
 
 **Core value:** Main wallet must be able to discover, monitor, and manage registered child wallets through consensus-visible state
-**Current focus:** Main wallet child balance query from synced CRDT
+**Current focus:** Phase 01 — child-balance-query
+
+## Performance Metrics
+
+| Phase | Plan | Duration | Notes |
+|-------|------|----------|-------|
+| Phase 01-child-balance-query P01 | 5min | 2 tasks | 2 files |
+
+## Decisions
+
+- [Phase 01]: Argument order swap at delegation boundary: GetChildBalance is child-first (D-56) but UTXOManager::GetBalance is token-first, swapped at the call site
+- [Phase 01]: No registration gate, plain uint64_t return; 0 is an inherently ambiguous no-balance-or-not-synced signal (D-54/D-55/D-62)
+
+## Session
+
+**Last session:** 2026-07-17T21:49:48.447Z
+**Stopped at:** Completed 01-01-PLAN.md
+**Resume file:** None
