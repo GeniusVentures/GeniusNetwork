@@ -35,8 +35,8 @@ The design documents must map every child-wallet behavior — registration, disc
 <!-- v2.0 implementation milestone scope. -->
 
 - ✓ Child-wallet registration implemented in SuperGenius per `docs/registration-protocol.md` (RegistrationTx proto, C++ transaction class, child-signed-only protocol, sequence numbering) — Validated in Phase 4: Registration Proto & Transaction (RIMPL-01..03; E2E GTest proves child creates, signs, and submits through TransactionManager)
-- [ ] Registration persisted in consensus-visible `reg/` CRDT namespace with validating element filter, broadcast on the main wallet's pubsub channel per `docs/02-crdt-registry-pubsub.md`
-- [ ] Multi-node integration test: genesis node + two nodes; one node registers as a child of the other; registration propagates and is discoverable from the main node
+- ✓ Registration persisted in consensus-visible `reg/` CRDT namespace with validating element filter (`FilterRegistration`, gates a-d), broadcast on the main wallet's pubsub channel per `docs/02-crdt-registry-pubsub.md` — Validated in Phase 5: CRDT Persistence, PubSub & Integration Test (RIMPL-04..07)
+- ✓ Multi-node integration test: genesis node + two nodes; one node registers as a child of the other; registration propagates and is discoverable from the main node — Validated in Phase 5 (TEST-01..04; `child_registration_test` 3/3 pass, Phase 4 regression suite 18/18 pass)
 
 ### Out of Scope
 
@@ -112,4 +112,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-07-16 after Phase 4 (Registration Proto & Transaction) completion — RegistrationTx proto, RegistrationTransaction class, and child-signed submission path shipped with passing E2E test*
+*Last updated: 2026-07-17 after Phase 5 (CRDT Persistence, PubSub & Integration Test) completion — FilterRegistration on reg/ namespace, main-node discovery read path, pubsub CID follow, and multi-node integration test all shipped and passing; v2.0 milestone phases complete*
