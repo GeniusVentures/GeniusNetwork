@@ -13,7 +13,7 @@ Requirements for milestone v2.1: Main Wallet Child Balance Query.
 
 ### Integration
 
-- [ ] **INTG-01**: Multi-node integration test validates end-to-end: child node registers with main node, child receives child token funds, main node queries child balance via `GetChildBalance`, result matches the expected funded amount
+- [x] **INTG-01**: Multi-node integration test validates end-to-end: child node registers with main node, child receives child token funds, main node queries child balance via `GetChildBalance`, result matches the expected funded amount
 
 ## Future Requirements
 
@@ -49,7 +49,7 @@ Deferred to future milestones.
 | Requirement | Phase | Status |
 |-------------|-------|--------|
 | BALT-01 | Phase 1 | Complete |
-| INTG-01 | Phase 1 | Pending |
+| INTG-01 | Phase 1 | Complete |
 
 **Coverage:**
 

@@ -8,7 +8,7 @@
 
 | # | Phase | Goal | Requirements | Success Criteria |
 |---|-------|------|--------------|------------------|
-| 1 | Child Balance Query | 1/2 | In Progress|  |
+| 1 | Child Balance Query | 2/2 | Complete   | 2026-07-17 |
 
 ## Phase 1: Child Balance Query
 
@@ -25,7 +25,7 @@
 2. Multi-node integration test passes: child registers with main, receives child token funds, main calls GetChildBalance, returned balance matches the funded amount
 3. All existing registration tests (unit + multi-node integration) continue to pass — no regressions
 
-**Plans:** 1/2 plans executed
+**Plans:** 2/2 plans complete
 
 Plans:
 **Wave 1**
@@ -34,7 +34,7 @@ Plans:
 
 **Wave 2** *(blocked on Wave 1 completion)*
 
-- [ ] 01-02-PLAN.md — Add multi-node integration test (child_registration.cpp) proving BALT-01 end-to-end per D-63–D-65
+- [x] 01-02-PLAN.md — Add multi-node integration test (child_registration.cpp) proving BALT-01 end-to-end per D-63–D-65
 
 **Depends on:**
 
