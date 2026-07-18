@@ -49,14 +49,17 @@ Archived: [`.planning/milestones/v2.1-ROADMAP.md`](milestones/v2.1-ROADMAP.md)
   2. A main-side caller can enumerate its registered children (address, sequence, metadata) via a GeniusSDK C function that wraps `GetRegistrationsForMain`
   3. External caller can query a child wallet's balance for a specific token, and separately its total balance across all tokens, via GeniusSDK C functions that wrap the two `GetChildBalance` overloads
   4. Registration, discovery, and balance calls all return existing `GeniusNodeReturnValue_t` status codes for not-initialized and invalid-argument conditions, consistent with other GeniusSDK calls
-**Plans**: TBD
+**Plans**: 1 plan
+
+Plans:
+- [ ] 02-01-PLAN.md — Add GeniusRegistrationMetadata/GeniusRegistrationDiscoveryEntry structs, GENIUS_NODE_ERROR_REGISTRATION enum value, and 4 wrapper functions (GeniusSDKRegisterChild, GeniusSDKGetRegistrationsForMain, GeniusSDKGetChildBalance, GeniusSDKGetChildBalanceAll) to GeniusSDK.h/.cpp
 
 ## Progress
 
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|-----------------|--------|-----------|
 | Child Balance Query | v2.1 | 2/2 | Complete | 2026-07-17 |
-| GeniusSDK Child Wallet Interfaces | v2.2 | 0/TBD | Not started | - |
+| GeniusSDK Child Wallet Interfaces | v2.2 | 0/1 | Planned | - |
 
 ---
 *Roadmap updated: 2026-07-17 after dropping TEST-01 (GeniusSDK/test coverage) from Phase 2 scope*
