@@ -19,10 +19,6 @@ Requirements for the GeniusSDK Child Wallet Interfaces milestone. Each maps to r
 - [ ] **SDKB-01**: External caller can query a child wallet's balance for a specific token via a GeniusSDK C function (wraps `GeniusNode::GetChildBalance` token-filtered overload)
 - [ ] **SDKB-02**: External caller can query a child wallet's total balance across all tokens via a GeniusSDK C function (wraps `GeniusNode::GetChildBalance` all-tokens overload)
 
-### Tests (TEST)
-
-- [ ] **TEST-01**: `GeniusSDK/test` unit tests cover the new registration, discovery, and balance SDK calls against a running GeniusNode instance, including not-initialized and invalid-argument error paths
-
 ## Future Requirements
 
 Deferred to future release. Tracked but not in current roadmap.
@@ -51,6 +47,7 @@ Explicitly excluded from v2.2. Documented to prevent scope creep.
 | New proto messages/schema changes | `RegistrationMetadata`/`RegistrationTx` already exist from v2.0 — no new wire format needed |
 | Manual-sequence `RegisterChild` overload | SDK exposes only the auto-derive overload for v1; manual sequence stays C++-internal (tests/replay) |
 | Balance display formatting (FormatTokens/ConvertToChildToken) | Carried over from v2.1 out-of-scope — still deferred |
+| Dedicated `GeniusSDK/test` unit tests for the new calls | GeniusSDK is a thin C FFI wrapper; the underlying `GeniusNode`/`TransactionManager` logic is already covered by SuperGenius tests — duplicating coverage at the shim layer adds no value |
 
 ## Traceability
 
@@ -58,19 +55,18 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| SDKR-01 | TBD | Pending |
-| SDKR-02 | TBD | Pending |
-| SDKR-03 | TBD | Pending |
-| SDKR-04 | TBD | Pending |
-| SDKB-01 | TBD | Pending |
-| SDKB-02 | TBD | Pending |
-| TEST-01 | TBD | Pending |
+| SDKR-01 | Phase 2 | Pending |
+| SDKR-02 | Phase 2 | Pending |
+| SDKR-03 | Phase 2 | Pending |
+| SDKR-04 | Phase 2 | Pending |
+| SDKB-01 | Phase 2 | Pending |
+| SDKB-02 | Phase 2 | Pending |
 
 **Coverage:**
-- v2.2 requirements: 7 total
-- Mapped to phases: 0 (pending roadmap creation)
-- Unmapped: 7 ⚠️ (resolved by roadmapper)
+- v2.2 requirements: 6 total
+- Mapped to phases: 6 (Phase 2) ✓
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-07-17*
-*Last updated: 2026-07-17 after initial milestone v2.2 definition*
+*Last updated: 2026-07-17 after dropping TEST-01 (GeniusSDK/test unit test coverage) — moved to Out of Scope; SuperGenius already covers the underlying logic*
