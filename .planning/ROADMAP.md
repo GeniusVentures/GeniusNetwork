@@ -36,23 +36,27 @@ Archived: [`.planning/milestones/v2.1-ROADMAP.md`](milestones/v2.1-ROADMAP.md)
 
 **Milestone Goal:** Expose `GeniusNode::RegisterChild`, `GetRegistrationsForMain`, and `GetChildBalance` through the public C SDK (`GeniusSDK.h`/`.cpp`) so external games/apps can register a child wallet and query its balance without linking SuperGenius directly.
 
-- [ ] **Phase 2: GeniusSDK Child Wallet Interfaces** - Wrap child registration, discovery, and balance query in the public GeniusSDK C API
+- [x] **Phase 2: GeniusSDK Child Wallet Interfaces** - Wrap child registration, discovery, and balance query in the public GeniusSDK C API (completed 2026-07-18)
 
 ## Phase Details
 
 ### Phase 2: GeniusSDK Child Wallet Interfaces
+
 **Goal**: External callers (games/apps linking only `GeniusSDK.h`) can register this node as a child wallet, discover a main wallet's registered children, and query child balances — entirely through the public C SDK, without linking SuperGenius directly
 **Depends on**: v2.0 (`RegisterChild`, `GetRegistrationsForMain`), v2.1 Phase 1 (`GetChildBalance`)
 **Requirements**: SDKR-01, SDKR-02, SDKR-03, SDKR-04, SDKB-01, SDKB-02
 **Success Criteria** (what must be TRUE):
+
   1. External caller can register this node as a child wallet under a main wallet address via a GeniusSDK C function, supplying registration metadata (game_id, publisher_id, dev_wallet, peers_cut) through a new `GeniusRegistrationMetadata` C struct, without linking SuperGenius directly
   2. A main-side caller can enumerate its registered children (address, sequence, metadata) via a GeniusSDK C function that wraps `GetRegistrationsForMain`
   3. External caller can query a child wallet's balance for a specific token, and separately its total balance across all tokens, via GeniusSDK C functions that wrap the two `GetChildBalance` overloads
   4. Registration, discovery, and balance calls all return existing `GeniusNodeReturnValue_t` status codes for not-initialized and invalid-argument conditions, consistent with other GeniusSDK calls
-**Plans**: 1 plan
+
+**Plans**: 1/1 plans complete
 
 Plans:
-- [ ] 02-01-PLAN.md — Add GeniusRegistrationMetadata/GeniusRegistrationDiscoveryEntry structs, GENIUS_NODE_ERROR_REGISTRATION enum value, and 4 wrapper functions (GeniusSDKRegisterChild, GeniusSDKGetRegistrationsForMain, GeniusSDKGetChildBalance, GeniusSDKGetChildBalanceAll) to GeniusSDK.h/.cpp
+
+- [x] 02-01-PLAN.md — Add GeniusRegistrationMetadata/GeniusRegistrationDiscoveryEntry structs, GENIUS_NODE_ERROR_REGISTRATION enum value, and 4 wrapper functions (GeniusSDKRegisterChild, GeniusSDKGetRegistrationsForMain, GeniusSDKGetChildBalance, GeniusSDKGetChildBalanceAll) to GeniusSDK.h/.cpp
 
 ## Progress
 

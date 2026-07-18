@@ -9,15 +9,15 @@ Requirements for the GeniusSDK Child Wallet Interfaces milestone. Each maps to r
 
 ### SDK Registration (SDKR)
 
-- [ ] **SDKR-01**: External caller can register this node as a child wallet under a main wallet address via a GeniusSDK C function (wraps `GeniusNode::RegisterChild`, auto-derived sequence overload)
-- [ ] **SDKR-02**: Caller can supply registration metadata (game_id, publisher_id, dev_wallet, peers_cut) via a new `GeniusRegistrationMetadata` C struct passed to the registration call
-- [ ] **SDKR-03**: A main-side caller can enumerate its registered children via a GeniusSDK C function (wraps `GeniusNode::GetRegistrationsForMain`), receiving each child's address, sequence, and metadata
-- [ ] **SDKR-04**: Registration and discovery calls return existing `GeniusNodeReturnValue_t` status codes (not initialized / invalid argument / registration failure) consistent with other GeniusSDK calls
+- [x] **SDKR-01**: External caller can register this node as a child wallet under a main wallet address via a GeniusSDK C function (wraps `GeniusNode::RegisterChild`, auto-derived sequence overload)
+- [x] **SDKR-02**: Caller can supply registration metadata (game_id, publisher_id, dev_wallet, peers_cut) via a new `GeniusRegistrationMetadata` C struct passed to the registration call
+- [x] **SDKR-03**: A main-side caller can enumerate its registered children via a GeniusSDK C function (wraps `GeniusNode::GetRegistrationsForMain`), receiving each child's address, sequence, and metadata
+- [x] **SDKR-04**: Registration and discovery calls return existing `GeniusNodeReturnValue_t` status codes (not initialized / invalid argument / registration failure) consistent with other GeniusSDK calls
 
 ### SDK Balance (SDKB)
 
-- [ ] **SDKB-01**: External caller can query a child wallet's balance for a specific token via a GeniusSDK C function (wraps `GeniusNode::GetChildBalance` token-filtered overload)
-- [ ] **SDKB-02**: External caller can query a child wallet's total balance across all tokens via a GeniusSDK C function (wraps `GeniusNode::GetChildBalance` all-tokens overload)
+- [x] **SDKB-01**: External caller can query a child wallet's balance for a specific token via a GeniusSDK C function (wraps `GeniusNode::GetChildBalance` token-filtered overload)
+- [x] **SDKB-02**: External caller can query a child wallet's total balance across all tokens via a GeniusSDK C function (wraps `GeniusNode::GetChildBalance` all-tokens overload)
 
 ## Future Requirements
 
@@ -55,14 +55,15 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| SDKR-01 | Phase 2 | Pending |
-| SDKR-02 | Phase 2 | Pending |
-| SDKR-03 | Phase 2 | Pending |
-| SDKR-04 | Phase 2 | Pending |
-| SDKB-01 | Phase 2 | Pending |
-| SDKB-02 | Phase 2 | Pending |
+| SDKR-01 | Phase 2 | Complete |
+| SDKR-02 | Phase 2 | Complete |
+| SDKR-03 | Phase 2 | Complete |
+| SDKR-04 | Phase 2 | Complete |
+| SDKB-01 | Phase 2 | Complete |
+| SDKB-02 | Phase 2 | Complete |
 
 **Coverage:**
+
 - v2.2 requirements: 6 total
 - Mapped to phases: 6 (Phase 2) ✓
 - Unmapped: 0
