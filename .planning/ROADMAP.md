@@ -52,29 +52,46 @@ Archived: [`.planning/milestones/v2.2-ROADMAP.md`](milestones/v2.2-ROADMAP.md)
 ## Phase Details
 
 ### Phase 3: Parent-Child Transfer Authority
+
 **Goal**: Main wallet can fund a registered child wallet and recover funds back from it, enforced by a new consensus-level `CheckParentChildAuthority` gate — while every existing child-signed transfer path (child→arbitrary, child→main, child→dev, child-cannot-spend-main) continues to behave exactly as before
 **Depends on**: v2.0 Registration Implementation (`reg/{child_addr}` CRDT records the gate reads; certified-status flag)
 **Requirements**: CONS-01, CONS-02, CONS-06, REGR-01, REGR-02, REGR-03
 **Success Criteria** (what must be TRUE):
+
   1. Main wallet can submit a `"transfer"` tx funding a registered child address, and the new `CheckParentChildAuthority` gate approves it as an ordinary transfer — an unregistered destination still succeeds unchanged (CONS-01)
   2. Main wallet can submit a `"transfer"` tx recovering funds from a registered child back to its own registered main address, and the gate approves it (CONS-02)
   3. A main-signed recovery transfer whose destination does not match the child's registered main address is rejected by the gate (D-21 destination restriction, CONS-02)
   4. Child-signed transfers to arbitrary addresses, to the registered main, and to the developer wallet via `PayDev` continue to pass through the gate unchanged, confirmed by regression tests (REGR-01, REGR-02)
   5. A child-signed transaction attempting to spend a main wallet's UTXOs is still rejected by the existing `ValidateWitness` owner-address check, confirmed by a new regression test — proving the new gate stays orthogonal to UTXO *ownership* checks specifically (the signature-acceptance layer gains one narrow CRDT-gated branch in `GeniusInputValidator.cpp`, verified during planning to be required by D-60; the owner-address check itself is untouched) (REGR-03, CONS-06)
+
 **Plans**: 4 plans
+**Wave 1**
+
 - [ ] 03-01-PLAN.md — Certified-parent lookup (Blockchain::CheckCertifiedParent) + signature primitive (GeniusTransaction::CheckSignatureAgainst)
+
+**Wave 2** *(blocked on Wave 1 completion)*
+
 - [ ] 03-02-PLAN.md — CheckParentChildAuthority consensus gate + D-60 signature-acceptance extension (CheckTransactionAuthorization + GeniusInputValidator.cpp)
+
+**Wave 3** *(blocked on Wave 2 completion)*
+
 - [ ] 03-03-PLAN.md — RecoverFromChild transaction construction (TransactionManager + GeniusNode layers)
+
+**Wave 4** *(blocked on Wave 3 completion)*
+
 - [ ] 03-04-PLAN.md — CONS-01/CONS-02/D-21 + REGR-01/02/03 test coverage (extends existing registration_transaction_test.cpp per D-65)
 
 ### Phase 4: GeniusSDK Transfer Wrappers
+
 **Goal**: External games/apps can fund a registered child wallet and recover funds from it through the public GeniusSDK C API, without linking SuperGenius directly
 **Depends on**: Phase 3 (`CheckParentChildAuthority` gate and the underlying GeniusNode-level transfer call(s) must exist first)
 **Requirements**: SDKT-01, SDKT-02, SDKT-03
 **Success Criteria** (what must be TRUE):
+
   1. External caller can invoke a GeniusSDK C function to fund a registered child wallet from the main wallet, wrapping the CONS-01 transfer path (SDKT-01)
   2. External caller can invoke a GeniusSDK C function to recover funds from a registered child wallet back to the main wallet, wrapping the CONS-02 transfer path (SDKT-02)
   3. Both transfer calls return existing `GeniusNodeReturnValue_t` status codes (not-initialized / invalid-argument / rejected), consistent with other GeniusSDK calls (SDKT-03)
+
 **Plans**: TBD
 
 ## Progress
