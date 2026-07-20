@@ -11,7 +11,7 @@ Requirements for the Child Wallet Transfers milestone. Each maps to roadmap phas
 
 - [ ] **CONS-01**: Main wallet can fund a registered child wallet via an ordinary `"transfer"` transaction; the new `CheckParentChildAuthority` gate treats the `reg/` check as a consistency validation, not access control — an unregistered destination still succeeds as a normal transfer
 - [ ] **CONS-02**: Main wallet can recover funds from a registered child wallet, restricted to sending back to its own registered main address; the gate rejects a main-signed recovery transfer whose destination doesn't match the `reg/` record's `main_address` (D-21)
-- [x] **CONS-06**: `CheckParentChildAuthority` is inserted as an independent gate between `CheckTransactionAuthorization` and `CheckTransactionTimestamp` in `ValidateTransactionForConsensus`, orthogonal to the existing UTXO-*ownership* check in `ValidateWitness` (the owner-address check is untouched) — the signature-acceptance layer in `GeniusInputValidator.cpp` gains one narrow, CRDT-gated branch, required by D-60 and confirmed during Phase 3 research/planning (2026-07-20)
+- [ ] **CONS-06**: `CheckParentChildAuthority` is inserted as an independent gate between `CheckTransactionAuthorization` and `CheckTransactionTimestamp` in `ValidateTransactionForConsensus`, orthogonal to the existing UTXO-*ownership* check in `ValidateWitness` (the owner-address check is untouched) — the signature-acceptance layer in `GeniusInputValidator.cpp` gains one narrow, CRDT-gated branch, required by D-60 and confirmed during Phase 3 research/planning (2026-07-20)
 
 ### Regression Coverage (REGR)
 
