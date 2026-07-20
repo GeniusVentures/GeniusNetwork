@@ -120,6 +120,41 @@
 - Sessions: 1 phase cycle, single day
 - Notable: Plan 01 took 5 min (pure delegation), Plan 02 took 25 min (integration test + one bug-fix cycle)
 
+## Milestone: v2.2 — GeniusSDK Child Wallet Interfaces
+
+**Shipped:** 2026-07-20
+**Phases:** 1 | **Plans:** 1
+
+### What Was Built
+
+- `GeniusSDKRegisterChild`, `GeniusSDKGetRegistrationsForMain`, `GeniusSDKGetChildBalance`, and `GeniusSDKGetChildBalanceAll` added to the public `GeniusSDK.h`/`.cpp` C API, wrapping the existing `GeniusNode::RegisterChild`/`GetRegistrationsForMain`/`GetChildBalance` logic — Phase 2, Plan 01
+- `GeniusRegistrationMetadata`/`GeniusRegistrationDiscoveryEntry` C structs and a new `GENIUS_NODE_ERROR_REGISTRATION` status code
+- Fixed a pre-existing SuperGenius/evmrelay CMake packaging gap (missing `find_dependency(evmrelay)` + Boost::coroutine MSVC error) that had blocked full `GeniusSDK` static-lib builds — full build confirmed green (2026-07-20, 2 days after the wrapper code landed)
+
+### What Worked
+
+- Mirroring the existing `do/while(0)`-guarded status-code wrapper pattern (`GeniusSDKMint`/`GeniusSDKTransfer`/`GeniusSDKPayDev`) kept the 4 new functions idiomatic and reviewable with zero new conventions invented
+- `strnlen`-bounded string construction from fixed-size caller buffers, and the malloc'd/`GeniusSDKFree` ownership-handoff pattern for the variable-length discovery array, both extended existing SDK conventions cleanly to a new C-struct/array shape
+
+### What Was Inefficient
+
+- The SDK wrapper code could not be build-verified at the time it was written — a pre-existing, unrelated evmrelay/Boost::coroutine CMake packaging bug blocked the full `GeniusSDK` static-lib build. Verification fell back to manual line-by-line signature cross-check against `GeniusNode.hpp`/`TransactionManager.hpp`/`SGTransaction.proto`, and a formal `VERIFICATION.md` was never generated even after the build blocker was fixed 2 days later — milestone closed via explicit verification override rather than backfilling it with `/gsd-execute-phase 2`
+
+### Patterns Established
+
+- Two-layer API convention (`GeniusNode` method → thin `GeniusSDK` C wrapper) now extended from node-level calls to the public C FFI boundary
+- Malloc'd output array + `GeniusSDKFree` ownership-handoff pattern for variable-length discovery results, reusable for any future SDK call returning an unbounded collection
+
+### Key Lessons
+
+- When a build-environment blocker prevents compiled verification, manual signature cross-check is an acceptable stopgap — but it needs an explicit follow-up task to backfill real verification once the blocker clears, or the gap silently survives to milestone close (as it did here)
+- Pre-existing CMake/`find_package` transitive-include gaps (like the evmrelay one) can block downstream SDK consumers for an extended period without surfacing until someone tries a fresh build — worth a proactive `find_package(SuperGenius)` smoke build when adding new SDK-facing wrappers, not just header inspection
+
+### Cost Observations
+
+- Sessions: 1 session for the wrapper implementation (20 min), 1 separate later session (2026-07-20) to diagnose and fix the CMake/coroutine build blocker
+- Notable: implementation was fast (thin wrapper over already-shipped v2.0/v2.1 logic); the bulk of elapsed calendar time (2 days) was the build-verification blocker, not the SDK code itself
+
 ## Cross-Milestone Trends
 
 | Milestone | Phases | Plans | Duration | Notes |
@@ -127,3 +162,4 @@
 | v1.0 Child Wallet Design | 3 | 6 | 2 days | Design docs only |
 | v2.0 Registration Implementation | 2 | 6 | 2 days | First implementation slice; +2,235/-47 LOC C++ |
 | v2.1 Main Wallet Child Balance Query | 1 | 2 | 1 day | Thin delegation + integration test; segfault-on-teardown flake deferred |
+| v2.2 GeniusSDK Child Wallet Interfaces | 1 | 1 | 3 days (20min impl + 2-day build-blocker fix) | Verification override: no formal VERIFICATION.md; segfault-on-teardown flake still deferred |
