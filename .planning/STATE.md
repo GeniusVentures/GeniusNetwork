@@ -5,22 +5,22 @@ milestone_name: Child Wallet Transfers
 current_phase: 3
 current_phase_name: Parent-Child Transfer Authority
 status: executing
-stopped_at: Completed 03-01-PLAN.md
-last_updated: "2026-07-20T22:52:08.637Z"
+stopped_at: Completed 03-02-PLAN.md
+last_updated: "2026-07-20T23:54:11.118Z"
 last_activity: 2026-07-20
 last_activity_desc: Phase 3 execution started
 progress:
   total_phases: 2
   completed_phases: 0
   total_plans: 4
-  completed_plans: 1
+  completed_plans: 2
   percent: 0
 ---
 
 ## Current Position
 
 Phase: 3 (Parent-Child Transfer Authority) — EXECUTING
-Plan: 2 of 4
+Plan: 3 of 4
 Status: Ready to execute
 Last activity: 2026-07-20 — Phase 3 execution started
 
@@ -53,6 +53,7 @@ Items acknowledged and deferred at milestone close on 2026-07-20:
 | Phase 01-child-balance-query P02 | 25min | 2 tasks | 1 files |
 | Phase 02-geniussdk-child-wallet-interfaces P01 | 20min | 2 tasks | 2 files |
 | Phase 03-parent-child-transfer-authority P01 | 25min | 2 tasks | 4 files |
+| Phase 03-parent-child-transfer-authority P02 | 50min | 3 tasks | 3 files |
 
 ## Decisions
 
@@ -64,6 +65,9 @@ Items acknowledged and deferred at milestone close on 2026-07-20:
 - [Roadmap, v2.3]: Reuses existing `"transfer"` tx type for both CONS-01 (fund) and CONS-02 (recover) — no new proto message or tx type; GeniusSDK wrapper phase (4) depends on Phase 3's gate + GeniusNode-level transfer call existing first
 - [Phase 03, v2.3]: Blockchain::CheckCertifiedParent implemented with zero genius_node dependency (duplicated reg-key format inline via boost::format) to preserve the one-directional blockchain_genesis <- genius_node link
 - [Phase 03, v2.3]: GeniusTransaction::CheckSignature refactored to delegate to new CheckSignatureAgainst(address) - behavior-preserving, unlocks Plan 02's D-60 delegated-signature verification
+- [Phase 03-parent-child-transfer-authority]: CheckParentChildAuthority re-derives tx.CheckSignature() as a cheap branch selector (not redundant verification) to distinguish REGR-01/02 child-self-signed spends from CONS-02 certified-main-delegated recovery
+- [Phase 03-parent-child-transfer-authority]: D-21 destination restriction enforced via exact string equality against params->second.front().dest_address (primary output first convention), fail-closed on empty/missing UTXO parameters
+- [Phase 03-parent-child-transfer-authority]: GeniusInputValidator.cpp owner-address check and delegated_escrow_spend block left byte-for-byte unchanged - D-60 recovery txs naturally pass since payload_owner == child_addr == tx->GetSrcAddress()
 
 ### Pending Todos
 
@@ -75,8 +79,8 @@ None yet.
 
 ## Session
 
-**Last session:** 2026-07-20T22:52:08.631Z
-**Stopped at:** Completed 03-01-PLAN.md
+**Last session:** 2026-07-20T23:54:11.113Z
+**Stopped at:** Completed 03-02-PLAN.md
 **Resume file:** None
 
 ## Operator Next Steps

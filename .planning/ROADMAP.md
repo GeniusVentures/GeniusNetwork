@@ -64,14 +64,14 @@ Archived: [`.planning/milestones/v2.2-ROADMAP.md`](milestones/v2.2-ROADMAP.md)
   4. Child-signed transfers to arbitrary addresses, to the registered main, and to the developer wallet via `PayDev` continue to pass through the gate unchanged, confirmed by regression tests (REGR-01, REGR-02)
   5. A child-signed transaction attempting to spend a main wallet's UTXOs is still rejected by the existing `ValidateWitness` owner-address check, confirmed by a new regression test — proving the new gate stays orthogonal to UTXO *ownership* checks specifically (the signature-acceptance layer gains one narrow CRDT-gated branch in `GeniusInputValidator.cpp`, verified during planning to be required by D-60; the owner-address check itself is untouched) (REGR-03, CONS-06)
 
-**Plans**: 1/4 plans executed
+**Plans**: 2/4 plans executed
 **Wave 1**
 
 - [x] 03-01-PLAN.md — Certified-parent lookup (Blockchain::CheckCertifiedParent) + signature primitive (GeniusTransaction::CheckSignatureAgainst)
 
 **Wave 2** *(blocked on Wave 1 completion)*
 
-- [ ] 03-02-PLAN.md — CheckParentChildAuthority consensus gate + D-60 signature-acceptance extension (CheckTransactionAuthorization + GeniusInputValidator.cpp)
+- [x] 03-02-PLAN.md — CheckParentChildAuthority consensus gate + D-60 signature-acceptance extension (CheckTransactionAuthorization + GeniusInputValidator.cpp)
 
 **Wave 3** *(blocked on Wave 2 completion)*
 
