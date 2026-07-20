@@ -5,24 +5,24 @@ milestone_name: Child Wallet Transfers
 current_phase: 3
 current_phase_name: Parent-Child Transfer Authority
 status: executing
-stopped_at: Phase 3 context gathered
-last_updated: "2026-07-20T22:38:47.100Z"
+stopped_at: Completed 03-01-PLAN.md
+last_updated: "2026-07-20T22:52:08.637Z"
 last_activity: 2026-07-20
-last_activity_desc: "ROADMAP v2.3 created (Phase 3: Parent-Child Transfer Authority, Phase 4: GeniusSDK Transfer Wrappers); 9/9 requirements mapped"
+last_activity_desc: Phase 3 execution started
 progress:
   total_phases: 2
   completed_phases: 0
-  total_plans: 0
-  completed_plans: 0
+  total_plans: 4
+  completed_plans: 1
   percent: 0
 ---
 
 ## Current Position
 
-Phase: 3 of 4 (Parent-Child Transfer Authority)
-Plan: — (not yet planned)
+Phase: 3 (Parent-Child Transfer Authority) — EXECUTING
+Plan: 2 of 4
 Status: Ready to execute
-Last activity: 2026-07-20 — ROADMAP v2.3 created (Phase 3: Parent-Child Transfer Authority, Phase 4: GeniusSDK Transfer Wrappers); 9/9 requirements mapped
+Last activity: 2026-07-20 — Phase 3 execution started
 
 Progress: [░░░░░░░░░░] 0%
 
@@ -31,7 +31,7 @@ Progress: [░░░░░░░░░░] 0%
 See: .planning/PROJECT.md (updated 2026-07-20)
 
 **Core value:** Main wallet must be able to discover, monitor, and manage registered child wallets through consensus-visible state
-**Current focus:** Phase 3 — Parent-Child Transfer Authority (new `CheckParentChildAuthority` consensus gate)
+**Current focus:** Phase 3 — Parent-Child Transfer Authority
 
 ### Blockers/Concerns (carried forward)
 
@@ -52,6 +52,7 @@ Items acknowledged and deferred at milestone close on 2026-07-20:
 | Phase 01-child-balance-query P01 | 5min | 2 tasks | 2 files |
 | Phase 01-child-balance-query P02 | 25min | 2 tasks | 1 files |
 | Phase 02-geniussdk-child-wallet-interfaces P01 | 20min | 2 tasks | 2 files |
+| Phase 03-parent-child-transfer-authority P01 | 25min | 2 tasks | 4 files |
 
 ## Decisions
 
@@ -61,6 +62,8 @@ Items acknowledged and deferred at milestone close on 2026-07-20:
 - [Phase 02, v2.2]: Zero registrations from GeniusSDKGetRegistrationsForMain is GENIUS_NODE_RET_OK with out_count=0, not a failure
 - [Roadmap, v2.3]: CheckParentChildAuthority gate slots between CheckTransactionAuthorization and CheckTransactionTimestamp in ValidateTransactionForConsensus (TransactionManager.cpp:4250-4303); GeniusInputValidator.cpp is NOT modified — CONS-05/CONS-06 stay invariant-only
 - [Roadmap, v2.3]: Reuses existing `"transfer"` tx type for both CONS-01 (fund) and CONS-02 (recover) — no new proto message or tx type; GeniusSDK wrapper phase (4) depends on Phase 3's gate + GeniusNode-level transfer call existing first
+- [Phase 03, v2.3]: Blockchain::CheckCertifiedParent implemented with zero genius_node dependency (duplicated reg-key format inline via boost::format) to preserve the one-directional blockchain_genesis <- genius_node link
+- [Phase 03, v2.3]: GeniusTransaction::CheckSignature refactored to delegate to new CheckSignatureAgainst(address) - behavior-preserving, unlocks Plan 02's D-60 delegated-signature verification
 
 ### Pending Todos
 
@@ -72,9 +75,9 @@ None yet.
 
 ## Session
 
-**Last session:** 2026-07-20T21:52:33.532Z
-**Stopped at:** Phase 3 context gathered
-**Resume file:** .planning/phases/03-parent-child-transfer-authority/03-CONTEXT.md
+**Last session:** 2026-07-20T22:52:08.631Z
+**Stopped at:** Completed 03-01-PLAN.md
+**Resume file:** None
 
 ## Operator Next Steps
 
