@@ -1,28 +1,24 @@
 ---
 gsd_state_version: 1.0
-milestone: v2.2
-milestone_name: GeniusSDK Child Wallet Interfaces
-current_phase: 2
-status: Awaiting next milestone
-stopped_at: Completed 02-01-PLAN.md (GeniusSDK child wallet C API); evmrelay/coroutine CMake gap fixed and full build confirmed green
-last_updated: "2026-07-20T19:09:59.829Z"
+milestone: v2.3
+milestone_name: Child Wallet Transfers
+status: planning
+last_updated: "2026-07-20T20:00:18.695Z"
 last_activity: 2026-07-20
-last_activity_desc: Milestone v2.2 completed and archived
 progress:
-  total_phases: 1
-  completed_phases: 1
-  total_plans: 1
-  completed_plans: 1
-  percent: 100
-current_phase_name: GeniusSDK Child Wallet Interfaces
+  total_phases: 0
+  completed_phases: 0
+  total_plans: 0
+  completed_plans: 0
+  percent: 0
 ---
 
 ## Current Position
 
-Phase: Milestone v2.2 complete
+Phase: Not started (defining requirements)
 Plan: —
-Status: Awaiting next milestone
-Last activity: 2026-07-20 — Milestone v2.2 completed and archived
+Status: Defining requirements
+Last activity: 2026-07-20 — Milestone v2.3 started
 
 ## Project Reference
 
@@ -30,6 +26,10 @@ See: .planning/PROJECT.md (updated 2026-07-20)
 
 **Core value:** Main wallet must be able to discover, monitor, and manage registered child wallets through consensus-visible state
 **Current focus:** Planning next milestone (v2.3 — child wallet transfers)
+
+### Blockers/Concerns (carried forward)
+
+- `child_registration_test.exe` segfaults on process teardown (after all GTest assertions pass) — pre-existing lifecycle issue, likely unjoined libp2p/boost::asio threads during node `.reset()`, not caused by v2.1/v2.2/v2.3 work. Tracked in `.planning/phases/01-child-balance-query/deferred-items.md`; candidate for a future test-infra/node-shutdown-hygiene phase.
 
 ## Deferred Items
 

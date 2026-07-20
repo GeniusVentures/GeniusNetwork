@@ -12,9 +12,21 @@ The main wallet must be able to discover, monitor, and manage registered child w
 
 **Shipped:** v2.2 GeniusSDK Child Wallet Interfaces (2026-07-20) — external games/apps can register this node as a child wallet, discover a main wallet's registered children, and query child balances entirely through the public `GeniusSDK.h`/`.cpp` C API, without linking SuperGenius directly. Build-verified end-to-end after fixing a pre-existing evmrelay/Boost::coroutine CMake packaging gap.
 
-## Next Milestone: v2.3 (planning)
+## Current Milestone: v2.3 Child Wallet Transfers
 
-**Requested goal:** Implement transferring to and from a child wallet from a main wallet — the transfer/spend path is not yet scoped. `/gsd-new-milestone` will define the concrete requirements (e.g. main→child funding, child→main withdrawal, transfer authorization/limits).
+**Goal:** Enable authorized main↔child fund transfers — main can fund a registered child (CONS-01) and recover funds back from it (CONS-02) — enforced by a new `CheckParentChildAuthority` consensus gate, exposed through GeniusNode and the public GeniusSDK C API.
+
+**Target features:**
+- `CheckParentChildAuthority` gate in `ValidateTransactionForConsensus` (fires only for `"transfer"` tx type; all other types pass through unchanged)
+- CONS-01 Main→child fund: ordinary transfer; `reg/` check is a consistency validation, not access control
+- CONS-02 Main-recover-from-child: `reg/` check + destination restricted to the registered main address (D-21)
+- GeniusNode-level transfer call(s) reusing existing `TransferTransaction` machinery — no new tx type or proto message needed
+- GeniusSDK C API wrapper(s) exposing both directions to external callers
+- Regression coverage confirming CONS-03/04/05 invariants (child→main, child→dev, child-cannot-spend-main) still hold once the gate is inserted
+
+**Explicitly out of scope this milestone:** new tx types, new proto messages, GeniusWallet Flutter UI wiring, transfer amount limits/policy beyond CONS-01/02, dedicated GeniusSDK/test unit tests (thin FFI wrapper — SuperGenius/TransactionManager tests are the coverage layer).
+
+**Key context:** Fully spec'd already in `docs/02-consensus-parent-child-authority.md` (CONS-01–CONS-06, D-20 through D-23); confirmed unimplemented (`CheckParentChildAuthority` has zero hits in `SuperGenius/`). Gate slots between `CheckTransactionAuthorization` and `CheckTransactionTimestamp` in `ValidateTransactionForConsensus` at `TransactionManager.cpp:4250-4303`.
 
 ## Requirements
 
@@ -33,8 +45,10 @@ The main wallet must be able to discover, monitor, and manage registered child w
 
 ### Active
 
-- [ ] Main wallet can transfer (fund) assets to a registered child wallet — v2.3 (candidate, to be scoped)
-- [ ] Child wallet can transfer (withdraw/spend) assets back to its registered main wallet — v2.3 (candidate, to be scoped)
+- [ ] `CheckParentChildAuthority` consensus gate enforces CONS-01 (main→child fund) — v2.3
+- [ ] `CheckParentChildAuthority` consensus gate enforces CONS-02 (main-recover-from-child, destination-restricted) — v2.3
+- [ ] GeniusSDK wrapper exposes main→child fund transfer — v2.3
+- [ ] GeniusSDK wrapper exposes main-recover-from-child transfer — v2.3
 
 ### Deferred (candidates for future milestones)
 
@@ -107,4 +121,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-07-20 after shipping v2.2 milestone*
+*Last updated: 2026-07-20 after starting v2.3 milestone*
