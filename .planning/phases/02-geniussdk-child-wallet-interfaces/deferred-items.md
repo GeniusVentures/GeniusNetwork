@@ -1,6 +1,27 @@
 # Deferred Items — Phase 2 (GeniusSDK Child Wallet Interfaces)
 
-## GeniusSDK static-lib build cannot be verified end-to-end (pre-existing, out of scope)
+## GeniusSDK static-lib build cannot be verified end-to-end (pre-existing, out of scope) — RESOLVED 2026-07-20
+
+**Resolution:** Fixed directly in `GeniusSDK/cmake/CommonBuildParameters.cmake` rather than in
+`SuperGenius/cmake/config.cmake.in` (the candidate fix location below). Two commits:
+
+- `e2277ec` — adds `set(evmrelay_DIR ...)` + `find_package(evmrelay CONFIG REQUIRED)` directly in
+  `CommonBuildParameters.cmake`, before `find_package(SuperGenius)`. This makes `evmrelay`'s
+  `include/evmrelay` usage-requirement available in the consumer's build tree independently of
+  whether `SuperGeniusConfig.cmake` declares the transitive dependency, resolving the
+  `eth/eth_watch_service.hpp` include failure.
+- `6ced449` ("Exception handling flag") — adds `coroutine` to the `find_package(Boost CONFIG
+  REQUIRED COMPONENTS ...)` list, resolving the secondary Boost::coroutine/MSVC
+  template-instantiation error (`'current_exception': identifier not found`) surfaced once past
+  the evmrelay include issue.
+
+A full `GeniusSDK` build has been run and confirmed green end-to-end. The three deferred
+verification items in `02-01-SUMMARY.md` (D1–D3, previously `human_judgment: true` pending build
+confirmation) are now build-confirmed, not just inspection-confirmed.
+
+---
+
+## Original issue (superseded by resolution above)
 
 **Found during:** Phase 2 Plan 01, Task 2 build verification step.
 

@@ -3,35 +3,41 @@ gsd_state_version: 1.0
 milestone: v2.2
 milestone_name: GeniusSDK Child Wallet Interfaces
 current_phase: 2
-current_phase_name: GeniusSDK Child Wallet Interfaces
-status: verifying
-stopped_at: Completed 02-01-PLAN.md (GeniusSDK child wallet C API); build verification blocked by pre-existing SuperGenius/evmrelay CMake gap
-last_updated: "2026-07-18T01:27:00.866Z"
-last_activity: 2026-07-18
-last_activity_desc: Phase 2 execution started
+status: Awaiting next milestone
+stopped_at: Completed 02-01-PLAN.md (GeniusSDK child wallet C API); evmrelay/coroutine CMake gap fixed and full build confirmed green
+last_updated: "2026-07-20T19:09:59.829Z"
+last_activity: 2026-07-20
+last_activity_desc: Milestone v2.2 completed and archived
 progress:
   total_phases: 1
   completed_phases: 1
   total_plans: 1
   completed_plans: 1
   percent: 100
+current_phase_name: GeniusSDK Child Wallet Interfaces
 ---
 
 ## Current Position
 
-Phase: 2 (GeniusSDK Child Wallet Interfaces) — EXECUTING
-Plan: 1 of 1
-Status: Phase complete — ready for verification
-Last activity: 2026-07-18 — Phase 2 execution started
-
-Progress: [░░░░░░░░░░] 0%
+Phase: Milestone v2.2 complete
+Plan: —
+Status: Awaiting next milestone
+Last activity: 2026-07-20 — Milestone v2.2 completed and archived
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-07-17)
+See: .planning/PROJECT.md (updated 2026-07-20)
 
 **Core value:** Main wallet must be able to discover, monitor, and manage registered child wallets through consensus-visible state
-**Current focus:** Phase 2 — GeniusSDK Child Wallet Interfaces
+**Current focus:** Planning next milestone (v2.3 — child wallet transfers)
+
+## Deferred Items
+
+Items acknowledged and deferred at milestone close on 2026-07-20:
+
+| Category | Item | Status |
+|----------|------|--------|
+| verification | Phase 2 (GeniusSDK Child Wallet Interfaces) closed without a `VERIFICATION.md` report — verify step never ran (`/gsd-execute-phase 2` was never re-invoked after implementation). Coverage was manually cross-checked and later build-confirmed (2026-07-20), but no formal verification artifact exists. | override_closeout, accepted |
 
 ## Performance Metrics
 
@@ -57,14 +63,15 @@ None yet.
 ### Blockers/Concerns
 
 - `child_registration_test.exe` segfaults on process teardown (pre-existing lifecycle issue, not caused by v2.1/v2.2 work) — tracked in `.planning/phases/01-child-balance-query/deferred-items.md`, candidate for a future test-infra phase.
-- GeniusSDK static-lib build cannot be verified end-to-end: SuperGeniusConfig.cmake does not propagate evmrelay's usage requirements (include/evmrelay) to external consumers, causing account/BridgeRelayer.hpp -> eth/eth_watch_service.hpp to fail to resolve. Pre-existing, unrelated to Phase 2 Plan 01 source changes. See .planning/phases/02-geniussdk-child-wallet-interfaces/deferred-items.md
+
+**Resolved:** GeniusSDK static-lib build verification blocker (evmrelay include path + Boost::coroutine MSVC error) fixed in `GeniusSDK/cmake/CommonBuildParameters.cmake` (commits `e2277ec`, `6ced449`); full build now confirmed green. See `.planning/phases/02-geniussdk-child-wallet-interfaces/deferred-items.md`.
 
 ## Session
 
-**Last session:** 2026-07-18T01:27:00.861Z
-**Stopped at:** Completed 02-01-PLAN.md (GeniusSDK child wallet C API); build verification blocked by pre-existing SuperGenius/evmrelay CMake gap
+**Last session:** 2026-07-20T00:00:00.000Z
+**Stopped at:** Completed 02-01-PLAN.md (GeniusSDK child wallet C API); evmrelay/coroutine CMake gap fixed and full build confirmed green
 **Resume file:** None
 
 ## Operator Next Steps
 
-- Run `/gsd-plan-phase 2` to plan the GeniusSDK Child Wallet Interfaces phase.
+- Start the next milestone with /gsd-new-milestone

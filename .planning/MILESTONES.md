@@ -1,5 +1,19 @@
 # Milestones
 
+## v2.2 GeniusSDK Child Wallet Interfaces (Shipped: 2026-07-20)
+
+**Phases completed:** 1 phases, 1 plans, 2 tasks
+
+**Key accomplishments:**
+
+- Added GeniusSDKRegisterChild, GeniusSDKGetRegistrationsForMain, GeniusSDKGetChildBalance, and GeniusSDKGetChildBalanceAll to the public GeniusSDK C API, wrapping the existing GeniusNode::RegisterChild/GetRegistrationsForMain/GetChildBalance logic with strnlen-bounded proto conversion and a malloc'd/GeniusSDKFree discovery-array pattern.
+
+### Known Gaps
+
+- **Verification override**: Phase 2 has no formal `VERIFICATION.md` on record (`/gsd-execute-phase 2`'s verify step never completed, per `init.manager`). Coverage D1-D3 in `02-01-SUMMARY.md` were verified by manual line-by-line signature cross-check against `GeniusNode.hpp`/`TransactionManager.hpp`/`SGTransaction.proto`, then build-confirmed end-to-end on 2026-07-20 once the evmrelay/coroutine CMake blocker was fixed — but no dedicated verification report exists. Milestone closed with user override rather than running `/gsd-execute-phase 2` to backfill it.
+
+---
+
 ## v2.1 Main Wallet Child Balance Query (Shipped: 2026-07-17)
 
 **Phases completed:** 1 phases, 2 plans, 4 tasks

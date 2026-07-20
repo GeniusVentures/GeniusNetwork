@@ -197,6 +197,14 @@ None - no external service configuration required.
 *Phase: 02-geniussdk-child-wallet-interfaces*
 *Completed: 2026-07-18*
 
+## Build Verification Update (2026-07-20)
+
+The evmrelay/Boost::coroutine CMake blocker described above and in `deferred-items.md` has
+been fixed in `GeniusSDK/cmake/CommonBuildParameters.cmake` (commits `e2277ec`, `6ced449`).
+A full `GeniusSDK` build has been run and confirmed green end-to-end. Coverage items D1–D3
+above (`human_judgment: true`, previously verified only by manual signature inspection) are
+now also build-confirmed.
+
 ## Self-Check: PASSED
 
 - FOUND: GeniusSDK/src/GeniusSDK.h
