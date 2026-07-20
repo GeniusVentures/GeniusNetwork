@@ -54,21 +54,21 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| CONS-01 | TBD | Pending |
-| CONS-02 | TBD | Pending |
-| CONS-06 | TBD | Pending |
-| REGR-01 | TBD | Pending |
-| REGR-02 | TBD | Pending |
-| REGR-03 | TBD | Pending |
-| SDKT-01 | TBD | Pending |
-| SDKT-02 | TBD | Pending |
-| SDKT-03 | TBD | Pending |
+| CONS-01 | Phase 3 | Mapped |
+| CONS-02 | Phase 3 | Mapped |
+| CONS-06 | Phase 3 | Mapped |
+| REGR-01 | Phase 3 | Mapped |
+| REGR-02 | Phase 3 | Mapped |
+| REGR-03 | Phase 3 | Mapped |
+| SDKT-01 | Phase 4 | Mapped |
+| SDKT-02 | Phase 4 | Mapped |
+| SDKT-03 | Phase 4 | Mapped |
 
 **Coverage:**
 - v2.3 requirements: 9 total
-- Mapped to phases: 0 (pending roadmap creation)
-- Unmapped: 9 ⚠️ (will be resolved by gsd-roadmapper)
+- Mapped to phases: 9
+- Unmapped: 0 ✓
 
 ---
 *Requirements defined: 2026-07-20*
-*Last updated: 2026-07-20 after initial definition*
+*Last updated: 2026-07-20 after ROADMAP v2.3 creation (Phase 3, Phase 4) — 100% coverage*

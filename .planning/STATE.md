@@ -6,7 +6,7 @@ status: planning
 last_updated: "2026-07-20T20:00:18.695Z"
 last_activity: 2026-07-20
 progress:
-  total_phases: 0
+  total_phases: 2
   completed_phases: 0
   total_plans: 0
   completed_plans: 0
@@ -15,17 +15,19 @@ progress:
 
 ## Current Position
 
-Phase: Not started (defining requirements)
-Plan: —
-Status: Defining requirements
-Last activity: 2026-07-20 — Milestone v2.3 started
+Phase: 3 of 4 (Parent-Child Transfer Authority)
+Plan: — (not yet planned)
+Status: Ready to plan
+Last activity: 2026-07-20 — ROADMAP v2.3 created (Phase 3: Parent-Child Transfer Authority, Phase 4: GeniusSDK Transfer Wrappers); 9/9 requirements mapped
+
+Progress: [░░░░░░░░░░] 0%
 
 ## Project Reference
 
 See: .planning/PROJECT.md (updated 2026-07-20)
 
 **Core value:** Main wallet must be able to discover, monitor, and manage registered child wallets through consensus-visible state
-**Current focus:** Planning next milestone (v2.3 — child wallet transfers)
+**Current focus:** Phase 3 — Parent-Child Transfer Authority (new `CheckParentChildAuthority` consensus gate)
 
 ### Blockers/Concerns (carried forward)
 
@@ -51,10 +53,10 @@ Items acknowledged and deferred at milestone close on 2026-07-20:
 
 - [Phase 01, v2.1]: Argument order swap at delegation boundary: GetChildBalance is child-first (D-56) but UTXOManager::GetBalance is token-first, swapped at the call site
 - [Phase 01, v2.1]: No registration gate, plain uint64_t return; 0 is an inherently ambiguous no-balance-or-not-synced signal (D-54/D-55/D-62)
-- [Phase 01, v2.1]: MintTokens chainid must match a registered test-only IInputValidator ("test") — an arbitrary description string falls back to the public-chain validator and rejects the mint
-- [Phase 02, v2.2]: GENIUS_SDK_MAX_METADATA_STRING_SIZE=128 sized as opaque strings, distinct from GENIUS_SDK_ADDRESS_SIZE
 - [Phase 02, v2.2]: GeniusSDKRegisterChild wraps only the 2-arg auto-derive RegisterChild overload; 3-arg manual-sequence overload intentionally not exposed
 - [Phase 02, v2.2]: Zero registrations from GeniusSDKGetRegistrationsForMain is GENIUS_NODE_RET_OK with out_count=0, not a failure
+- [Roadmap, v2.3]: CheckParentChildAuthority gate slots between CheckTransactionAuthorization and CheckTransactionTimestamp in ValidateTransactionForConsensus (TransactionManager.cpp:4250-4303); GeniusInputValidator.cpp is NOT modified — CONS-05/CONS-06 stay invariant-only
+- [Roadmap, v2.3]: Reuses existing `"transfer"` tx type for both CONS-01 (fund) and CONS-02 (recover) — no new proto message or tx type; GeniusSDK wrapper phase (4) depends on Phase 3's gate + GeniusNode-level transfer call existing first
 
 ### Pending Todos
 
@@ -62,16 +64,14 @@ None yet.
 
 ### Blockers/Concerns
 
-- `child_registration_test.exe` segfaults on process teardown (pre-existing lifecycle issue, not caused by v2.1/v2.2 work) — tracked in `.planning/phases/01-child-balance-query/deferred-items.md`, candidate for a future test-infra phase.
-
-**Resolved:** GeniusSDK static-lib build verification blocker (evmrelay include path + Boost::coroutine MSVC error) fixed in `GeniusSDK/cmake/CommonBuildParameters.cmake` (commits `e2277ec`, `6ced449`); full build now confirmed green. See `.planning/phases/02-geniussdk-child-wallet-interfaces/deferred-items.md`.
+- `child_registration_test.exe` segfaults on process teardown (pre-existing lifecycle issue, not caused by v2.1/v2.2/v2.3 work) — tracked in `.planning/phases/01-child-balance-query/deferred-items.md`, candidate for a future test-infra phase.
 
 ## Session
 
 **Last session:** 2026-07-20T00:00:00.000Z
-**Stopped at:** Completed 02-01-PLAN.md (GeniusSDK child wallet C API); evmrelay/coroutine CMake gap fixed and full build confirmed green
+**Stopped at:** Created v2.3 ROADMAP.md (Phase 3, Phase 4) and updated REQUIREMENTS.md traceability — 9/9 v2.3 requirements mapped
 **Resume file:** None
 
 ## Operator Next Steps
 
-- Start the next milestone with /gsd-new-milestone
+- Plan Phase 3 with `/gsd-plan-phase 3`
