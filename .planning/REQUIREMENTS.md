@@ -21,9 +21,9 @@ Requirements for the Child Wallet Transfers milestone. Each maps to roadmap phas
 
 ### SDK Transfer (SDKT)
 
-- [ ] **SDKT-01**: GeniusSDK C API exposes a call for external callers to fund a registered child wallet from the main wallet (wraps the CONS-01 transfer path)
-- [ ] **SDKT-02**: GeniusSDK C API exposes a call for external callers to recover funds from a registered child wallet back to the main wallet (wraps the CONS-02 transfer path)
-- [ ] **SDKT-03**: Both transfer calls return existing `GeniusNodeReturnValue_t` status codes (not-initialized / invalid-argument / rejected), consistent with other GeniusSDK calls
+- [x] **SDKT-01**: GeniusSDK C API exposes a call for external callers to fund a registered child wallet from the main wallet (wraps the CONS-01 transfer path)
+- [x] **SDKT-02**: GeniusSDK C API exposes a call for external callers to recover funds from a registered child wallet back to the main wallet (wraps the CONS-02 transfer path)
+- [x] **SDKT-03**: Both transfer calls return existing `GeniusNodeReturnValue_t` status codes (not-initialized / invalid-argument / rejected), consistent with other GeniusSDK calls
 
 ## Future Requirements
 

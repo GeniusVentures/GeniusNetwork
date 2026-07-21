@@ -47,7 +47,7 @@ Archived: [`.planning/milestones/v2.2-ROADMAP.md`](milestones/v2.2-ROADMAP.md)
 **Milestone Goal:** Enable authorized main↔child fund transfers — main can fund a registered child (CONS-01) and recover funds back from it (CONS-02) — enforced by a new `CheckParentChildAuthority` consensus gate, exposed through GeniusNode and the public GeniusSDK C API.
 
 - [x] **Phase 3: Parent-Child Transfer Authority** - New `CheckParentChildAuthority` consensus gate enabling main→child funding and main-recover-from-child, with regression coverage proving existing child-signed paths are unaffected (completed 2026-07-21)
-- [ ] **Phase 4: GeniusSDK Transfer Wrappers** - Expose both transfer directions through the public GeniusSDK C API for external callers
+- [x] **Phase 4: GeniusSDK Transfer Wrappers** - Expose both transfer directions through the public GeniusSDK C API for external callers (completed 2026-07-21)
 
 ## Phase Details
 
@@ -92,10 +92,10 @@ Archived: [`.planning/milestones/v2.2-ROADMAP.md`](milestones/v2.2-ROADMAP.md)
   2. External caller can invoke a GeniusSDK C function to recover funds from a registered child wallet back to the main wallet, wrapping the CONS-02 transfer path (SDKT-02)
   3. Both transfer calls return existing `GeniusNodeReturnValue_t` status codes (not-initialized / invalid-argument / rejected), consistent with other GeniusSDK calls (SDKT-03)
 
-**Plans**: 1 plan
+**Plans**: 1/1 plans complete
 **Wave 1**
 
-- [ ] 04-01-PLAN.md — GeniusSDKFundChild/FundChildGNUS + GeniusSDKRecoverFromChild/RecoverFromChildGNUS C API wrappers (SDKT-01/02/03)
+- [x] 04-01-PLAN.md — GeniusSDKFundChild/FundChildGNUS + GeniusSDKRecoverFromChild/RecoverFromChildGNUS C API wrappers (SDKT-01/02/03)
 
 ## Progress
 
