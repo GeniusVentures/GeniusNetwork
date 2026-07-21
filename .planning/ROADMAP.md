@@ -92,7 +92,10 @@ Archived: [`.planning/milestones/v2.2-ROADMAP.md`](milestones/v2.2-ROADMAP.md)
   2. External caller can invoke a GeniusSDK C function to recover funds from a registered child wallet back to the main wallet, wrapping the CONS-02 transfer path (SDKT-02)
   3. Both transfer calls return existing `GeniusNodeReturnValue_t` status codes (not-initialized / invalid-argument / rejected), consistent with other GeniusSDK calls (SDKT-03)
 
-**Plans**: TBD
+**Plans**: 1 plan
+**Wave 1**
+
+- [ ] 04-01-PLAN.md — GeniusSDKFundChild/FundChildGNUS + GeniusSDKRecoverFromChild/RecoverFromChildGNUS C API wrappers (SDKT-01/02/03)
 
 ## Progress
 
@@ -101,7 +104,7 @@ Archived: [`.planning/milestones/v2.2-ROADMAP.md`](milestones/v2.2-ROADMAP.md)
 | Child Balance Query | v2.1 | 2/2 | Complete | 2026-07-17 |
 | GeniusSDK Child Wallet Interfaces | v2.2 | 1/1 | Complete | 2026-07-18 |
 | Parent-Child Transfer Authority | v2.3 | 0/4 | Planned | - |
-| GeniusSDK Transfer Wrappers | v2.3 | 0/TBD | Not started | - |
+| GeniusSDK Transfer Wrappers | v2.3 | 0/1 | Planned | - |
 
 ---
 *Roadmap updated: 2026-07-20 — v2.3 roadmap created (Phase 3: Parent-Child Transfer Authority, Phase 4: GeniusSDK Transfer Wrappers); 9/9 requirements mapped*
