@@ -5,24 +5,24 @@ milestone_name: Child Wallet Transfers
 current_phase: 3
 current_phase_name: Parent-Child Transfer Authority
 status: executing
-stopped_at: Completed 03-03-PLAN.md
-last_updated: "2026-07-21T00:48:14.109Z"
+stopped_at: Completed 03-04-PLAN.md — all 4 plans executed, pending goal-backward verification
+last_updated: "2026-07-21T03:30:00.000Z"
 last_activity: 2026-07-20
-last_activity_desc: Phase 3 execution started
+last_activity_desc: Phase 3 all plans complete (4/4) — CONS-01/02/06 and REGR-01/02/03 all test-backed
 progress:
   total_phases: 2
   completed_phases: 0
   total_plans: 4
-  completed_plans: 3
+  completed_plans: 4
   percent: 0
 ---
 
 ## Current Position
 
-Phase: 3 (Parent-Child Transfer Authority) — EXECUTING
-Plan: 4 of 4
-Status: Ready to execute
-Last activity: 2026-07-20 — Phase 3 execution started
+Phase: 3 (Parent-Child Transfer Authority) — ALL PLANS COMPLETE, PENDING VERIFICATION
+Plan: 4 of 4 (complete)
+Status: Ready for phase goal verification
+Last activity: 2026-07-20 — Phase 3 all plans complete (4/4)
 
 Progress: [░░░░░░░░░░] 0%
 
@@ -55,6 +55,7 @@ Items acknowledged and deferred at milestone close on 2026-07-20:
 | Phase 03-parent-child-transfer-authority P01 | 25min | 2 tasks | 4 files |
 | Phase 03-parent-child-transfer-authority P02 | 50min | 3 tasks | 3 files |
 | Phase 03-parent-child-transfer-authority P03 | 65min | 2 tasks | 4 files |
+| Phase 03-parent-child-transfer-authority P04 | ~3.5hr | 2 tasks | 3 files |
 
 ## Decisions
 
@@ -72,6 +73,8 @@ Items acknowledged and deferred at milestone close on 2026-07-20:
 - [Phase 03-parent-child-transfer-authority]: RecoverFromChild uses a new FillDAGStructForAddress(source_address) helper instead of modifying FillDAGStruct() itself - keeps main's own transfer/escrow paths untouched
 - [Phase 03-parent-child-transfer-authority]: RecoverFromChild's primary output (main's own address) is always pushed first, before any change output, matching Plan 02's gate reading params->second.front().dest_address for the D-21 destination check
 - [Phase 03-parent-child-transfer-authority]: GeniusNode::RecoverFromChild's balance pre-check uses GetBalance(token_id, child_address) - the child's own balance, not main's
+- [Phase 03-parent-child-transfer-authority, P04]: Fixed a pre-existing gap discovered while writing regression tests - TransactionManager's transaction_parsers dispatch table had no entry for "registration" tx type, so every registration transaction was rejected as "Unknown tx type" before it could ever be certified; added no-op ParseRegistrationTransaction/RevertRegistrationTransaction (registration state already fully owned by FilterRegistration/RegElementCallback)
+- [Phase 03-parent-child-transfer-authority, P04]: All 6 phase requirements (CONS-01, CONS-02, CONS-06, REGR-01, REGR-02, REGR-03) now have direct automated E2E regression coverage against the real ValidateTransactionForConsensus pipeline - 24/24 tests passing in registration_transaction_test.exe
 
 ### Pending Todos
 
@@ -83,10 +86,10 @@ None yet.
 
 ## Session
 
-**Last session:** 2026-07-21T00:48:14.102Z
-**Stopped at:** Completed 03-03-PLAN.md
+**Last session:** 2026-07-21T03:30:00.000Z
+**Stopped at:** Completed 03-04-PLAN.md — all 4 plans executed, pending goal-backward verification
 **Resume file:** None
 
 ## Operator Next Steps
 
-- Plan Phase 3 with `/gsd-plan-phase 3`
+- Verify Phase 3 goal achievement (gsd-verifier), then mark phase complete

@@ -46,7 +46,7 @@ Archived: [`.planning/milestones/v2.2-ROADMAP.md`](milestones/v2.2-ROADMAP.md)
 
 **Milestone Goal:** Enable authorized main↔child fund transfers — main can fund a registered child (CONS-01) and recover funds back from it (CONS-02) — enforced by a new `CheckParentChildAuthority` consensus gate, exposed through GeniusNode and the public GeniusSDK C API.
 
-- [ ] **Phase 3: Parent-Child Transfer Authority** - New `CheckParentChildAuthority` consensus gate enabling main→child funding and main-recover-from-child, with regression coverage proving existing child-signed paths are unaffected
+- [x] **Phase 3: Parent-Child Transfer Authority** - New `CheckParentChildAuthority` consensus gate enabling main→child funding and main-recover-from-child, with regression coverage proving existing child-signed paths are unaffected (completed 2026-07-21)
 - [ ] **Phase 4: GeniusSDK Transfer Wrappers** - Expose both transfer directions through the public GeniusSDK C API for external callers
 
 ## Phase Details
@@ -64,7 +64,7 @@ Archived: [`.planning/milestones/v2.2-ROADMAP.md`](milestones/v2.2-ROADMAP.md)
   4. Child-signed transfers to arbitrary addresses, to the registered main, and to the developer wallet via `PayDev` continue to pass through the gate unchanged, confirmed by regression tests (REGR-01, REGR-02)
   5. A child-signed transaction attempting to spend a main wallet's UTXOs is still rejected by the existing `ValidateWitness` owner-address check, confirmed by a new regression test — proving the new gate stays orthogonal to UTXO *ownership* checks specifically (the signature-acceptance layer gains one narrow CRDT-gated branch in `GeniusInputValidator.cpp`, verified during planning to be required by D-60; the owner-address check itself is untouched) (REGR-03, CONS-06)
 
-**Plans**: 3/4 plans executed
+**Plans**: 4/4 plans complete
 **Wave 1**
 
 - [x] 03-01-PLAN.md — Certified-parent lookup (Blockchain::CheckCertifiedParent) + signature primitive (GeniusTransaction::CheckSignatureAgainst)
@@ -79,7 +79,7 @@ Archived: [`.planning/milestones/v2.2-ROADMAP.md`](milestones/v2.2-ROADMAP.md)
 
 **Wave 4** *(blocked on Wave 3 completion)*
 
-- [ ] 03-04-PLAN.md — CONS-01/CONS-02/D-21 + REGR-01/02/03 test coverage (extends existing registration_transaction_test.cpp per D-65)
+- [x] 03-04-PLAN.md — CONS-01/CONS-02/D-21 + REGR-01/02/03 test coverage (extends existing registration_transaction_test.cpp per D-65)
 
 ### Phase 4: GeniusSDK Transfer Wrappers
 

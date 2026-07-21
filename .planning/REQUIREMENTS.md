@@ -15,9 +15,9 @@ Requirements for the Child Wallet Transfers milestone. Each maps to roadmap phas
 
 ### Regression Coverage (REGR)
 
-- [ ] **REGR-01**: Child-signed transfers to main or arbitrary addresses (CONS-03) continue to pass through the new gate unchanged (short-circuit `Approve()`)
-- [ ] **REGR-02**: Child-signed transfers to the developer wallet via `PayDev` (CONS-04) continue to work unchanged
-- [ ] **REGR-03**: A child cannot spend a main wallet's UTXOs even when claiming delegated authority — `ValidateWitness` owner_address check still rejects (CONS-05 invariant) — covered by a new regression test
+- [x] **REGR-01**: Child-signed transfers to main or arbitrary addresses (CONS-03) continue to pass through the new gate unchanged (short-circuit `Approve()`)
+- [x] **REGR-02**: Child-signed transfers to the developer wallet via `PayDev` (CONS-04) continue to work unchanged
+- [x] **REGR-03**: A child cannot spend a main wallet's UTXOs even when claiming delegated authority — `ValidateWitness` owner_address check still rejects (CONS-05 invariant) — covered by a new regression test
 
 ### SDK Transfer (SDKT)
 
