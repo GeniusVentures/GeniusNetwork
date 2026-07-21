@@ -10,9 +10,9 @@ The main wallet must be able to discover, monitor, and manage registered child w
 
 ## Current State
 
-**Shipped:** v2.3 Phase 3 Parent-Child Transfer Authority (2026-07-21) — the `CheckParentChildAuthority` consensus gate is live: main can fund a registered child via an ordinary transfer (CONS-01) and recover funds back from it via the new `TransactionManager::RecoverFromChild`/`GeniusNode::RecoverFromChild` (CONS-02, destination-restricted per D-21), while every existing child-signed path (child→arbitrary, child→main, child→dev, child-cannot-spend-main) is confirmed unaffected by 24 passing E2E regression tests. GeniusSDK C API exposure of both directions is Phase 4, not yet started.
+**Shipped:** v2.3 Phase 4 GeniusSDK Transfer Wrappers (2026-07-21) — external games/apps can fund a registered child wallet (`GeniusSDKFundChild`/`GeniusSDKFundChildGNUS`) and recover funds from it (`GeniusSDKRecoverFromChild`/`GeniusSDKRecoverFromChildGNUS`) entirely through the public GeniusSDK C API, wrapping Phase 3's `GeniusNode::TransferFunds`/`RecoverFromChild` calls with no new business logic. This completes v2.3 Child Wallet Transfers — all milestone phases are done.
 
-**Previously shipped:** v2.2 GeniusSDK Child Wallet Interfaces (2026-07-20) — external games/apps can register this node as a child wallet, discover a main wallet's registered children, and query child balances entirely through the public `GeniusSDK.h`/`.cpp` C API, without linking SuperGenius directly.
+**Previously shipped:** v2.3 Phase 3 Parent-Child Transfer Authority (2026-07-21) — the `CheckParentChildAuthority` consensus gate is live: main can fund a registered child via an ordinary transfer (CONS-01) and recover funds back from it via the new `TransactionManager::RecoverFromChild`/`GeniusNode::RecoverFromChild` (CONS-02, destination-restricted per D-21), while every existing child-signed path (child→arbitrary, child→main, child→dev, child-cannot-spend-main) is confirmed unaffected by 24 passing E2E regression tests.
 
 ## Current Milestone: v2.3 Child Wallet Transfers
 
@@ -47,11 +47,13 @@ The main wallet must be able to discover, monitor, and manage registered child w
 - ✓ `CheckParentChildAuthority` consensus gate enforces CONS-01 (main→child fund) — v2.3 Phase 3
 - ✓ `CheckParentChildAuthority` consensus gate enforces CONS-02 (main-recover-from-child, destination-restricted per D-21) — v2.3 Phase 3
 - ✓ Regression coverage confirms CONS-03/04/05 invariants (child→arbitrary, child→main, child→dev, child-cannot-spend-main) hold unchanged with the new gate in place — v2.3 Phase 3 (REGR-01/02/03)
+- ✓ GeniusSDK wrapper exposes main→child fund transfer (`GeniusSDKFundChild`/`GeniusSDKFundChildGNUS`) — v2.3 Phase 4, fulfilled SDKT-01
+- ✓ GeniusSDK wrapper exposes main-recover-from-child transfer (`GeniusSDKRecoverFromChild`/`GeniusSDKRecoverFromChildGNUS`) — v2.3 Phase 4, fulfilled SDKT-02
+- ✓ Both transfer wrappers return existing `GeniusNodeReturnValue_t` codes with no new enum value added — v2.3 Phase 4, fulfilled SDKT-03
 
 ### Active
 
-- [ ] GeniusSDK wrapper exposes main→child fund transfer — v2.3 Phase 4
-- [ ] GeniusSDK wrapper exposes main-recover-from-child transfer — v2.3 Phase 4
+None — v2.3 Child Wallet Transfers milestone is fully planned and executed. Run `/gsd-complete-milestone` to close it out.
 
 ### Deferred (candidates for future milestones)
 
@@ -128,4 +130,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-07-21 after Phase 3 (Parent-Child Transfer Authority) completion*
+*Last updated: 2026-07-21 after Phase 4 (GeniusSDK Transfer Wrappers) completion — v2.3 milestone execution complete*
