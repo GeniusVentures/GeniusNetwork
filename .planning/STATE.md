@@ -5,22 +5,22 @@ milestone_name: Child Wallet Transfers
 current_phase: 05
 current_phase_name: Child Wallet Lifecycle States (Detach/Revoke
 status: executing
-stopped_at: Completed 05-03-PLAN.md
-last_updated: "2026-07-21T22:33:31.311Z"
+stopped_at: Completed 05-04-PLAN.md
+last_updated: "2026-07-21T23:10:46.578Z"
 last_activity: 2026-07-21
 last_activity_desc: Phase 05 execution started
 progress:
   total_phases: 3
   completed_phases: 2
   total_plans: 10
-  completed_plans: 8
+  completed_plans: 9
   percent: 67
 ---
 
 ## Current Position
 
 Phase: 05 (Child Wallet Lifecycle States (Detach/Revoke)) — EXECUTING
-Plan: 4 of 5
+Plan: 5 of 5
 Status: Ready to execute
 Last activity: 2026-07-21 — Phase 05 execution started
 
@@ -63,6 +63,7 @@ Items acknowledged and deferred at milestone close on 2026-07-20:
 | Phase 05-child-wallet-lifecycle-states P01 | 45min | 3 tasks | 7 files |
 | Phase 05 P02 | 30min | 3 tasks | 2 files |
 | Phase 05 P03 | 25min | 2 tasks | 4 files |
+| Phase 05-child-wallet-lifecycle-states P04 | ~2.5hr | 3 tasks | 1 files |
 
 ## Decisions
 
@@ -91,6 +92,8 @@ Items acknowledged and deferred at milestone close on 2026-07-20:
 - [Phase 05-child-wallet-lifecycle-states, P02]: CheckParentChildAuthority revoke branch does not call CheckCertifiedParent - reg/{child} was already gated by FilterRegistration's own child-signature check
 - [Phase 05-child-wallet-lifecycle-states, P03]: DetachChild/ReplaceMain auto-derive overloads fail closed (invalid_argument) when no prior reg/ record exists, diverging from RegisterChild's auto-derive default-to-sequence-1 behavior
 - [Phase 05-child-wallet-lifecycle-states, P03]: RevokeChild uses FillDAGStruct() (own address as source), never FillDAGStructForAddress - main is Revoke's own signer/src
+- [Phase 05-child-wallet-lifecycle-states, P04]: LifecycleChangeReplayRejectedByNonceChain polls for CONFIRMED (not SENDING) status before exercising the replay check - the nonce chain's GetPeerNonce() is only populated on genuine CONFIRMED status, so polling only to SENDING would make the test pass vacuously
+- [Phase 05-child-wallet-lifecycle-states, P04]: FilterRegistrationRejectsForkedSupersedesSequence's forked element uses sequence=3 (not 2) so gate (d)'s monotonicity check passes on its own, isolating the assertion to gate 3b specifically
 
 ### Pending Todos
 
@@ -102,9 +105,9 @@ None yet.
 
 ## Session
 
-**Last session:** 2026-07-21T22:33:31.306Z
-**Stopped at:** Completed 05-03-PLAN.md
-**Resume file:** .planning/phases/05-child-wallet-lifecycle-states/05-04-PLAN.md
+**Last session:** 2026-07-21T23:10:46.572Z
+**Stopped at:** Completed 05-04-PLAN.md
+**Resume file:** None
 
 ## Operator Next Steps
 
