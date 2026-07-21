@@ -4,16 +4,16 @@ milestone: v2.3
 milestone_name: Child Wallet Transfers
 current_phase: 3
 status: Awaiting next milestone
-stopped_at: Phase 4 context gathered
-last_updated: "2026-07-21T18:14:40.645Z"
+stopped_at: Phase 5 context gathered
+last_updated: "2026-07-21T20:46:47.277Z"
 last_activity: 2026-07-21
 last_activity_desc: Milestone v2.3 completed and archived
 progress:
-  total_phases: 2
+  total_phases: 3
   completed_phases: 2
   total_plans: 5
   completed_plans: 5
-  percent: 100
+  percent: 67
 current_phase_name: GeniusSDK Transfer Wrappers
 ---
 
@@ -42,6 +42,10 @@ Items acknowledged and deferred at milestone close on 2026-07-20:
 | Category | Item | Status |
 |----------|------|--------|
 | verification | Phase 2 (GeniusSDK Child Wallet Interfaces) closed without a `VERIFICATION.md` report — verify step never ran (`/gsd-execute-phase 2` was never re-invoked after implementation). Coverage was manually cross-checked and later build-confirmed (2026-07-20), but no formal verification artifact exists. | override_closeout, accepted |
+
+## Roadmap Evolution
+
+- Phase 5 added: Child Wallet Lifecycle States (Detach/Revoke) — implement the child-initiated Detach and main-initiated Revoke lifecycle transitions for registered child wallets, per the v1.0 lifecycle design (docs/03-02-reward-policy-lifecycle.md). Nothing in SuperGenius/src implements detach_flag, supersedes_sequence, or RevokeTx yet.
 
 ## Performance Metrics
 
@@ -88,9 +92,9 @@ None yet.
 
 ## Session
 
-**Last session:** 2026-07-21T17:41:28.585Z
-**Stopped at:** Phase 4 context gathered
-**Resume file:** .planning/phases/04-geniussdk-transfer-wrappers/04-CONTEXT.md
+**Last session:** 2026-07-21T20:46:47.272Z
+**Stopped at:** Phase 5 context gathered
+**Resume file:** .planning/phases/05-child-wallet-lifecycle-states/05-CONTEXT.md
 
 ## Operator Next Steps
 
