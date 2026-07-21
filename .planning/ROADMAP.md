@@ -61,5 +61,20 @@ Archived: [`.planning/milestones/v2.3-ROADMAP.md`](milestones/v2.3-ROADMAP.md)
 | Parent-Child Transfer Authority | v2.3 | 4/4 | Complete | 2026-07-21 |
 | GeniusSDK Transfer Wrappers | v2.3 | 1/1 | Complete | 2026-07-21 |
 
+### Phase 5: Child Wallet Lifecycle States (Detach/Revoke)
+
+**Goal:** Implement the child-initiated Detach and main-initiated Revoke lifecycle transitions for registered child wallets, per the v1.0 lifecycle design (`docs/03-02-reward-policy-lifecycle.md`, archived at `.planning/milestones/v1.0-phases/03-discovery-rewards-lifecycle/`): `reg/{child_addr}` CRDT fields `detach_flag` + `supersedes_sequence`, a new `RevokeTx` transaction type (`EmbeddedTransaction` oneof arm 9), a `FilterRegistration` gate extension checking `supersedes_sequence`, and reuse of `CheckParentChildAuthority` for revoke validation (main sig + Registered state). Nothing in `SuperGenius/src` implements this yet — only Unregistered/Registered exist today.
+**Requirements**: [LIFE-01, LIFE-02, LIFE-03, LIFE-04]
+**Depends on:** Phase 4
+**Plans:** 5 plans
+
+Plans:
+
+- [ ] 05-01-PLAN.md — Proto schema evolution (RegistrationTx detach_flag/supersedes_sequence, new RevokeTx message) + RevokeTransaction C++ class
+- [ ] 05-02-PLAN.md — Dispatch wiring ("revoke" tx type, ParseRevokeTransaction reg/ mutation), FilterRegistration gate 3b (fork prevention), CheckParentChildAuthority revoke branch
+- [ ] 05-03-PLAN.md — DetachChild/ReplaceMain/RevokeChild methods (TransactionManager + GeniusNode two-layer)
+- [ ] 05-04-PLAN.md — Detach/Replace-Main adversarial tests (fork detection, re-registration, invariants)
+- [ ] 05-05-PLAN.md — Revoke adversarial tests (unauthorized revoke, sequence mismatch, re-registration, invariants)
+
 ---
-*Roadmap updated: 2026-07-21 — v2.3 milestone shipped and archived (Phase 3: Parent-Child Transfer Authority, Phase 4: GeniusSDK Transfer Wrappers); awaiting next milestone*
+*Roadmap updated: 2026-07-21 — Phase 5 (Child Wallet Lifecycle States) planned: 5 plans across proto/consensus-gate/CRDT-filter/GeniusNode/test layers*
