@@ -5,22 +5,22 @@ milestone_name: Child Wallet Transfers
 current_phase: 3
 current_phase_name: Parent-Child Transfer Authority
 status: executing
-stopped_at: Completed 03-02-PLAN.md
-last_updated: "2026-07-20T23:54:11.118Z"
+stopped_at: Completed 03-03-PLAN.md
+last_updated: "2026-07-21T00:48:14.109Z"
 last_activity: 2026-07-20
 last_activity_desc: Phase 3 execution started
 progress:
   total_phases: 2
   completed_phases: 0
   total_plans: 4
-  completed_plans: 2
+  completed_plans: 3
   percent: 0
 ---
 
 ## Current Position
 
 Phase: 3 (Parent-Child Transfer Authority) — EXECUTING
-Plan: 3 of 4
+Plan: 4 of 4
 Status: Ready to execute
 Last activity: 2026-07-20 — Phase 3 execution started
 
@@ -54,6 +54,7 @@ Items acknowledged and deferred at milestone close on 2026-07-20:
 | Phase 02-geniussdk-child-wallet-interfaces P01 | 20min | 2 tasks | 2 files |
 | Phase 03-parent-child-transfer-authority P01 | 25min | 2 tasks | 4 files |
 | Phase 03-parent-child-transfer-authority P02 | 50min | 3 tasks | 3 files |
+| Phase 03-parent-child-transfer-authority P03 | 65min | 2 tasks | 4 files |
 
 ## Decisions
 
@@ -68,6 +69,9 @@ Items acknowledged and deferred at milestone close on 2026-07-20:
 - [Phase 03-parent-child-transfer-authority]: CheckParentChildAuthority re-derives tx.CheckSignature() as a cheap branch selector (not redundant verification) to distinguish REGR-01/02 child-self-signed spends from CONS-02 certified-main-delegated recovery
 - [Phase 03-parent-child-transfer-authority]: D-21 destination restriction enforced via exact string equality against params->second.front().dest_address (primary output first convention), fail-closed on empty/missing UTXO parameters
 - [Phase 03-parent-child-transfer-authority]: GeniusInputValidator.cpp owner-address check and delegated_escrow_spend block left byte-for-byte unchanged - D-60 recovery txs naturally pass since payload_owner == child_addr == tx->GetSrcAddress()
+- [Phase 03-parent-child-transfer-authority]: RecoverFromChild uses a new FillDAGStructForAddress(source_address) helper instead of modifying FillDAGStruct() itself - keeps main's own transfer/escrow paths untouched
+- [Phase 03-parent-child-transfer-authority]: RecoverFromChild's primary output (main's own address) is always pushed first, before any change output, matching Plan 02's gate reading params->second.front().dest_address for the D-21 destination check
+- [Phase 03-parent-child-transfer-authority]: GeniusNode::RecoverFromChild's balance pre-check uses GetBalance(token_id, child_address) - the child's own balance, not main's
 
 ### Pending Todos
 
@@ -79,8 +83,8 @@ None yet.
 
 ## Session
 
-**Last session:** 2026-07-20T23:54:11.113Z
-**Stopped at:** Completed 03-02-PLAN.md
+**Last session:** 2026-07-21T00:48:14.102Z
+**Stopped at:** Completed 03-03-PLAN.md
 **Resume file:** None
 
 ## Operator Next Steps
