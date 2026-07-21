@@ -10,7 +10,9 @@ The main wallet must be able to discover, monitor, and manage registered child w
 
 ## Current State
 
-**Shipped:** v2.2 GeniusSDK Child Wallet Interfaces (2026-07-20) — external games/apps can register this node as a child wallet, discover a main wallet's registered children, and query child balances entirely through the public `GeniusSDK.h`/`.cpp` C API, without linking SuperGenius directly. Build-verified end-to-end after fixing a pre-existing evmrelay/Boost::coroutine CMake packaging gap.
+**Shipped:** v2.3 Phase 3 Parent-Child Transfer Authority (2026-07-21) — the `CheckParentChildAuthority` consensus gate is live: main can fund a registered child via an ordinary transfer (CONS-01) and recover funds back from it via the new `TransactionManager::RecoverFromChild`/`GeniusNode::RecoverFromChild` (CONS-02, destination-restricted per D-21), while every existing child-signed path (child→arbitrary, child→main, child→dev, child-cannot-spend-main) is confirmed unaffected by 24 passing E2E regression tests. GeniusSDK C API exposure of both directions is Phase 4, not yet started.
+
+**Previously shipped:** v2.2 GeniusSDK Child Wallet Interfaces (2026-07-20) — external games/apps can register this node as a child wallet, discover a main wallet's registered children, and query child balances entirely through the public `GeniusSDK.h`/`.cpp` C API, without linking SuperGenius directly.
 
 ## Current Milestone: v2.3 Child Wallet Transfers
 
@@ -26,7 +28,7 @@ The main wallet must be able to discover, monitor, and manage registered child w
 
 **Explicitly out of scope this milestone:** new tx types, new proto messages, GeniusWallet Flutter UI wiring, transfer amount limits/policy beyond CONS-01/02, dedicated GeniusSDK/test unit tests (thin FFI wrapper — SuperGenius/TransactionManager tests are the coverage layer).
 
-**Key context:** Fully spec'd already in `docs/02-consensus-parent-child-authority.md` (CONS-01–CONS-06, D-20 through D-23); confirmed unimplemented (`CheckParentChildAuthority` has zero hits in `SuperGenius/`). Gate slots between `CheckTransactionAuthorization` and `CheckTransactionTimestamp` in `ValidateTransactionForConsensus` at `TransactionManager.cpp:4250-4303`.
+**Key context:** Fully spec'd already in `docs/02-consensus-parent-child-authority.md` (CONS-01–CONS-06, D-20 through D-23). Phase 3 (2026-07-21) implemented the gate at `TransactionManager.cpp:4255-4280`, between `CheckTransactionAuthorization` and `CheckTransactionTimestamp` — the design doc's original CONS-06 "GeniusInputValidator.cpp untouched" claim was superseded by D-60 during Phase 3 research/planning: the owner-address check stays untouched, but the signature-acceptance layer gained one narrow CRDT-gated branch to accept a certified main's signature on a child-sourced transaction.
 
 ## Requirements
 
@@ -42,13 +44,14 @@ The main wallet must be able to discover, monitor, and manage registered child w
 - ✓ GeniusSDK wrapper exposes child registration (`GeniusSDKRegisterChild`, wraps `RegisterChild` auto-derive overload) — v2.2
 - ✓ GeniusSDK wrapper exposes child discovery (`GeniusSDKGetRegistrationsForMain`) — v2.2
 - ✓ GeniusSDK wrapper exposes child balance query (`GeniusSDKGetChildBalance`/`GeniusSDKGetChildBalanceAll`) — v2.2, fulfilled API-02
+- ✓ `CheckParentChildAuthority` consensus gate enforces CONS-01 (main→child fund) — v2.3 Phase 3
+- ✓ `CheckParentChildAuthority` consensus gate enforces CONS-02 (main-recover-from-child, destination-restricted per D-21) — v2.3 Phase 3
+- ✓ Regression coverage confirms CONS-03/04/05 invariants (child→arbitrary, child→main, child→dev, child-cannot-spend-main) hold unchanged with the new gate in place — v2.3 Phase 3 (REGR-01/02/03)
 
 ### Active
 
-- [ ] `CheckParentChildAuthority` consensus gate enforces CONS-01 (main→child fund) — v2.3
-- [ ] `CheckParentChildAuthority` consensus gate enforces CONS-02 (main-recover-from-child, destination-restricted) — v2.3
-- [ ] GeniusSDK wrapper exposes main→child fund transfer — v2.3
-- [ ] GeniusSDK wrapper exposes main-recover-from-child transfer — v2.3
+- [ ] GeniusSDK wrapper exposes main→child fund transfer — v2.3 Phase 4
+- [ ] GeniusSDK wrapper exposes main-recover-from-child transfer — v2.3 Phase 4
 
 ### Deferred (candidates for future milestones)
 
@@ -75,6 +78,8 @@ The main wallet must be able to discover, monitor, and manage registered child w
 - v2.2 exposed `RegisterChild`/`GetRegistrationsForMain`/`GetChildBalance` through the public `GeniusSDK.h`/`.cpp` C API (4 wrapper functions, 2 new C structs), so external games/apps no longer need to link SuperGenius directly
 - Fixed a pre-existing SuperGenius/evmrelay CMake packaging gap (missing `find_dependency(evmrelay)`/`evmrelayTargets.cmake` include) plus a Boost::coroutine MSVC template-instantiation error that had blocked full GeniusSDK static-lib builds — full build now confirmed green
 - No dedicated `GeniusSDK/test` unit tests exist for the v2.2 wrapper functions — SuperGenius's existing `GeniusNode`/`TransactionManager` tests already cover the wrapped logic
+- v2.3 Phase 3 added `Blockchain::CheckCertifiedParent` (D-63 certified-parent lookup, zero `genius_node` dependency to preserve the one-directional `blockchain_genesis` ← `genius_node` library link) and a narrow D-60 signature-acceptance branch in `CheckTransactionAuthorization`/`ValidateWitness`, so a certified main's signature is accepted on a child-sourced recovery transaction without weakening any other signature check
+- While building Phase 3's regression tests, found and fixed a pre-existing gap: `TransactionManager`'s `transaction_parsers` dispatch table had no entry for the `"registration"` tx type, so every registration transaction was rejected as "Unknown tx type" before it could ever reach a certified state — the certified-parent mechanism this milestone depends on could never have worked without this fix
 
 ## Known Issues
 
@@ -102,6 +107,8 @@ The main wallet must be able to discover, monitor, and manage registered child w
 | GeniusSDK wraps only auto-derive RegisterChild overload (v2.2) | Manual-sequence overload stays C++-internal (tests/replay), keeps public C API surface minimal | ✓ Good |
 | No dedicated GeniusSDK/test unit tests (v2.2) | Thin FFI wrapper; SuperGenius already covers the wrapped GeniusNode/TransactionManager logic | ✓ Good |
 | Milestone v2.2 closed via verification override | Phase 2 implementation was manually cross-checked and build-confirmed, but formal VERIFICATION.md was never generated; user chose to proceed rather than backfill it | ⚠️ Revisit — consider closing this gap before v2.3 if it recurs |
+| D-60: certified-main signature accepted on child-sourced tx via CRDT registration, not cryptographic delegation (Phase 3) | Verified against current code that main's signature cannot verify against a child's address under a literal-delegation model; CRDT-derived authority was the user's directional call | ✓ Good — narrowly scoped, owner-address check left untouched |
+| Registration-dispatch no-op fix (Phase 3) | Discovered mid-implementation that registration txs could never be certified without a `transaction_parsers` entry; fixed with a narrowly-scoped no-op rather than touching `FilterRegistration`/`RegElementCallback` | ✓ Good |
 
 ## Evolution
 
@@ -121,4 +128,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-07-20 after starting v2.3 milestone*
+*Last updated: 2026-07-21 after Phase 3 (Parent-Child Transfer Authority) completion*
