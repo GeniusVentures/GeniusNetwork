@@ -69,11 +69,24 @@ Archived: [`.planning/milestones/v2.3-ROADMAP.md`](milestones/v2.3-ROADMAP.md)
 **Plans:** 5 plans
 
 Plans:
+**Wave 1**
 
 - [ ] 05-01-PLAN.md — Proto schema evolution (RegistrationTx detach_flag/supersedes_sequence, new RevokeTx message) + RevokeTransaction C++ class
+
+**Wave 2** *(blocked on Wave 1 completion)*
+
 - [ ] 05-02-PLAN.md — Dispatch wiring ("revoke" tx type, ParseRevokeTransaction reg/ mutation), FilterRegistration gate 3b (fork prevention), CheckParentChildAuthority revoke branch
+
+**Wave 3** *(blocked on Wave 2 completion)*
+
 - [ ] 05-03-PLAN.md — DetachChild/ReplaceMain/RevokeChild methods (TransactionManager + GeniusNode two-layer)
+
+**Wave 4** *(blocked on Wave 3 completion)*
+
 - [ ] 05-04-PLAN.md — Detach/Replace-Main adversarial tests (fork detection, re-registration, invariants)
+
+**Wave 5** *(blocked on Wave 4 completion)*
+
 - [ ] 05-05-PLAN.md — Revoke adversarial tests (unauthorized revoke, sequence mismatch, re-registration, invariants)
 
 ---
