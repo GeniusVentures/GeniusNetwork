@@ -14,21 +14,16 @@ The main wallet must be able to discover, monitor, and manage registered child w
 
 **Previously shipped:** v2.3 Phase 3 Parent-Child Transfer Authority (2026-07-21) — the `CheckParentChildAuthority` consensus gate is live: main can fund a registered child via an ordinary transfer (CONS-01) and recover funds back from it via the new `TransactionManager::RecoverFromChild`/`GeniusNode::RecoverFromChild` (CONS-02, destination-restricted per D-21), while every existing child-signed path (child→arbitrary, child→main, child→dev, child-cannot-spend-main) is confirmed unaffected by 24 passing E2E regression tests.
 
-## Current Milestone: v2.3 Child Wallet Transfers
+## Next Milestone Goals
 
-**Goal:** Enable authorized main↔child fund transfers — main can fund a registered child (CONS-01) and recover funds back from it (CONS-02) — enforced by a new `CheckParentChildAuthority` consensus gate, exposed through GeniusNode and the public GeniusSDK C API.
+v2.3 Child Wallet Transfers shipped 2026-07-21 (Phases 3-4 archived: [`.planning/milestones/v2.3-ROADMAP.md`](../.planning/milestones/v2.3-ROADMAP.md), [`.planning/milestones/v2.3-REQUIREMENTS.md`](../.planning/milestones/v2.3-REQUIREMENTS.md)). No milestone is currently active — run `/gsd-new-milestone` to scope the next one.
 
-**Target features:**
-- `CheckParentChildAuthority` gate in `ValidateTransactionForConsensus` (fires only for `"transfer"` tx type; all other types pass through unchanged)
-- CONS-01 Main→child fund: ordinary transfer; `reg/` check is a consistency validation, not access control
-- CONS-02 Main-recover-from-child: `reg/` check + destination restricted to the registered main address (D-21)
-- GeniusNode-level transfer call(s) reusing existing `TransferTransaction` machinery — no new tx type or proto message needed
-- GeniusSDK C API wrapper(s) exposing both directions to external callers
-- Regression coverage confirming CONS-03/04/05 invariants (child→main, child→dev, child-cannot-spend-main) still hold once the gate is inserted
-
-**Explicitly out of scope this milestone:** new tx types, new proto messages, GeniusWallet Flutter UI wiring, transfer amount limits/policy beyond CONS-01/02, dedicated GeniusSDK/test unit tests (thin FFI wrapper — SuperGenius/TransactionManager tests are the coverage layer).
-
-**Key context:** Fully spec'd already in `docs/02-consensus-parent-child-authority.md` (CONS-01–CONS-06, D-20 through D-23). Phase 3 (2026-07-21) implemented the gate at `TransactionManager.cpp:4255-4280`, between `CheckTransactionAuthorization` and `CheckTransactionTimestamp` — the design doc's original CONS-06 "GeniusInputValidator.cpp untouched" claim was superseded by D-60 during Phase 3 research/planning: the owner-address check stays untouched, but the signature-acceptance layer gained one narrow CRDT-gated branch to accept a certified main's signature on a child-sourced transaction.
+**Deferred candidates carried forward** (see Requirements > Deferred below):
+- MON-01/MON-02: Full monitoring dashboard (per-child balance, all assets/tokens, activity history, escrow status, lifecycle monitoring)
+- API-01: gRPC endpoint exposing child registration/balance to external callers
+- TOK-01: Multi-token balance query (GNUS, child tokens, NFTs)
+- POL-01: Transfer amount limits/policy beyond CONS-01/CONS-02
+- UI-01: GeniusWallet Flutter UI wiring for child-wallet transfers
 
 ## Requirements
 
@@ -53,13 +48,15 @@ The main wallet must be able to discover, monitor, and manage registered child w
 
 ### Active
 
-None — v2.3 Child Wallet Transfers milestone is fully planned and executed. Run `/gsd-complete-milestone` to close it out.
+None — v2.3 Child Wallet Transfers milestone shipped 2026-07-21 and is archived. Run `/gsd-new-milestone` to scope the next one.
 
 ### Deferred (candidates for future milestones)
 
 - MON-01/MON-02: Full monitoring dashboard — per-child balance, all assets/tokens, activity history, escrow status, lifecycle monitoring
 - API-01: gRPC endpoint exposing child registration/balance to external callers (SDK wrapper covered in v2.2 instead)
 - TOK-01: Multi-token balance query (GNUS, child tokens, NFTs) — v2.1/v2.2 covered child token only
+- POL-01: Transfer amount limits/policy beyond CONS-01/CONS-02 (e.g. per-child caps, rate limiting)
+- UI-01: GeniusWallet Flutter UI wiring for child-wallet transfers
 
 ### Out of Scope
 
@@ -130,4 +127,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-07-21 after Phase 4 (GeniusSDK Transfer Wrappers) completion — v2.3 milestone execution complete*
+*Last updated: 2026-07-21 after v2.3 Child Wallet Transfers milestone close — archived, awaiting next milestone*

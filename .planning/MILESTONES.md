@@ -1,5 +1,19 @@
 # Milestones
 
+## v2.3 Child Wallet Transfers (Shipped: 2026-07-21)
+
+**Phases completed:** 2 phases, 5 plans, 11 tasks
+
+**Key accomplishments:**
+
+- Added `Blockchain::CheckCertifiedParent` (D-63 CRDT certified-status lookup, zero `genius_node` dependency) and `GeniusTransaction::CheckSignatureAgainst` (parameterized signature verification `CheckSignature` now delegates to) — the two shared primitives Plan 02's gate and `CheckTransactionAuthorization` extension build on
+- Extended `CheckTransactionAuthorization` and `GeniusInputValidator::ValidateWitness`'s per-input signature check with the narrow D-60 certified-main OR-branch, and added the new `CheckParentChildAuthority` gate enforcing D-21's destination restriction — all three call sites additive, zero behavior change for non-certified-child transactions
+- Added `TransactionManager::RecoverFromChild` and `GeniusNode::RecoverFromChild` — the one new transfer-construction method this phase introduces (D-62), building a `TransferTransaction` with `src = child_address`, `dst = main's own address`, spending only the child's own UTXOs, and signed with main's own key so Plan 02's `CheckParentChildAuthority`/`CheckTransactionAuthorization`/`ValidateWitness` extensions can approve it
+- Proves, with automated E2E tests against the real consensus pipeline, that CONS-01 and CONS-02 work correctly and that REGR-01/02/03 confirm every existing child-signed path is unaffected by Plans 01-03 — the phase's final empirical closeout.
+- 4 new thin C-API wrappers (GeniusSDKFundChild/GNUS, GeniusSDKRecoverFromChild/GNUS) expose Phase 3's TransferFunds/RecoverFromChild to external callers, reusing all existing GeniusNodeReturnValue_t codes
+
+---
+
 ## v2.2 GeniusSDK Child Wallet Interfaces (Shipped: 2026-07-20)
 
 **Phases completed:** 1 phases, 1 plans, 2 tasks
