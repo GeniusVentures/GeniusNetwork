@@ -6,21 +6,21 @@ current_phase: 05
 current_phase_name: Child Wallet Lifecycle States (Detach/Revoke
 status: executing
 stopped_at: Phase 5 context gathered
-last_updated: "2026-07-21T22:00:25.001Z"
+last_updated: "2026-07-21T22:24:23.144Z"
 last_activity: 2026-07-21
 last_activity_desc: Phase 05 execution started
 progress:
   total_phases: 3
   completed_phases: 2
   total_plans: 10
-  completed_plans: 6
-  percent: 60
+  completed_plans: 7
+  percent: 67
 ---
 
 ## Current Position
 
 Phase: 05 (Child Wallet Lifecycle States (Detach/Revoke)) — EXECUTING
-Plan: 2 of 5
+Plan: 3 of 5
 Status: Ready to execute
 Last activity: 2026-07-21 — Phase 05 execution started
 
@@ -34,6 +34,7 @@ See: .planning/PROJECT.md (updated 2026-07-20)
 ### Blockers/Concerns (carried forward)
 
 - `child_registration_test.exe` segfaults on process teardown (after all GTest assertions pass) — pre-existing lifecycle issue, likely unjoined libp2p/boost::asio threads during node `.reset()`, not caused by v2.1/v2.2/v2.3 work. Tracked in `.planning/phases/01-child-balance-query/deferred-items.md`; candidate for a future test-infra/node-shutdown-hygiene phase.
+- `registration_transaction_test.exe`'s `RegistrationTransactionE2ETest` fixture (real `GossipPubSub`/`PubSubBroadcasterExt` stack) was observed idling near-zero CPU for 10+ minutes during process bring-up, before any GTest case ran, during Phase 05 Plan 02 verification — same class of test-binary networking/lifecycle issue as the `child_registration_test.exe` teardown segfault above. Build succeeded; full E2E run deferred rather than blocking. Candidate for the same future test-infra/node-shutdown-hygiene phase.
 
 ## Deferred Items
 
@@ -60,6 +61,7 @@ Items acknowledged and deferred at milestone close on 2026-07-20:
 | Phase 03-parent-child-transfer-authority P04 | ~3.5hr | 2 tasks | 3 files |
 | Phase 04-geniussdk-transfer-wrappers P01 | 20min | 2 tasks | 2 files |
 | Phase 05-child-wallet-lifecycle-states P01 | 45min | 3 tasks | 7 files |
+| Phase 05 P02 | 30min | 3 tasks | 2 files |
 
 ## Decisions
 
@@ -83,6 +85,9 @@ Items acknowledged and deferred at milestone close on 2026-07-20:
 - [Phase 04-geniussdk-transfer-wrappers]: No new GeniusNodeReturnValue enum value added; both new function families reuse GENIUS_NODE_ERROR_TRANSFER for submission failures (D-69)
 - [Phase 04-geniussdk-transfer-wrappers]: Refreshed a stale locally-installed SuperGenius header via cmake --install to unblock GeniusSDK build verification (pre-existing build/install staleness gap)
 - [Phase 05-child-wallet-lifecycle-states]: Plan 01's Task 1 grep verify script expected supersedes_sequence count=2; actual is 1 (single declaration) - non-functional discrepancy, no code change needed — Field exists correctly and all functional/build verification passed
+- [Phase 05-child-wallet-lifecycle-states, P02]: ParseRevokeTransaction tolerates absent/mismatched reg/ record by logging warning and returning success rather than failing the pipeline
+- [Phase 05-child-wallet-lifecycle-states, P02]: FilterRegistration gate 3b's supersedes_sequence check is unconditional on tx sub-kind, uniformly covering Detach/Replace-Main per design doc §9.3
+- [Phase 05-child-wallet-lifecycle-states, P02]: CheckParentChildAuthority revoke branch does not call CheckCertifiedParent - reg/{child} was already gated by FilterRegistration's own child-signature check
 
 ### Pending Todos
 
@@ -94,7 +99,7 @@ None yet.
 
 ## Session
 
-**Last session:** 2026-07-21T21:59:54.212Z
+**Last session:** 2026-07-21T22:21:33.654Z
 **Stopped at:** Phase 5 context gathered
 **Resume file:** .planning/phases/05-child-wallet-lifecycle-states/05-CONTEXT.md
 
