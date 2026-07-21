@@ -2,34 +2,34 @@
 gsd_state_version: 1.0
 milestone: v2.3
 milestone_name: Child Wallet Transfers
-current_phase: 3
-status: Awaiting next milestone
+current_phase: 05
+current_phase_name: Child Wallet Lifecycle States (Detach/Revoke
+status: executing
 stopped_at: Phase 5 context gathered
-last_updated: "2026-07-21T20:46:47.277Z"
+last_updated: "2026-07-21T22:00:25.001Z"
 last_activity: 2026-07-21
-last_activity_desc: Milestone v2.3 completed and archived
+last_activity_desc: Phase 05 execution started
 progress:
   total_phases: 3
   completed_phases: 2
-  total_plans: 5
-  completed_plans: 5
-  percent: 67
-current_phase_name: GeniusSDK Transfer Wrappers
+  total_plans: 10
+  completed_plans: 6
+  percent: 60
 ---
 
 ## Current Position
 
-Phase: Milestone v2.3 complete
-Plan: —
-Status: Awaiting next milestone
-Last activity: 2026-07-21 — Milestone v2.3 completed and archived
+Phase: 05 (Child Wallet Lifecycle States (Detach/Revoke)) — EXECUTING
+Plan: 2 of 5
+Status: Ready to execute
+Last activity: 2026-07-21 — Phase 05 execution started
 
 ## Project Reference
 
 See: .planning/PROJECT.md (updated 2026-07-20)
 
 **Core value:** Main wallet must be able to discover, monitor, and manage registered child wallets through consensus-visible state
-**Current focus:** Phase 4 — GeniusSDK Transfer Wrappers
+**Current focus:** Phase 05 — Child Wallet Lifecycle States (Detach/Revoke)
 
 ### Blockers/Concerns (carried forward)
 
@@ -59,6 +59,7 @@ Items acknowledged and deferred at milestone close on 2026-07-20:
 | Phase 03-parent-child-transfer-authority P03 | 65min | 2 tasks | 4 files |
 | Phase 03-parent-child-transfer-authority P04 | ~3.5hr | 2 tasks | 3 files |
 | Phase 04-geniussdk-transfer-wrappers P01 | 20min | 2 tasks | 2 files |
+| Phase 05-child-wallet-lifecycle-states P01 | 45min | 3 tasks | 7 files |
 
 ## Decisions
 
@@ -81,6 +82,7 @@ Items acknowledged and deferred at milestone close on 2026-07-20:
 - [Phase 04-geniussdk-transfer-wrappers]: GeniusSDKRecoverFromChild calls RecoverFromChild(child_address, amount, token_id) - child_address FIRST, opposite order from the wrapper's own (amount, child_address, token_id) parameter list, matching GeniusNode::RecoverFromChild's actual signature
 - [Phase 04-geniussdk-transfer-wrappers]: No new GeniusNodeReturnValue enum value added; both new function families reuse GENIUS_NODE_ERROR_TRANSFER for submission failures (D-69)
 - [Phase 04-geniussdk-transfer-wrappers]: Refreshed a stale locally-installed SuperGenius header via cmake --install to unblock GeniusSDK build verification (pre-existing build/install staleness gap)
+- [Phase 05-child-wallet-lifecycle-states]: Plan 01's Task 1 grep verify script expected supersedes_sequence count=2; actual is 1 (single declaration) - non-functional discrepancy, no code change needed — Field exists correctly and all functional/build verification passed
 
 ### Pending Todos
 
@@ -92,7 +94,7 @@ None yet.
 
 ## Session
 
-**Last session:** 2026-07-21T20:46:47.272Z
+**Last session:** 2026-07-21T21:59:54.212Z
 **Stopped at:** Phase 5 context gathered
 **Resume file:** .planning/phases/05-child-wallet-lifecycle-states/05-CONTEXT.md
 
