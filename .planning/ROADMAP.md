@@ -66,7 +66,7 @@ Archived: [`.planning/milestones/v2.3-ROADMAP.md`](milestones/v2.3-ROADMAP.md)
 **Goal:** Implement the child-initiated Detach and main-initiated Revoke lifecycle transitions for registered child wallets, per the v1.0 lifecycle design (`docs/03-02-reward-policy-lifecycle.md`, archived at `.planning/milestones/v1.0-phases/03-discovery-rewards-lifecycle/`): `reg/{child_addr}` CRDT fields `detach_flag` + `supersedes_sequence`, a new `RevokeTx` transaction type (`EmbeddedTransaction` oneof arm 9), a `FilterRegistration` gate extension checking `supersedes_sequence`, and reuse of `CheckParentChildAuthority` for revoke validation (main sig + Registered state). Nothing in `SuperGenius/src` implements this yet — only Unregistered/Registered exist today.
 **Requirements**: [LIFE-01, LIFE-02, LIFE-03, LIFE-04]
 **Depends on:** Phase 4
-**Plans:** 5/5 plans complete
+**Plans:** 5/6 plans complete (gap closure in progress — see 05-VERIFICATION.md)
 
 Plans:
 **Wave 1**
@@ -89,5 +89,9 @@ Plans:
 
 - [x] 05-05-PLAN.md — Revoke adversarial tests (unauthorized revoke, sequence mismatch, re-registration, invariants)
 
+**Wave 6** *(gap closure — blocked on Wave 5 completion; found by 05-VERIFICATION.md)*
+
+- [ ] 05-06-PLAN.md — Fix ParseRevokeTransaction's CRDT-write deadlock (new local-only CrdtDatastore::PutKeyLocal/GlobalDB::PutLocal path) and confirm the 4 previously-blocked Revoke tests now pass; autonomous:false, requires human approval before commit per SuperGenius/AgentDocs/CLAUDE.md
+
 ---
-*Roadmap updated: 2026-07-21 — Phase 5 (Child Wallet Lifecycle States) planned: 5 plans across proto/consensus-gate/CRDT-filter/GeniusNode/test layers*
+*Roadmap updated: 2026-07-22 — Phase 5 gap closure planned: 05-06-PLAN.md added to fix the ParseRevokeTransaction CRDT-write deadlock found in 05-VERIFICATION.md (score 13/18 -> 4 tests blocked on one root cause)*
