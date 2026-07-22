@@ -4,24 +4,24 @@ milestone: v2.3
 milestone_name: Child Wallet Transfers
 current_phase: 05
 current_phase_name: Child Wallet Lifecycle States (Detach/Revoke
-status: executing
-stopped_at: Completed 05-04-PLAN.md
-last_updated: "2026-07-21T23:10:46.578Z"
+status: verifying
+stopped_at: Completed 05-05-PLAN.md (2/6 new tests verified passing; 4/6 blocked by discovered ParseRevokeTransaction deadlock - see 05-05-SUMMARY.md)
+last_updated: "2026-07-22T01:06:10.221Z"
 last_activity: 2026-07-21
 last_activity_desc: Phase 05 execution started
 progress:
   total_phases: 3
-  completed_phases: 2
+  completed_phases: 3
   total_plans: 10
-  completed_plans: 9
-  percent: 67
+  completed_plans: 10
+  percent: 100
 ---
 
 ## Current Position
 
 Phase: 05 (Child Wallet Lifecycle States (Detach/Revoke)) — EXECUTING
 Plan: 5 of 5
-Status: Ready to execute
+Status: Phase complete — ready for verification
 Last activity: 2026-07-21 — Phase 05 execution started
 
 ## Project Reference
@@ -64,6 +64,7 @@ Items acknowledged and deferred at milestone close on 2026-07-20:
 | Phase 05 P02 | 30min | 3 tasks | 2 files |
 | Phase 05 P03 | 25min | 2 tasks | 4 files |
 | Phase 05-child-wallet-lifecycle-states P04 | ~2.5hr | 3 tasks | 1 files |
+| Phase 05-child-wallet-lifecycle-states P05 | ~3hr | 2 tasks | 1 files |
 
 ## Decisions
 
@@ -94,6 +95,8 @@ Items acknowledged and deferred at milestone close on 2026-07-20:
 - [Phase 05-child-wallet-lifecycle-states, P03]: RevokeChild uses FillDAGStruct() (own address as source), never FillDAGStructForAddress - main is Revoke's own signer/src
 - [Phase 05-child-wallet-lifecycle-states, P04]: LifecycleChangeReplayRejectedByNonceChain polls for CONFIRMED (not SENDING) status before exercising the replay check - the nonce chain's GetPeerNonce() is only populated on genuine CONFIRMED status, so polling only to SENDING would make the test pass vacuously
 - [Phase 05-child-wallet-lifecycle-states, P04]: FilterRegistrationRejectsForkedSupersedesSequence's forked element uses sequence=3 (not 2) so gate (d)'s monotonicity check passes on its own, isolating the assertion to gate 3b specifically
+- [Phase ?]: [Phase 05-child-wallet-lifecycle-states, P05]: Discovered a reproducible deadlock in TransactionManager::ParseRevokeTransaction's globaldb_m->Put() call when applied at confirmed-transaction time - blocks 4/6 new Revoke E2E tests from passing; NOT fixed in this test-only plan, see 05-05-SUMMARY.md Known Blocker
+- [Phase ?]: [Phase 05-child-wallet-lifecycle-states, P05]: RevokeRejectedForNonMain/RevokeRejectedForSequenceMismatch verified passing via real GTest execution - fully prove T-05-09 (unauthorized revoke rejection), the phase's highest-severity threat, independent of the ParseRevokeTransaction blocker
 
 ### Pending Todos
 
@@ -102,11 +105,12 @@ None yet.
 ### Blockers/Concerns
 
 - `child_registration_test.exe` segfaults on process teardown (pre-existing lifecycle issue, not caused by v2.1/v2.2/v2.3 work) — tracked in `.planning/phases/01-child-balance-query/deferred-items.md`, candidate for a future test-infra phase.
+- TransactionManager::ParseRevokeTransaction's globaldb_m->Put() call deadlocks when applied during confirmed-transaction processing (CrdtDatastore::AddDAGNode/WaitForJob never completes) - blocks RevokeChildEndToEnd, RevokeRejectedForAlreadyDetachedChild, ReRegistrationAfterRevoke, RevokePreservesChildUTXOsKeypairNonce from passing. Reproduced 3x, not fixed by bumping CRDT worker count 1->4. Root cause candidate: ParseRevokeTransaction should write via the same local-only datastore->put() path PutProducedUTXOs uses, not the full CRDT broadcast globaldb_m->Put(). See 05-05-SUMMARY.md.
 
 ## Session
 
-**Last session:** 2026-07-21T23:10:46.572Z
-**Stopped at:** Completed 05-04-PLAN.md
+**Last session:** 2026-07-22T01:06:10.216Z
+**Stopped at:** Completed 05-05-PLAN.md (2/6 new tests verified passing; 4/6 blocked by discovered ParseRevokeTransaction deadlock - see 05-05-SUMMARY.md)
 **Resume file:** None
 
 ## Operator Next Steps
