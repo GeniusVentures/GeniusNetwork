@@ -97,6 +97,14 @@ Must-haves from the plan frontmatter:
 - "Full pre-existing child-wallet test suite... passes with zero regressions": **PARTIALLY CONFIRMED** — the 5 non-networked cases pass; the 32+4 networked E2E cases could not execute this session due to an out-of-scope, unrelated-file blocker (DI-06-01). No actual regression (GTest FAILED) was observed anywhere.
 - "CheckParentChildAuthority, FilterRegistration, CheckCertifiedParent, and the transaction_parsers registration/revoke dispatch entries are confirmed unmodified... and the adjacency-risk EvaluateTransactionReplayProtection rewrite does not reject any legitimate lifecycle transaction": **PARTIALLY CONFIRMED** — the symbol-presence and byte-identical-body claims are fully proven (stronger evidence than originally required); the live adjacency-risk proof (6-test targeted re-run against `EvaluateTransactionReplayProtection`) could not run this session for the same DI-06-01 reason.
 
+## Post-Plan Update (orchestrator, same session, 2026-07-23)
+
+DI-06-01's blocker is resolved — see `deferred-items.md` for full detail. Summary: the crash is specific to the Debug build config (`BOOST_ASSERT` compiled out under Release's `/DNDEBUG`). Both regression binaries were rebuilt and run to completion in **Release** config:
+- `registration_transaction_test.exe`: `[  PASSED  ] 37 tests.` (all 5 non-E2E + all 32 E2E cases, including the 6 lifecycle-adjacent cases this plan's Task 2 needed for its targeted re-run), exit 0, zero FAILED.
+- `child_registration_test.exe`: `[  PASSED  ] 4 tests.`, exit 0, zero FAILED.
+
+**MVER-03 and MVER-04 are both now fully confirmed and marked complete in REQUIREMENTS.md.** The must-haves below, originally recorded as "PARTIALLY CONFIRMED," are now fully satisfied via this Release-mode run in addition to the static verification already performed.
+
 ## Self-Check: PASSED
 
 - FOUND: `W:\gnus\GeniusNetwork\.planning\phases\06-supergenius-merge-regression-verification\deferred-items.md`
