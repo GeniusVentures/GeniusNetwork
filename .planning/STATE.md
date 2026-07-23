@@ -2,27 +2,27 @@
 gsd_state_version: 1.0
 milestone: v2.4
 milestone_name: Merge origin/develop into dev_childwallet
-current_phase: 6
-current_phase_name: SuperGenius Merge & Regression Verification
+current_phase: 7
+current_phase_name: GeniusSDK Merge & Build Verification
 status: executing
-stopped_at: Completed 06-02-PLAN.md
-last_updated: "2026-07-23T20:53:10.947Z"
+stopped_at: Completed 06-05-PLAN.md (merge committed, push pending)
+last_updated: "2026-07-23T23:23:13.913Z"
 last_activity: 2026-07-23
-last_activity_desc: Phase 6 execution started
+last_activity_desc: Phase 6 plans 1-5 complete (MVER-01/03/04 verified); MERGE-01's push to origin/dev_childwallet deliberately withheld per user instruction ("Commit it, don't push anything") — outstanding action, not a blocker for Phase 7's local work
 progress:
   total_phases: 2
-  completed_phases: 0
+  completed_phases: 1
   total_plans: 5
-  completed_plans: 4
-  percent: 0
+  completed_plans: 5
+  percent: 50
 ---
 
 ## Current Position
 
-Phase: 6 (SuperGenius Merge & Regression Verification) — EXECUTING
-Plan: 5 of 5
-Status: Ready to execute
-Last activity: 2026-07-23 — Phase 6 execution started
+Phase: 7 — GeniusSDK Merge & Build Verification
+Plan: Not started
+Status: Ready to execute (Phase 6's local SuperGenius merge/build satisfies Phase 7's dependency; the merge commit's push to origin/dev_childwallet is still outstanding — see Blockers/Concerns)
+Last activity: 2026-07-23 — Phase 6 plans 1-5 complete; MERGE-01's push deliberately deferred per user instruction
 
 ## Project Reference
 
@@ -33,6 +33,7 @@ See: .planning/PROJECT.md (updated 2026-07-23)
 
 ### Blockers/Concerns (carried forward)
 
+- **SuperGenius merge commit (`cb4e46da`, Phase 6) is created and fully verified locally but NOT pushed to `origin/dev_childwallet`** — deliberately withheld per explicit user instruction ("Commit it, don't push anything"). Outstanding action: `git push origin dev_childwallet` from within `SuperGenius/`, whenever ready. MERGE-01 left unchecked in REQUIREMENTS.md until this happens.
 - `child_registration_test.exe` segfaults on process teardown (after all GTest assertions pass) — pre-existing lifecycle issue, likely unjoined libp2p/boost::asio threads during node `.reset()`, not caused by v2.1/v2.2/v2.3 work. Tracked in `.planning/phases/01-child-balance-query/deferred-items.md`; candidate for a future test-infra/node-shutdown-hygiene phase. Also observed on `registration_transaction_test.exe` (exit code 139 after GTest prints PASSED, during Phase 05 verification) — same class of issue, not a regression.
 - `registration_transaction_test.exe`'s `RegistrationTransactionE2ETest` fixture (real `GossipPubSub`/`PubSubBroadcasterExt` stack) was observed idling near-zero CPU for 10+ minutes during process bring-up, before any GTest case ran, during Phase 05 Plan 02 verification — same class of test-binary networking/lifecycle issue as the `child_registration_test.exe` teardown segfault above. Build succeeded; full E2E run deferred rather than blocking. Candidate for the same future test-infra/node-shutdown-hygiene phase.
 - GeniusSDK does not yet expose Detach/Revoke/Replace-Main through the public C API — never in Phase 5's scope (stops at TransactionManager/GeniusNode level). ~~Would need a future phase~~ — RESOLVED via quick task 260723-2tc (see Quick Tasks Completed below).
@@ -141,5 +142,5 @@ None yet.
 
 ## Operator Next Steps
 
-- Run `/gsd-plan-phase 6` to begin planning the SuperGenius merge (MERGE-01, MVER-01, MVER-03, MVER-04)
-- Phase 7 (GeniusSDK merge) is blocked on Phase 6's merged/built SuperGenius static lib and headers
+- **Push the SuperGenius merge commit when ready:** `git push origin dev_childwallet` from within `SuperGenius/` (commit `cb4e46da`, already fully verified — MVER-01/03/04 all pass). This is the sole remaining action for MERGE-01/Phase 6.
+- Phase 7 (GeniusSDK Merge & Build Verification) can proceed now — its dependency on Phase 6 is the local merged/built SuperGenius static lib and headers, which the submodule pointer bump (commit `925608a`) already provides.

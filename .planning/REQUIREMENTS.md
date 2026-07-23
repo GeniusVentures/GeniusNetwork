@@ -9,7 +9,7 @@ Requirements for milestone v2.4 (Merge origin/develop into dev_childwallet). Eac
 
 ### Submodule Merges
 
-- [ ] **MERGE-01**: SuperGenius `dev_childwallet` is merged with `origin/develop` (162 commits behind at scoping time) via a merge commit — not a rebase, since the branch is already shared/pushed — with all conflicts resolved in the 9 confirmed shared files (`src/account/GeniusNode.{hpp,cpp}`, `src/account/TransactionManager.{hpp,cpp}`, `src/blockchain/Blockchain.hpp`, `src/blockchain/impl/Blockchain.cpp`, `src/blockchain/impl/proto/Consensus.proto`, `src/account/CMakeLists.txt`, `test/src/account/CMakeLists.txt`), including adapting all `DevConfig_st` references (~17 files) to the renamed `GeniusNodeConfig` typedef (fields unchanged), and the merge commit pushed to `origin/dev_childwallet`
+- [ ] **MERGE-01**: SuperGenius `dev_childwallet` is merged with `origin/develop` (162 commits behind at scoping time) via a merge commit — not a rebase, since the branch is already shared/pushed — with all conflicts resolved in the 9 confirmed shared files (`src/account/GeniusNode.{hpp,cpp}`, `src/account/TransactionManager.{hpp,cpp}`, `src/blockchain/Blockchain.hpp`, `src/blockchain/impl/Blockchain.cpp`, `src/blockchain/impl/proto/Consensus.proto`, `src/account/CMakeLists.txt`, `test/src/account/CMakeLists.txt`), including adapting all `DevConfig_st` references (~17 files) to the renamed `GeniusNodeConfig` typedef (fields unchanged), and the merge commit pushed to `origin/dev_childwallet` — **merge commit `cb4e46da` created and fully verified (2 parents, conflicts resolved, rename swept, build clean, zero regressions); push to `origin/dev_childwallet` deliberately withheld per explicit user instruction ("Commit it, don't push anything") — outstanding action: `git push origin dev_childwallet` from within `SuperGenius/`**
 - [ ] **MERGE-02**: GeniusSDK `dev_childwallet` is merged with the 1 remaining `origin/develop` commit (already merged once at `6f05025`), merge commit pushed to `origin/dev_childwallet`
 
 ### Build & Regression Verification
@@ -40,7 +40,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| MERGE-01 | Phase 6 | Pending |
+| MERGE-01 | Phase 6 | Partial — committed (`cb4e46da`), push withheld per user instruction |
 | MERGE-02 | Phase 7 | Pending |
 | MVER-01 | Phase 6 | Complete |
 | MVER-02 | Phase 7 | Pending |
