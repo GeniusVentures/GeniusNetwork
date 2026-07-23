@@ -6,21 +6,21 @@ current_phase: 6
 current_phase_name: SuperGenius Merge & Regression Verification
 status: executing
 stopped_at: Completed 06-02-PLAN.md
-last_updated: "2026-07-23T20:30:55.962Z"
+last_updated: "2026-07-23T20:53:10.947Z"
 last_activity: 2026-07-23
 last_activity_desc: Phase 6 execution started
 progress:
   total_phases: 2
   completed_phases: 0
   total_plans: 5
-  completed_plans: 3
+  completed_plans: 4
   percent: 0
 ---
 
 ## Current Position
 
 Phase: 6 (SuperGenius Merge & Regression Verification) — EXECUTING
-Plan: 4 of 5
+Plan: 5 of 5
 Status: Ready to execute
 Last activity: 2026-07-23 — Phase 6 execution started
 
@@ -71,6 +71,7 @@ Items acknowledged and deferred at milestone close on 2026-07-20:
 | Phase 06 P01 | 10min | 3 tasks | 9 files |
 | Phase 06-supergenius-merge-regression-verification P02 | 10min | 2 tasks | 1 files |
 | Phase 06-supergenius-merge-regression-verification P03 P03 | ~70min | 2 tasks | 0 files |
+| Phase 06-supergenius-merge-regression-verification P04 | 55min | 2 tasks | 2 files |
 
 ## Decisions
 
@@ -113,6 +114,7 @@ Items acknowledged and deferred at milestone close on 2026-07-20:
 - [Phase Phase 06 P03]: All 3 SuperGenius targets (genius_node, registration_transaction_test, child_registration_test) build clean post-merge; both test binaries confirmed freshly rebuilt vs stale pre-merge baseline
 - [Phase Phase 06 P03]: Manual read-through confirms zero symbol overlap between origin/develop's bridge-catchup/genesis-registry refactors and child-wallet consensus code; ValidateTransactionForConsensus pipeline order (CheckTransactionAuthorization -> CheckParentChildAuthority -> CheckTransactionTimestamp -> EvaluateTransactionReplayProtection) preserved unchanged
 - [Phase Phase 06 P03]: Plan 03's literal Task 2 verify grep (whole-file, expecting 0) doesn't hold as written since GeniusNode.cpp legitimately contains pre-existing RegisterChild/DetachChild/etc wrapper implementations; region-scoped grep against only the bridge-catchup touched line ranges is the correct check and returns 0 as expected
+- [Phase Phase 06 P04]: MVER-04 fully confirmed via static verification (grep + byte-identical function-body diff for CheckParentChildAuthority/FilterRegistration) independent of test execution; MVER-03 only partially confirmed this session (5/37 + 0/4 executed) due to an out-of-scope thirdparty submodule drift crashing all real-networked E2E fixtures (DI-06-01, deferred-items.md) - not a regression from the origin/develop merge
 
 ### Pending Todos
 
@@ -123,6 +125,7 @@ None yet.
 - `child_registration_test.exe` segfaults on process teardown (pre-existing lifecycle issue, not caused by v2.1/v2.2/v2.3 work) — tracked in `.planning/phases/01-child-balance-query/deferred-items.md`, candidate for a future test-infra phase. Same class of issue also seen on `registration_transaction_test.exe` (exit 139 after GTest PASSED summary) throughout Phase 05 verification — not a regression.
 - ~~TransactionManager::ParseRevokeTransaction's globaldb_m->Put() call deadlocks~~ — RESOLVED in 05-06. Root cause was actually `CrdtSet::mutex_` reentrancy (non-recursive mutex held across a synchronous callback that re-enters `PutElems`), not the DAG-broadcast path originally suspected; fixed via `std::recursive_mutex`. See 05-06-SUMMARY.md.
 - ~~GeniusSDK does not expose Detach/Revoke/Replace-Main through the public C API~~ — RESOLVED in quick task 260723-2tc. `GeniusSDKDetachChild`/`GeniusSDKReplaceMain`/`GeniusSDKRevokeChild` now wrap the auto-derive/fire-and-forget `GeniusNode` overloads, mirroring Phase 2/4's wrapper pattern. See 260723-2tc-SUMMARY.md.
+- registration_transaction_test.exe and child_registration_test.exe crash deterministically (BOOST_ASSERT in thirdparty/libp2p Kademlia StorageImpl) on every real-networked E2E test fixture SetUp, blocking 32/37 and 4/4 test cases; traced to an unrelated same-day thirdparty submodule fast-forward (not the SuperGenius merge). See .planning/phases/06-supergenius-merge-regression-verification/deferred-items.md (DI-06-01)
 
 ### Quick Tasks Completed
 
@@ -132,7 +135,7 @@ None yet.
 
 ## Session
 
-**Last session:** 2026-07-23T20:30:55.957Z
+**Last session:** 2026-07-23T20:51:36.484Z
 **Stopped at:** Completed 06-02-PLAN.md
 **Resume file:** None
 
