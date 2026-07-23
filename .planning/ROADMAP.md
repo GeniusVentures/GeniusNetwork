@@ -114,7 +114,7 @@ Plans:
   4. The full pre-existing child-wallet test suite — registration (v2.0), balance query (v2.1), GeniusSDK wrapper interfaces (v2.2), transfer authority CONS-01/CONS-02 (v2.3 Phase 3), transfer wrappers (v2.3 Phase 4), and lifecycle Detach/Revoke/ReplaceMain (Phase 5) — passes with zero regressions.
   5. `CheckParentChildAuthority`, `FilterRegistration`, `CheckCertifiedParent`, and the `transaction_parsers` registration-tx dispatch entry all still function as designed against the `origin/develop` changes merged into the 9 shared files.
 
-**Plans:** 1/5 plans executed
+**Plans:** 2/5 plans executed
 
 Plans:
 **Wave 1**
@@ -123,7 +123,7 @@ Plans:
 
 **Wave 2** *(blocked on Wave 1 completion)*
 
-- [ ] 06-02-PLAN.md — DevConfig_st -> GeniusNodeConfig mechanical rename sweep across the 15 non-conflicting files
+- [x] 06-02-PLAN.md — DevConfig_st -> GeniusNodeConfig mechanical rename sweep across the 15 non-conflicting files
 
 **Wave 3** *(blocked on Wave 2 completion)*
 
