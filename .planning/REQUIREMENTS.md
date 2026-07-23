@@ -14,7 +14,7 @@ Requirements for milestone v2.4 (Merge origin/develop into dev_childwallet). Eac
 
 ### Build & Regression Verification
 
-- [ ] **MVER-01**: SuperGenius builds cleanly (all targets) after MERGE-01, with no new compiler/linker errors introduced by conflict resolution
+- [x] **MVER-01**: SuperGenius builds cleanly (all targets) after MERGE-01, with no new compiler/linker errors introduced by conflict resolution
 - [ ] **MVER-02**: GeniusSDK builds cleanly against the updated SuperGenius static lib after MERGE-01 and MERGE-02
 - [ ] **MVER-03**: Full existing child-wallet test suite passes with zero regressions post-merge — registration (v2.0), balance query (v2.1), GeniusSDK wrapper interfaces (v2.2), transfer authority CONS-01/CONS-02 (v2.3 Phase 3), transfer wrappers (v2.3 Phase 4), and lifecycle states Detach/Revoke/ReplaceMain (Phase 5)
 - [ ] **MVER-04**: `origin/develop`'s changes in the 9 shared files are confirmed compatible with child-wallet consensus gates — `CheckParentChildAuthority`, `FilterRegistration`, `CheckCertifiedParent`, and the `transaction_parsers` registration-tx dispatch entry all still function as designed after the merge
@@ -42,12 +42,13 @@ Which phases cover which requirements. Updated during roadmap creation.
 |-------------|-------|--------|
 | MERGE-01 | Phase 6 | Pending |
 | MERGE-02 | Phase 7 | Pending |
-| MVER-01 | Phase 6 | Pending |
+| MVER-01 | Phase 6 | Complete |
 | MVER-02 | Phase 7 | Pending |
 | MVER-03 | Phase 6 | Pending |
 | MVER-04 | Phase 6 | Pending |
 
 **Coverage:**
+
 - v1 requirements: 6 total
 - Mapped to phases: 6/6 ✓
 - Unmapped: 0
