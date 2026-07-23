@@ -112,7 +112,28 @@ Plans:
   3. SuperGenius builds cleanly across all targets post-merge, with no new compiler/linker errors introduced by conflict resolution.
   4. The full pre-existing child-wallet test suite — registration (v2.0), balance query (v2.1), GeniusSDK wrapper interfaces (v2.2), transfer authority CONS-01/CONS-02 (v2.3 Phase 3), transfer wrappers (v2.3 Phase 4), and lifecycle Detach/Revoke/ReplaceMain (Phase 5) — passes with zero regressions.
   5. `CheckParentChildAuthority`, `FilterRegistration`, `CheckCertifiedParent`, and the `transaction_parsers` registration-tx dispatch entry all still function as designed against the `origin/develop` changes merged into the 9 shared files.
-**Plans**: TBD
+**Plans:** 5 plans
+
+Plans:
+**Wave 1**
+
+- [ ] 06-01-PLAN.md — Start the merge (no-commit) and resolve the 2 real conflicts (retire ProcessingTransaction consistently in TransactionManager.cpp + CMakeLists.txt)
+
+**Wave 2** *(blocked on Wave 1 completion)*
+
+- [ ] 06-02-PLAN.md — DevConfig_st -> GeniusNodeConfig mechanical rename sweep across the 15 non-conflicting files
+
+**Wave 3** *(blocked on Wave 2 completion)*
+
+- [ ] 06-03-PLAN.md — Build all targets post-merge (MVER-01) + manual read-through of the 4 large auto-merged files
+
+**Wave 4** *(blocked on Wave 3 completion)*
+
+- [ ] 06-04-PLAN.md — Full regression suite (MVER-03) + targeted MVER-04 consensus-gate verification
+
+**Wave 5** *(blocked on Wave 4 completion)*
+
+- [ ] 06-05-PLAN.md — Finalize + push the merge commit, bump outer-repo SuperGenius submodule pointer
 
 ### Phase 7: GeniusSDK Merge & Build Verification
 
