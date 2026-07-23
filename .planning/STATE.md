@@ -111,12 +111,18 @@ None yet.
 
 - `child_registration_test.exe` segfaults on process teardown (pre-existing lifecycle issue, not caused by v2.1/v2.2/v2.3 work) — tracked in `.planning/phases/01-child-balance-query/deferred-items.md`, candidate for a future test-infra phase. Same class of issue also seen on `registration_transaction_test.exe` (exit 139 after GTest PASSED summary) throughout Phase 05 verification — not a regression.
 - ~~TransactionManager::ParseRevokeTransaction's globaldb_m->Put() call deadlocks~~ — RESOLVED in 05-06. Root cause was actually `CrdtSet::mutex_` reentrancy (non-recursive mutex held across a synchronous callback that re-enters `PutElems`), not the DAG-broadcast path originally suspected; fixed via `std::recursive_mutex`. See 05-06-SUMMARY.md.
-- GeniusSDK does not expose Detach/Revoke/Replace-Main through the public C API — out of Phase 5's scope by design (stops at TransactionManager/GeniusNode level). Future phase candidate if external games/apps need this.
+- ~~GeniusSDK does not expose Detach/Revoke/Replace-Main through the public C API~~ — RESOLVED in quick task 260723-2tc. `GeniusSDKDetachChild`/`GeniusSDKReplaceMain`/`GeniusSDKRevokeChild` now wrap the auto-derive/fire-and-forget `GeniusNode` overloads, mirroring Phase 2/4's wrapper pattern. See 260723-2tc-SUMMARY.md.
+
+### Quick Tasks Completed
+
+| # | Description | Date | Commit | Directory |
+|---|-------------|------|--------|-----------|
+| 260723-2tc | Add GeniusSDKDetachChild/GeniusSDKRevokeChild/GeniusSDKReplaceMain wrappers to GeniusSDK interfaces, mirroring the Phase 2/4 wrapper pattern | 2026-07-23 | 7289080 | [260723-2tc-add-geniussdkdetachchild-geniussdkrevoke](./quick/260723-2tc-add-geniussdkdetachchild-geniussdkrevoke/) |
 
 ## Session
 
-**Last session:** 2026-07-23T01:30:00.000Z
-**Stopped at:** Phase 05 complete — 05-06-SUMMARY.md written, all 6 Revoke tests + full Detach/Replace-Main coverage verified passing, submodule bumped
+**Last session:** 2026-07-23T06:18:00.000Z
+**Stopped at:** Quick task 260723-2tc complete — GeniusSDKDetachChild/GeniusSDKReplaceMain/GeniusSDKRevokeChild wrappers added and build-verified
 **Resume file:** None
 
 ## Operator Next Steps
