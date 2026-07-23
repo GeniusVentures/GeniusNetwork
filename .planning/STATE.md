@@ -3,10 +3,10 @@ gsd_state_version: 1.0
 milestone: v2.4
 milestone_name: Merge origin/develop into dev_childwallet
 status: planning
-last_updated: "2026-07-23T19:11:10.232Z"
+last_updated: "2026-07-23T19:16:15.000Z"
 last_activity: 2026-07-23
 progress:
-  total_phases: 0
+  total_phases: 2
   completed_phases: 0
   total_plans: 0
   completed_plans: 0
@@ -15,23 +15,23 @@ progress:
 
 ## Current Position
 
-Phase: Not started (defining requirements)
-Plan: —
-Status: Defining requirements
-Last activity: 2026-07-23 — Milestone v2.4 started
+Phase: 6 of 7 (SuperGenius Merge & Regression Verification) — 1st of 2 phases in v2.4
+Plan: — (not yet planned)
+Status: Ready to plan
+Last activity: 2026-07-23 — ROADMAP.md created for v2.4 (Phase 6: SuperGenius Merge & Regression Verification, Phase 7: GeniusSDK Merge & Build Verification); REQUIREMENTS.md traceability updated, 6/6 requirements mapped
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-07-20)
+See: .planning/PROJECT.md (updated 2026-07-23)
 
 **Core value:** Main wallet must be able to discover, monitor, and manage registered child wallets through consensus-visible state
-**Current focus:** Phase 05 complete — ready for next milestone/phase planning
+**Current focus:** Phase 6 — SuperGenius Merge & Regression Verification (ready to plan)
 
 ### Blockers/Concerns (carried forward)
 
 - `child_registration_test.exe` segfaults on process teardown (after all GTest assertions pass) — pre-existing lifecycle issue, likely unjoined libp2p/boost::asio threads during node `.reset()`, not caused by v2.1/v2.2/v2.3 work. Tracked in `.planning/phases/01-child-balance-query/deferred-items.md`; candidate for a future test-infra/node-shutdown-hygiene phase. Also observed on `registration_transaction_test.exe` (exit code 139 after GTest prints PASSED, during Phase 05 verification) — same class of issue, not a regression.
 - `registration_transaction_test.exe`'s `RegistrationTransactionE2ETest` fixture (real `GossipPubSub`/`PubSubBroadcasterExt` stack) was observed idling near-zero CPU for 10+ minutes during process bring-up, before any GTest case ran, during Phase 05 Plan 02 verification — same class of test-binary networking/lifecycle issue as the `child_registration_test.exe` teardown segfault above. Build succeeded; full E2E run deferred rather than blocking. Candidate for the same future test-infra/node-shutdown-hygiene phase.
-- GeniusSDK does not yet expose Detach/Revoke/Replace-Main through the public C API — never in Phase 5's scope (stops at TransactionManager/GeniusNode level). Would need a future phase, mirroring Phase 2/4's GeniusSDK wrapper pattern, if external games/apps need to trigger these transitions directly.
+- GeniusSDK does not yet expose Detach/Revoke/Replace-Main through the public C API — never in Phase 5's scope (stops at TransactionManager/GeniusNode level). ~~Would need a future phase~~ — RESOLVED via quick task 260723-2tc (see Quick Tasks Completed below).
 
 ## Deferred Items
 
@@ -44,6 +44,7 @@ Items acknowledged and deferred at milestone close on 2026-07-20:
 ## Roadmap Evolution
 
 - Phase 5 added: Child Wallet Lifecycle States (Detach/Revoke) — implement the child-initiated Detach and main-initiated Revoke lifecycle transitions for registered child wallets, per the v1.0 lifecycle design (docs/03-02-reward-policy-lifecycle.md). Nothing in SuperGenius/src implements detach_flag, supersedes_sequence, or RevokeTx yet.
+- v2.4 roadmap created: Phase 6 (SuperGenius Merge & Regression Verification — MERGE-01, MVER-01, MVER-03, MVER-04) and Phase 7 (GeniusSDK Merge & Build Verification — MERGE-02, MVER-02), continuing numbering from Phase 5. Coarse granularity applied per config; MVER-01/03/04 folded into Phase 6 since all three are provable against the SuperGenius-only test suite (GeniusSDK has no dedicated unit tests per project memory) without needing GeniusSDK's own merge complete first.
 
 ## Performance Metrics
 
@@ -93,11 +94,12 @@ Items acknowledged and deferred at milestone close on 2026-07-20:
 - [Phase 05-child-wallet-lifecycle-states, P03]: RevokeChild uses FillDAGStruct() (own address as source), never FillDAGStructForAddress - main is Revoke's own signer/src
 - [Phase 05-child-wallet-lifecycle-states, P04]: LifecycleChangeReplayRejectedByNonceChain polls for CONFIRMED (not SENDING) status before exercising the replay check - the nonce chain's GetPeerNonce() is only populated on genuine CONFIRMED status, so polling only to SENDING would make the test pass vacuously
 - [Phase 05-child-wallet-lifecycle-states, P04]: FilterRegistrationRejectsForkedSupersedesSequence's forked element uses sequence=3 (not 2) so gate (d)'s monotonicity check passes on its own, isolating the assertion to gate 3b specifically
-- [Phase ?]: [Phase 05-child-wallet-lifecycle-states, P05]: Discovered a reproducible deadlock in TransactionManager::ParseRevokeTransaction's globaldb_m->Put() call when applied at confirmed-transaction time - blocks 4/6 new Revoke E2E tests from passing; NOT fixed in this test-only plan, see 05-05-SUMMARY.md Known Blocker
-- [Phase ?]: [Phase 05-child-wallet-lifecycle-states, P05]: RevokeRejectedForNonMain/RevokeRejectedForSequenceMismatch verified passing via real GTest execution - fully prove T-05-09 (unauthorized revoke rejection), the phase's highest-severity threat, independent of the ParseRevokeTransaction blocker
+- [Phase 05-child-wallet-lifecycle-states, P05]: Discovered a reproducible deadlock in TransactionManager::ParseRevokeTransaction's globaldb_m->Put() call when applied at confirmed-transaction time - blocks 4/6 new Revoke E2E tests from passing; NOT fixed in this test-only plan, see 05-05-SUMMARY.md Known Blocker
+- [Phase 05-child-wallet-lifecycle-states, P05]: RevokeRejectedForNonMain/RevokeRejectedForSequenceMismatch verified passing via real GTest execution - fully prove T-05-09 (unauthorized revoke rejection), the phase's highest-severity threat, independent of the ParseRevokeTransaction blocker
 - [Phase 05-child-wallet-lifecycle-states, P06]: Root cause of the ParseRevokeTransaction deadlock was NOT the plan's own hypothesis (DAG-broadcast path) - it was CrdtSet::mutex_ reentrancy via PutElems's synchronous callback chain, found via live debugger stack trace; fixed via std::recursive_mutex, with PutKeyLocal/PutLocal kept as the architecturally-correct local write path
 - [Phase 05-child-wallet-lifecycle-states, P06]: ReRegistrationAfterRevoke had two separate pre-existing test bugs, not one - a nonce=0 collision with the original registration (fixed: nonce=1), then a missing dag.previous_hash exposed once the nonce fix was applied (fixed: set to the certified nonce=0 tx's hash) - EvaluateTransactionReplayProtection requires previous_hash to resolve to a certified tx whenever nonce>0
 - [Phase 05-child-wallet-lifecycle-states, P06]: CRDTFixture::SetUpTestSuite now clears leftover CRDT.Datastore.TEST*/unit_N directories up front, since the fixture counter restarts at 0 every process and a prior run's segfault-on-exit can skip the destructor's own cleanup, causing collisions
+- [Roadmap, v2.4]: Phase 6 groups MERGE-01 with MVER-01/03/04 since all three verification requirements are provable against the SuperGenius-only test suite (GeniusSDK has no dedicated unit tests per project memory) without needing GeniusSDK's merge complete first; Phase 7 groups MERGE-02 with MVER-02 since GeniusSDK's build verification inherently depends on Phase 6's updated static lib/headers
 
 ### Pending Todos
 
@@ -117,11 +119,11 @@ None yet.
 
 ## Session
 
-**Last session:** 2026-07-23T06:18:00.000Z
-**Stopped at:** Quick task 260723-2tc complete — GeniusSDKDetachChild/GeniusSDKReplaceMain/GeniusSDKRevokeChild wrappers added and build-verified
+**Last session:** 2026-07-23T19:16:15.000Z
+**Stopped at:** v2.4 ROADMAP.md created — Phase 6 (SuperGenius Merge & Regression Verification) and Phase 7 (GeniusSDK Merge & Build Verification) defined; REQUIREMENTS.md traceability updated, 6/6 requirements mapped
 **Resume file:** None
 
 ## Operator Next Steps
 
-- Start the next milestone with /gsd-new-milestone
-- If GeniusSDK exposure for Detach/Revoke/Replace-Main is needed, plan a new phase mirroring Phase 2/4's wrapper pattern
+- Run `/gsd-plan-phase 6` to begin planning the SuperGenius merge (MERGE-01, MVER-01, MVER-03, MVER-04)
+- Phase 7 (GeniusSDK merge) is blocked on Phase 6's merged/built SuperGenius static lib and headers

@@ -40,18 +40,18 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| MERGE-01 | TBD | Pending |
-| MERGE-02 | TBD | Pending |
-| MVER-01 | TBD | Pending |
-| MVER-02 | TBD | Pending |
-| MVER-03 | TBD | Pending |
-| MVER-04 | TBD | Pending |
+| MERGE-01 | Phase 6 | Pending |
+| MERGE-02 | Phase 7 | Pending |
+| MVER-01 | Phase 6 | Pending |
+| MVER-02 | Phase 7 | Pending |
+| MVER-03 | Phase 6 | Pending |
+| MVER-04 | Phase 6 | Pending |
 
 **Coverage:**
 - v1 requirements: 6 total
-- Mapped to phases: 0 (pending roadmap creation)
-- Unmapped: 6 ⚠️ (resolved by gsd-roadmapper)
+- Mapped to phases: 6/6 ✓
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-07-23*
-*Last updated: 2026-07-23 after initial definition*
+*Last updated: 2026-07-23 after roadmap creation — all 6 requirements mapped to Phase 6 (SuperGenius Merge & Regression Verification) and Phase 7 (GeniusSDK Merge & Build Verification)*

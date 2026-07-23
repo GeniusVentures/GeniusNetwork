@@ -7,6 +7,7 @@
 - ✅ **v2.1 Main Wallet Child Balance Query** — Phase 1 (shipped 2026-07-17)
 - ✅ **v2.2 GeniusSDK Child Wallet Interfaces** — Phase 2 (shipped 2026-07-20)
 - ✅ **v2.3 Child Wallet Transfers** — Phases 3-4 (shipped 2026-07-21)
+- 🚧 **v2.4 Merge origin/develop into dev_childwallet** — Phases 6-7 (in progress)
 
 ## Phases
 
@@ -60,6 +61,9 @@ Archived: [`.planning/milestones/v2.3-ROADMAP.md`](milestones/v2.3-ROADMAP.md)
 | GeniusSDK Child Wallet Interfaces | v2.2 | 1/1 | Complete | 2026-07-18 |
 | Parent-Child Transfer Authority | v2.3 | 4/4 | Complete | 2026-07-21 |
 | GeniusSDK Transfer Wrappers | v2.3 | 1/1 | Complete | 2026-07-21 |
+| Child Wallet Lifecycle States (Detach/Revoke) | v2.3 | 6/6 | Complete | 2026-07-23 |
+| SuperGenius Merge & Regression Verification | v2.4 | 0/TBD | Not started | - |
+| GeniusSDK Merge & Build Verification | v2.4 | 0/TBD | Not started | - |
 
 ### Phase 5: Child Wallet Lifecycle States (Detach/Revoke) — ✅ COMPLETE
 
@@ -93,5 +97,32 @@ Plans:
 
 - [x] 05-06-PLAN.md — Fixed ParseRevokeTransaction's CRDT-write deadlock. Root cause diverged from the plan's own hypothesis: not the DAG-broadcast path, but CrdtSet::mutex_ reentrancy (fixed via std::recursive_mutex, found through live debugging). PutKeyLocal/GlobalDB::PutLocal kept as the correct local-write mechanism. Also fixed two pre-existing test bugs (nonce collision, missing previous_hash) blocking verification. All 6 Revoke tests pass; zero regressions.
 
+### 🚧 v2.4 Merge origin/develop into dev_childwallet (In Progress)
+
+**Milestone Goal:** Bring SuperGenius and GeniusSDK `dev_childwallet` branches current with `origin/develop` — including the `DevConfig_st`→`GeniusNodeConfig` rename — with zero regressions to child-wallet functionality.
+
+### Phase 6: SuperGenius Merge & Regression Verification
+
+**Goal:** Bring SuperGenius's `dev_childwallet` branch current with `origin/develop` via a merge commit (not a rebase — the branch is already shared/pushed), resolving all conflicts in the 9 confirmed shared files including the `DevConfig_st`→`GeniusNodeConfig` rename, with the merged branch building cleanly and every pre-existing child-wallet capability confirmed regression-free.
+**Requirements**: [MERGE-01, MVER-01, MVER-03, MVER-04]
+**Depends on:** Phase 5
+**Success Criteria** (what must be TRUE):
+  1. SuperGenius's `dev_childwallet` branch has a merge commit with `origin/develop` as a parent (two-parent merge commit visible in `git log`), pushed to `origin/dev_childwallet`.
+  2. All 9 confirmed shared files (`src/account/GeniusNode.{hpp,cpp}`, `src/account/TransactionManager.{hpp,cpp}`, `src/blockchain/Blockchain.hpp`, `src/blockchain/impl/Blockchain.cpp`, `src/blockchain/impl/proto/Consensus.proto`, `src/account/CMakeLists.txt`, `test/src/account/CMakeLists.txt`) are conflict-free with no leftover conflict markers, and zero `DevConfig_st` references remain anywhere in `src/`, `test/`, or `example/` (all ~17 replaced by `GeniusNodeConfig`, struct fields unchanged).
+  3. SuperGenius builds cleanly across all targets post-merge, with no new compiler/linker errors introduced by conflict resolution.
+  4. The full pre-existing child-wallet test suite — registration (v2.0), balance query (v2.1), GeniusSDK wrapper interfaces (v2.2), transfer authority CONS-01/CONS-02 (v2.3 Phase 3), transfer wrappers (v2.3 Phase 4), and lifecycle Detach/Revoke/ReplaceMain (Phase 5) — passes with zero regressions.
+  5. `CheckParentChildAuthority`, `FilterRegistration`, `CheckCertifiedParent`, and the `transaction_parsers` registration-tx dispatch entry all still function as designed against the `origin/develop` changes merged into the 9 shared files.
+**Plans**: TBD
+
+### Phase 7: GeniusSDK Merge & Build Verification
+
+**Goal:** Bring GeniusSDK's `dev_childwallet` branch current with the 1 remaining `origin/develop` commit (already merged once at `6f05025`) and confirm it builds cleanly against the SuperGenius static lib/headers updated in Phase 6.
+**Requirements**: [MERGE-02, MVER-02]
+**Depends on:** Phase 6
+**Success Criteria** (what must be TRUE):
+  1. GeniusSDK's `dev_childwallet` branch has a merge commit with `origin/develop` as a parent, pushed to `origin/dev_childwallet`.
+  2. GeniusSDK builds cleanly against the Phase-6-updated SuperGenius static lib and headers, with no new compiler/linker errors.
+**Plans**: TBD
+
 ---
-*Roadmap updated: 2026-07-23 — Phase 5 complete: gap closure (05-06) fixed the real deadlock root cause (CrdtSet::mutex_ reentrancy) plus two pre-existing test bugs; all Detach/Revoke/Replace-Main coverage verified passing.*
+*Roadmap updated: 2026-07-23 — v2.4 roadmap created: Phase 6 (SuperGenius Merge & Regression Verification) and Phase 7 (GeniusSDK Merge & Build Verification) defined, continuing numbering from Phase 5. All 6 v2.4 requirements (MERGE-01, MERGE-02, MVER-01..04) mapped with zero orphans.*
