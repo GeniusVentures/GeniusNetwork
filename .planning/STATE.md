@@ -1,28 +1,24 @@
 ---
 gsd_state_version: 1.0
-milestone: v2.3
-milestone_name: Child Wallet Transfers
-current_phase: 05
-current_phase_name: child-wallet-lifecycle-states
-status: complete
-stopped_at: Completed 05-06-PLAN.md (gap closure) - all 6 Revoke tests pass, zero regressions; Phase 5 fully verified (see 05-06-SUMMARY.md)
-last_updated: "2026-07-23T01:30:00.000Z"
+milestone: v2.4
+milestone_name: Merge origin/develop into dev_childwallet
+status: planning
+last_updated: "2026-07-23T19:11:10.232Z"
 last_activity: 2026-07-23
-last_activity_desc: Phase 05 complete - Revoke deadlock root-caused to CrdtSet::mutex_ reentrancy (not the plan's own hypothesis), fixed via recursive_mutex; two pre-existing test bugs (nonce collision, missing previous_hash) also fixed
 progress:
-  total_phases: 3
-  completed_phases: 3
-  total_plans: 11
-  completed_plans: 11
-  percent: 100
+  total_phases: 0
+  completed_phases: 0
+  total_plans: 0
+  completed_plans: 0
+  percent: 0
 ---
 
 ## Current Position
 
-Phase: 05 (child-wallet-lifecycle-states) — ✅ COMPLETE
-Plan: 6 of 6
-Status: Phase 05 complete — all requirements (LIFE-01..04) verified
-Last activity: 2026-07-23 — Phase 05 gap closure (05-06) completed and verified
+Phase: Not started (defining requirements)
+Plan: —
+Status: Defining requirements
+Last activity: 2026-07-23 — Milestone v2.4 started
 
 ## Project Reference
 

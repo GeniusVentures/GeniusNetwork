@@ -14,11 +14,22 @@ The main wallet must be able to discover, monitor, and manage registered child w
 
 **Previously shipped:** v2.3 Phase 3 Parent-Child Transfer Authority (2026-07-21) — the `CheckParentChildAuthority` consensus gate is live: main can fund a registered child via an ordinary transfer (CONS-01) and recover funds back from it via the new `TransactionManager::RecoverFromChild`/`GeniusNode::RecoverFromChild` (CONS-02, destination-restricted per D-21), while every existing child-signed path (child→arbitrary, child→main, child→dev, child-cannot-spend-main) is confirmed unaffected by 24 passing E2E regression tests.
 
-## Next Milestone Goals
+## Current Milestone: v2.4 Merge origin/develop into dev_childwallet
 
-v2.3 Child Wallet Transfers shipped 2026-07-21 (Phases 3-4 archived: [`.planning/milestones/v2.3-ROADMAP.md`](../.planning/milestones/v2.3-ROADMAP.md), [`.planning/milestones/v2.3-REQUIREMENTS.md`](../.planning/milestones/v2.3-REQUIREMENTS.md)). No milestone is currently active — run `/gsd-new-milestone` to scope the next one.
+**Goal:** Bring SuperGenius and GeniusSDK `dev_childwallet` branches current with `origin/develop` — including the `DevConfig_st`→`GeniusNodeConfig` rename — with zero regressions to child-wallet functionality.
 
-**Deferred candidates carried forward** (see Requirements > Deferred below):
+**Target features:**
+- SuperGenius `dev_childwallet` merged with `origin/develop` (162 commits behind at scoping time; merge commit, not rebase — branch is shared/pushed), conflicts resolved in the 9 confirmed shared files: `src/account/GeniusNode.{hpp,cpp}`, `src/account/TransactionManager.{hpp,cpp}`, `src/blockchain/Blockchain.hpp`, `src/blockchain/impl/Blockchain.cpp`, `src/blockchain/impl/proto/Consensus.proto`, `src/account/CMakeLists.txt`, `test/src/account/CMakeLists.txt`
+- GeniusSDK `dev_childwallet` caught up with the 1 remaining `origin/develop` commit (already merged once at `6f05025`)
+- All `DevConfig_st` references (~17 files in `src/`/`test/`/`example/`) adapted to `GeniusNodeConfig` as part of conflict resolution — typedef rename only, struct fields unchanged
+- Full child-wallet regression suite (registration, balance query, transfer authority, transfer wrappers, lifecycle states/Detach/Revoke) passes post-merge with zero regressions
+- SuperGenius, GeniusSDK, and dependent submodule builds stay green
+
+**Explicitly out of scope this milestone:**
+- GeniusWallet — currently on `dev_mergeandroidbg`, not a `dev_childwallet` branch; untouched
+- thirdparty — already tracks `develop` directly, no separate child-wallet branch to merge
+
+**Deferred candidates carried forward from prior milestones** (see Requirements > Deferred below):
 - MON-01/MON-02: Full monitoring dashboard (per-child balance, all assets/tokens, activity history, escrow status, lifecycle monitoring)
 - API-01: gRPC endpoint exposing child registration/balance to external callers
 - TOK-01: Multi-token balance query (GNUS, child tokens, NFTs)
@@ -127,4 +138,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-07-21 after v2.3 Child Wallet Transfers milestone close — archived, awaiting next milestone*
+*Last updated: 2026-07-23 after starting v2.4 Merge origin/develop into dev_childwallet milestone*
