@@ -59,7 +59,12 @@ The main wallet must be able to discover, monitor, and manage registered child w
 
 ### Active
 
-None — v2.3 Child Wallet Transfers milestone shipped 2026-07-21 and is archived. Run `/gsd-new-milestone` to scope the next one.
+- [ ] MERGE-01: SuperGenius `dev_childwallet` merged with `origin/develop`, conflicts resolved incl. `DevConfig_st`→`GeniusNodeConfig` rename
+- [ ] MERGE-02: GeniusSDK `dev_childwallet` merged with the remaining `origin/develop` commit
+- [ ] MVER-01: SuperGenius builds cleanly post-merge
+- [ ] MVER-02: GeniusSDK builds cleanly against updated SuperGenius static lib
+- [ ] MVER-03: Full existing child-wallet test suite passes with zero regressions
+- [ ] MVER-04: `origin/develop`'s changes confirmed compatible with child-wallet consensus gates
 
 ### Deferred (candidates for future milestones)
 

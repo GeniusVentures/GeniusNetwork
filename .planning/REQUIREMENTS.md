@@ -1,0 +1,57 @@
+# Requirements: GNUS Child Wallet — v2.4
+
+**Defined:** 2026-07-23
+**Core Value:** The main wallet must be able to discover, monitor, and manage registered child wallets through consensus-visible state
+
+## v1 Requirements
+
+Requirements for milestone v2.4 (Merge origin/develop into dev_childwallet). Each maps to roadmap phases.
+
+### Submodule Merges
+
+- [ ] **MERGE-01**: SuperGenius `dev_childwallet` is merged with `origin/develop` (162 commits behind at scoping time) via a merge commit — not a rebase, since the branch is already shared/pushed — with all conflicts resolved in the 9 confirmed shared files (`src/account/GeniusNode.{hpp,cpp}`, `src/account/TransactionManager.{hpp,cpp}`, `src/blockchain/Blockchain.hpp`, `src/blockchain/impl/Blockchain.cpp`, `src/blockchain/impl/proto/Consensus.proto`, `src/account/CMakeLists.txt`, `test/src/account/CMakeLists.txt`), including adapting all `DevConfig_st` references (~17 files) to the renamed `GeniusNodeConfig` typedef (fields unchanged), and the merge commit pushed to `origin/dev_childwallet`
+- [ ] **MERGE-02**: GeniusSDK `dev_childwallet` is merged with the 1 remaining `origin/develop` commit (already merged once at `6f05025`), merge commit pushed to `origin/dev_childwallet`
+
+### Build & Regression Verification
+
+- [ ] **MVER-01**: SuperGenius builds cleanly (all targets) after MERGE-01, with no new compiler/linker errors introduced by conflict resolution
+- [ ] **MVER-02**: GeniusSDK builds cleanly against the updated SuperGenius static lib after MERGE-01 and MERGE-02
+- [ ] **MVER-03**: Full existing child-wallet test suite passes with zero regressions post-merge — registration (v2.0), balance query (v2.1), GeniusSDK wrapper interfaces (v2.2), transfer authority CONS-01/CONS-02 (v2.3 Phase 3), transfer wrappers (v2.3 Phase 4), and lifecycle states Detach/Revoke/ReplaceMain (Phase 5)
+- [ ] **MVER-04**: `origin/develop`'s changes in the 9 shared files are confirmed compatible with child-wallet consensus gates — `CheckParentChildAuthority`, `FilterRegistration`, `CheckCertifiedParent`, and the `transaction_parsers` registration-tx dispatch entry all still function as designed after the merge
+
+## v2 Requirements
+
+None — this milestone is scoped entirely to merge integration.
+
+## Out of Scope
+
+Explicitly excluded. Documented to prevent scope creep.
+
+| Feature | Reason |
+|---------|--------|
+| GeniusWallet merge/update | Currently on `dev_mergeandroidbg`, not a `dev_childwallet` branch — untouched this milestone |
+| thirdparty submodule merge | Already tracks `develop` directly; no separate child-wallet branch exists to merge |
+| Rebasing `dev_childwallet` onto `develop` | Branch is already pushed/shared on origin; rebase would rewrite shared history — merge commit chosen instead |
+| Separate REQ-ID for the `DevConfig_st`→`GeniusNodeConfig` rename | Folded into MERGE-01 as part of ordinary conflict resolution, not tracked independently |
+
+## Traceability
+
+Which phases cover which requirements. Updated during roadmap creation.
+
+| Requirement | Phase | Status |
+|-------------|-------|--------|
+| MERGE-01 | TBD | Pending |
+| MERGE-02 | TBD | Pending |
+| MVER-01 | TBD | Pending |
+| MVER-02 | TBD | Pending |
+| MVER-03 | TBD | Pending |
+| MVER-04 | TBD | Pending |
+
+**Coverage:**
+- v1 requirements: 6 total
+- Mapped to phases: 0 (pending roadmap creation)
+- Unmapped: 6 ⚠️ (resolved by gsd-roadmapper)
+
+---
+*Requirements defined: 2026-07-23*
+*Last updated: 2026-07-23 after initial definition*
