@@ -6,30 +6,30 @@ current_phase: 6
 current_phase_name: SuperGenius Merge & Regression Verification
 status: executing
 stopped_at: v2.4 ROADMAP.md created — Phase 6 (SuperGenius Merge & Regression Verification) and Phase 7 (GeniusSDK Merge & Build Verification) defined; REQUIREMENTS.md traceability updated, 6/6 requirements mapped
-last_updated: "2026-07-23T20:00:28.565Z"
+last_updated: "2026-07-23T20:12:25.805Z"
 last_activity: 2026-07-23
-last_activity_desc: "ROADMAP.md created for v2.4 (Phase 6: SuperGenius Merge & Regression Verification, Phase 7: GeniusSDK Merge & Build Verification); REQUIREMENTS.md traceability updated, 6/6 requirements mapped"
+last_activity_desc: Phase 6 execution started
 progress:
   total_phases: 2
   completed_phases: 0
-  total_plans: 0
-  completed_plans: 0
+  total_plans: 5
+  completed_plans: 1
   percent: 0
 ---
 
 ## Current Position
 
-Phase: 6 of 7 (SuperGenius Merge & Regression Verification) — 1st of 2 phases in v2.4
-Plan: — (not yet planned)
+Phase: 6 (SuperGenius Merge & Regression Verification) — EXECUTING
+Plan: 2 of 5
 Status: Ready to execute
-Last activity: 2026-07-23 — ROADMAP.md created for v2.4 (Phase 6: SuperGenius Merge & Regression Verification, Phase 7: GeniusSDK Merge & Build Verification); REQUIREMENTS.md traceability updated, 6/6 requirements mapped
+Last activity: 2026-07-23 — Phase 6 execution started
 
 ## Project Reference
 
 See: .planning/PROJECT.md (updated 2026-07-23)
 
 **Core value:** Main wallet must be able to discover, monitor, and manage registered child wallets through consensus-visible state
-**Current focus:** Phase 6 — SuperGenius Merge & Regression Verification (ready to plan)
+**Current focus:** Phase 6 — SuperGenius Merge & Regression Verification
 
 ### Blockers/Concerns (carried forward)
 
@@ -68,6 +68,7 @@ Items acknowledged and deferred at milestone close on 2026-07-20:
 | Phase 05-child-wallet-lifecycle-states P04 | ~2.5hr | 3 tasks | 1 files |
 | Phase 05-child-wallet-lifecycle-states P05 | ~3hr | 2 tasks | 1 files |
 | Phase 05-child-wallet-lifecycle-states P06 (gap closure) | ~4-5hr across 2 sessions | 3 tasks | 8 files |
+| Phase 06 P01 | 10min | 3 tasks | 9 files |
 
 ## Decisions
 
@@ -104,6 +105,8 @@ Items acknowledged and deferred at milestone close on 2026-07-20:
 - [Phase 05-child-wallet-lifecycle-states, P06]: ReRegistrationAfterRevoke had two separate pre-existing test bugs, not one - a nonce=0 collision with the original registration (fixed: nonce=1), then a missing dag.previous_hash exposed once the nonce fix was applied (fixed: set to the certified nonce=0 tx's hash) - EvaluateTransactionReplayProtection requires previous_hash to resolve to a certified tx whenever nonce>0
 - [Phase 05-child-wallet-lifecycle-states, P06]: CRDTFixture::SetUpTestSuite now clears leftover CRDT.Datastore.TEST*/unit_N directories up front, since the fixture counter restarts at 0 every process and a prior run's segfault-on-exit can skip the destructor's own cleanup, causing collisions
 - [Roadmap, v2.4]: Phase 6 groups MERGE-01 with MVER-01/03/04 since all three verification requirements are provable against the SuperGenius-only test suite (GeniusSDK has no dedicated unit tests per project memory) without needing GeniusSDK's merge complete first; Phase 7 groups MERGE-02 with MVER-02 since GeniusSDK's build verification inherently depends on Phase 6's updated static lib/headers
+- [Phase 06]: Both real conflicts (TransactionManager.cpp include block, CMakeLists.txt GENIUS_NODE_SOURCES) resolved identically - fully adopt origin/develop's ProcessingTransaction retirement, keep RegistrationTransaction/RevokeTransaction untouched
+- [Phase 06]: docs submodule pointer bump ended up staged by git's own auto-merge (not left separately unstaged) because origin/develop's own docs target is the identical commit (3293bb6a) as the pre-existing local bump - confirmed benign, not forced back to unstaged
 
 ### Pending Todos
 
@@ -123,7 +126,7 @@ None yet.
 
 ## Session
 
-**Last session:** 2026-07-23T19:16:15.000Z
+**Last session:** 2026-07-23T20:11:30.017Z
 **Stopped at:** v2.4 ROADMAP.md created — Phase 6 (SuperGenius Merge & Regression Verification) and Phase 7 (GeniusSDK Merge & Build Verification) defined; REQUIREMENTS.md traceability updated, 6/6 requirements mapped
 **Resume file:** None
 

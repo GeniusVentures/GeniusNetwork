@@ -107,17 +107,19 @@ Plans:
 **Requirements**: [MERGE-01, MVER-01, MVER-03, MVER-04]
 **Depends on:** Phase 5
 **Success Criteria** (what must be TRUE):
+
   1. SuperGenius's `dev_childwallet` branch has a merge commit with `origin/develop` as a parent (two-parent merge commit visible in `git log`), pushed to `origin/dev_childwallet`.
   2. All 9 confirmed shared files (`src/account/GeniusNode.{hpp,cpp}`, `src/account/TransactionManager.{hpp,cpp}`, `src/blockchain/Blockchain.hpp`, `src/blockchain/impl/Blockchain.cpp`, `src/blockchain/impl/proto/Consensus.proto`, `src/account/CMakeLists.txt`, `test/src/account/CMakeLists.txt`) are conflict-free with no leftover conflict markers, and zero `DevConfig_st` references remain anywhere in `src/`, `test/`, or `example/` (all ~17 replaced by `GeniusNodeConfig`, struct fields unchanged).
   3. SuperGenius builds cleanly across all targets post-merge, with no new compiler/linker errors introduced by conflict resolution.
   4. The full pre-existing child-wallet test suite — registration (v2.0), balance query (v2.1), GeniusSDK wrapper interfaces (v2.2), transfer authority CONS-01/CONS-02 (v2.3 Phase 3), transfer wrappers (v2.3 Phase 4), and lifecycle Detach/Revoke/ReplaceMain (Phase 5) — passes with zero regressions.
   5. `CheckParentChildAuthority`, `FilterRegistration`, `CheckCertifiedParent`, and the `transaction_parsers` registration-tx dispatch entry all still function as designed against the `origin/develop` changes merged into the 9 shared files.
-**Plans:** 5 plans
+
+**Plans:** 1/5 plans executed
 
 Plans:
 **Wave 1**
 
-- [ ] 06-01-PLAN.md — Start the merge (no-commit) and resolve the 2 real conflicts (retire ProcessingTransaction consistently in TransactionManager.cpp + CMakeLists.txt)
+- [x] 06-01-PLAN.md — Start the merge (no-commit) and resolve the 2 real conflicts (retire ProcessingTransaction consistently in TransactionManager.cpp + CMakeLists.txt)
 
 **Wave 2** *(blocked on Wave 1 completion)*
 
@@ -141,8 +143,10 @@ Plans:
 **Requirements**: [MERGE-02, MVER-02]
 **Depends on:** Phase 6
 **Success Criteria** (what must be TRUE):
+
   1. GeniusSDK's `dev_childwallet` branch has a merge commit with `origin/develop` as a parent, pushed to `origin/dev_childwallet`.
   2. GeniusSDK builds cleanly against the Phase-6-updated SuperGenius static lib and headers, with no new compiler/linker errors.
+
 **Plans**: TBD
 
 ---
