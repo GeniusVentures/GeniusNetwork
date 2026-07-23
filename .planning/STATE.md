@@ -4,37 +4,38 @@ milestone: v2.3
 milestone_name: Child Wallet Transfers
 current_phase: 05
 current_phase_name: child-wallet-lifecycle-states
-status: executing
-stopped_at: Completed 05-05-PLAN.md (2/6 new tests verified passing; 4/6 blocked by discovered ParseRevokeTransaction deadlock - see 05-05-SUMMARY.md)
-last_updated: "2026-07-22T19:18:41.742Z"
-last_activity: 2026-07-22
-last_activity_desc: Phase 05 execution started
+status: complete
+stopped_at: Completed 05-06-PLAN.md (gap closure) - all 6 Revoke tests pass, zero regressions; Phase 5 fully verified (see 05-06-SUMMARY.md)
+last_updated: "2026-07-23T01:30:00.000Z"
+last_activity: 2026-07-23
+last_activity_desc: Phase 05 complete - Revoke deadlock root-caused to CrdtSet::mutex_ reentrancy (not the plan's own hypothesis), fixed via recursive_mutex; two pre-existing test bugs (nonce collision, missing previous_hash) also fixed
 progress:
   total_phases: 3
-  completed_phases: 2
+  completed_phases: 3
   total_plans: 11
-  completed_plans: 10
-  percent: 67
+  completed_plans: 11
+  percent: 100
 ---
 
 ## Current Position
 
-Phase: 05 (child-wallet-lifecycle-states) — EXECUTING
-Plan: 1 of 6
-Status: Executing Phase 05
-Last activity: 2026-07-22 — Phase 05 execution started
+Phase: 05 (child-wallet-lifecycle-states) — ✅ COMPLETE
+Plan: 6 of 6
+Status: Phase 05 complete — all requirements (LIFE-01..04) verified
+Last activity: 2026-07-23 — Phase 05 gap closure (05-06) completed and verified
 
 ## Project Reference
 
 See: .planning/PROJECT.md (updated 2026-07-20)
 
 **Core value:** Main wallet must be able to discover, monitor, and manage registered child wallets through consensus-visible state
-**Current focus:** Phase 05 — child-wallet-lifecycle-states
+**Current focus:** Phase 05 complete — ready for next milestone/phase planning
 
 ### Blockers/Concerns (carried forward)
 
-- `child_registration_test.exe` segfaults on process teardown (after all GTest assertions pass) — pre-existing lifecycle issue, likely unjoined libp2p/boost::asio threads during node `.reset()`, not caused by v2.1/v2.2/v2.3 work. Tracked in `.planning/phases/01-child-balance-query/deferred-items.md`; candidate for a future test-infra/node-shutdown-hygiene phase.
+- `child_registration_test.exe` segfaults on process teardown (after all GTest assertions pass) — pre-existing lifecycle issue, likely unjoined libp2p/boost::asio threads during node `.reset()`, not caused by v2.1/v2.2/v2.3 work. Tracked in `.planning/phases/01-child-balance-query/deferred-items.md`; candidate for a future test-infra/node-shutdown-hygiene phase. Also observed on `registration_transaction_test.exe` (exit code 139 after GTest prints PASSED, during Phase 05 verification) — same class of issue, not a regression.
 - `registration_transaction_test.exe`'s `RegistrationTransactionE2ETest` fixture (real `GossipPubSub`/`PubSubBroadcasterExt` stack) was observed idling near-zero CPU for 10+ minutes during process bring-up, before any GTest case ran, during Phase 05 Plan 02 verification — same class of test-binary networking/lifecycle issue as the `child_registration_test.exe` teardown segfault above. Build succeeded; full E2E run deferred rather than blocking. Candidate for the same future test-infra/node-shutdown-hygiene phase.
+- GeniusSDK does not yet expose Detach/Revoke/Replace-Main through the public C API — never in Phase 5's scope (stops at TransactionManager/GeniusNode level). Would need a future phase, mirroring Phase 2/4's GeniusSDK wrapper pattern, if external games/apps need to trigger these transitions directly.
 
 ## Deferred Items
 
@@ -65,6 +66,7 @@ Items acknowledged and deferred at milestone close on 2026-07-20:
 | Phase 05 P03 | 25min | 2 tasks | 4 files |
 | Phase 05-child-wallet-lifecycle-states P04 | ~2.5hr | 3 tasks | 1 files |
 | Phase 05-child-wallet-lifecycle-states P05 | ~3hr | 2 tasks | 1 files |
+| Phase 05-child-wallet-lifecycle-states P06 (gap closure) | ~4-5hr across 2 sessions | 3 tasks | 8 files |
 
 ## Decisions
 
@@ -97,6 +99,9 @@ Items acknowledged and deferred at milestone close on 2026-07-20:
 - [Phase 05-child-wallet-lifecycle-states, P04]: FilterRegistrationRejectsForkedSupersedesSequence's forked element uses sequence=3 (not 2) so gate (d)'s monotonicity check passes on its own, isolating the assertion to gate 3b specifically
 - [Phase ?]: [Phase 05-child-wallet-lifecycle-states, P05]: Discovered a reproducible deadlock in TransactionManager::ParseRevokeTransaction's globaldb_m->Put() call when applied at confirmed-transaction time - blocks 4/6 new Revoke E2E tests from passing; NOT fixed in this test-only plan, see 05-05-SUMMARY.md Known Blocker
 - [Phase ?]: [Phase 05-child-wallet-lifecycle-states, P05]: RevokeRejectedForNonMain/RevokeRejectedForSequenceMismatch verified passing via real GTest execution - fully prove T-05-09 (unauthorized revoke rejection), the phase's highest-severity threat, independent of the ParseRevokeTransaction blocker
+- [Phase 05-child-wallet-lifecycle-states, P06]: Root cause of the ParseRevokeTransaction deadlock was NOT the plan's own hypothesis (DAG-broadcast path) - it was CrdtSet::mutex_ reentrancy via PutElems's synchronous callback chain, found via live debugger stack trace; fixed via std::recursive_mutex, with PutKeyLocal/PutLocal kept as the architecturally-correct local write path
+- [Phase 05-child-wallet-lifecycle-states, P06]: ReRegistrationAfterRevoke had two separate pre-existing test bugs, not one - a nonce=0 collision with the original registration (fixed: nonce=1), then a missing dag.previous_hash exposed once the nonce fix was applied (fixed: set to the certified nonce=0 tx's hash) - EvaluateTransactionReplayProtection requires previous_hash to resolve to a certified tx whenever nonce>0
+- [Phase 05-child-wallet-lifecycle-states, P06]: CRDTFixture::SetUpTestSuite now clears leftover CRDT.Datastore.TEST*/unit_N directories up front, since the fixture counter restarts at 0 every process and a prior run's segfault-on-exit can skip the destructor's own cleanup, causing collisions
 
 ### Pending Todos
 
@@ -104,15 +109,17 @@ None yet.
 
 ### Blockers/Concerns
 
-- `child_registration_test.exe` segfaults on process teardown (pre-existing lifecycle issue, not caused by v2.1/v2.2/v2.3 work) — tracked in `.planning/phases/01-child-balance-query/deferred-items.md`, candidate for a future test-infra phase.
-- TransactionManager::ParseRevokeTransaction's globaldb_m->Put() call deadlocks when applied during confirmed-transaction processing (CrdtDatastore::AddDAGNode/WaitForJob never completes) - blocks RevokeChildEndToEnd, RevokeRejectedForAlreadyDetachedChild, ReRegistrationAfterRevoke, RevokePreservesChildUTXOsKeypairNonce from passing. Reproduced 3x, not fixed by bumping CRDT worker count 1->4. Root cause candidate: ParseRevokeTransaction should write via the same local-only datastore->put() path PutProducedUTXOs uses, not the full CRDT broadcast globaldb_m->Put(). See 05-05-SUMMARY.md.
+- `child_registration_test.exe` segfaults on process teardown (pre-existing lifecycle issue, not caused by v2.1/v2.2/v2.3 work) — tracked in `.planning/phases/01-child-balance-query/deferred-items.md`, candidate for a future test-infra phase. Same class of issue also seen on `registration_transaction_test.exe` (exit 139 after GTest PASSED summary) throughout Phase 05 verification — not a regression.
+- ~~TransactionManager::ParseRevokeTransaction's globaldb_m->Put() call deadlocks~~ — RESOLVED in 05-06. Root cause was actually `CrdtSet::mutex_` reentrancy (non-recursive mutex held across a synchronous callback that re-enters `PutElems`), not the DAG-broadcast path originally suspected; fixed via `std::recursive_mutex`. See 05-06-SUMMARY.md.
+- GeniusSDK does not expose Detach/Revoke/Replace-Main through the public C API — out of Phase 5's scope by design (stops at TransactionManager/GeniusNode level). Future phase candidate if external games/apps need this.
 
 ## Session
 
-**Last session:** 2026-07-22T01:06:10.216Z
-**Stopped at:** Completed 05-05-PLAN.md (2/6 new tests verified passing; 4/6 blocked by discovered ParseRevokeTransaction deadlock - see 05-05-SUMMARY.md)
+**Last session:** 2026-07-23T01:30:00.000Z
+**Stopped at:** Phase 05 complete — 05-06-SUMMARY.md written, all 6 Revoke tests + full Detach/Replace-Main coverage verified passing, submodule bumped
 **Resume file:** None
 
 ## Operator Next Steps
 
 - Start the next milestone with /gsd-new-milestone
+- If GeniusSDK exposure for Detach/Revoke/Replace-Main is needed, plan a new phase mirroring Phase 2/4's wrapper pattern
