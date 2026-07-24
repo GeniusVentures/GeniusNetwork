@@ -155,6 +155,81 @@
 - Sessions: 1 session for the wrapper implementation (20 min), 1 separate later session (2026-07-20) to diagnose and fix the CMake/coroutine build blocker
 - Notable: implementation was fast (thin wrapper over already-shipped v2.0/v2.1 logic); the bulk of elapsed calendar time (2 days) was the build-verification blocker, not the SDK code itself
 
+## Milestone: v2.3 — Child Wallet Transfers
+
+**Shipped:** 2026-07-21
+**Phases:** 2 | **Plans:** 5
+
+### What Was Built
+
+- `Blockchain::CheckCertifiedParent` (D-63 CRDT certified-status lookup, zero `genius_node` dependency) and `GeniusTransaction::CheckSignatureAgainst(address)` (parameterized signature verification `CheckSignature` now delegates to) — Phase 3, Plan 01
+- `CheckParentChildAuthority` consensus gate enforcing CONS-01 (main→child fund) and CONS-02 (main-recover-from-child, D-21 destination-restricted), slotted between `CheckTransactionAuthorization` and `CheckTransactionTimestamp` — Phase 3, Plan 02
+- `TransactionManager::RecoverFromChild`/`GeniusNode::RecoverFromChild` — new transfer-construction method spending only the child's own UTXOs, signed with main's own key — Phase 3, Plan 03
+- 24/24 passing E2E regression tests proving CONS-01/CONS-02 work and REGR-01/02/03 (every existing child-signed path) are unaffected — Phase 3, Plan 04
+- 4 new GeniusSDK C-API wrappers (`GeniusSDKFundChild`/`GNUS`, `GeniusSDKRecoverFromChild`/`GNUS`) exposing Phase 3's transfer calls, reusing existing `GeniusNodeReturnValue_t` codes — Phase 4
+
+### What Worked
+
+- Reusing the existing `"transfer"` tx type for both fund and recover avoided any new proto message or tx type
+- Found and fixed a pre-existing gap while writing regression tests: `transaction_parsers` had no dispatch entry for `"registration"` tx type — registration transactions could never have been certified without this fix, and the certified-parent mechanism this milestone depends on would have silently failed
+
+### What Was Inefficient
+
+- Plan 04 (regression test authoring) took ~3.5hr, the longest single plan in the milestone — E2E test authoring against the real consensus pipeline is inherently slower than unit-level verification
+
+### Patterns Established
+
+- D-60: certified-main signature accepted on child-sourced tx via CRDT registration lookup, not cryptographic delegation — `CheckParentChildAuthority` re-derives `tx.CheckSignature()` as a cheap branch selector to distinguish child-self-signed spends from certified-main-delegated recovery
+- `FillDAGStructForAddress(source_address)` helper added alongside `FillDAGStruct()` to keep main's own transfer/escrow paths untouched while supporting recovery-from-child construction
+
+### Key Lessons
+
+- When adding a new consensus gate, grep the dispatch tables (`transaction_parsers` and similar) for the transaction types the new logic depends on — a missing entry can silently block the entire feature at the tx-type level, upstream of the new gate itself
+
+### Cost Observations
+
+- Sessions: 2 phase cycles over 1 day (Phase 3: 4 plans, ~25min-3.5hr each; Phase 4: 1 plan, 20min)
+- Notable: Phase 3 Plan 04's regression-test authoring dominated wall-clock time; the actual gate/transfer implementation (Plans 01-03) was comparatively fast
+
+## Milestone: v2.4 — Merge origin/develop into dev_childwallet
+
+**Shipped:** 2026-07-24
+**Phases:** 2 (Phase 6 via formal GSD workflow; Phase 7 completed directly by the user) | **Plans:** 5
+
+### What Was Built
+
+- Two-parent merge commit (SuperGenius `cb4e46da`) bringing `dev_childwallet` current with `origin/develop` (162 commits), resolving the 2 real conflicts (retiring `ProcessingTransaction` consistently) and auto-merging the other 7 of 9 confirmed shared files cleanly
+- `DevConfig_st`→`GeniusNodeConfig` rename swept across all ~17 affected files — 14 of 15 plan-enumerated files had already auto-merged correctly; only `child_registration.cpp` needed a manual edit
+- All SuperGenius targets (`genius_node`, `registration_transaction_test`, `child_registration_test`) confirmed building cleanly post-merge, zero new compiler/linker errors
+- Full pre-existing child-wallet regression suite (registration, balance query, transfer authority, transfer wrappers, lifecycle Detach/Revoke/ReplaceMain) confirmed zero regressions; consensus gates confirmed compatible with `origin/develop`'s merged changes via static verification (byte-identical function-body diff)
+- GeniusSDK `dev_childwallet` merged with the 1 remaining `origin/develop` commit (merge commit `6969fac`), pushed, and confirmed building against the updated SuperGenius static lib — completed directly by the user, no formal `07-*` phase artifacts
+
+### What Worked
+
+- Doing careful pre-merge research (recorded in 06-RESEARCH.md) meant the actual `git merge --no-ff --no-commit` produced exactly the predicted conflict set — no surprises during Plan 01
+- Root-causing test crashes via live debugger stack trace (Phase 5's `CrdtSet::mutex_` reentrancy fix) rather than accepting the plan's original hypothesis, then confirming that same fix held under the newly-merged `origin/develop` code paths during Phase 6 regression testing
+- Distinguishing an unrelated `thirdparty` submodule drift (accidentally fast-forwarded during this session's build troubleshooting) from an actual merge regression — root-caused via a non-rebuilt baseline binary comparison rather than assuming the merge was at fault
+
+### What Was Inefficient
+
+- Full E2E regression execution (MVER-03) was only partially completed (5/37 + 0/4 test cases) because of the `thirdparty` drift crash — static/structural verification had to substitute for live test execution on the affected fixtures
+- Phase 7 was completed entirely outside the GSD discuss/plan/execute workflow, leaving no `PLAN.md`/`SUMMARY.md`/build-log artifact — milestone close required independently reconstructing MERGE-02/MVER-02 evidence from git history and user attestation, and required a `--force` override on `gsd-tools.cjs query milestone.complete` since the roadmap showed Phase 7 with 0 plans
+
+### Patterns Established
+
+- Merge commit (not rebase) is the correct choice whenever a `dev_*` branch is already shared/pushed — rebase would rewrite shared history
+- When troubleshooting a Windows build blocker, check sibling submodules (`thirdparty` in this case) for accidental fast-forwards before assuming the change under test caused a new failure
+
+### Key Lessons
+
+- A phase completed outside the formal workflow is still closeable, but costs real verification effort at milestone-close time to reconstruct what would have been captured automatically by `/gsd-execute-phase` — worth running the formal workflow even for "simple" merge-only phases
+- When a milestone-close tool refuses due to an unstarted phase, `--force` is appropriate only after independently verifying the actual work through an out-of-band source (here: git history) — never take the user's word alone as sufficient for requirements marked complete
+
+### Cost Observations
+
+- Sessions: entirely same-day (2026-07-23 for Phase 6, 2026-07-23/24 for Phase 7's manual completion)
+- Notable: Phase 6's 5 plans ran efficiently (10min-70min each) except the deferred-items root-cause investigation in Plan 04; Phase 7 had zero GSD-tracked cost since it bypassed the workflow entirely
+
 ## Cross-Milestone Trends
 
 | Milestone | Phases | Plans | Duration | Notes |
@@ -163,3 +238,5 @@
 | v2.0 Registration Implementation | 2 | 6 | 2 days | First implementation slice; +2,235/-47 LOC C++ |
 | v2.1 Main Wallet Child Balance Query | 1 | 2 | 1 day | Thin delegation + integration test; segfault-on-teardown flake deferred |
 | v2.2 GeniusSDK Child Wallet Interfaces | 1 | 1 | 3 days (20min impl + 2-day build-blocker fix) | Verification override: no formal VERIFICATION.md; segfault-on-teardown flake still deferred |
+| v2.3 Child Wallet Transfers | 2 | 5 | 1 day | CheckParentChildAuthority consensus gate; found/fixed missing registration-tx dispatch entry |
+| v2.4 Merge origin/develop into dev_childwallet | 2 | 5 | 2 days | Phase 7 completed outside GSD workflow; verification override on milestone close (--force) |
