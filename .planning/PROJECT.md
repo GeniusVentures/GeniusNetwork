@@ -16,6 +16,10 @@ The main wallet must be able to discover, monitor, and manage registered child w
 
 ## Current Milestone
 
+This project now runs parallel workstreams (see `.planning/workstreams/`). Each tracks its own milestone independently.
+
+### Workstream: milestone (child-wallet track)
+
 Planning next milestone — run `/gsd-new-milestone` to define v2.5 scope.
 
 **Deferred candidates carried forward from prior milestones** (see Requirements > Deferred below):
@@ -24,6 +28,16 @@ Planning next milestone — run `/gsd-new-milestone` to define v2.5 scope.
 - TOK-01: Multi-token balance query (GNUS, child tokens, NFTs)
 - POL-01: Transfer amount limits/policy beyond CONS-01/CONS-02
 - UI-01: GeniusWallet Flutter UI wiring for child-wallet transfers
+
+### Workstream: gnus-subnets
+
+**Goal:** Produce design documentation defining how isolated GNUS subnets (e.g. `144.100` under main net `144`) address, communicate, bridge tokens, and isolate job/consensus processing — no implementation this milestone.
+
+**Target deliverables (v1.0, docs-only, one phase each):**
+- Subnet addressing scheme — `net_id.subnet_id` composition, `config_json` placement, validation/allocation
+- PubSub channel namespacing — how `subnet_id` folds into topic names for traffic isolation
+- Bridge/gateway design — GNUS token movement between main net and subnet, trust model
+- Job isolation & consensus impact — subnet-scoped job scheduling, CRDT/registration/validation-gate subnet-awareness
 
 ## Requirements
 
@@ -139,4 +153,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-07-24 after v2.4 milestone*
+*Last updated: 2026-07-24 — gnus-subnets workstream v1.0 (GNUS Subnets Architecture) started*
