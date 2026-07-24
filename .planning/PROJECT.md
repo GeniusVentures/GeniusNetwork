@@ -10,24 +10,13 @@ The main wallet must be able to discover, monitor, and manage registered child w
 
 ## Current State
 
-**Shipped:** v2.3 Phase 4 GeniusSDK Transfer Wrappers (2026-07-21) — external games/apps can fund a registered child wallet (`GeniusSDKFundChild`/`GeniusSDKFundChildGNUS`) and recover funds from it (`GeniusSDKRecoverFromChild`/`GeniusSDKRecoverFromChildGNUS`) entirely through the public GeniusSDK C API, wrapping Phase 3's `GeniusNode::TransferFunds`/`RecoverFromChild` calls with no new business logic. This completes v2.3 Child Wallet Transfers — all milestone phases are done.
+**Shipped:** v2.4 Merge origin/develop into dev_childwallet (2026-07-24) — SuperGenius's `dev_childwallet` branch is current with `origin/develop` via merge commit `cb4e46da` (162 commits caught up, `DevConfig_st`→`GeniusNodeConfig` rename swept across ~17 files, zero regressions across the full child-wallet suite), pushed to `origin/dev_childwallet`. GeniusSDK's `dev_childwallet` is current with the same `origin/develop` baseline via merge commit `6969fac`, pushed, and confirmed building cleanly against the updated SuperGenius static lib. Phase 7 (GeniusSDK side) was completed directly by the user outside the formal GSD plan/execute workflow — see MILESTONES.md Known Gaps.
 
-**Previously shipped:** v2.3 Phase 3 Parent-Child Transfer Authority (2026-07-21) — the `CheckParentChildAuthority` consensus gate is live: main can fund a registered child via an ordinary transfer (CONS-01) and recover funds back from it via the new `TransactionManager::RecoverFromChild`/`GeniusNode::RecoverFromChild` (CONS-02, destination-restricted per D-21), while every existing child-signed path (child→arbitrary, child→main, child→dev, child-cannot-spend-main) is confirmed unaffected by 24 passing E2E regression tests.
+**Previously shipped:** v2.3 Phase 4 GeniusSDK Transfer Wrappers (2026-07-21) — external games/apps can fund a registered child wallet (`GeniusSDKFundChild`/`GeniusSDKFundChildGNUS`) and recover funds from it (`GeniusSDKRecoverFromChild`/`GeniusSDKRecoverFromChildGNUS`) entirely through the public GeniusSDK C API, wrapping Phase 3's `GeniusNode::TransferFunds`/`RecoverFromChild` calls with no new business logic.
 
-## Current Milestone: v2.4 Merge origin/develop into dev_childwallet
+## Current Milestone
 
-**Goal:** Bring SuperGenius and GeniusSDK `dev_childwallet` branches current with `origin/develop` — including the `DevConfig_st`→`GeniusNodeConfig` rename — with zero regressions to child-wallet functionality.
-
-**Target features:**
-- SuperGenius `dev_childwallet` merged with `origin/develop` (162 commits behind at scoping time; merge commit, not rebase — branch is shared/pushed), conflicts resolved in the 9 confirmed shared files: `src/account/GeniusNode.{hpp,cpp}`, `src/account/TransactionManager.{hpp,cpp}`, `src/blockchain/Blockchain.hpp`, `src/blockchain/impl/Blockchain.cpp`, `src/blockchain/impl/proto/Consensus.proto`, `src/account/CMakeLists.txt`, `test/src/account/CMakeLists.txt`
-- GeniusSDK `dev_childwallet` caught up with the 1 remaining `origin/develop` commit (already merged once at `6f05025`)
-- All `DevConfig_st` references (~17 files in `src/`/`test/`/`example/`) adapted to `GeniusNodeConfig` as part of conflict resolution — typedef rename only, struct fields unchanged
-- Full child-wallet regression suite (registration, balance query, transfer authority, transfer wrappers, lifecycle states/Detach/Revoke) passes post-merge with zero regressions
-- SuperGenius, GeniusSDK, and dependent submodule builds stay green
-
-**Explicitly out of scope this milestone:**
-- GeniusWallet — currently on `dev_mergeandroidbg`, not a `dev_childwallet` branch; untouched
-- thirdparty — already tracks `develop` directly, no separate child-wallet branch to merge
+Planning next milestone — run `/gsd-new-milestone` to define v2.5 scope.
 
 **Deferred candidates carried forward from prior milestones** (see Requirements > Deferred below):
 - MON-01/MON-02: Full monitoring dashboard (per-child balance, all assets/tokens, activity history, escrow status, lifecycle monitoring)
@@ -56,15 +45,16 @@ The main wallet must be able to discover, monitor, and manage registered child w
 - ✓ GeniusSDK wrapper exposes main→child fund transfer (`GeniusSDKFundChild`/`GeniusSDKFundChildGNUS`) — v2.3 Phase 4, fulfilled SDKT-01
 - ✓ GeniusSDK wrapper exposes main-recover-from-child transfer (`GeniusSDKRecoverFromChild`/`GeniusSDKRecoverFromChildGNUS`) — v2.3 Phase 4, fulfilled SDKT-02
 - ✓ Both transfer wrappers return existing `GeniusNodeReturnValue_t` codes with no new enum value added — v2.3 Phase 4, fulfilled SDKT-03
+- ✓ SuperGenius `dev_childwallet` merged with `origin/develop`, conflicts resolved incl. `DevConfig_st`→`GeniusNodeConfig` rename — v2.4, fulfilled MERGE-01
+- ✓ GeniusSDK `dev_childwallet` merged with the remaining `origin/develop` commit — v2.4, fulfilled MERGE-02 (completed directly by user, no formal GSD phase artifacts)
+- ✓ SuperGenius builds cleanly post-merge — v2.4, fulfilled MVER-01
+- ✓ GeniusSDK builds cleanly against updated SuperGenius static lib — v2.4, fulfilled MVER-02 (user attestation only, no captured build log)
+- ✓ Full existing child-wallet test suite passes with zero regressions post-merge — v2.4, fulfilled MVER-03
+- ✓ `origin/develop`'s changes confirmed compatible with child-wallet consensus gates — v2.4, fulfilled MVER-04
 
 ### Active
 
-- [ ] MERGE-01: SuperGenius `dev_childwallet` merged with `origin/develop`, conflicts resolved incl. `DevConfig_st`→`GeniusNodeConfig` rename
-- [ ] MERGE-02: GeniusSDK `dev_childwallet` merged with the remaining `origin/develop` commit
-- [ ] MVER-01: SuperGenius builds cleanly post-merge
-- [ ] MVER-02: GeniusSDK builds cleanly against updated SuperGenius static lib
-- [ ] MVER-03: Full existing child-wallet test suite passes with zero regressions
-- [ ] MVER-04: `origin/develop`'s changes confirmed compatible with child-wallet consensus gates
+(None yet — define next milestone's requirements via `/gsd-new-milestone`)
 
 ### Deferred (candidates for future milestones)
 
@@ -95,11 +85,14 @@ The main wallet must be able to discover, monitor, and manage registered child w
 - No dedicated `GeniusSDK/test` unit tests exist for the v2.2 wrapper functions — SuperGenius's existing `GeniusNode`/`TransactionManager` tests already cover the wrapped logic
 - v2.3 Phase 3 added `Blockchain::CheckCertifiedParent` (D-63 certified-parent lookup, zero `genius_node` dependency to preserve the one-directional `blockchain_genesis` ← `genius_node` library link) and a narrow D-60 signature-acceptance branch in `CheckTransactionAuthorization`/`ValidateWitness`, so a certified main's signature is accepted on a child-sourced recovery transaction without weakening any other signature check
 - While building Phase 3's regression tests, found and fixed a pre-existing gap: `TransactionManager`'s `transaction_parsers` dispatch table had no entry for the `"registration"` tx type, so every registration transaction was rejected as "Unknown tx type" before it could ever reach a certified state — the certified-parent mechanism this milestone depends on could never have worked without this fix
+- v2.4 merged both SuperGenius and GeniusSDK `dev_childwallet` branches current with `origin/develop` (162 commits caught up on SuperGenius), resolving the `DevConfig_st`→`GeniusNodeConfig` rename across ~17 files with zero child-wallet regressions; an unrelated `thirdparty` submodule drift was root-caused as blocking some real-networked E2E fixtures (DI-06-01), not a regression from the merge itself
 
 ## Known Issues
 
-- `child_registration_test.exe` segfaults on process teardown (after all GTest assertions pass) — pre-existing lifecycle issue, likely unjoined libp2p/boost::asio threads during node `.reset()`, not caused by v2.1/v2.2 changes. Reproduces with only the 3 pre-v2.1 test cases. Tracked in `.planning/phases/01-child-balance-query/deferred-items.md`; candidate for a future test-infra/node-shutdown-hygiene phase.
+- `child_registration_test.exe` segfaults on process teardown (after all GTest assertions pass) — pre-existing lifecycle issue, likely unjoined libp2p/boost::asio threads during node `.reset()`, not caused by v2.1/v2.2 changes. Reproduces with only the 3 pre-v2.1 test cases. Tracked in `.planning/phases/01-child-balance-query/deferred-items.md`; candidate for a future test-infra/node-shutdown-hygiene phase. Same class of issue also seen on `registration_transaction_test.exe` (exit 139 after GTest PASSED summary).
 - Phase 2 (v2.2) closed without a formal `VERIFICATION.md` — the verify step was never re-run after implementation. Coverage was manually cross-checked against source and later build-confirmed, but no verification artifact exists. Milestone closed via explicit user override; see STATE.md Deferred Items.
+- Phase 7 (v2.4, GeniusSDK Merge & Build Verification) has no formal GSD phase artifacts — MERGE-02 and MVER-02 were completed directly by the user. Merge commits independently confirmed via git history; MVER-02's build success rests on user attestation only, no build log captured. Milestone closed via explicit user override.
+- An unrelated `thirdparty` submodule drift (fast-forwarded same-day during Phase 6 build troubleshooting) causes `registration_transaction_test.exe`/`child_registration_test.exe` to crash deterministically on real-networked E2E fixture `SetUp()` (BOOST_ASSERT in libp2p Kademlia `StorageImpl`), blocking most E2E cases in those binaries. Traced to a `gossip_pubsub.cpp`/`boost::di` config-lifetime change between the recorded and current `ipfs-pubsub` commits — not caused by the origin/develop merge. See `.planning/milestones/v2.4-phases/06-supergenius-merge-regression-verification/deferred-items.md` (DI-06-01).
 
 ## Constraints
 
@@ -124,6 +117,9 @@ The main wallet must be able to discover, monitor, and manage registered child w
 | Milestone v2.2 closed via verification override | Phase 2 implementation was manually cross-checked and build-confirmed, but formal VERIFICATION.md was never generated; user chose to proceed rather than backfill it | ⚠️ Revisit — consider closing this gap before v2.3 if it recurs |
 | D-60: certified-main signature accepted on child-sourced tx via CRDT registration, not cryptographic delegation (Phase 3) | Verified against current code that main's signature cannot verify against a child's address under a literal-delegation model; CRDT-derived authority was the user's directional call | ✓ Good — narrowly scoped, owner-address check left untouched |
 | Registration-dispatch no-op fix (Phase 3) | Discovered mid-implementation that registration txs could never be certified without a `transaction_parsers` entry; fixed with a narrowly-scoped no-op rather than touching `FilterRegistration`/`RegElementCallback` | ✓ Good |
+| Merge commit over rebase for `dev_childwallet` (v2.4) | Both SuperGenius and GeniusSDK `dev_childwallet` branches already shared/pushed; rebase would rewrite shared history | ✓ Good |
+| `CrdtSet::mutex_` reentrancy root cause over original DAG-broadcast hypothesis (Phase 5, revisited v2.4) | Live-debugger stack trace during Phase 6 regression testing confirmed the fix (`std::recursive_mutex`) held under the merged `origin/develop` code paths too | ✓ Good |
+| Phase 7 (v2.4) completed outside formal GSD workflow, milestone closed via override | User completed the GeniusSDK merge/build verification directly; no `07-*` plan/verification artifacts exist, but git history independently confirms both merge commits are pushed | ⚠️ Revisit — same pattern as the v2.2 Phase 2 gap; consider running `/gsd-plan-phase`/`/gsd-execute-phase` retroactively if a future milestone needs a formal Phase 7 verification trail |
 
 ## Evolution
 
@@ -143,4 +139,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-07-23 after starting v2.4 Merge origin/develop into dev_childwallet milestone*
+*Last updated: 2026-07-24 after v2.4 milestone*

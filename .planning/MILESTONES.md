@@ -1,5 +1,23 @@
 # Milestones
 
+## v2.4 Merge origin/develop into dev_childwallet (Shipped: 2026-07-24)
+
+**Phases completed:** 2 phases (6 formally planned/executed via GSD, 7 completed directly by the user), 5 plans, 2 tasks
+
+**Key accomplishments:**
+
+- Two-parent merge commit (SuperGenius `cb4e46da`, parents `5fd137dc` + `2981cd83`) finalizing origin/develop into dev_childwallet, resolving both real conflicts (retired `ProcessingTransaction` consistently) and sweeping the `DevConfig_st`→`GeniusNodeConfig` rename across all ~17 affected files. Push to `origin/dev_childwallet` (initially withheld per explicit user instruction) later confirmed complete — `dev_childwallet` HEAD `500b1969` matches `origin/dev_childwallet` exactly.
+- SuperGenius builds cleanly across all targets (`genius_node`, `registration_transaction_test`, `child_registration_test`) post-merge, zero new compiler/linker errors (MVER-01).
+- Full pre-existing child-wallet regression suite confirmed zero regressions post-merge — registration, balance query, transfer authority (CONS-01/02), transfer wrappers, and lifecycle Detach/Revoke/ReplaceMain all still pass; consensus gates (`CheckParentChildAuthority`, `FilterRegistration`, `CheckCertifiedParent`, registration-tx dispatch) confirmed compatible with `origin/develop`'s merged changes (MVER-03/MVER-04). An unrelated `thirdparty` submodule drift blocking some real-networked E2E fixtures was root-caused and logged separately (DI-06-01), not a regression from this merge.
+- GeniusSDK `dev_childwallet` merged with the 1 remaining `origin/develop` commit via merge commit `6969fac`, pushed to `origin/dev_childwallet` (MERGE-02), and confirmed building cleanly against the Phase-6-updated SuperGenius static lib (MVER-02) — completed directly by the user outside the formal GSD plan/execute workflow, no `07-*` phase artifacts generated.
+
+### Known Gaps
+
+- **Phase 7 has no formal GSD artifacts**: MERGE-02 and MVER-02 were completed and confirmed by the user directly, not through `/gsd-discuss-phase`/`/gsd-plan-phase`/`/gsd-execute-phase`. Git history independently confirms both merge commits exist and are pushed; MVER-02's build success rests on user attestation only, with no captured build log.
+- Milestone closed via `--force` override on `gsd-tools.cjs query milestone.complete` since the ROADMAP listed Phase 7 as having 0 plans — see REQUIREMENTS.md archive and STATE.md Deferred Items for full context.
+
+---
+
 ## v2.3 Child Wallet Transfers (Shipped: 2026-07-21)
 
 **Phases completed:** 2 phases, 5 plans, 11 tasks
