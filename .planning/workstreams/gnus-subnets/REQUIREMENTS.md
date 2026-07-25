@@ -59,25 +59,25 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| ADDR-01 | TBD | Pending |
-| ADDR-02 | TBD | Pending |
-| ADDR-03 | TBD | Pending |
-| PUBSUB-01 | TBD | Pending |
-| PUBSUB-02 | TBD | Pending |
-| PUBSUB-03 | TBD | Pending |
-| JOBC-01 | TBD | Pending |
-| JOBC-02 | TBD | Pending |
-| JOBC-03 | TBD | Pending |
-| BRDG-01 | TBD | Pending |
-| BRDG-02 | TBD | Pending |
-| BRDG-03 | TBD | Pending |
-| BRDG-04 | TBD | Pending |
+| ADDR-01 | Phase 1 | Pending |
+| ADDR-02 | Phase 1 | Pending |
+| ADDR-03 | Phase 1 | Pending |
+| PUBSUB-01 | Phase 2 | Pending |
+| PUBSUB-02 | Phase 2 | Pending |
+| PUBSUB-03 | Phase 2 | Pending |
+| JOBC-01 | Phase 3 | Pending |
+| JOBC-02 | Phase 3 | Pending |
+| JOBC-03 | Phase 3 | Pending |
+| BRDG-01 | Phase 4 | Pending |
+| BRDG-02 | Phase 4 | Pending |
+| BRDG-03 | Phase 4 | Pending |
+| BRDG-04 | Phase 4 | Pending |
 
 **Coverage:**
 - v1 requirements: 13 total
-- Mapped to phases: 0 (pending roadmap creation)
-- Unmapped: 13 ⚠️
+- Mapped to phases: 13/13 ✓
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-07-24*
-*Last updated: 2026-07-24 after initial definition*
+*Last updated: 2026-07-24 after roadmap creation (4 phases, 100% coverage)*
