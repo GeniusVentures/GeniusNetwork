@@ -3,10 +3,10 @@ gsd_state_version: 1.0
 milestone: v2.5
 milestone_name: node_example Child Wallet Commands
 status: planning
-last_updated: "2026-07-27T22:35:08.203Z"
+last_updated: "2026-07-27T00:00:00.000Z"
 last_activity: 2026-07-27
 progress:
-  total_phases: 0
+  total_phases: 1
   completed_phases: 0
   total_plans: 0
   completed_plans: 0
@@ -15,17 +15,17 @@ progress:
 
 ## Current Position
 
-Phase: Not started (defining requirements)
-Plan: —
-Status: Defining requirements
-Last activity: 2026-07-27 — Milestone v2.5 started
+Phase: 8 of 8 (node_example Child Wallet Commands)
+Plan: — (not yet planned)
+Status: Ready to plan
+Last activity: 2026-07-27 — Roadmap created: Phase 8 covers NEXC-01/NEXC-02/NEXC-03 (3/3 requirements mapped, 100% coverage)
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-07-23)
+See: .planning/PROJECT.md (updated 2026-07-27)
 
 **Core value:** Main wallet must be able to discover, monitor, and manage registered child wallets through consensus-visible state
-**Current focus:** Planning next milestone (v2.5) — run `/gsd-new-milestone`
+**Current focus:** Phase 8 — node_example Child Wallet Commands (v2.5) — run `/gsd-plan-phase 8`
 
 ### Blockers/Concerns (carried forward)
 
@@ -50,6 +50,7 @@ Items acknowledged and deferred at milestone close on 2026-07-24 (v2.4):
 ## Roadmap Evolution
 
 - v2.4 shipped 2026-07-24 (Phase 6 via formal GSD workflow, Phase 7 completed directly by user — see Deferred Items). Full milestone decision log archived in `.planning/milestones/v2.4-ROADMAP.md` and `PROJECT.md` Key Decisions.
+- v2.5 roadmap created 2026-07-27 — single Phase 8 (node_example Child Wallet Commands), covering NEXC-01/NEXC-02/NEXC-03. Continues phase numbering from v2.4's Phase 7 (this workstream does not reset phase numbers between milestones). Coarse granularity: 3 small, tightly-coupled CLI additions to one file (`SuperGenius/example/node_test/NodeExample.cpp`) kept as one phase rather than split, since all three reuse existing `GeniusNode` methods with no new proto/consensus/SDK work.
 
 ### Pending Todos
 
@@ -63,10 +64,10 @@ None yet.
 
 ## Session
 
-**Last session:** 2026-07-24T21:55:39.962Z
-**Stopped at:** v2.4 milestone completed and archived
+**Last session:** 2026-07-27T00:00:00.000Z
+**Stopped at:** v2.5 ROADMAP.md/STATE.md/REQUIREMENTS.md created — Phase 8 defined, 3/3 requirements mapped
 **Resume file:** None
 
 ## Operator Next Steps
 
-- Start the next milestone with /gsd-new-milestone
+- Run `/gsd-plan-phase 8` to plan node_example Child Wallet Commands (or `/gsd-discuss-phase 8` first for a discussion pass)

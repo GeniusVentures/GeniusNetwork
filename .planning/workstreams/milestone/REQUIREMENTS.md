@@ -56,15 +56,15 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| NEXC-01 | TBD | Pending |
-| NEXC-02 | TBD | Pending |
-| NEXC-03 | TBD | Pending |
+| NEXC-01 | Phase 8 | Pending |
+| NEXC-02 | Phase 8 | Pending |
+| NEXC-03 | Phase 8 | Pending |
 
 **Coverage:**
 - v1 requirements: 3 total
-- Mapped to phases: 0
-- Unmapped: 3 ⚠️ (pending roadmap creation)
+- Mapped to phases: 3
+- Unmapped: 0 ✓
 
 ---
 *Requirements defined: 2026-07-27*
-*Last updated: 2026-07-27 after initial definition*
+*Last updated: 2026-07-27 after roadmap creation — 3/3 v1 requirements mapped to Phase 8*
