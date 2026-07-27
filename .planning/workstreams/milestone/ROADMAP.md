@@ -81,10 +81,10 @@ Archived: [`.planning/milestones/v2.4-ROADMAP.md`](milestones/v2.4-ROADMAP.md)
   2. Running `listchildren <main_address>` at the REPL lists every child currently registered to that main address, showing each child's address AND its current balance (not address alone)
   3. Running `childbalance <child_address>` (no `token_id`) at the REPL prints that child's all-tokens total balance
   4. Running `childbalance <child_address> <token_id>` at the REPL prints the balance for just the specified token
-**Plans**: TBD — `childbalance`'s balance-query/formatting logic is a natural building block for `listchildren`'s per-child balance display; consider sequencing plans within this single phase (e.g. `childbalance` → `listchildren` → `registerchild`, or an equivalent wave order) rather than splitting into separate phases.
+**Plans**: 1 plan (single wave, 3 sequential tasks — `childbalance` → `listchildren` → `registerchild`, per this phase's own sequencing note)
 
 Plans:
-- [ ] 08-01: TBD (defined during `/gsd-plan-phase 8`)
+- [ ] 08-01-PLAN.md — Add `childbalance`, `listchildren`, `registerchild` REPL commands to `node_example` (NEXC-01/02/03)
 
 ## Progress
 
@@ -98,7 +98,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8
 | Parent-Child Transfer Authority | v2.3 | 4/4 | Complete | 2026-07-21 |
 | GeniusSDK Transfer Wrappers | v2.3 | 1/1 | Complete | 2026-07-21 |
 | Child Wallet Lifecycle States (Detach/Revoke) | v2.3 | 6/6 | Complete | 2026-07-23 |
-| node_example Child Wallet Commands | v2.5 | 0/TBD | Not started | - |
+| node_example Child Wallet Commands | v2.5 | 0/1 | Not started | - |
 
 ### Phase 5: Child Wallet Lifecycle States (Detach/Revoke) — ✅ COMPLETE
 
@@ -134,3 +134,4 @@ Plans:
 
 ---
 *Roadmap updated: 2026-07-27 — v2.5 roadmap created: Phase 8 (node_example Child Wallet Commands) added, covering NEXC-01/NEXC-02/NEXC-03 (3/3 requirements mapped, 100% coverage). Continues phase numbering from v2.4's Phase 7 per this workstream's no-reset convention.*
+*Roadmap updated: 2026-07-27 — Phase 8 planned: 1 plan (08-01-PLAN.md, single wave, 3 sequential tasks — childbalance → listchildren → registerchild, all three touching only `SuperGenius/example/node_test/NodeExample.cpp`). No mid-flight checkpoint tasks emitted (`workflow.human_verify_mode = end-of-phase`); behavioral verification against the four success criteria is embedded as `<verify><human-check>` blocks, harvested at end-of-phase into `08-UAT.md`.*
