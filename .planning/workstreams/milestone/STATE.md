@@ -2,34 +2,34 @@
 gsd_state_version: 1.0
 milestone: v2.5
 milestone_name: node_example Child Wallet Commands
-current_phase: 8
+current_phase: 08
 current_phase_name: node_example Child Wallet Commands
-status: executing
-stopped_at: v2.5 ROADMAP.md/STATE.md/REQUIREMENTS.md created — Phase 8 defined, 3/3 requirements mapped
-last_updated: "2026-07-27T23:45:23.019Z"
+status: verifying
+stopped_at: Completed 08-01-PLAN.md
+last_updated: "2026-07-27T23:55:08.493Z"
 last_activity: 2026-07-27
-last_activity_desc: "Roadmap created: Phase 8 covers NEXC-01/NEXC-02/NEXC-03 (3/3 requirements mapped, 100% coverage)"
+last_activity_desc: Phase 08 execution started
 progress:
-  total_phases: 1
-  completed_phases: 0
-  total_plans: 0
-  completed_plans: 0
-  percent: 0
+  total_phases: 2
+  completed_phases: 1
+  total_plans: 1
+  completed_plans: 1
+  percent: 50
 ---
 
 ## Current Position
 
-Phase: 8 of 8 (node_example Child Wallet Commands)
-Plan: — (not yet planned)
-Status: Ready to execute
-Last activity: 2026-07-27 — Roadmap created: Phase 8 covers NEXC-01/NEXC-02/NEXC-03 (3/3 requirements mapped, 100% coverage)
+Phase: 08 (node_example Child Wallet Commands) — EXECUTING
+Plan: 1 of 1
+Status: Phase complete — ready for verification
+Last activity: 2026-07-27 — Phase 08 execution started
 
 ## Project Reference
 
 See: .planning/PROJECT.md (updated 2026-07-27)
 
 **Core value:** Main wallet must be able to discover, monitor, and manage registered child wallets through consensus-visible state
-**Current focus:** Phase 8 — node_example Child Wallet Commands (v2.5) — run `/gsd-plan-phase 8`
+**Current focus:** Phase 08 — node_example Child Wallet Commands
 
 ### Blockers/Concerns (carried forward)
 
@@ -68,10 +68,21 @@ None yet.
 
 ## Session
 
-**Last session:** 2026-07-27T00:00:00.000Z
-**Stopped at:** v2.5 ROADMAP.md/STATE.md/REQUIREMENTS.md created — Phase 8 defined, 3/3 requirements mapped
+**Last session:** 2026-07-27T23:55:08.487Z
+**Stopped at:** Completed 08-01-PLAN.md
 **Resume file:** None
 
 ## Operator Next Steps
 
 - Run `/gsd-plan-phase 8` to plan node_example Child Wallet Commands (or `/gsd-discuss-phase 8` first for a discussion pass)
+
+## Performance Metrics
+
+| Phase | Plan | Duration | Notes |
+|-------|------|----------|-------|
+| Phase 08 P01 | 20min | 3 tasks | 1 files |
+
+## Decisions
+
+- [Phase 08]: Reused cmd_childbalance's 2-arg GetChildBalance call verbatim inside cmd_listchildren's loop, per plan's key_links spec
+- [Phase 08]: Kept game_id/publisher_id as literal mock placeholder strings in registerchild, per REQUIREMENTS.md Out of Scope guidance

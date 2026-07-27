@@ -145,3 +145,12 @@ None - no external service configuration required.
 ---
 *Phase: 08-node-example-child-wallet-commands*
 *Completed: 2026-07-27*
+
+## Self-Check: PASSED
+
+- FOUND: SuperGenius/example/node_test/NodeExample.cpp
+- FOUND: .planning/workstreams/milestone/phases/08-node-example-child-wallet-commands/08-01-SUMMARY.md
+- FOUND commit: 959d804b (Task 1, SuperGenius submodule)
+- FOUND commit: 55bb4cd7 (Task 2, SuperGenius submodule)
+- FOUND commit: 755f5b29 (Task 3, SuperGenius submodule)
+- FOUND commit: 5484722 (SUMMARY.md, parent repo)

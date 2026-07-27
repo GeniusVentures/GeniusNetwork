@@ -68,23 +68,27 @@ Archived: [`.planning/milestones/v2.4-ROADMAP.md`](milestones/v2.4-ROADMAP.md)
 
 **Milestone Goal:** Give `node_example`'s interactive REPL commands to register the node as a child wallet, list children registered to a main wallet, and query child balances — using `GeniusNode`'s existing `RegisterChild`/`GetRegistrationsForMain`/`GetChildBalance` C++ methods directly (no GeniusSDK C API changes, no GeniusWallet UI this milestone).
 
-- [ ] **Phase 8: node_example Child Wallet Commands** - Add `registerchild`, `listchildren`, and `childbalance` REPL commands to `node_example`
+- [x] **Phase 8: node_example Child Wallet Commands** - Add `registerchild`, `listchildren`, and `childbalance` REPL commands to `node_example` (completed 2026-07-27)
 
 ## Phase Details
 
 ### Phase 8: node_example Child Wallet Commands
+
 **Goal**: Users can register the running `node_example` instance as a child wallet, discover all children registered to a given main wallet, and query any child's balance — all from the `node_example` interactive REPL (`SuperGenius/example/node_test/NodeExample.cpp`), reusing `GeniusNode::RegisterChild`/`GetRegistrationsForMain`/`GetChildBalance` with no new proto, consensus, or GeniusSDK work.
 **Depends on**: None — all three underlying `GeniusNode` methods already exist and are unchanged (`RegisterChild`/`GetRegistrationsForMain` from v2.0, `GetChildBalance` from v2.1)
 **Requirements**: NEXC-01, NEXC-02, NEXC-03
 **Success Criteria** (what must be TRUE):
+
   1. Running `registerchild <main_address>` at the `node_example` REPL returns a success message, and the registration is discoverable via `listchildren <main_address>` immediately after
   2. Running `listchildren <main_address>` at the REPL lists every child currently registered to that main address, showing each child's address AND its current balance (not address alone)
   3. Running `childbalance <child_address>` (no `token_id`) at the REPL prints that child's all-tokens total balance
   4. Running `childbalance <child_address> <token_id>` at the REPL prints the balance for just the specified token
-**Plans**: 1 plan (single wave, 3 sequential tasks — `childbalance` → `listchildren` → `registerchild`, per this phase's own sequencing note)
+
+**Plans**: 1/1 plans complete
 
 Plans:
-- [ ] 08-01-PLAN.md — Add `childbalance`, `listchildren`, `registerchild` REPL commands to `node_example` (NEXC-01/02/03)
+
+- [x] 08-01-PLAN.md — Add `childbalance`, `listchildren`, `registerchild` REPL commands to `node_example` (NEXC-01/02/03)
 
 ## Progress
 

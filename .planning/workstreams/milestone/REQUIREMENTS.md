@@ -9,9 +9,9 @@ Requirements for this milestone. Each maps to roadmap phases.
 
 ### Node Example CLI
 
-- [ ] **NEXC-01**: User can run `registerchild <main_address>` in `node_example` to register the running node as a child wallet of the given main address — `dev_wallet` is derived from `dev_config_.Addr`, `peers_cut` is the fraction-complement of `dev_config_.Cut` (`1.0 - dev_cut_fraction`) expressed in the same fixed-point scale `TokenAmount::ParseMinions` produces, and `game_id`/`publisher_id` use mock placeholder values (not consumed downstream today)
-- [ ] **NEXC-02**: User can run `listchildren <main_address>` in `node_example` to list all children registered to a main wallet, showing each child's address and current balance
-- [ ] **NEXC-03**: User can run `childbalance <child_address> [token_id]` in `node_example` to query a single child's balance — a specific token if `token_id` is given, or the all-tokens total when omitted
+- [x] **NEXC-01**: User can run `registerchild <main_address>` in `node_example` to register the running node as a child wallet of the given main address — `dev_wallet` is derived from `dev_config_.Addr`, `peers_cut` is the fraction-complement of `dev_config_.Cut` (`1.0 - dev_cut_fraction`) expressed in the same fixed-point scale `TokenAmount::ParseMinions` produces, and `game_id`/`publisher_id` use mock placeholder values (not consumed downstream today)
+- [x] **NEXC-02**: User can run `listchildren <main_address>` in `node_example` to list all children registered to a main wallet, showing each child's address and current balance
+- [x] **NEXC-03**: User can run `childbalance <child_address> [token_id]` in `node_example` to query a single child's balance — a specific token if `token_id` is given, or the all-tokens total when omitted
 
 ## v2 Requirements
 
@@ -56,11 +56,12 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| NEXC-01 | Phase 8 | Pending |
-| NEXC-02 | Phase 8 | Pending |
-| NEXC-03 | Phase 8 | Pending |
+| NEXC-01 | Phase 8 | Complete |
+| NEXC-02 | Phase 8 | Complete |
+| NEXC-03 | Phase 8 | Complete |
 
 **Coverage:**
+
 - v1 requirements: 3 total
 - Mapped to phases: 3
 - Unmapped: 0 ✓
