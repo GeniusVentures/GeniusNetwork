@@ -20,7 +20,12 @@ This project now runs parallel workstreams (see `.planning/workstreams/`). Each 
 
 ### Workstream: milestone (child-wallet track)
 
-Planning next milestone — run `/gsd-new-milestone` to define v2.5 scope.
+**Goal:** Give `node_example`'s interactive REPL commands to register the node as a child wallet, list children registered to a main wallet, and query child balances — using `GeniusNode`'s existing `RegisterChild`/`GetRegistrationsForMain`/`GetChildBalance` C++ methods directly (no GeniusSDK C API changes, no GeniusWallet UI this milestone).
+
+**Target features (v2.5):**
+- `registerchild <main_address>` — registers this node as a child of the given main wallet; derives `dev_wallet` from `dev_config_.Addr`, `peers_cut` as `1,000,000 - ParseMinions(dev_config_.Cut)` (10^6 fixed-point scale), and mock placeholder values for `game_id`/`publisher_id` (unused downstream today)
+- `listchildren <main_address>` — lists all children registered to a main wallet, including each child's balance
+- `childbalance <child_address> [token_id]` — queries a single child's balance (specific token, or all-tokens total when omitted)
 
 **Deferred candidates carried forward from prior milestones** (see Requirements > Deferred below):
 - MON-01/MON-02: Full monitoring dashboard (per-child balance, all assets/tokens, activity history, escrow status, lifecycle monitoring)
@@ -153,4 +158,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-07-24 — gnus-subnets workstream v1.0 (GNUS Subnets Architecture) started*
+*Last updated: 2026-07-27 — milestone workstream v2.5 (node_example Child Wallet Commands) started*
