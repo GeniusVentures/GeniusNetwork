@@ -34,6 +34,20 @@ This project now runs parallel workstreams (see `.planning/workstreams/`). Each 
 - POL-01: Transfer amount limits/policy beyond CONS-01/CONS-02
 - UI-01: GeniusWallet Flutter UI wiring for child-wallet transfers
 
+### Workstream: sgproc-render
+
+**Goal:** Make SGProcessingManager's `render` PassType a real, executable graphics pipeline — extending the schema for render targets, vertex/index buffers, and multi-stage shaders, then wiring it end-to-end through a vendored permissive-license (non-GPL) Vulkan rendering library.
+
+**Target features (v1.0):**
+- Extend `gnus-processing-schema.json`: render_target/framebuffer config, vertex/index buffer bindings, multi-stage shader pipeline (vertex+fragment, replacing the single `shader_config` for render passes); regenerate quicktype headers (`generated/` is never hand-edited)
+- Fix `ParseBlockSize()` bug: unconditional `pass.get_model().value()` crashes on any render/compute pass (no `model`) — add a type guard
+- Add `PassType`-based dispatch to `ProcessingManager::Process()` (currently dispatches only by input `DataType` via MNN processor factories — no render path exists)
+- Research + select a permissive-license (non-GPL) C++ Vulkan rendering library; vendor as a new `thirdparty/` git submodule following the existing convention
+- Implement a `RenderProcessor` (parallel to the MNN `ProcessingProcessor` family) that builds the pipeline from schema config and executes a render pass headless (offscreen — no swapchain/window, since this is a distributed compute node) writing output to a texture/buffer consumable the same way inference outputs are today
+- End-to-end proof: a render pass definition executes through the real distributed processing pipeline and produces a verifiable output (e.g. rendered image hash)
+
+**Context:** `PassType::RENDER` currently exists only as a no-op stub in `CheckProcessValidity()` (SGProcessingManager/src/processingbase/ProcessingManager.cpp:136-158) — accepted but never validated or executed. MNN's Vulkan use is fully encapsulated (no exposed `VkInstance`/`VkDevice`); a renderer needs its own independent Vulkan context. `thirdparty/` is 100% git submodules, all permissive (Apache-2.0/MIT/BSD/zlib), including `Vulkan-Headers`/`Vulkan-Loader` already vendored.
+
 ### Workstream: gnus-subnets
 
 **Goal:** Produce design documentation defining how isolated GNUS subnets (e.g. `144.100` under main net `144`) address, communicate, bridge tokens, and isolate job/consensus processing — no implementation this milestone.
@@ -158,4 +172,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-07-27 — milestone workstream v2.5 (node_example Child Wallet Commands) started*
+*Last updated: 2026-07-28 — sgproc-render workstream v1.0 (Render Pass Execution) started*
