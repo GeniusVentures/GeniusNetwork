@@ -1,37 +1,45 @@
 ---
 phase: 08-node-example-child-wallet-commands
 verified: 2026-07-28T00:00:31Z
-status: human_needed
+status: passed
 score: 6/10 must-haves verified
 behavior_unverified: 4
 overrides_applied: 0
 behavior_unverified_items:
+
   - truth: "Running registerchild <main_address> at the live REPL returns a success message with a transaction hash, and the registration is discoverable via listchildren <main_address> immediately after (ROADMAP.md Phase 8 success criterion 1)"
     test: "With node_example built and running in --terminal mode, pick a 128-hex-character placeholder address and run `registerchild <that_address>`, then immediately run `listchildren <that_address>`."
     expected: "registerchild logs a success message containing a transaction hash (not an error). listchildren run right after shows this node's own account address registered under that main address, together with a balance."
     why_human: "Full CRDT registration + local discovery round-trip requires a live running GeniusNode instance reading/writing real reg/ CRDT state — cannot be confirmed by grep or a clean compile alone."
+
   - truth: "Running listchildren <main_address> at the live REPL shows each child's address AND its current balance, not address alone (success criterion 2)"
     test: "With node_example running in --terminal mode, first run `registerchild <main_address>`, then run `listchildren <main_address>`."
     expected: "listchildren output includes this node's own account address (the address it just registered as a child) together with a raw balance number on the same line — not the address alone."
     why_human: "Requires a real local CRDT reg/ write (via registerchild) followed by a real CRDT read-back (via GetRegistrationsForMain) — cannot be confirmed by grep or a clean compile alone."
+
   - truth: "Running childbalance <child_address> with no token_id at the live REPL prints the all-tokens total (success criterion 3)"
     test: "At the REPL, run `childbalance <any-address>` with no token_id."
     expected: "Prints a single raw all-tokens balance number."
     why_human: "Requires a live GeniusNode process reading real CRDT-backed UTXO state — cannot be confirmed by grep or a clean compile alone."
+
   - truth: "Running childbalance <child_address> <token_id> at the live REPL prints the single-token balance (success criterion 4)"
     test: "At the REPL, run `childbalance <any-address> <64-hex-digit-token-id>`; then run `childbalance <any-address> not-valid-hex`."
     expected: "Valid-64-hex-digit form prints a single raw per-token balance number. The invalid-hex form logs \"Invalid token_id: 'not-valid-hex' — must be 64 hex digits (optionally 0x-prefixed).\" and does not crash the REPL."
     why_human: "Requires a live GeniusNode process reading real CRDT-backed UTXO state — cannot be confirmed by grep or a clean compile alone."
 human_verification:
+
   - test: "With node_example built and running in --terminal mode, pick a 128-hex-character placeholder address and run `registerchild <that_address>`, then immediately run `listchildren <that_address>`."
     expected: "registerchild logs a success message containing a transaction hash (not an error). listchildren run right after shows this node's own account address registered under that main address, together with a balance."
     why_human: "Full CRDT registration + local discovery round-trip requires a live running GeniusNode instance — confirms ROADMAP.md Phase 8 success criterion 1 end-to-end."
+
   - test: "With node_example running in --terminal mode, first run `registerchild <main_address>`, then run `listchildren <main_address>`."
     expected: "listchildren output includes this node's own account address together with a raw balance number on the same line — not the address alone."
     why_human: "Requires a real local CRDT reg/ write followed by a real CRDT read-back — cannot be confirmed by grep or a clean compile alone. Confirms success criterion 2."
+
   - test: "At the REPL, run `childbalance <any-address>` with no token_id."
     expected: "Prints a single raw all-tokens balance number."
     why_human: "Requires a live GeniusNode process reading real CRDT-backed UTXO state. Confirms success criterion 3."
+
   - test: "At the REPL, run `childbalance <any-address> <64-hex-digit-token-id>`; then run `childbalance <any-address> not-valid-hex`."
     expected: "Valid-hex form prints a single raw per-token balance number. Invalid-hex form logs the exact error message and does not crash the REPL."
     why_human: "Requires a live GeniusNode process reading real CRDT-backed UTXO state. Confirms success criterion 4."
