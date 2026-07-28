@@ -109,7 +109,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8
 **Goal:** Implement the child-initiated Detach and main-initiated Revoke lifecycle transitions for registered child wallets, per the v1.0 lifecycle design (`docs/03-02-reward-policy-lifecycle.md`, archived at `.planning/milestones/v1.0-phases/03-discovery-rewards-lifecycle/`): `reg/{child_addr}` CRDT fields `detach_flag` + `supersedes_sequence`, a new `RevokeTx` transaction type (`EmbeddedTransaction` oneof arm 9), a `FilterRegistration` gate extension checking `supersedes_sequence`, and reuse of `CheckParentChildAuthority` for revoke validation (main sig + Registered state). Nothing in `SuperGenius/src` implements this yet — only Unregistered/Registered exist today.
 **Requirements**: [LIFE-01, LIFE-02, LIFE-03, LIFE-04]
 **Depends on:** Phase 4
-**Plans:** 6/6 plans complete — gap closure done, all Revoke/Detach/Replace-Main tests pass, zero regressions (see 05-06-SUMMARY.md)
+**Plans:** 1/1 plans complete
 
 Plans:
 **Wave 1**
