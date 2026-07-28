@@ -36,15 +36,18 @@ This project now runs parallel workstreams (see `.planning/workstreams/`). Each 
 
 ### Workstream: sgproc-render
 
-**Goal:** Make SGProcessingManager's `render` PassType a real, executable graphics pipeline — extending the schema for render targets, vertex/index buffers, and multi-stage shaders, then wiring it end-to-end through a vendored permissive-license (non-GPL) Vulkan rendering library.
+**Goal:** Make SGProcessingManager's `render` PassType a real, executable graphics pipeline with MNN-style graceful backend fallback — extending the schema for render targets, vertex/index buffers, and multi-stage shaders, then wiring it end-to-end through **bgfx** (BSD-2-Clause) with an explicit three-tier fallback chain: Vulkan (hardware) → OpenGL (hardware, Linux only) → Vulkan-via-SwiftShader (software/CPU).
 
 **Target features (v1.0):**
-- Extend `gnus-processing-schema.json`: render_target/framebuffer config, vertex/index buffer bindings, multi-stage shader pipeline (vertex+fragment, replacing the single `shader_config` for render passes); regenerate quicktype headers (`generated/` is never hand-edited)
+- Extend `gnus-processing-schema.json`: render_target/framebuffer config, vertex/index buffer bindings, multi-stage shader pipeline (vertex+fragment, replacing the single `shader_config` for render passes); regenerate quicktype headers (`generated/` is never hand-edited); `ShaderType` re-scoped for bgfx's own shader dialect (job authors write once, bgfx cross-compiles per active backend — see FINAL-BACKEND-DECISION.md)
 - Fix `ParseBlockSize()` bug: unconditional `pass.get_model().value()` crashes on any render/compute pass (no `model`) — add a type guard
 - Add `PassType`-based dispatch to `ProcessingManager::Process()` (currently dispatches only by input `DataType` via MNN processor factories — no render path exists)
-- Research + select a permissive-license (non-GPL) C++ Vulkan rendering library; vendor as a new `thirdparty/` git submodule following the existing convention
-- Implement a `RenderProcessor` (parallel to the MNN `ProcessingProcessor` family) that builds the pipeline from schema config and executes a render pass headless (offscreen — no swapchain/window, since this is a distributed compute node) writing output to a texture/buffer consumable the same way inference outputs are today
-- End-to-end proof: a render pass definition executes through the real distributed processing pipeline and produces a verifiable output (e.g. rendered image hash)
+- Vendor **bgfx** and **SwiftShader** as new `thirdparty/` git submodules via the existing `CommonBuildParameters.cmake`/`CommonTargets` convention, alongside already-vendored Vulkan-Headers/Vulkan-Loader/MoltenVK
+- Implement explicit (non-automatic) three-tier backend sequencing: `bgfx::Init::fallback = false`, try Vulkan hardware → OpenGL hardware (Linux only, excluded on Windows/macOS) → Vulkan-via-SwiftShader software ICD
+- Implement a `RenderProcessor` (parallel to the MNN `ProcessingProcessor` family) built on bgfx's API that builds the pipeline from schema config and executes a render pass headless (offscreen — no swapchain/window, since this is a distributed compute node) writing output to a texture/buffer consumable the same way inference outputs are today
+- End-to-end proof: a real render pass definition executes through the real distributed processing pipeline on all three fallback tiers and produces a verifiable output (e.g. rendered image hash)
+
+**Rendering backend decision (2026-07-28):** see `.planning/workstreams/sgproc-render/research/FINAL-BACKEND-DECISION.md` for the full reasoning trail. Short version: an initial Vulkan-only raw approach (vk-bootstrap+VMA+Google-shaderc) was superseded after the user asked for MNN-parity graceful fallback — no rendering engine offers a genuine app-level CPU-rasterizer choice (the only real CPU fallback exists at the Vulkan-ICD level via SwiftShader/lavapipe), but bgfx's real Vulkan↔OpenGL app-level switching still has value, and a dedicated verification spike confirmed bgfx's Vulkan headless support is genuine (not blocked by the previously-flagged open issues, which were stale/OpenGL-scoped).
 
 **Context:** `PassType::RENDER` currently exists only as a no-op stub in `CheckProcessValidity()` (SGProcessingManager/src/processingbase/ProcessingManager.cpp:136-158) — accepted but never validated or executed. MNN's Vulkan use is fully encapsulated (no exposed `VkInstance`/`VkDevice`); a renderer needs its own independent Vulkan context. `thirdparty/` is 100% git submodules, all permissive (Apache-2.0/MIT/BSD/zlib), including `Vulkan-Headers`/`Vulkan-Loader` already vendored.
 
