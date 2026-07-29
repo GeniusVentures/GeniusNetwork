@@ -16,24 +16,25 @@ bgfx and SwiftShader are vendored as new `thirdparty/` git submodules and made t
 ## Implementation Decisions
 
 ### bgfx build integration
-- **D-01 (revised 2026-07-28):** Adopt the community **`bgfx.cmake`** wrapper (vendored as an additional `thirdparty/` submodule) rather than wrapping bgfx's native GENie/bam build in a custom `ExternalProject_Add` `BUILD_COMMAND`. Originally decided the opposite way, then reversed after clarifying the actual trade-off: GENie/bam don't require any extra system-level install (GENie bootstraps from source; bgfx's own `Makefile` already wraps both, so it reduces to "compiler + `make`"), so the custom-wrapper route wasn't actually avoiding a dependency — it was wrapping a second, non-CMake build system inside `ExternalProject_Add`. The user prefers avoiding that indirection and is willing to accept `bgfx.cmake`'s trade-off: one more submodule, maintained by the community rather than bgfx's own maintainers, which can lag upstream.
+- **D-01 (revised 2026-07-28):** Adopt **`bgfx.cmake`** (vendored as one additional `thirdparty/` submodule) rather than wrapping bgfx's native GENie/bam build in a custom `ExternalProject_Add` `BUILD_COMMAND`. Originally decided the opposite way, then reversed after clarifying the actual trade-off: GENie/bam don't require any extra system-level install (GENie bootstraps from source; bgfx's own `Makefile` already wraps both, so it reduces to "compiler + `make`"), so the custom-wrapper route wasn't actually avoiding a dependency — it was wrapping a second, non-CMake build system inside `ExternalProject_Add`. The user prefers avoiding that indirection.
+  - **Repo correction (2026-07-28):** the correct, current repo is **`bkaradzic/bgfx.cmake`** — it moved there from `widberg/bgfx.cmake` per the project's own README. Since bkaradzic is bgfx's own upstream author/maintainer, this is materially lower lag/abandonment risk than a purely third-party fork — the earlier "community-maintained, can lag upstream" caveat is largely moot.
 - **D-02 (revised 2026-07-28):** With `bgfx.cmake` in place, bgfx becomes a normal CMake subproject/target rather than an opaque `ExternalProject_Add` — confirm during research whether it's added via `ExternalProject_Add` (staying consistent with every other `thirdparty/` dependency's install-prefix superbuild shape) or `add_subdirectory()` (bgfx.cmake's own documented usage pattern, which assumes an in-tree CMake target rather than an installed one). This determines how the rest of the build (e.g. `SGProcessingManager`) links against it and is left to research/planning.
-- **D-02b:** How bx/bimg get vendored is now largely dictated by `bgfx.cmake`'s own expected layout (it typically expects bgfx/bx/bimg as sibling directories, either as its own nested submodules or user-supplied ones) — research must confirm the exact layout `bgfx.cmake` expects for whichever commit is pinned, rather than deciding this independently of the wrapper choice.
+- **D-02b (settled 2026-07-28):** bx and bimg do **not** need their own top-level `thirdparty/` submodule entries — `bkaradzic/bgfx.cmake` already carries bgfx, bx, and bimg as its own nested submodules. Adding **one** `thirdparty/.gitmodules` entry for `bgfx.cmake` (recursively initialized) is sufficient; no separate bx/bimg vendoring decision remains.
 
 ### Build footprint
 - **D-03:** Compile bgfx with **only** the Vulkan (all platforms) and OpenGL (Linux) backends — restrict via bgfx's compile-time renderer config (`BGFX_CONFIG_RENDERER_*` defines). D3D11/D3D12/Metal are never compiled in. This is self-documenting alignment with the 3-tier design and keeps build time/binary size down.
 - **D-04:** Build **only** SwiftShader's Vulkan ICD target (`vk_swiftshader`) and its ICD manifest — not SwiftShader's full repo. Confirmed with the user this loses no CPU-rendering capability: the 3-tier architecture (`FINAL-BACKEND-DECISION.md`) routes the software/CPU tier exclusively through SwiftShader's Vulkan ICD, never through its GL/D3D emulation layers, so those layers are architecturally unreachable in this design regardless.
 
 ### Submodule pinning strategy
-- **D-05:** Pin bgfx, bx, bimg, and SwiftShader each to a **specific, tested commit SHA** — not tracking a default branch. Matches the reproducibility posture of existing `thirdparty/` submodules (MNN, libp2p, etc.); bgfx has no tagged releases at all, so a commit SHA is the only stable reference point regardless of preference.
-- **D-06:** No specific commits are mandated by the user. `gsd-phase-researcher` selects the latest commit for each that builds cleanly and is consistent with the headless-Vulkan behavior already confirmed in `BGFX-HEADLESS-VERIFICATION.md`, and records the exact SHA chosen in RESEARCH.md/PLAN.md.
+- **D-05:** Pin `bgfx.cmake` (which transitively pins bgfx/bx/bimg via its own `.gitmodules`) and SwiftShader each to a **specific, tested commit SHA** — not tracking a default branch. Matches the reproducibility posture of existing `thirdparty/` submodules (MNN, libp2p, etc.); bgfx has no tagged releases at all, so a commit SHA is the only stable reference point regardless of preference.
+- **D-06:** No specific commits are mandated by the user. `gsd-phase-researcher` selects the latest `bkaradzic/bgfx.cmake` commit (and whatever bgfx/bx/bimg SHAs it pins) that builds cleanly and is consistent with the headless-Vulkan behavior already confirmed in `BGFX-HEADLESS-VERIFICATION.md`, plus a matching SwiftShader commit, and records the exact SHAs chosen in RESEARCH.md/PLAN.md.
 
 ### Smoke-test target
 - **D-07:** The trivial bgfx API-call test target (calls `bgfx::getRendererName()`, proves CMake wiring end-to-end per the roadmap's Success Criterion 4) is **kept permanently** in the tree, not deleted after Phase 1 — despite the roadmap's "throwaway" wording. It's cheap to maintain as a minimal CI build-health check, and gives Phase 5's `DETV-03` (CI installs/exercises the vendored SwiftShader ICD) a pre-existing hook to extend rather than building a smoke-test asset from scratch.
 
 ### Claude's Discretion
 - Exact directory/target naming for the smoke-test target, and its precise location in the build tree (e.g. alongside `SuperGenius/example/*` or a new minimal location under `thirdparty/`) — planner's call.
-- Exact `bgfx.cmake` version/commit to pin, and the resulting bx/bimg layout it dictates — research call.
+- Exact `bkaradzic/bgfx.cmake` commit to pin — research call.
 - Whether bgfx (via `bgfx.cmake`) is wired in via `ExternalProject_Add` or `add_subdirectory()` (see D-02) — research call.
 - Exact `BGFX_CONFIG_RENDERER_*` / `bgfx.cmake`-equivalent CMake options needed to restrict compiled backends to Vulkan+GL per platform — planner's call, informed by bgfx's `src/config.h` and `bgfx.cmake`'s own option surface.
 
@@ -58,7 +59,7 @@ bgfx and SwiftShader are vendored as new `thirdparty/` git submodules and made t
 - `thirdparty/build/OSX/CMakeLists.txt` — MoltenVK's custom `BUILD_COMMAND`-wrapped `ExternalProject_Add`; also defines `_MNN_EXTRA_PARAM`/`_MNN_DEPENDS` consumed by `CommonTargets.cmake`
 - `thirdparty/build/Windows/CMakeLists.txt` — Boost's fully per-platform-duplicated `ExternalProject_Add` with custom `b2` `BUILD_COMMAND` (the "duplicate per platform" alternative pattern)
 - `SuperGenius/SGProcessingManager/cmake/CommonBuildParameters.cmake` — how `find_package(Vulkan)` resolves against the vendored Vulkan-Loader via `VULKAN_SDK` env var; the pattern bgfx's own Vulkan backend must slot into without introducing a second Vulkan dependency tree (Success Criterion 3)
-- `thirdparty/.gitmodules` — where new bgfx.cmake/bx/bimg/SwiftShader submodule entries get added (`thirdparty` is itself a nested git submodule of this repo — adding new submodules means committing inside `thirdparty`'s own repo first, then bumping this repo's `thirdparty` pointer)
+- `thirdparty/.gitmodules` — where the two new submodule entries (`bgfx.cmake` — pulls in bgfx/bx/bimg as its own nested submodules, no separate top-level entries needed — and SwiftShader) get added (`thirdparty` is itself a nested git submodule of this repo — adding new submodules means committing inside `thirdparty`'s own repo first, then bumping this repo's `thirdparty` pointer)
 
 ### Requirements & roadmap
 - `.planning/workstreams/sgproc-render/REQUIREMENTS.md` — CTX-04 (this phase's sole requirement)
@@ -79,7 +80,7 @@ bgfx and SwiftShader are vendored as new `thirdparty/` git submodules and made t
 
 ### Integration Points
 - `find_package(Vulkan)` / `VULKAN_SDK` env var resolution in `SuperGenius/SGProcessingManager/cmake/CommonBuildParameters.cmake` is the exact point bgfx's Vulkan backend must resolve through, to satisfy Success Criterion 3 (no second/conflicting Vulkan dependency tree).
-- `thirdparty/.gitmodules` is where the new submodule entries for bgfx.cmake (which brings in bgfx, and typically bx/bimg per its own layout) and SwiftShader are added.
+- `thirdparty/.gitmodules` is where the two new submodule entries go: `bgfx.cmake` (recursively brings in bgfx, bx, and bimg as its own nested submodules — no separate entries for those) and SwiftShader.
 
 </code_context>
 
