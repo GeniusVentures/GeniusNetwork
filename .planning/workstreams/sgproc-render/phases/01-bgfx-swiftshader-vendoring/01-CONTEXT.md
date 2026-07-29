@@ -16,8 +16,9 @@ bgfx and SwiftShader are vendored as new `thirdparty/` git submodules and made t
 ## Implementation Decisions
 
 ### bgfx build integration
-- **D-01:** bgfx has no official CMake build (it natively builds via GENie + bam/make). Wire it into the superbuild using `ExternalProject_Add` with a **custom `BUILD_COMMAND`** that invokes bgfx's own GENie/bam toolchain and stages the resulting static library — do **not** vendor the community `bgfx.cmake` wrapper as an additional submodule. This follows the same in-repo precedent already used for Boost (`thirdparty/build/Windows/CMakeLists.txt` — custom `b2` `BUILD_COMMAND`) and MoltenVK (`thirdparty/build/OSX/CMakeLists.txt` — custom `build.sh` wrapper).
-- **D-02:** Whether the full `ExternalProject_Add(bgfx ...)` block is **duplicated per-platform** (the Boost pattern — each of `Windows/CMakeLists.txt`, `Linux/CMakeLists.txt`, `OSX/CMakeLists.txt` defines its own complete block because the build invocation differs meaningfully per platform) or **shared once in `CommonTargets.cmake`** with per-platform cache-arg variables set beforehand in each platform's own CMakeLists.txt (the MNN pattern — see `_MNN_EXTRA_PARAM` in `thirdparty/build/OSX/CMakeLists.txt` consumed by the single `ExternalProject_Add(MNN ...)` in `CommonTargets.cmake`) is **not decided here** — determine this empirically during research/planning by examining what bgfx's actual GENie/bam invocation needs per platform.
+- **D-01 (revised 2026-07-28):** Adopt the community **`bgfx.cmake`** wrapper (vendored as an additional `thirdparty/` submodule) rather than wrapping bgfx's native GENie/bam build in a custom `ExternalProject_Add` `BUILD_COMMAND`. Originally decided the opposite way, then reversed after clarifying the actual trade-off: GENie/bam don't require any extra system-level install (GENie bootstraps from source; bgfx's own `Makefile` already wraps both, so it reduces to "compiler + `make`"), so the custom-wrapper route wasn't actually avoiding a dependency — it was wrapping a second, non-CMake build system inside `ExternalProject_Add`. The user prefers avoiding that indirection and is willing to accept `bgfx.cmake`'s trade-off: one more submodule, maintained by the community rather than bgfx's own maintainers, which can lag upstream.
+- **D-02 (revised 2026-07-28):** With `bgfx.cmake` in place, bgfx becomes a normal CMake subproject/target rather than an opaque `ExternalProject_Add` — confirm during research whether it's added via `ExternalProject_Add` (staying consistent with every other `thirdparty/` dependency's install-prefix superbuild shape) or `add_subdirectory()` (bgfx.cmake's own documented usage pattern, which assumes an in-tree CMake target rather than an installed one). This determines how the rest of the build (e.g. `SGProcessingManager`) links against it and is left to research/planning.
+- **D-02b:** How bx/bimg get vendored is now largely dictated by `bgfx.cmake`'s own expected layout (it typically expects bgfx/bx/bimg as sibling directories, either as its own nested submodules or user-supplied ones) — research must confirm the exact layout `bgfx.cmake` expects for whichever commit is pinned, rather than deciding this independently of the wrapper choice.
 
 ### Build footprint
 - **D-03:** Compile bgfx with **only** the Vulkan (all platforms) and OpenGL (Linux) backends — restrict via bgfx's compile-time renderer config (`BGFX_CONFIG_RENDERER_*` defines). D3D11/D3D12/Metal are never compiled in. This is self-documenting alignment with the 3-tier design and keeps build time/binary size down.
@@ -32,8 +33,12 @@ bgfx and SwiftShader are vendored as new `thirdparty/` git submodules and made t
 
 ### Claude's Discretion
 - Exact directory/target naming for the smoke-test target, and its precise location in the build tree (e.g. alongside `SuperGenius/example/*` or a new minimal location under `thirdparty/`) — planner's call.
-- Whether bx/bimg are vendored as their own separate `thirdparty/` submodules (matching bgfx's expected sibling-repo layout) or nested some other way — research/planning call, informed by whatever the chosen bgfx commit's build actually expects.
-- Exact `BGFX_CONFIG_RENDERER_*` define set needed to restrict compiled backends to Vulkan+GL per platform — planner's call, informed by bgfx's `src/config.h`.
+- Exact `bgfx.cmake` version/commit to pin, and the resulting bx/bimg layout it dictates — research call.
+- Whether bgfx (via `bgfx.cmake`) is wired in via `ExternalProject_Add` or `add_subdirectory()` (see D-02) — research call.
+- Exact `BGFX_CONFIG_RENDERER_*` / `bgfx.cmake`-equivalent CMake options needed to restrict compiled backends to Vulkan+GL per platform — planner's call, informed by bgfx's `src/config.h` and `bgfx.cmake`'s own option surface.
+
+### Superseded (kept for audit trail)
+- Custom `ExternalProject_Add` `BUILD_COMMAND` wrapper around bgfx's native GENie/bam build — this was the original D-01/D-02, reversed in favor of `bgfx.cmake` (see above). Not applicable to planning.
 
 </decisions>
 
@@ -48,12 +53,12 @@ bgfx and SwiftShader are vendored as new `thirdparty/` git submodules and made t
 - `.planning/workstreams/sgproc-render/research/RENDER-BACKEND-DECISION.md` — prior reasoning step (superseded in part by FINAL-BACKEND-DECISION.md, but documents why raw-Vulkan-only was initially preferred before bgfx's app-level tier switching was reconsidered)
 - `.planning/workstreams/sgproc-render/research/STACK.md` — original stack evaluation (superseded, kept for reasoning-trail context)
 
-### Existing CMake vendoring convention (precedent to follow)
-- `thirdparty/build/CommonTargets.cmake` — shared cross-platform `ExternalProject_Add` superbuild; see the existing Vulkan-Headers/Vulkan-Loader block (lines ~362-392) and the MNN block (lines ~394-416) as the "shared target, per-platform cache-arg vars" pattern
-- `thirdparty/build/OSX/CMakeLists.txt` — MoltenVK's custom `BUILD_COMMAND`-wrapped `ExternalProject_Add` (non-CMake-native upstream build wrapped the same way bgfx will need to be); also defines `_MNN_EXTRA_PARAM`/`_MNN_DEPENDS` consumed by `CommonTargets.cmake`
+### Existing CMake vendoring convention (precedent for SwiftShader; bgfx now goes through `bgfx.cmake` instead — see D-01/D-02)
+- `thirdparty/build/CommonTargets.cmake` — shared cross-platform `ExternalProject_Add` superbuild; see the existing Vulkan-Headers/Vulkan-Loader block (lines ~362-392) and the MNN block (lines ~394-416) as the "shared target, per-platform cache-arg vars" pattern. SwiftShader (native CMake, unaffected by the bgfx.cmake switch) should follow this shape.
+- `thirdparty/build/OSX/CMakeLists.txt` — MoltenVK's custom `BUILD_COMMAND`-wrapped `ExternalProject_Add`; also defines `_MNN_EXTRA_PARAM`/`_MNN_DEPENDS` consumed by `CommonTargets.cmake`
 - `thirdparty/build/Windows/CMakeLists.txt` — Boost's fully per-platform-duplicated `ExternalProject_Add` with custom `b2` `BUILD_COMMAND` (the "duplicate per platform" alternative pattern)
 - `SuperGenius/SGProcessingManager/cmake/CommonBuildParameters.cmake` — how `find_package(Vulkan)` resolves against the vendored Vulkan-Loader via `VULKAN_SDK` env var; the pattern bgfx's own Vulkan backend must slot into without introducing a second Vulkan dependency tree (Success Criterion 3)
-- `thirdparty/.gitmodules` — where new bgfx/bx/bimg/SwiftShader submodule entries get added (`thirdparty` is itself a nested git submodule of this repo — adding new submodules means committing inside `thirdparty`'s own repo first, then bumping this repo's `thirdparty` pointer)
+- `thirdparty/.gitmodules` — where new bgfx.cmake/bx/bimg/SwiftShader submodule entries get added (`thirdparty` is itself a nested git submodule of this repo — adding new submodules means committing inside `thirdparty`'s own repo first, then bumping this repo's `thirdparty` pointer)
 
 ### Requirements & roadmap
 - `.planning/workstreams/sgproc-render/REQUIREMENTS.md` — CTX-04 (this phase's sole requirement)
@@ -65,23 +70,23 @@ bgfx and SwiftShader are vendored as new `thirdparty/` git submodules and made t
 ## Existing Code Insights
 
 ### Reusable Assets
-- `thirdparty/build/OSX/CMakeLists.txt`'s MoltenVK `ExternalProject_Add` block — direct template for wrapping bgfx's non-CMake-native build with a custom `BUILD_COMMAND`.
-- `thirdparty/build/CommonTargets.cmake`'s MNN block (`_MNN_EXTRA_PARAM`, `_MNN_DEPENDS` pattern) — template if bgfx's build turns out uniform enough per platform to share one `ExternalProject_Add`.
+- `thirdparty/build/CommonTargets.cmake`'s MNN block (`_MNN_EXTRA_PARAM`, `_MNN_DEPENDS` pattern) — template for SwiftShader's native-CMake `ExternalProject_Add`, and a reference point if bgfx.cmake ends up wired in via `ExternalProject_Add` rather than `add_subdirectory()`.
+- `thirdparty/build/OSX/CMakeLists.txt`'s MoltenVK block — precedent for custom `BUILD_COMMAND` wrapping in general, though no longer the direct template for bgfx now that `bgfx.cmake` is in play.
 
 ### Established Patterns
-- Every existing `thirdparty/` dependency with a non-standard build (Boost, MoltenVK) is wrapped via `ExternalProject_Add` + custom `BUILD_COMMAND`/`PATCH_COMMAND`, installing into `${CMAKE_CURRENT_BINARY_DIR}/<name>` — never a raw `add_subdirectory()`. bgfx and SwiftShader should follow this same superbuild-via-install-prefix shape.
+- Every existing `thirdparty/` dependency with a non-standard build (Boost, MoltenVK) is wrapped via `ExternalProject_Add` + custom `BUILD_COMMAND`/`PATCH_COMMAND`, installing into `${CMAKE_CURRENT_BINARY_DIR}/<name>` — never a raw `add_subdirectory()`. This is the convention SwiftShader should follow; whether bgfx (via `bgfx.cmake`) follows it too or uses `add_subdirectory()` instead is open (D-02).
 - Platform-conditional guards already exist at the top of `CommonTargets.cmake` (e.g. `if(NOT ANDROID)` around the Vulkan-Headers/Vulkan-Loader block) — the same mechanism applies for skipping Android/iOS entirely for bgfx/SwiftShader.
 
 ### Integration Points
 - `find_package(Vulkan)` / `VULKAN_SDK` env var resolution in `SuperGenius/SGProcessingManager/cmake/CommonBuildParameters.cmake` is the exact point bgfx's Vulkan backend must resolve through, to satisfy Success Criterion 3 (no second/conflicting Vulkan dependency tree).
-- `thirdparty/.gitmodules` is where the new submodule entries for bgfx, bx, bimg, and SwiftShader are added.
+- `thirdparty/.gitmodules` is where the new submodule entries for bgfx.cmake (which brings in bgfx, and typically bx/bimg per its own layout) and SwiftShader are added.
 
 </code_context>
 
 <specifics>
 ## Specific Ideas
 
-No specific commits, versions, or exact file layouts were mandated — the user deferred those choices to the researcher/planner, with two firm constraints: (1) follow the existing `ExternalProject_Add`-based vendoring convention rather than adopting an external CMake wrapper project, and (2) don't let build-footprint restriction reduce actual CPU-rendering capability (confirmed it doesn't, given the architecture's SwiftShader usage is Vulkan-ICD-only).
+No specific commits, versions, or exact file layouts were mandated — the user deferred those choices to the researcher/planner, with two firm constraints: (1) vendor bgfx via the community `bgfx.cmake` wrapper rather than wrapping bgfx's native GENie/bam build directly (revised 2026-07-28 — see D-01), and (2) don't let build-footprint restriction reduce actual CPU-rendering capability (confirmed it doesn't, given the architecture's SwiftShader usage is Vulkan-ICD-only).
 
 </specifics>
 

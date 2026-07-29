@@ -13,12 +13,14 @@
 
 | Option | Description | Selected |
 |--------|-------------|----------|
-| Custom BUILD_COMMAND wrapper | ExternalProject_Add with a custom BUILD_COMMAND invoking bgfx's own GENie/bam toolchain, mirroring the existing MoltenVK precedent | ✓ |
-| Adopt bgfx.cmake | Vendor the community `bgfx.cmake` wrapper as an additional submodule | |
+| Custom BUILD_COMMAND wrapper | ExternalProject_Add with a custom BUILD_COMMAND invoking bgfx's own GENie/bam toolchain, mirroring the existing MoltenVK precedent | (reversed, see below) |
+| Adopt bgfx.cmake | Vendor the community `bgfx.cmake` wrapper as an additional submodule | ✓ (final) |
 | You decide | Let research/planning pick | |
 
-**User's choice:** Custom `ExternalProject_Add`, following the Boost/OpenSSL per-platform pattern or the MoltenVK precedent — not `bgfx.cmake`.
+**User's original choice:** Custom `ExternalProject_Add`, following the Boost/OpenSSL per-platform pattern or the MoltenVK precedent — not `bgfx.cmake`.
 **Notes:** User specifically flagged: if bgfx's build needs little/no per-platform customization, define per-platform vars in each platform's CMakeLists.txt and put the actual `ExternalProject_Add` in `CommonTargets.cmake` (the MNN pattern) rather than duplicating the whole block per platform (the Boost pattern). This determination was left for research/planning to make empirically.
+
+**Revision (same day, post-session):** User reopened this decision, unfamiliar with GENie/bam and concerned they implied extra system dependencies; asked to switch to `bgfx.cmake` to avoid that. Claude clarified: GENie bootstraps from source and bgfx's own `Makefile` already wraps GENie+bam, so no extra system-level install was actually being introduced — the real trade-off is "wrap a second non-CMake build system inside `ExternalProject_Add`" (original plan) vs. "one more community-maintained submodule, pure CMake" (`bgfx.cmake`). User confirmed they still prefer `bgfx.cmake` given that accurate framing. **Final decision: `bgfx.cmake`.** Follow-on question raised by the switch: whether bgfx.cmake is wired in via `ExternalProject_Add` (consistent with every other thirdparty dep) or `add_subdirectory()` (bgfx.cmake's own documented pattern) — left open for research.
 
 ---
 
