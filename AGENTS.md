@@ -2,7 +2,7 @@
 
 Before planning or changing code in this repository or any submodule, read:
 
-1. `MASTER_ARCHITECTURE.md`
+1. `documentation/MASTER_ARCHITECTURE.md` (canonical platform architecture)
 2. `.gitmodules` on the active branch
 3. `.planning/codebase/ARCHITECTURE.md`
 4. `.planning/codebase/STRUCTURE.md`
@@ -11,9 +11,12 @@ Before planning or changing code in this repository or any submodule, read:
 7. `.planning/codebase/TESTING.md`
 8. `.planning/codebase/CONCERNS.md`
 
+If the documentation submodule is not initialized, `MASTER_ARCHITECTURE.md` at the repository root points to the canonical document.
+
 ## Mandatory ownership rules
 
 - `GeniusNetwork` composes and pins the platform; it is not the default implementation location.
+- `documentation` owns canonical platform documentation, docs.gnus.ai navigation, and LLM catalog metadata.
 - Put node, networking, ledger, CRDT, storage, processing, and runtime changes in `SuperGenius` or its owning nested submodule.
 - Put public native application APIs in `GeniusSDK`.
 - Put Unity bindings and reusable Unity components in `UnityGeniusSDK`.
