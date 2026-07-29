@@ -6,7 +6,7 @@ This is the parent composition repository for the GNUS.ai, Genius, and SuperGeni
 
 Before adding a subsystem, SDK, application integration, token feature, cognitive module, dependency, or sample implementation, read:
 
-- **[GNUS.ai Master Platform Architecture](MASTER_ARCHITECTURE.md)** — canonical repository ownership, subsystem map, application/game integration paths, and LLM reuse rules.
+- **[GNUS.ai Master Platform Architecture](documentation/MASTER_ARCHITECTURE.md)** — canonical repository ownership, subsystem map, application/game integration paths, and LLM reuse rules. The root [`MASTER_ARCHITECTURE.md`](MASTER_ARCHITECTURE.md) is a pointer for checkouts where the documentation submodule has not yet been initialized.
 - **[Agent Instructions](AGENTS.md)** — mandatory guidance for coding agents and LLMs.
 - **[Existing Codebase Architecture](.planning/codebase/ARCHITECTURE.md)** — code-grounded analysis of the pinned repository composition.
 - **[Codebase Structure](.planning/codebase/STRUCTURE.md)** — detailed directory and submodule map.
@@ -28,6 +28,8 @@ To initialize or repair submodules in an existing clone:
 git submodule sync --recursive
 git submodule update --init --recursive
 ```
+
+The `documentation/` submodule contains the canonical architecture and the docs.gnus.ai build configuration.
 
 ## Requirements
 
@@ -53,4 +55,4 @@ See [INSTALL.md](INSTALL.md) and [ThirdParty_Libraries_Integration.md](ThirdPart
 
 ## Repository role
 
-`GeniusNetwork` pins and documents a compatible platform composition. Implement changes in the repository that owns the capability, test there, and then update the appropriate parent submodule pointer.
+`GeniusNetwork` pins a compatible platform composition. Implement changes in the repository that owns the capability, test there, and then update the appropriate parent submodule pointer. Canonical published documentation belongs in the `documentation` repository.
