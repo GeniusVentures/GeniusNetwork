@@ -29,7 +29,15 @@ Decimal phases appear between their surrounding integers in numeric order.
   3. Physical-device selection for `RenderProcessor` follows a documented, deterministic scoring policy — not "pick index 0" — and the same hardware always yields the same selected device across repeated runs (CTX-03)
   4. A written decision documents Vulkan-ValidationLayers vendoring as explicitly deferred to v1.x, not silently dropped (CTX-04)
   5. Submitting a render or compute pass (no `model` field) through `ParseBlockSize()` no longer crashes; `ProcessingManager::Process()` routes render passes through a new, separate `PassType`-keyed dispatch map (confirmed not colliding with the existing `DataType`-keyed map); and `CheckProcessValidity()` requires a shader config to be present for render passes (DISP-01, DISP-02, DISP-03)
-**Plans**: TBD
+**Plans**: 6 plans
+
+Plans:
+- [ ] 01-01-PLAN.md — Vulkan init guard & MNN Vulkan call-site migration (CTX-02/D-04)
+- [ ] 01-02-PLAN.md — vk-bootstrap dependency legitimacy checkpoint (D-01 vendoring gate)
+- [ ] 01-03-PLAN.md — vk-bootstrap vendoring & validation-layers deferral decision (CTX-01/CTX-04)
+- [ ] 01-04-PLAN.md — RenderProcessor headless Vulkan context (CTX-01/CTX-03)
+- [ ] 01-05-PLAN.md — ProcessingManager dispatch plumbing (DISP-01/02/03)
+- [ ] 01-06-PLAN.md — Concurrent Vulkan init stress test (CTX-02/D-05)
 
 ### Phase 2: Schema Extension & Shader/SPIR-V Validation Pipeline
 **Goal**: The processing schema can fully describe a render pass, and every piece of SPIR-V that could reach the GPU — compiled from job-supplied GLSL or submitted directly — is validated before it ever reaches the driver.
