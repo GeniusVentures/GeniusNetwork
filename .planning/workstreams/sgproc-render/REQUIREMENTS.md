@@ -13,7 +13,7 @@ Requirements for milestone v1.0. Each maps to roadmap phases.
 - [ ] **SCHEMA-01**: Render pass schema defines a render-target/framebuffer config (color+depth attachment formats/dimensions)
 - [ ] **SCHEMA-02**: Render pass schema defines vertex/index buffer bindings
 - [ ] **SCHEMA-03**: Render pass schema supports a multi-stage shader pipeline (vertex+fragment), replacing the single `shader_config` for render passes
-- [ ] **SCHEMA-04** *(revised for bgfx)*: Render pass `ShaderType`/shader-source fields represent bgfx-dialect shader source (or precompiled bgfx shader binaries) rather than raw platform-native formats (`metal`/`hlsl`/`glsl`/`spirv` as separate author-selected targets) — job authors write once, bgfx's own toolchain cross-compiles per active backend. Exact field shape is an open design question for Phase 1, not a settled format.
+- [ ] **SCHEMA-04** *(revised for bgfx)*: Render pass `ShaderType`/shader-source fields represent bgfx-dialect shader source (or precompiled bgfx shader binaries) rather than raw platform-native formats (`metal`/`hlsl`/`glsl`/`spirv` as separate author-selected targets) — job authors write once, bgfx's own toolchain cross-compiles per active backend. Exact field shape is an open design question for Phase 2, not a settled format.
 - [ ] **SCHEMA-05**: quicktype-generated headers regenerated from the extended schema (`generated/` is never hand-edited)
 
 ### Dispatch & Validation Plumbing
@@ -93,44 +93,44 @@ Explicitly excluded. Documented to prevent scope creep.
 
 ## Traceability
 
-(Populated during roadmap creation.)
+Populated during roadmap creation (2026-07-28, bgfx architecture pivot). Updated 2026-07-28 when the roadmap was restructured to split bgfx/SwiftShader vendoring (CTX-04) into its own earliest phase, ahead of the runtime three-tier backend-context work (CTX-01/02/03/05).
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| SCHEMA-01 | TBD | Pending |
-| SCHEMA-02 | TBD | Pending |
-| SCHEMA-03 | TBD | Pending |
-| SCHEMA-04 | TBD | Pending |
-| SCHEMA-05 | TBD | Pending |
-| DISP-01 | TBD | Pending |
-| DISP-02 | TBD | Pending |
-| DISP-03 | TBD | Pending |
-| CTX-01 | TBD | Pending |
-| CTX-02 | TBD | Pending |
-| CTX-03 | TBD | Pending |
-| CTX-04 | TBD | Pending |
-| CTX-05 | TBD | Pending |
-| RENDER-01 | TBD | Pending |
-| RENDER-02 | TBD | Pending |
-| RENDER-03 | TBD | Pending |
-| RENDER-04 | TBD | Pending |
-| RENDER-05 | TBD | Pending |
-| RENDER-06 | TBD | Pending |
-| RENDER-07 | TBD | Pending |
-| RENDER-08 | TBD | Pending |
-| DETV-01 | TBD | Pending |
-| DETV-02 | TBD | Pending |
-| DETV-03 | TBD | Pending |
-| E2E-01 | TBD | Pending |
-| E2E-02 | TBD | Pending |
-| E2E-03 | TBD | Pending |
-| E2E-04 | TBD | Pending |
+| SCHEMA-01 | Phase 2 | Pending |
+| SCHEMA-02 | Phase 2 | Pending |
+| SCHEMA-03 | Phase 2 | Pending |
+| SCHEMA-04 | Phase 2 | Pending |
+| SCHEMA-05 | Phase 2 | Pending |
+| DISP-01 | Phase 2 | Pending |
+| DISP-02 | Phase 2 | Pending |
+| DISP-03 | Phase 2 | Pending |
+| CTX-04 | Phase 1 | Pending |
+| CTX-01 | Phase 3 | Pending |
+| CTX-02 | Phase 3 | Pending |
+| CTX-03 | Phase 3 | Pending |
+| CTX-05 | Phase 3 | Pending |
+| RENDER-01 | Phase 4 | Pending |
+| RENDER-02 | Phase 4 | Pending |
+| RENDER-03 | Phase 4 | Pending |
+| RENDER-04 | Phase 4 | Pending |
+| RENDER-05 | Phase 4 | Pending |
+| RENDER-06 | Phase 4 | Pending |
+| RENDER-07 | Phase 4 | Pending |
+| RENDER-08 | Phase 4 | Pending |
+| DETV-01 | Phase 5 | Pending |
+| DETV-02 | Phase 5 | Pending |
+| DETV-03 | Phase 5 | Pending |
+| E2E-01 | Phase 5 | Pending |
+| E2E-02 | Phase 5 | Pending |
+| E2E-03 | Phase 5 | Pending |
+| E2E-04 | Phase 5 | Pending |
 
 **Coverage:**
 - v1 requirements: 28 total
-- Mapped to phases: 0 (pending roadmap re-creation)
-- Unmapped: 28 ⚠️
+- Mapped to phases: 28
+- Unmapped: 0 ✓
 
 ---
 *Requirements defined: 2026-07-28*
-*Last updated: 2026-07-28 after bgfx backend pivot*
+*Last updated: 2026-07-28 — traceability updated after ROADMAP.md restructuring (5 phases, 28/28 requirements mapped): bgfx/SwiftShader vendoring (CTX-04) split into new Phase 1, prior phases renumbered 2-5 accordingly*
