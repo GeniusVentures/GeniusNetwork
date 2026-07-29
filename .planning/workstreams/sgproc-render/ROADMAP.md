@@ -33,29 +33,29 @@ Decimal phases appear between their surrounding integers in numeric order.
   4. A written decision documents Vulkan-ValidationLayers vendoring as explicitly deferred to v1.x, not silently dropped (CTX-04)
   5. Submitting a render or compute pass (no `model` field) through `ParseBlockSize()` no longer crashes; `ProcessingManager::Process()` routes render passes through a new, separate `PassType`-keyed dispatch map (confirmed not colliding with the existing `DataType`-keyed map); and `CheckProcessValidity()` requires a shader config to be present for render passes (DISP-01, DISP-02, DISP-03)
 
-**Plans**: 1/6 plans executed
+**Plans**: 6/6 plans executed
 
 Plans:
 **Wave 1**
 
-- [ ] 01-01-PLAN.md — Vulkan init guard & MNN Vulkan call-site migration (CTX-02/D-04)
+- [x] 01-01-PLAN.md — Vulkan init guard & MNN Vulkan call-site migration (CTX-02/D-04)
 - [x] 01-02-PLAN.md — vk-bootstrap dependency legitimacy checkpoint (D-01 vendoring gate)
 
 **Wave 2** *(blocked on Wave 1 completion)*
 
-- [ ] 01-03-PLAN.md — vk-bootstrap vendoring & validation-layers deferral decision (CTX-01/CTX-04)
+- [x] 01-03-PLAN.md — vk-bootstrap vendoring & validation-layers deferral decision (CTX-01/CTX-04)
 
 **Wave 3** *(blocked on Wave 2 completion)*
 
-- [ ] 01-04-PLAN.md — RenderProcessor headless Vulkan context (CTX-01/CTX-03)
+- [x] 01-04-PLAN.md — RenderProcessor headless Vulkan context (CTX-01/CTX-03)
 
 **Wave 4** *(blocked on Wave 3 completion)*
 
-- [ ] 01-05-PLAN.md — ProcessingManager dispatch plumbing (DISP-01/02/03)
+- [x] 01-05-PLAN.md — ProcessingManager dispatch plumbing (DISP-01/02/03)
 
 **Wave 5** *(blocked on Wave 4 completion)*
 
-- [ ] 01-06-PLAN.md — Concurrent Vulkan init stress test (CTX-02/D-05)
+- [x] 01-06-PLAN.md — Concurrent Vulkan init stress test (CTX-02/D-05)
 
 ### Phase 2: Schema Extension & Shader/SPIR-V Validation Pipeline
 
@@ -109,7 +109,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 (Phase 2 is independently d
 
 | Phase | Plans Complete | Status | Completed |
 |-------|-----------------|--------|-----------|
-| 1. Vulkan Foundation & Dispatch Plumbing | 1/6 | In Progress|  |
+| 1. Vulkan Foundation & Dispatch Plumbing | 6/6 | Complete | 2026-07-29 |
 | 2. Schema Extension & Shader/SPIR-V Validation Pipeline | 0/TBD | Not started | - |
 | 3. RenderProcessor Implementation & Determinism | 0/TBD | Not started | - |
 | 4. Cross-Platform Build, CI & End-to-End Verification | 0/TBD | Not started | - |
