@@ -96,46 +96,44 @@ Explicitly excluded. Documented to prevent scope creep.
 
 ## Traceability
 
-Populated during roadmap creation.
-
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| CTX-01 | TBD | Pending |
-| CTX-02 | TBD | Pending |
-| CTX-03 | TBD | Pending |
-| CTX-04 | TBD | Pending |
-| SCHEMA-01 | TBD | Pending |
-| SCHEMA-02 | TBD | Pending |
-| SCHEMA-03 | TBD | Pending |
-| SCHEMA-04 | TBD | Pending |
-| SCHEMA-05 | TBD | Pending |
-| SHADER-01 | TBD | Pending |
-| SHADER-02 | TBD | Pending |
-| SHADER-03 | TBD | Pending |
-| DISP-01 | TBD | Pending |
-| DISP-02 | TBD | Pending |
-| DISP-03 | TBD | Pending |
-| RENDER-01 | TBD | Pending |
-| RENDER-02 | TBD | Pending |
-| RENDER-03 | TBD | Pending |
-| RENDER-04 | TBD | Pending |
-| RENDER-05 | TBD | Pending |
-| RENDER-06 | TBD | Pending |
-| RENDER-07 | TBD | Pending |
-| RENDER-08 | TBD | Pending |
-| RENDER-09 | TBD | Pending |
-| DETV-01 | TBD | Pending |
-| DETV-02 | TBD | Pending |
-| DETV-03 | TBD | Pending |
-| E2E-01 | TBD | Pending |
-| E2E-02 | TBD | Pending |
-| E2E-03 | TBD | Pending |
+| CTX-01 | Phase 1 | Pending |
+| CTX-02 | Phase 1 | Pending |
+| CTX-03 | Phase 1 | Pending |
+| CTX-04 | Phase 1 | Pending |
+| DISP-01 | Phase 1 | Pending |
+| DISP-02 | Phase 1 | Pending |
+| DISP-03 | Phase 1 | Pending |
+| SCHEMA-01 | Phase 2 | Pending |
+| SCHEMA-02 | Phase 2 | Pending |
+| SCHEMA-03 | Phase 2 | Pending |
+| SCHEMA-04 | Phase 2 | Pending |
+| SCHEMA-05 | Phase 2 | Pending |
+| SHADER-01 | Phase 2 | Pending |
+| SHADER-02 | Phase 2 | Pending |
+| SHADER-03 | Phase 2 | Pending |
+| RENDER-01 | Phase 3 | Pending |
+| RENDER-02 | Phase 3 | Pending |
+| RENDER-03 | Phase 3 | Pending |
+| RENDER-04 | Phase 3 | Pending |
+| RENDER-05 | Phase 3 | Pending |
+| RENDER-06 | Phase 3 | Pending |
+| RENDER-07 | Phase 3 | Pending |
+| RENDER-08 | Phase 3 | Pending |
+| RENDER-09 | Phase 3 | Pending |
+| DETV-01 | Phase 3 | Pending |
+| DETV-02 | Phase 3 | Pending |
+| DETV-03 | Phase 4 | Pending |
+| E2E-01 | Phase 4 | Pending |
+| E2E-02 | Phase 4 | Pending |
+| E2E-03 | Phase 4 | Pending |
 
 **Coverage:**
 - v1 requirements: 30 total
-- Mapped to phases: 0 (populated by roadmapper)
-- Unmapped: 30 ⚠️ (expected pre-roadmap)
+- Mapped to phases: 30
+- Unmapped: 0 ✓
 
 ---
 *Requirements defined: 2026-07-29*
-*Last updated: 2026-07-29 — initial definition for restarted (hand-rolled Vulkan) v1.0*
+*Last updated: 2026-07-29 — roadmap created, 4 phases, 30/30 v1 requirements mapped (0 unmapped)*
