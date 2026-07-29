@@ -7,6 +7,7 @@ This is a full restart of the archived bgfx-based v1.0 attempt (`.planning/miles
 ## Phases
 
 **Phase Numbering:**
+
 - Integer phases (1, 2, 3): Planned milestone work
 - Decimal phases (2.1, 2.2): Urgent insertions (marked with INSERTED)
 
@@ -20,59 +21,85 @@ Decimal phases appear between their surrounding integers in numeric order.
 ## Phase Details
 
 ### Phase 1: Vulkan Foundation & Dispatch Plumbing
+
 **Goal**: A headless Vulkan context can be created for `RenderProcessor` safely alongside MNN's existing Vulkan usage, and `ProcessingManager` can route render passes through a dedicated, non-crashing dispatch path.
 **Depends on**: Nothing (first phase)
 **Requirements**: CTX-01, CTX-02, CTX-03, CTX-04, DISP-01, DISP-02, DISP-03
 **Success Criteria** (what must be TRUE):
+
   1. A headless `VkInstance`/`VkDevice`/`VkQueue` can be created for `RenderProcessor` with no `VkSurfaceKHR`, swapchain, or WSI extension present, on Windows, Linux, and macOS via MoltenVK (CTX-01)
   2. A concurrent-init stress test demonstrates MNN's existing 3 Vulkan-instance-creation call sites and `RenderProcessor`'s new call site all serialize through one shared, process-wide synchronization primitive with zero crashes or races across repeated concurrent runs, replacing MNN's file-scoped `mnn_vulkan_mutex` (CTX-02)
   3. Physical-device selection for `RenderProcessor` follows a documented, deterministic scoring policy — not "pick index 0" — and the same hardware always yields the same selected device across repeated runs (CTX-03)
   4. A written decision documents Vulkan-ValidationLayers vendoring as explicitly deferred to v1.x, not silently dropped (CTX-04)
   5. Submitting a render or compute pass (no `model` field) through `ParseBlockSize()` no longer crashes; `ProcessingManager::Process()` routes render passes through a new, separate `PassType`-keyed dispatch map (confirmed not colliding with the existing `DataType`-keyed map); and `CheckProcessValidity()` requires a shader config to be present for render passes (DISP-01, DISP-02, DISP-03)
+
 **Plans**: 6 plans
 
 Plans:
+**Wave 1**
+
 - [ ] 01-01-PLAN.md — Vulkan init guard & MNN Vulkan call-site migration (CTX-02/D-04)
 - [ ] 01-02-PLAN.md — vk-bootstrap dependency legitimacy checkpoint (D-01 vendoring gate)
+
+**Wave 2** *(blocked on Wave 1 completion)*
+
 - [ ] 01-03-PLAN.md — vk-bootstrap vendoring & validation-layers deferral decision (CTX-01/CTX-04)
+
+**Wave 3** *(blocked on Wave 2 completion)*
+
 - [ ] 01-04-PLAN.md — RenderProcessor headless Vulkan context (CTX-01/CTX-03)
+
+**Wave 4** *(blocked on Wave 3 completion)*
+
 - [ ] 01-05-PLAN.md — ProcessingManager dispatch plumbing (DISP-01/02/03)
+
+**Wave 5** *(blocked on Wave 4 completion)*
+
 - [ ] 01-06-PLAN.md — Concurrent Vulkan init stress test (CTX-02/D-05)
 
 ### Phase 2: Schema Extension & Shader/SPIR-V Validation Pipeline
+
 **Goal**: The processing schema can fully describe a render pass, and every piece of SPIR-V that could reach the GPU — compiled from job-supplied GLSL or submitted directly — is validated before it ever reaches the driver.
 **Depends on**: None structurally (independently developable in parallel with Phase 1 — GLSL/SPIR-V validation needs no `VkInstance`; sequenced second here for planning clarity only, per research's phase-ordering rationale)
 **Requirements**: SCHEMA-01, SCHEMA-02, SCHEMA-03, SCHEMA-04, SCHEMA-05, SHADER-01, SHADER-02, SHADER-03
 **Success Criteria** (what must be TRUE):
+
   1. A render pass definition in `gnus-processing-schema.json` can declare a render-target/framebuffer config (color+depth attachment formats, dimensions, clear values), vertex/index buffer bindings with per-attribute strides and offsets, a multi-stage (vertex+fragment) shader array, and pipeline state (topology, cull mode, winding order, depth-test) (SCHEMA-01, SCHEMA-02, SCHEMA-03, SCHEMA-04)
   2. All of the above is consumable through quicktype-regenerated headers with zero hand-edits to `generated/` (SCHEMA-05)
   3. GLSL shader source supplied by a job is compiled to SPIR-V in-process via a vendored `shaderc` toolchain at job-load time, before any GPU call is made (SHADER-01)
   4. Malformed or invalid SPIR-V — whether produced by GLSL compilation or submitted directly via `shader_config.type: "spirv"` — is rejected by a mandatory `spirv-val` gate with a clean error and never reaches `vkCreateShaderModule` (SHADER-02)
   5. `shader_config.type: "spirv"` is explicitly accepted for render passes as a validated input path, subject to the `spirv-val` gate — not silently rejected or silently trusted (SHADER-03)
+
 **Plans**: TBD
 
 ### Phase 3: RenderProcessor Implementation & Determinism
+
 **Goal**: A schema-declared render pass actually executes on the headless Vulkan context — pipeline built, buffers uploaded, offscreen draw performed, output read back — and produces bit-exact repeatable output on the same node.
 **Depends on**: Phase 1, Phase 2 (needs a working, coexistence-safe Vulkan context and dispatch path, plus validated SPIR-V, before a pipeline can be built and executed)
 **Requirements**: RENDER-01, RENDER-02, RENDER-03, RENDER-04, RENDER-05, RENDER-06, RENDER-07, RENDER-08, RENDER-09, DETV-01, DETV-02
 **Success Criteria** (what must be TRUE):
+
   1. `RenderProcessor` builds a vertex+fragment graphics pipeline from schema-declared, validated SPIR-V, with pipeline state (topology, cull mode, winding order) configurable via schema (RENDER-01, RENDER-04)
   2. Vertex/index buffer data resolved from `pass_io_binding` inputs uploads via direct Vulkan buffer APIs and renders to an offscreen, depth-tested framebuffer with no swapchain, with uniforms/parameters bound via push constants and falling back to descriptor-set uniforms when push-constant size limits are exceeded (RENDER-02, RENDER-03, RENDER-05)
   3. Rendered output is read back via `vkCmdCopyImageToBuffer` and exposed as `texture2D` through the existing `pass_io_binding` output mechanism, optionally flows through the existing `data_transform` post-processing step, and feeds the unmodified `ProcessingResult` → `FileManager::SaveASync` → hash path (RENDER-06, RENDER-07, RENDER-08)
   4. `VkResult` failures at any stage map to structured `ProcessingManager::Error` values with clear per-failure-point messages (RENDER-09)
   5. The same render pass definition executed N≥10 times on the same node/hardware produces a bit-exact matching output hash every time, achieved through architectural guards — explicit clear ops (never `DONT_CARE`) on hashed regions, `VK_SAMPLE_COUNT_1_BIT` always, fixed shader precision qualifiers, no unordered parallel-reduction shader math — rather than incidental behavior (DETV-01, DETV-02)
+
 **Plans**: TBD
 
 ### Phase 4: Cross-Platform Build, CI & End-to-End Verification
+
 **Goal**: The render path is proven end-to-end across target platforms (including macOS/MoltenVK) and continuously verified in CI, with zero regressions to existing MNN inference/retrain behavior.
 **Depends on**: Phase 3 (needs a working `RenderProcessor` before end-to-end execution, cross-platform runs, and CI tiers can be meaningfully validated)
 **Requirements**: DETV-03, E2E-01, E2E-02, E2E-03
 **Success Criteria** (what must be TRUE):
+
   1. CI runs a hardware-independent tier — schema validation, shader compile, `spirv-val`, pipeline construction via a software Vulkan ICD — on every build, test-only and never exercised from product code (DETV-03)
   2. CI runs a hardware-dependent tier — real draw+readback, the N≥10 repeat-run determinism test — on a real-GPU runner (DETV-03)
   3. A real render pass definition executes end-to-end through the actual distributed processing pipeline and produces a verified output hash (E2E-01)
   4. The render path actually executes — not just compiles — on a MoltenVK/macOS target (E2E-02)
   5. The full existing MNN inference/retrain test suite passes with zero regressions alongside the new render path, including a concurrent-init stress test proving Phase 1's shared Vulkan-init lock holds under real concurrent MNN-Vulkan-init + `RenderProcessor`-Vulkan-init load (E2E-03)
+
 **Plans**: TBD
 
 ## Progress
