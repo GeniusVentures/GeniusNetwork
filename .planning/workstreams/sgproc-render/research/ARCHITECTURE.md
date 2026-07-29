@@ -1,259 +1,283 @@
-# Architecture Patterns
+# Architecture Research: Hand-Rolled Vulkan RenderProcessor Integration
 
-**Domain:** Distributed processing-job execution (SGProcessingManager) — integrating a headless Vulkan render pass alongside an existing MNN-inference-shaped dispatch system
-**Researched:** 2026-07-28
+**Domain:** Headless Vulkan render-pass execution inside SGProcessingManager's distributed processing pipeline
+**Researched:** 2026-07-29
+**Confidence:** HIGH for codebase findings (direct source reads with file:line citations); MEDIUM for cross-verified Vulkan spec/loader claims (external, cross-checked across 2+ sources, not primary-spec-text quoted verbatim)
 
-## Recommended Architecture
+## Standard Architecture
 
-### Current architecture (as-is, verified from source)
-
-```
-ProcessingCoreImpl::ProcessSubTask(SGProcessing::SubTask)
-    │
-    ├─ ProcessingManager::Create(task.json_data())         // parses whole SgnsProcessing doc, builds m_inputMap
-    │      └─ CheckProcessValidity()                       // per-pass switch(PassType) — RENDER: break (no-op today)
-    │
-    ├─ ProcessingManager::GetModelNodeFromJson(subTask.json_data())
-    │      → sgns::ModelNode  (one input_node/output_node entry — "input:<name>" or "output:<name>")
-    │
-    └─ processing_manager_->Process(ioc, chunk_hashes, model, output_locations)
-           │
-           ├─ GetInputIndex(model.get_source())              // "input:foo" → index i into processing_.get_inputs()
-           ├─ GetCidForProc(ioc, model)                       // fetches BOTH:
-           │        processing_.get_passes()[i].get_model().value().get_source_uri_param()   ← model file
-           │        processing_.get_inputs()[i].get_source_uri_param()                        ← data file
-           │        (NOTE: indexes passes[] by the *input* index i — an undocumented
-           │         1:1 positional assumption between inputs[] and passes[], not a
-           │         name-based lookup. This only works because today's schemas are
-           │         single-pass/single-model.)
-           ├─ SetProcessorByName(inputs[i].get_type())        // DataType → m_processorFactories → m_processor
-           ├─ m_processor->StartProcessing(chunkhashes, inputs[i], imageData, modelFile, parameters)
-           │        → ProcessingResult{ hash, output_buffers }
-           └─ output_buffers → FileManager::SaveASync(...) per processing_.get_outputs()[k], IPFS dual-save,
-                    hash → returned as std::vector<uint8_t>
-```
-
-Two load-bearing facts this design rests on, both broken by a render pass:
-
-1. **Dispatch key is `DataType`, not `PassType`.** `m_processorFactories` is keyed by the *input's* `DataType` (`TEXTURE2_D`, `STRING`, …), populated once in `Init()`. `PassType` is checked only for JSON validation in `CheckProcessValidity()` and is never read again. There is no `PassType`-keyed table anywhere.
-2. **One pass ⇄ one model ⇄ one input, addressed positionally.** `Process()`/`GetCidForProc()` assume `passes[i]` is the pass that owns `inputs[i]`, recovered via `GetInputIndex` on the model's `source` string. A render pass has *no* `model`, has *multiple* inputs bound via `pass.get_inputs()` (`PassIoBinding`, resolved by `input:`/`internal:`/`parameter:` prefix — a totally different resolution mechanism than `IoDeclaration`/`m_inputMap`), and needs a `pass.get_outputs()` (`PassIoBinding` with `output:`/`internal:` targets) rather than the top-level `processing_.get_outputs()` used today. The existing single positional index cannot express "this pass reads binding `vertexBuffer` from `input:mesh` and binding `indexBuffer` from `input:indices`."
-
-**Consequence for this milestone's dispatch design:** `PassType`-keyed dispatch cannot bolt onto the *existing* `SetProcessorByName(DataType)` call without a parallel resolution path, because a render pass is identified and driven by *pass name + `PassIoBinding` list*, not by *input index + `IoDeclaration`*. Build the render path as a second, independent resolution branch inside `Process()`, not as a `DataType` alias.
-
-### Target architecture (render path added)
+### System Overview (as it exists today, annotated with the new RENDER path)
 
 ```
-ProcessingManager::Process(...)
-    │
-    ├─ Resolve which Pass this SubTask targets
-    │     (today: purely via GetInputIndex(model.source); render subtasks carry
-    │      no ModelNode — need a pass-name-keyed lookup, e.g. m_passMap["passName"],
-    │      built in Init() alongside m_inputMap, mirroring its construction pattern)
-    │
-    ├─ switch (pass.get_type())
-    │     case PassType::RENDER:
-    │         → RenderProcessor path (new)
-    │     default (existing DataType path):
-    │         → SetProcessorByName(inputs[i].get_type()) → MNN processor (unchanged)
-    │
-    └─ RenderProcessor path:
-          1. Resolve each PassIoBinding in pass.get_inputs() to a buffer:
-                "input:name"    → fetch via FileManager (same GetSubCidForProc mechanism)
-                "internal:name" → produced by an earlier pass in this same job (new: an
-                                  internal-buffer table scoped to one ProcessingManager::Process() call)
-                "parameter:name"→ processing_.get_parameters() (already resolved elsewhere for
-                                  StringMNN's tokenizerMode pattern — reuse that lookup helper)
-          2. RenderProcessor::StartProcessing(...) (render-shaped signature, see below)
-                a. Acquire/construct the render context (Vulkan instance/device/queue — see
-                   "Render Context Ownership" below)
-                b. Compile/load shader stages from pass.get_shader() (vertex+fragment; the
-                   schema extension mentioned in PROJECT.md, not designed here)
-                c. Upload vertex/index buffers from resolved PassIoBinding inputs
-                d. Allocate offscreen render target(s) (color/depth attachment images) sized
-                   per schema render-target config
-                e. Record + submit command buffer; wait on fence (headless — no
-                   surface/swapchain, no present)
-                f. Read back render target into host memory (vkCmdCopyImageToBuffer +
-                   host-visible staging buffer, or vkMapMemory if HOST_VISIBLE was used
-                   for the target directly)
-          3. Wrap readback bytes in the *same* ProcessingResult{ hash, output_buffers }
-             shape MNN processors return — hash via existing sgprocmanagersha::sha256,
-             output_buffers feeding the existing FileManager::SaveASync /
-             IPFS-dual-save / output_locations code in Process() completely unchanged.
+┌──────────────────────────────────────────────────────────────────────────┐
+│  ProcessingCoreImpl::ProcessSubTask()                                     │
+│  (SuperGenius/src/processing/impl/processing_core_impl.cpp:55-140)        │
+│  - loads Task json from CRDT, parses ModelNode from SubTask json          │
+│  - calls ProcessingManager::Process(ioc, chunkhashes, model, out_locs)    │
+└───────────────────────────────┬────────────────────────────────────────┘
+                                 │
+┌───────────────────────────────▼────────────────────────────────────────┐
+│  ProcessingManager (SGProcessingManager/src/processingbase/)             │
+│                                                                            │
+│  CheckProcessValidity()  — pass.get_type() switch, RENDER currently a    │
+│    no-op (ProcessingManager.cpp:151-152) — validated, never routed        │
+│                                                                            │
+│  Process(ioc, chunkhashes, model, out_locations)                         │
+│   ├─ index = GetInputIndex(model.get_source())      [cpp:671]           │
+│   ├─ NEW: pass = processing_.get_passes()[index]     ← same index today  │
+│   │        is already (undocumented-ly) reused to index get_passes()      │
+│   │        at cpp:840 inside GetCidForProc — see Integration Points       │
+│   ├─ switch(pass.get_type())                                             │
+│   │    ├─ RENDER  → NEW m_passFactories[PassType::RENDER] → RenderProcessor│
+│   │    └─ default → existing m_processorFactories[DataType(...)] → MNN_*  │
+│   └─ processResult = m_processor->StartProcessing(...) [cpp:689]         │
+│        (same ProcessingResult contract for both paths)                   │
+│                                                                            │
+│   output_buffers → FileManager::SaveASync(...) [cpp:696-817]  — UNCHANGED │
+└───────────────────────────────┬────────────────────────────────────────┘
+                                 │
+        ┌────────────────────────┴─────────────────────────┐
+        │                                                    │
+┌───────▼────────────────┐                     ┌────────────▼───────────────┐
+│ MNN_* processor family  │                     │ RenderProcessor (NEW)       │
+│ (processing_processor_  │                     │ processing_processor_       │
+│  mnn_*.cpp, 17 classes) │                     │ render.cpp/.hpp             │
+│ : public ProcessingProcessor                    │ : public ProcessingProcessor│
+│ owns MNN::Interpreter   │                     │ owns OWN VkInstance/VkDevice│
+│ (Vulkan fully internal   │                     │ (headless, no swapchain)    │
+│  to MNN, never exposed) │                     │ own physical device pick,   │
+│                          │                     │ own queue, own command pool │
+└──────────────────────────┘                     └─────────────────────────────┘
+        │                                                    │
+        └──────────────────── same physical GPU ────────────┘
+             (independent VkInstance/VkDevice each — see Coexistence Risk)
 ```
 
-### Component Boundaries
+### Component Responsibilities
 
-| Component | Responsibility | Communicates With | Status |
-|-----------|---------------|-------------------|--------|
-| `ProcessingManager` (`ProcessingManager.cpp/hpp`) | Parses `SgnsProcessing` JSON, owns pass/input maps, dispatches to a processor, drives output save | `ProcessingProcessor` subclasses (via factory map), `FileManager`, `sgprocmanagersha` | **Modified** — add `PassType` switch in `Process()`, add pass-name lookup map, fix `ParseBlockSize()` type guard (separate concern already tracked) |
-| `ProcessingProcessor` (`processing_processor.hpp`) | Abstract base: `StartProcessing(...) -> ProcessingResult` | Implemented by MNN_* and (new) `RenderProcessor` | **Modified or extended** — see interface discussion below |
-| `MNN_Image`, `MNN_String`, … (existing) | Inference execution per `DataType` | MNN library, Vulkan (MNN-internal, fully encapsulated) | **Unmodified** |
-| `RenderProcessor` (new) | Builds and executes one headless render pipeline from a schema `Pass` (render type); returns `ProcessingResult` | `VulkanRenderContext` (new), a vendored Vulkan rendering/utility library (schema/library selection out of this doc's scope), `FileManager` (via `ProcessingManager`, not directly) | **New** |
-| `VulkanRenderContext` (new) | Owns the render-pass-family's `VkInstance`/`VkPhysicalDevice`/`VkDevice`/`VkQueue`, independent of MNN's | `RenderProcessor` instances | **New** |
-| `ProcessingManager::CheckProcessValidity()` | Per-pass JSON structural validation | — | **Modified** — `PassType::RENDER` case needs to validate `pass.get_shader()` is present (mirroring the existing `INFERENCE` → `get_model()` check), matching the schema's own `allOf`/`if`/`then` requirement that render passes have a `shader` |
-| `gnus-processing-schema.json` / `generated/*.hpp` (quicktype) | Schema source of truth for `Pass`, `ShaderConfig`, `PassIoBinding`, etc. | Regenerated into `SGProcessingManager/generated/` | **Modified** (schema extension is a separate milestone deliverable; not designed in this file) |
-| `thirdparty/<new-vulkan-lib>` | Vendored permissive-license Vulkan renderer/utility helper (device/instance bootstrap, pipeline builder, or similar) | Consumed by `RenderProcessor`/`VulkanRenderContext` | **New** (library selection is a `STACK.md` concern, not this file) |
+| Component | Responsibility | File(s) |
+|-----------|----------------|---------|
+| `ProcessingManager` | Parses `SgnsProcessing` JSON, validates passes, dispatches one pass's execution to a `ProcessingProcessor` implementation, forwards output buffers to `FileManager` for save/IPFS-publish | `SGProcessingManager/src/processingbase/ProcessingManager.cpp` |
+| `ProcessingProcessor` (base) | Generic one-shot "take chunk hashes + IoDeclaration + two raw byte buffers + optional parameters, return `ProcessingResult`" contract; no MNN- or Vulkan-specific assumptions baked in | `SGProcessingManager/include/processors/processing_processor.hpp:27-56` |
+| `MNN_*` family (17 classes) | Bind an `MNN::Interpreter` model (fed via the "modelFile" buffer) against differently-shaped input data (fed via the "imageData" buffer), keyed by `DataType` of the model's designated input | `SGProcessingManager/src/processors/processing_processor_mnn_*.cpp` |
+| `RenderProcessor` (NEW) | Own independent headless Vulkan instance/device; builds a graphics pipeline from schema `shader_config` + new render-target/buffer-binding fields; executes one offscreen render pass; reads back the color attachment into a host buffer | `SGProcessingManager/src/processors/processing_processor_render.cpp` (new) |
+| `Vulkan::Vulkan` CMake target | Already-vendored Vulkan-Loader + Vulkan-Headers, resolved via standard `find_package(Vulkan)` against `VULKAN_SDK` pointed at the thirdparty-built loader | `thirdparty/build/CommonTargets.cmake:363-391`, consumed at `SGProcessingManager/src/processors/CMakeLists.txt:58` |
+| MNN's internal Vulkan backend | `MNN::VulkanInstance`/`VulkanDevice` — fully private to MNN's `backend/vulkan/` implementation, never included by any header SGProcessingManager uses | `thirdparty/MNN/source/backend/vulkan/component/VulkanInstance.hpp:17-37` |
 
-### Data Flow
+## Recommended Project Structure
 
 ```
-schema Pass (type: render)
-   │  name, shader{source,type,entry_point,uniforms}, inputs[](PassIoBinding), outputs[](PassIoBinding)
-   ▼
-ProcessingManager::Process()
-   │  resolves pass by name (new pass-name map), branches on PassType::RENDER
-   ▼
-RenderProcessor::StartProcessing(pass, resolved_input_buffers, parameters)
-   │
-   ├─ Pipeline construction
-   │     shader stages  ← compile/load SPIR-V from pass.shader (vertex + fragment)
-   │     vertex/index buffers ← upload from PassIoBinding "input:"/"internal:" sources
-   │     render target  ← allocate offscreen color (+ optional depth) image per schema render_target config
-   │     descriptor/uniform data ← pass.shader.uniforms, resolved same way as PassIoBinding sources
-   │
-   ├─ Execution (headless — no VkSurfaceKHR, no swapchain, no vkQueuePresentKHR)
-   │     record command buffer → vkQueueSubmit → vkWaitForFences
-   │
-   └─ Readback
-         vkCmdCopyImageToBuffer → host-visible staging buffer → std::vector<char>
-   ▼
-ProcessingResult{ hash = sha256(readback_bytes), output_buffers = {names, [readback_bytes]} }
-   ▼
-ProcessingManager::Process() (unchanged from here down)
-   │  same code path MNN results already use:
-   ├─ FileManager::SaveASync(outputUrl, ...)     — save to IPFS/file per processing_.get_outputs()
-   ├─ IPFS dual-save to local cache
-   └─ returns processResult.hash  →  SubTaskResult.result_hash (proto), used by
-      existing consensus/validation hashing exactly as inference results are today
+SGProcessingManager/
+├── gnus-processing-schema.json        # extend "pass" (render_target,
+│                                       #   vertex/index buffer bindings,
+│                                       #   vertex+fragment shader stages)
+├── generated/                         # regenerate via quicktype — NEVER hand-edit
+│   ├── PassType.hpp                   # unchanged (RENDER already exists)
+│   ├── DataType.hpp                   # unchanged
+│   └── SgnsProcessing.hpp             # new render-pass fields land here
+├── include/processors/
+│   ├── processing_processor.hpp       # unchanged base interface
+│   └── processing_processor_render.hpp  # NEW — parallel to mnn_*.hpp siblings
+├── include/processingbase/
+│   └── ProcessingManager.hpp          # + m_passFactories, RegisterPassProcessorFactory,
+│                                       #   SetProcessorByPassType (additive only)
+└── src/
+    ├── processingbase/ProcessingManager.cpp  # + PassType branch in Process(),
+    │                                          #   guard in ParseBlockSize()
+    └── processors/
+        ├── CMakeLists.txt             # + processing_processor_render.cpp,
+        │                              #   + link new SPIR-V compiler lib
+        └── processing_processor_render.cpp   # NEW
 ```
 
-**Key point:** everything *downstream* of `ProcessingResult` (hashing format, save/dual-save, `output_locations`, proto `SubTaskResult`) is reused completely unmodified — a render pass is just another producer of a `ProcessingResult`. Everything *upstream* of it (pass/input resolution) needs the new pass-name-keyed lookup because render passes are not addressable through the existing input-index positional trick.
+### Structure Rationale
 
-## Patterns to Follow
+- `RenderProcessor` sits as a **sibling file next to the MNN family**, not a new module/library — it reuses the same `SGProcessors` static-library target, the same `ProcessingProcessor` base class, and the same `Vulkan::Vulkan` link dependency that target already declares (`CMakeLists.txt:58`) for MNN's sake. No new CMake target is needed for the class itself.
+- Schema/generated separation is already enforced by convention (`generated/` is quicktype output) — the milestone's own scoping already states this, confirmed by the presence of `Generators.hpp`/`helper.hpp` boilerplate headers in every generated file.
 
-### Pattern 1: PassType dispatch as a sibling branch, not a DataType alias
+## Architectural Patterns
 
-**What:** In `Process()`, dispatch on `pass.get_type()` first. Only fall through to the existing `SetProcessorByName(DataType)` / `m_processorFactories` mechanism for non-render pass types. Do not attempt to register `RenderProcessor` into `m_processorFactories` keyed by some synthetic `DataType` — the render path's inputs are plural and `PassIoBinding`-resolved, not singular and `IoDeclaration`-resolved, so it does not fit the factory's calling convention (`StartProcessing(chunkhashes, const IoDeclaration&, imageData, modelFile, parameters)`).
+### Pattern 1: PassType-keyed dispatch alongside DataType-keyed dispatch (additive, not replacing)
 
-**When:** `PassType::RENDER` (and, by the same reasoning, `PassType::COMPUTE`, which shares the `shader_config`-shaped schema branch and will hit the same mismatch later).
+**What:** Add a second dispatch table, `m_passFactories: unordered_map<PassType, factory>`, checked in `Process()` before falling through to the existing `m_processorFactories` (DataType-keyed) path.
 
-**Example (illustrative — actual factory/table wiring is an implementation detail for planning):**
+**Why a *separate* map is required, not reuse of `m_processorFactories`:** `RegisterProcessorFactory`/`SetProcessorByName` key on a plain `int` cast from `DataType` (`ProcessingManager.hpp:59-63`, `.cpp:72-103`). Casting `PassType` to the same `int` space collides directly:
+
 ```cpp
-// In ProcessingManager::Process(), after resolving `pass` by name:
-switch (pass.get_type())
+// generated/DataType.hpp:19
+enum class DataType : int { BOOL, BUFFER, FLOAT, INT, MAT2, MAT3, MAT4, STRING, ... };
+//                                                  ^ INT = 3
+
+// generated/PassType.hpp:26
+enum class PassType : int { COMPUTE, DATA_TRANSFORM, INFERENCE, RENDER, RETRAIN };
+//                                                              ^ RENDER = 3
+```
+
+`static_cast<int>(PassType::RENDER) == static_cast<int>(DataType::INT) == 3`. Reusing `m_processorFactories` for both would silently dispatch a RENDER pass to whatever factory is registered for `DataType::INT` (currently `MNN_Int`). This is not a hypothetical risk — it is a confirmed, exact collision in the current generated enums. The new `m_passFactories` map must key on the `PassType` enum type itself (or an explicitly disjoint integer range), not on `static_cast<int>`.
+
+**Where dispatch belongs in `Process()`:** immediately after `index = GetInputIndex(modelname)` at `ProcessingManager.cpp:671`. Today, that same `index` is *already* reused (undocumented, but present in the shipped code) to index `processing_.get_passes()` at `cpp:840`:
+
+```cpp
+// ProcessingManager.cpp:840 — inside GetCidForProc
+std::string modelFile = processing_.get_passes()[index.value()].get_model().value().get_source_uri_param();
+```
+
+This confirms the existing implicit convention: **input array index == pass array index** (passes and inputs are expected to be positionally parallel). This is the cheapest, least-disruptive hook — no signature change to `Process()`, no change to `ProcessingCoreImpl`'s call site (`processing_core_impl.cpp:102`), no change to how subtasks are split today. The new code simply reads `processing_.get_passes()[index.value()].get_type()` and branches:
+
+```cpp
+const auto &pass = processing_.get_passes()[index.value()];
+if ( pass.get_type() == PassType::RENDER )
 {
-    case PassType::RENDER:
-    {
-        auto renderResult = RunRenderPass(ioc, pass, chunkhashes, parameters);
-        // renderResult is a ProcessingResult — feed into the existing
-        // output_buffers/FileManager block unchanged.
-        break;
-    }
-    default:
-    {
-        // existing DataType-keyed m_processorFactories path, unchanged
-        break;
-    }
+    if ( !SetProcessorByPassType( PassType::RENDER ) )
+        return outcome::failure( Error::NO_PROCESSOR );
+}
+else
+{
+    if ( !SetProcessorByName( static_cast<int>( processing_.get_inputs()[index.value()].get_type() ) ) )
+        return outcome::failure( Error::NO_PROCESSOR );
 }
 ```
 
-### Pattern 2: A render-specific method on `ProcessingProcessor`, or a parallel interface — recommend the latter
+**Trade-off / flag for the roadmap:** this reuses a convention that is currently *implicit and untested* (passes[i] ↔ inputs[i] positional pairing). It is real and already load-bearing in shipped code (`cpp:840`), so relying on it is not introducing a new risk — but it means the schema/job-splitter must keep emitting passes and inputs in matching order for any pass type, render included. This is worth an explicit assertion/validation addition in `CheckProcessValidity()` (passes.size() == inputs.size(), or an explicit index field) as a small hardening step, not a blocker.
 
-**What:** `ProcessingProcessor::StartProcessing(chunkhashes, const IoDeclaration&, imageData, modelFile, parameters)` is inference-shaped: exactly one `IoDeclaration` (one input), one model-file buffer. A render pass needs: the `Pass&`/`ShaderConfig&` itself, an ordered list of resolved input buffers (one per `PassIoBinding`, each carrying its own type/format), and no model file at all.
+**`GetCidForProc` also needs a parallel branch:** it unconditionally calls `model.get_model().value().get_source_uri_param()`-equivalent logic assuming a `model_config` (`cpp:840`). For a RENDER pass there is no `model` at all (schema requires `shader` instead — `gnus-processing-schema.json:205-222`, the `allOf`/`if`/`then` block). The render branch must instead read `pass.get_shader().value().get_source()` for the shader URI and fetch the schema's new vertex/index buffer binding(s) the same way — reusing the exact same `FileManager`/`GetSubCidForProc` async-fetch machinery (`cpp:885-913`), just pointed at different fields.
 
-Two options were weighed:
-- **(a) Overload the base interface** — add a second pure-virtual `StartProcessing(chunkhashes, const Pass&, std::vector<ResolvedBinding>&, parameters)` to `ProcessingProcessor`, defaulted to throw/assert in the MNN subclasses that don't implement it.
-- **(b) A parallel interface**, e.g. `RenderProcessorBase`, that does *not* inherit `ProcessingProcessor` at all, and is invoked from its own branch in `Process()` (Pattern 1) rather than through `m_processorFactories`.
+### Pattern 2: `RenderProcessor` reuses the existing `ProcessingProcessor` interface — no new sibling hierarchy
 
-**Recommendation: (b).** `ProcessingProcessor` is consumed today only through `m_processorFactories`/`SetProcessorByName`/`m_processor` — all keyed and typed around the single-`IoDeclaration` inference shape. Forcing a second signature onto that interface means every existing MNN_* subclass gets a dead-code override, and `m_processor` (a single `unique_ptr<ProcessingProcessor>`) would need to hold either shape ambiguously. A parallel, render-specific interface (own header, own factory map keyed by pass name or by `ShaderType`/render-target-kind if multiple render pipeline "flavors" emerge later) keeps the inference path completely untouched and gives the render path a signature that actually matches its data (a `Pass`, not an `IoDeclaration`).
+**What:** `RenderProcessor : public sgns::sgprocessing::ProcessingProcessor`, implementing the same `StartProcessing(chunkhashes, proc, imageData, modelFile, parameters) -> ProcessingResult` signature as every `MNN_*` class.
 
-**Instead of `m_processor` (singular member):** introduce a second, separate member (e.g. `std::unique_ptr<RenderProcessorBase> m_renderProcessor`) or, simpler for a first cut, construct a `RenderProcessor` instance locally inside the `PassType::RENDER` branch of `Process()` — it does not need to be a long-lived class member like `m_processor` is, since (unlike MNN's stateful session model) each render pass execution is expected to be a self-contained construct-pipeline → execute → readback → destroy sequence per subtask.
+**Why this fits without modification:** the interface (`processing_processor.hpp:37-41`) is already generic — two raw `std::vector<char>&` buffers plus an `IoDeclaration` plus optional parameters. Nothing in the signature is MNN-specific:
+- `modelFile` buffer → reinterpreted as compiled SPIR-V bytes (or GLSL source bytes needing runtime compilation — see Pattern 3) instead of an MNN `.mnn` model blob.
+- `imageData` buffer → reinterpreted as packed vertex/index buffer bytes instead of an input tensor/image.
+- `ProcessingResult::output_buffers` (a `pair<vector<string>, vector<vector<char>>>`, same as every MNN processor already produces) → the readback-from-framebuffer bytes, flowing unchanged through `Process()`'s existing output-save path (`cpp:696-817`, `FileManager::SaveASync`).
 
-### Pattern 3: Per-`RenderProcessor`-instance Vulkan device, shared instance-level context
+**When a new sibling hierarchy would have been justified (and isn't here):** if the render pass needed a fundamentally different return shape (e.g., streaming partial results, or a different progress-reporting contract) or if it needed to bypass the "chunkhashes" concept entirely. Neither is true — `RenderProcessor` produces exactly one shot of output bytes per invocation, identical in shape to what `MNN_Image`/`MNN_Buffer` already produce. Reusing the base class keeps `m_processor` (the single polymorphic `unique_ptr<ProcessingProcessor>` member in `ProcessingManager.hpp:129`) uniform across both dispatch paths — no second processor-holder member needed.
 
-**What:** Two axes of ownership need separating:
-1. **`VkInstance`** — process-wide, expensive to create, holds no per-job state. Own it in a small singleton/lazily-initialized `VulkanRenderContext` (analogous in spirit to `FileManager::GetInstance()`'s singleton pattern already used elsewhere in this same call path), created once, guarded by its own mutex during the one-time `vkCreateInstance`/`vkCreateDevice` calls.
-2. **`VkDevice`/`VkQueue`** — also process-wide is fine *if* the node only ever runs one render pass at a time (true today: `ProcessingCoreImpl` already serializes subtask processing via `IncProcessingSubTaskCount()`/`max_processing_subtask_count_`, and the *existing* `mnn_vulkan_mutex` in `processing_processor_mnn_image.cpp:114` shows the codebase already treats "one Vulkan init at a time, process-wide" as an accepted constraint). Do not create a new `VkDevice` per `RenderProcessor` instance — device creation is comparatively heavyweight and per-job device churn would dominate short render passes.
-3. **Command pools / command buffers / descriptor pools / the render target images themselves** — these *are* per-render-pass, i.e. own them on the `RenderProcessor` instance (or a short-lived helper it owns), reset/destroyed after each `StartProcessing()` call. This is the resource tier that legitimately varies per schema `Pass`.
+**Trade-off:** the buffer-repurposing (shader bytes in the "model" slot, vertex/index bytes in the "image" slot) is a naming/semantic stretch on the base interface's parameter names. This is acceptable for a "least-disruptive" v1 but is worth a documentation comment on `RenderProcessor::StartProcessing` explaining the reinterpretation, since a future reader skimming `processing_processor.hpp`'s doc comments (which say "Reference to task to get image split data") would otherwise be confused.
 
-**Why not a fully independent instance/device per `RenderProcessor` (full isolation)?** It is *safer* in isolation (zero shared mutable state) but the milestone's own context flags MNN's Vulkan init as process-wide-mutex-serialized already, and Vulkan instance/device creation cost is nontrivial (driver JIT, ICD enumeration) — paying that cost per subtask would regress the very short single-pass timings this pipeline is optimized for. Because MNN's Vulkan usage is fully encapsulated with **no exposed handles**, there is no *technical* requirement to interop share objects with MNN's context — the "must stay fully separate" constraint from the milestone context is satisfied automatically by MNN never exposing anything to share with. The design choice here is therefore purely about the new render context's *own* internal reuse, not about coordinating with MNN.
+### Pattern 3: Runtime GLSL→SPIR-V compilation, not a build-time-only CLI step
 
-**Recommendation:**
+**What:** shader source (`pass.get_shader().get_source()`, per schema `shader_config.source` at `gnus-processing-schema.json:326-356`) is fetched at job-execution time via the same IPFS/file/URL `source_uri_param` mechanism every other input already uses (`ProcessingManager.cpp:885-913`). This means the shader's GLSL text is not known until runtime — it arrives as fetched bytes per-subtask, exactly like a model file does today.
+
+**Confirmed gap — no reusable GLSL→SPIR-V toolchain currently exists in this repo:**
+- `thirdparty/Vulkan-Headers` and `thirdparty/Vulkan-Loader` are vendored and already wired via `find_package(Vulkan)` → `Vulkan::Vulkan` (`thirdparty/build/CommonTargets.cmake:363-391`; consumed at `SGProcessingManager/src/processors/CMakeLists.txt:58`). These provide the Vulkan API/loader only — no shader compiler.
+- `thirdparty/MoltenVK/MoltenVKShaderConverter/glslang` exists, but it is a **nested submodule scoped to MoltenVK's own SPIR-V→Metal shader converter build**, not an exposed, independently linkable `glslang` target usable from `SGProcessingManager`.
+- MNN's own Vulkan backend (`thirdparty/MNN/source/backend/vulkan/.../compiler/VulkanCodeGen.py`) is a code-generation scaffold for MNN's *own* precompiled operator shaders (baked into `AllShader.h` at MNN build time) — not a general-purpose runtime compiler, and not exposed outside MNN's internal backend.
+- No standalone `glslang`, `shaderc`, or `SPIRV-Tools` submodule exists at `thirdparty/` top level.
+
+**Implication:** since shader source arrives as runtime-fetched bytes (not a build-time artifact), a build-time-only `glslangValidator`/`glslc` CLI invocation does not fit the existing fetch pattern — `RenderProcessor` needs an **in-process, linkable** GLSL→SPIR-V compiler library, called at `StartProcessing()` time on the fetched bytes. This points to vendoring `glslang` (Khronos, BSD-3/MIT-style permissive — compatible with the project's all-permissive `thirdparty/` policy) as its own top-level submodule, built through the same ExternalProject/ImportedTarget pattern already used for Vulkan-Headers/Vulkan-Loader in `thirdparty/build/CommonTargets.cmake`. `shaderc` (Apache-2.0, also permissive) is the alternative — it wraps `glslang` + `SPIRV-Tools` behind a friendlier single-call C API (`shaderc_compile_into_spv`) and is the more common choice specifically because callers want "compile this GLSL string to SPIR-V bytes right now" rather than driving `glslang`'s own multi-step C++ API. Recommend `shaderc` for the smaller integration surface, unless the added `SPIRV-Tools`/`glslang` transitive dependency weight is a concern, in which case bare `glslang` is workable with more integration code.
+
+**Trade-off:** compiling shaders at runtime, per-job, adds latency (glslang/shaderc compilation of a small vertex+fragment pair is typically single-digit milliseconds, negligible next to network/IPFS fetch time already in the critical path) and a new attack surface (untrusted GLSL source from job definitions reaching a compiler) — worth flagging for a later security-review pass, out of scope for this architecture research.
+
+## Data Flow
+
+### Render Pass Execution Flow
+
 ```
-VulkanRenderContext (process-wide singleton, lazily constructed, own init mutex)
-    VkInstance   — created once
-    VkPhysicalDevice — selected once (headless-capable: no WSI/presentation
-                       queue family requirement, just a GRAPHICS-capable queue)
-    VkDevice     — created once
-    VkQueue      — fetched once from the device
-
-RenderProcessor (constructed per Pass execution, short-lived)
-    holds a reference/shared_ptr to VulkanRenderContext (not its own instance/device)
-    owns: command pool, command buffer(s), descriptor pool, pipeline layout/pipeline,
-          render target image(s) + image views + framebuffer, staging/readback buffer
-    all of the above destroyed when the RenderProcessor is destroyed (RAII, one per
-    StartProcessing() call — matches the "construct → execute → readback → destroy"
-    lifecycle described in Pattern 2)
+SubTask.json_data() (contains RENDER pass reference)
+    ↓
+ProcessingCoreImpl::ProcessSubTask (processing_core_impl.cpp:55-140, UNCHANGED)
+    ↓
+ProcessingManager::Process(ioc, chunkhashes, model, output_locations)
+    ↓
+index = GetInputIndex(...)  →  pass = get_passes()[index]  →  pass.get_type() == RENDER
+    ↓
+GetCidForProc — NEW branch: fetch shader source bytes + vertex/index buffer bytes
+  via FileManager::LoadASync (cpp:885-913, reused verbatim)
+    ↓
+SetProcessorByPassType(RENDER) → m_processor = RenderProcessor
+    ↓
+RenderProcessor::StartProcessing(chunkhashes, proc, vertexIndexBytes, shaderBytes, parameters)
+    ├─ compile GLSL → SPIR-V (shaderc/glslang, runtime)
+    ├─ build pipeline from schema render_target/framebuffer config
+    ├─ record + submit command buffer (own VkDevice, own queue)
+    ├─ vkQueueWaitIdle / fence wait
+    └─ copy color attachment → host-visible staging buffer → ProcessingResult.output_buffers
+    ↓
+Process() output-save path (cpp:696-817, UNCHANGED) — FileManager::SaveASync,
+  IPFS dual-save, output_locations populated exactly as MNN passes already do
 ```
 
-If profiling later shows the singleton's implicit serialization (only one render pass in flight at a time on a given node, mirroring the existing `mnn_vulkan_mutex` pattern) is a throughput bottleneck, the escape hatch is a **pool of devices** behind the same `VulkanRenderContext` facade (still process-wide-owned, still not per-`RenderProcessor`) — not one device per instance. Do not build that pool preemptively; it's unjustified complexity until there's a measured need, and it is not a decision this milestone needs to make.
+### Key Data Flows
 
-## Anti-Patterns to Avoid
+1. **Schema → pipeline config:** the extended `shader_config`/new render fields drive Vulkan `VkGraphicsPipelineCreateInfo` construction directly inside `RenderProcessor` — no intermediate abstraction layer, since this milestone explicitly prohibits a new rendering engine.
+2. **Output → existing save infra:** render output rides the exact same `ProcessingResult::output_buffers` → `FileManager::SaveASync` → IPFS/file path that MNN inference output already uses. This is the "bridge into `pass_io_binding`" the question asks about — it does not require new plumbing in `Process()`'s output section at all, only in how `RenderProcessor` populates the `output_buffers` pair.
 
-### Anti-Pattern 1: Reusing `GetInputIndex`/positional `passes[i]` lookup for render passes
+## Scaling Considerations
 
-**What:** Extending the current `passes[index]` positional trick (where `index` comes from `GetInputIndex` on a *ModelNode's* source) to somehow also resolve which pass is the render pass.
+Not meaningfully applicable in the traditional "N users" sense — this is a single-process compute-node executing one pass per `Process()` call, synchronously, per subtask. The relevant "scale" axis is **passes-per-job and concurrent-subtasks-per-node**, addressed under Coexistence Risk below rather than a user-scale table.
 
-**Why bad:** That trick only works because today every pass has exactly one model with one `input:` source, and pass-list-position happens to equal input-list-position. A render pass may have zero, one, or several `PassIoBinding` inputs with no `ModelNode` at all — there is nothing for `GetInputIndex` to be called *with*. Trying to force-fit it produces silent misalignment bugs (wrong pass executed) rather than a clean failure.
+## Integration Points — Coexistence Risk Verdict
 
-**Instead:** Add an explicit pass-name map (`m_passMap: name → index into processing_.get_passes()`), built in `Init()` the same way `m_inputMap` already is (lines 121-126 of `ProcessingManager.cpp`), and have the caller (`ProcessingCoreImpl`/subtask JSON) carry a pass-name reference for render/compute subtasks instead of (or alongside) the `ModelNode` JSON it carries today for inference subtasks.
+**Question:** does genuinely independent `VkInstance`/`VkDevice` ownership (RenderProcessor's own vs. MNN's fully-internal one) require any explicit synchronization/locking?
 
-### Anti-Pattern 2: Creating a `VkInstance`/`VkDevice` per `RenderProcessor` construction
+**Verdict: NO. No explicit synchronization or locking mechanism is required.** This is evidence-based, not a cautious guess:
 
-**What:** Mirroring the "per-processor-instance" ownership that would seem symmetrical with the `RenderProcessor : per-Pass-execution` lifecycle from Pattern 2/3.
+1. **Vulkan has no instance-spanning global state by design.** Per-application state lives entirely inside a `VkInstance`; objects allocated from a `VkDevice` are private to that device and must not be used on any other device ([Vulkan Documentation Project — Fundamentals](https://docs.vulkan.org/spec/latest/chapters/fundamentals.html)). Two independent `VkInstance`/`VkDevice` pairs in one process do not share any handle, memory allocation, or dispatch state by construction — there is nothing to race over unless the application itself hands the same handle to two threads, which does not happen here (MNN never exposes its instance/device; `RenderProcessor` owns and never shares its own).
+2. **Confirmed no exposure path exists today.** `MNN::VulkanInstance` (`thirdparty/MNN/source/backend/vulkan/component/VulkanInstance.hpp:17-37`) is a private implementation type inside MNN's internal `backend/vulkan/` tree — not included by, or reachable from, any public MNN header SGProcessingManager consumes (`MNN::MNN` target only). There is no code path today, and none planned, by which `RenderProcessor` and MNN could accidentally end up sharing a `VkInstance`/`VkDevice`/`VkQueue` handle.
+3. **The Vulkan Loader's own global bookkeeping (ICD discovery/enumeration, per-instance dispatch table construction) is documented as internally thread-safe.** The loader "uses multiple mutexes to ensure thread-safe access to global instance and device state" ([KhronosGroup/Vulkan-Loader — LoaderInterfaceArchitecture.md](https://github.com/KhronosGroup/Vulkan-Loader/blob/main/docs/LoaderInterfaceArchitecture.md)). This is the exact loader vendored at `thirdparty/Vulkan-Loader` and already linked as `Vulkan::Vulkan`. Even if MNN's lazy Vulkan-backend init and `RenderProcessor`'s init were ever called concurrently from separate threads (they are not, today — see point 4), the loader itself already serializes the shared bookkeeping (ICD enumeration cache, layer chain construction) internally; the application does not need to add its own lock around `vkCreateInstance`/`vkCreateDevice`.
+4. **No concurrency exists today that would even exercise this.** `ProcessingManager::Process()` is called synchronously, once per subtask, from `ProcessingCoreImpl::ProcessSubTask` (`processing_core_impl.cpp:55-140`); the only asynchronous work in the current pipeline is network/file IO via `boost::asio::io_context::run()` (`cpp:805-806`, `855-856`), not the Vulkan-touching compute/render call itself. There is no code path in the current architecture where MNN's Vulkan init and a render pass's Vulkan init race on separate threads.
 
-**Why bad:** Vulkan instance/device creation is the most expensive part of the Vulkan startup sequence (ICD/layer enumeration, driver capability negotiation). Paying it on every subtask defeats the purpose of a distributed *chunked* processing pipeline built around many small, fast subtask executions (see `ProcessTaskSplitter::SplitTask`'s per-chunk subtask model).
+**Real coexistence considerations — operational, not correctness/synchronization:**
 
-**Instead:** Singleton/shared `VulkanRenderContext` for instance+device+queue (Pattern 3); per-execution ownership only for command buffers, descriptor sets, and the render target images themselves.
+| Concern | Nature | Mitigation |
+|---------|--------|------------|
+| GPU scheduling contention | Two independent `VkDevice`s on the same physical GPU compete for compute units/VRAM bandwidth at the driver level if ever run concurrently — same as any two independent Vulkan applications sharing a GPU today | Document as expected; not a correctness bug. No code-level fix needed at v1 scope (today's pipeline doesn't run MNN inference and a render pass concurrently anyway) |
+| Physical device selection consistency | If the host has multiple GPUs, MNN's backend and `RenderProcessor`'s own `vkEnumeratePhysicalDevices` selection logic could independently pick *different* physical devices | Policy/config decision (e.g., prefer device index 0, or make it explicitly configurable), not a threading bug — flag for RenderProcessor's headless-init design, not for this dispatch-plumbing work |
+| Teardown ordering | Each owns full RAII lifecycle (`vkDestroyDevice`→`vkDestroyInstance`) independently; Vulkan has no process-wide instance-teardown handshake requirement | None needed — standard RAII destructor ordering suffices |
+| Validation layers (if `VK_INSTANCE_LAYERS` env var set) | Loader inserts requested layers into **each** instance's own dispatch chain independently | Non-issue — per-instance, not shared |
 
-### Anti-Pattern 3: Forcing render output through the `IoDeclaration`-shaped output loop unchanged
+**One nuance surfaced by direct source read (not disqualifying the verdict):** `MNN::VulkanInstance` has an `explicit VulkanInstance(VkInstance instance)` constructor (`VulkanInstance.hpp:20`), meaning MNN's *internal* implementation is technically capable of accepting an externally-supplied instance — but this constructor is not reachable through any public MNN API/header, and this milestone explicitly does not intend to patch MNN itself. Mentioned only to close the loop on "is MNN's Vulkan use *truly* unreachable" — yes, in practice, via the public surface this project links against.
 
-**What:** Assuming `processing_.get_outputs()` (top-level `IoDeclaration` list) is sufficient to route render target readback to its save location without checking `pass.get_outputs()` (`PassIoBinding`, resolves via `output:`/`internal:` targets).
+## Anti-Patterns
 
-**Why bad:** The schema explicitly gives *passes* their own `outputs` (`PassIoBinding[]`) distinct from the job-level `outputs` (`IoDeclaration[]`) used by `Process()`'s save loop today. A render pass's target may be an `internal:` buffer consumed by a *later* pass (e.g., a render pass feeding a subsequent `data_transform` or `inference` pass) rather than a job-level output at all — multi-pass jobs are visibly anticipated by the schema (`data_transforms` array on `Pass`, `internal:` prefix throughout) even though today's `ProcessingManager::Process()` only ever executes one pass per call.
+### Anti-Pattern 1: Keying the new render dispatch on the same `int`-cast `m_processorFactories` map
 
-**Instead:** When a render pass's `PassIoBinding` output target is `internal:*`, keep the readback bytes in an in-memory intra-job buffer table (scoped to one `Process()` invocation, or eventually one multi-pass job if/when `Process()` grows to iterate `processing_.get_passes()` rather than run a single pass) rather than routing it through `FileManager::SaveASync`. Only route to `FileManager`/output save when the binding target resolves to a job-level `output:` name matching an entry in `processing_.get_outputs()`.
+**What people would do:** add `RegisterProcessorFactory(static_cast<int>(PassType::RENDER), ...)` because it looks like the path of least resistance (one map, one registration call style already established).
+**Why it's wrong:** confirmed collision — `static_cast<int>(PassType::RENDER) == 3 == static_cast<int>(DataType::INT)` (see Pattern 1 above). This would silently misroute.
+**Do this instead:** a separate `m_passFactories` map keyed on `PassType` directly (or an explicit `SetProcessorByPassType`/`RegisterPassProcessorFactory` pair mirroring the existing method names but operating on the new map).
 
-## Scalability Considerations
+### Anti-Pattern 2: Trying to fix `ParseBlockSize()` and add render-pass block-size computation as a single change
 
-| Concern | At 1 render pass/job (this milestone's E2E proof) | At multi-pass jobs (render → inference chains) | At high concurrent job volume |
-|---------|--------------------------------------------------|--------------------------------------------------|-------------------------------|
-| Vulkan context lifetime | Singleton `VulkanRenderContext`, created lazily on first render pass | Unchanged — still one process-wide instance/device | May need the device-pool escape hatch from Pattern 3 if serialization becomes measured bottleneck |
-| Serialization | Fine as-is — `ProcessingCoreImpl` already gates subtask concurrency via `max_processing_subtask_count_`; mirrors existing `mnn_vulkan_mutex` precedent | `RunRenderPass` must not hold the process-wide render-context init mutex across the *entire* pipeline execution — only around one-time instance/device creation, not per-frame submission, or every subsequent render pass job serializes behind it unnecessarily | Same |
-| Internal buffer passing between passes | N/A (single pass) | Needs the `internal:`-scoped buffer table described in Anti-Pattern 3 | Needs a bound on how much intermediate GPU/host memory a single multi-pass job can hold resident — not addressed by this milestone |
-| Render target memory | One small offscreen target per subtask, freed on `RenderProcessor` destruction | Same, but device-local intermediate targets for `internal:`-chained passes could stay GPU-resident rather than round-tripping through host memory each hop | Would need target-size/format validation added to `CheckProcessValidity()`'s `RENDER` case (currently a total no-op — this milestone's fix should at minimum validate `pass.get_shader()` presence, matching `INFERENCE`'s `get_model()` check) |
+**What people would do:** while fixing the `pass.get_model().value()` crash (`cpp:649`), also try to make `ParseBlockSize()` return a meaningful value for render passes' vertex/index buffer sizes in the same patch.
+**Why it's wrong:** the crash fix (guard against model-less passes) is a pure bug fix, independent of whatever the "block size" concept should mean for a render pass (likely vertex/index buffer byte length, not input-tensor block length) — conflating them risks under-scoping the crash fix or over-scoping a schema decision that hasn't been made yet.
+**Do this instead:** fix the crash first (treat model-less passes as contributing 0 to `block_total_len`, or `continue`), land it independently, then decide render block-size semantics once the schema extension (render_target/buffer bindings) is finalized.
 
-## Build Order (dependency-ordered)
+### Anti-Pattern 3: Reaching for `VK_EXT_headless_surface` or any WSI extension
 
-1. **Schema extension** (`gnus-processing-schema.json` render_target/framebuffer config, vertex/index buffer bindings, multi-stage shader; regenerate `generated/*.hpp`) — everything downstream reads these generated types (`Pass::get_shader()`, `PassIoBinding`, a new render-target-config type), so this must land first. *(Detailed schema design is out of this file's scope — flagged here only for ordering.)*
-2. **`ParseBlockSize()` type guard** — independent of the render path itself, but must land before any real render/compute pass reaches `ParseBlockSize()` in practice, or it crashes on `pass.get_model().value()` for a pass with no model. Cheap, no dependencies on step 1's shape (only needs a `pass.get_type()` check), safe to do in parallel with step 1.
-3. **`PassType` dispatch plumbing in `ProcessingManager::Process()`** — the pass-name lookup map (`m_passMap`) and the `switch(pass.get_type())` branch point (Pattern 1). Depends on step 1 only insofar as the render branch's *body* references new schema fields; the branch/dispatch *scaffolding* itself can be built and tested with a stub render handler before the Vulkan work exists. **Also update `CheckProcessValidity()`'s `RENDER` case** in this step to validate `pass.get_shader()` is present (currently silently accepts a render pass with no shader at all).
-4. **Vulkan render context setup** (`VulkanRenderContext`: instance/device/queue singleton, Pattern 3) — depends on the vendored Vulkan rendering/utility library selection (a `STACK.md` concern) being in place, and on `Vulkan-Headers`/`Vulkan-Loader` (already vendored). Independent of steps 1-3; can be developed/unit-tested in isolation (e.g. a standalone "create headless device, clear a framebuffer, read back a solid color" smoke test) before wiring into `ProcessingManager` at all.
-5. **`RenderProcessor` implementation** — depends on steps 1 (schema types to read), 3 (dispatch branch to be called from), and 4 (context to execute against). This is the pipeline-construction → execution → readback logic (Pattern 2's parallel interface).
-6. **End-to-end proof** (a real render pass definition executes through the distributed pipeline, produces a verifiable output hash) — depends on all of the above, plus confirming the readback bytes flow correctly through the *unchanged* `ProcessingResult`/`FileManager::SaveASync`/hash-return path already exercised by MNN passes today.
+**What people would do (carried over from bgfx-era thinking):** request `VK_KHR_surface`/`VK_KHR_win32_surface`/`VK_EXT_headless_surface` to "do headless properly," by analogy with how OpenGL/EGL needs a headless context extension.
+**Why it's wrong:** `VK_EXT_headless_surface` exists only for tools that still want to exercise the `VkSurfaceKHR`/swapchain code path without a real window (e.g., CI systems testing swapchain logic). Since this milestone creates **no swapchain and no `VkSurfaceKHR` at all** — the render target is a plain `VkImage` with `VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT`, read back via a host-visible staging buffer — no WSI extension of any kind is needed on any platform.
+**Do this instead:** request zero WSI/surface extensions; instance/device creation only needs core Vulkan (+ whatever debug/validation extensions are desired).
 
-**Parallelizable subset:** steps 2 and 4 have no dependency on each other or on step 1's exact schema shape and can proceed concurrently with step 1. Step 3's scaffolding (dispatch branch + pass-name map + validity-check fix) can also start before step 1 is fully finalized, using a stub/no-op render handler, then be filled in once steps 1, 4, and 5 land.
+## Integration Points — Platform Scope
+
+**Confirmed: genuinely headless/offscreen Vulkan (no `VkSurfaceKHR`, no swapchain, ever) is platform-agnostic in the way that matters here, and the prior bgfx research's WGL/EGL/GLX concerns do not carry over.**
+
+- WGL (Windows), GLX/EGL (Linux), and NSOpenGL/EAGL context creation are OpenGL-specific windowing-system integration concerns — they exist because OpenGL contexts are inherently tied to a native window/pixel-format handle even for "hidden window" offscreen tricks. Vulkan's WSI layer (`VK_KHR_surface` + platform surface extensions) is **additive and optional** — a `VkInstance`/`VkDevice` created without requesting any `VK_KHR_*_surface` extension never touches platform windowing APIs at all.
+- The prior bgfx-based research's platform considerations applied specifically to bgfx's **three-tier fallback** design, where the OpenGL tier needed a real (even if hidden/dummy) native window/context per platform. That entire class of concern is inapplicable here: this milestone has no OpenGL tier and no swapchain.
+- **macOS/MoltenVK:** already vendored at `thirdparty/MoltenVK`. MoltenVK acts as a Vulkan ICD (translating Vulkan calls to Metal) and supports headless rendering to a plain `VkImage`-backed render target without requiring a `CAMetalLayer`/`NSView` — a Metal-backed surface is only needed if the caller explicitly creates a `VK_EXT_metal_surface`/`VK_MVK_macos_surface`, which this design does not do. So MoltenVK's presence in `thirdparty/` is sufficient; no additional macOS-specific windowing shim is required beyond what's already vendored.
+- **Windows/Linux:** the vendored `Vulkan-Loader` (`thirdparty/Vulkan-Loader`, wired via `find_package(Vulkan)` → `Vulkan::Vulkan`, already linked at `SGProcessingManager/src/processors/CMakeLists.txt:58`) discovers whatever ICD driver is present on the host (NVIDIA/AMD/Intel/Mesa) exactly the same way regardless of windowing — again, no surface extension requested, no platform branch needed in `RenderProcessor` itself.
+- **Net effect:** `RenderProcessor`'s Vulkan init code can be written once, with zero `#ifdef _WIN32`/`#ifdef __APPLE__` branches for windowing purposes. Any platform `#ifdef`s that do end up needed (if any) would be incidental build/link concerns already handled by the existing `SGProcessors` CMakeLists.txt's `if(APPLE)` framework-linking block (`CMakeLists.txt:63-84`), not new Vulkan-surface-related branching.
 
 ## Sources
 
-- `SuperGenius/SGProcessingManager/src/processingbase/ProcessingManager.cpp` (primary source, read in full) — HIGH confidence, verified against live repo at commit checked out in this workspace
-- `SuperGenius/SGProcessingManager/include/processingbase/ProcessingManager.hpp` — HIGH confidence
-- `SuperGenius/SGProcessingManager/include/processors/processing_processor.hpp` — HIGH confidence
-- `SuperGenius/SGProcessingManager/src/processors/processing_processor_mnn_image.cpp` (mutex pattern at line 114, confirms process-wide MNN Vulkan-init serialization) — HIGH confidence
-- `SuperGenius/SGProcessingManager/gnus-processing-schema.json` and `SGProcessingManager/generated/{Pass,PassType,PassIoBinding,ShaderConfig,ShaderType,Uniform,IoDeclaration,SgnsProcessing,DataType,ModelConfig}.hpp` — HIGH confidence, quicktype-generated from schema, read directly
-- `SuperGenius/src/processing/impl/processing_core_impl.cpp` (caller context: `ProcessSubTask`, subtask concurrency gating via `max_processing_subtask_count_`) — HIGH confidence
-- `SuperGenius/SGProcessingManager/src/processing_tasksplit.cpp` (subtask/chunk splitting model, confirms per-chunk subtask granularity) — HIGH confidence
-- `SuperGenius/SGProcessingManager/src/processors/CMakeLists.txt` and `SuperGenius/src/processing/CMakeLists.txt` (confirms `Vulkan::Vulkan` is already a public link target for both `SGProcessors` and `processing_service` today, and MoltenVK is vendored for Apple builds — i.e., a Vulkan loader/headers dependency already threads through this exact build graph) — HIGH confidence
-- `thirdparty/Vulkan-Headers`, `thirdparty/Vulkan-Loader` (present as vendored submodules; no VMA/shaderc/glslang/SPIRV-Cross/vk-bootstrap vendored yet — confirms a rendering/utility library still needs selecting, out of scope for this file) — HIGH confidence
-- `.planning/PROJECT.md` "Workstream: sgproc-render" section — HIGH confidence (primary project context, required reading)
+- Direct source reads (HIGH confidence, primary source):
+  - `SuperGenius/SGProcessingManager/src/processingbase/ProcessingManager.cpp` (full file)
+  - `SuperGenius/SGProcessingManager/include/processingbase/ProcessingManager.hpp` (full file)
+  - `SuperGenius/SGProcessingManager/include/processors/processing_processor.hpp` (full file)
+  - `SuperGenius/SGProcessingManager/src/processors/CMakeLists.txt` (full file)
+  - `SuperGenius/SGProcessingManager/generated/PassType.hpp`, `DataType.hpp`
+  - `SuperGenius/SGProcessingManager/gnus-processing-schema.json` (full file)
+  - `SuperGenius/src/processing/impl/processing_core_impl.cpp:1-140`
+  - `thirdparty/MNN/source/backend/vulkan/component/VulkanInstance.hpp` (full file)
+  - `thirdparty/build/CommonTargets.cmake:363-391`, `thirdparty/build/cmake/kompute-fix.cmake`
+  - `GeniusWallet/cmake/CommonBuildParameters.cmake:102-104`, `GeniusSDK/cmake/CommonBuildParameters.cmake:24-26`, `SuperGenius/build/CommonBuildParameters.cmake:253-255` (confirming `Vulkan::Vulkan` resolution path)
+  - `thirdparty/` submodule inventory (`git submodule status`) confirming `Vulkan-Headers`, `Vulkan-Loader`, `MoltenVK` present at top level; no standalone `glslang`/`shaderc`/`SPIRV-Tools`
+- External, cross-checked (MEDIUM confidence):
+  - [Vulkan Documentation Project — Fundamentals](https://docs.vulkan.org/spec/latest/chapters/fundamentals.html) — object/device scoping, no cross-device handle sharing
+  - [KhronosGroup/Vulkan-Loader — LoaderInterfaceArchitecture.md](https://github.com/KhronosGroup/Vulkan-Loader/blob/main/docs/LoaderInterfaceArchitecture.md) — loader-internal mutex-guarded global instance/device bookkeeping
+  - [Vulkan Documentation Project — Initialization](https://docs.vulkan.org/spec/latest/chapters/initialization.html) — `vkCreateInstance`/multi-instance behavior
+
+---
+*Architecture research for: sgproc-render workstream (hand-rolled headless Vulkan RenderProcessor)*
+*Researched: 2026-07-29*
