@@ -6,15 +6,15 @@ current_phase: 01
 current_phase_name: Vulkan Foundation & Dispatch Plumbing
 status: complete
 stopped_at: Phase 01 complete — all 6 plans executed
-last_updated: "2026-07-29"
+last_updated: "2026-07-30T02:00:21.472Z"
 last_activity: 2026-07-29
 last_activity_desc: Phase 01 execution complete
 progress:
-  total_phases: 4
+  total_phases: 5
   completed_phases: 1
   total_plans: 6
   completed_plans: 6
-  percent: 25
+  percent: 20
 ---
 
 # Project State
@@ -24,7 +24,7 @@ progress:
 See: .planning/PROJECT.md (updated 2026-07-29), workstream section "Workstream: sgproc-render"
 
 **Core value:** Make SGProcessingManager's `render` PassType a real, executable graphics pipeline via hand-rolled Vulkan — headless/offscreen, own independent `VkInstance`/`VkDevice`, no new GPU backend/engine, no OpenGL or CPU/software fallback tier.
-**Current focus:** Phase 01 — Vulkan Foundation & Dispatch Plumbing
+**Current focus:** Phase 01.1 - CMake vk-bootstrap discovery, MNN CPU-to-VULKAN processor migration, and coverage
 
 ## Current Position
 
@@ -79,6 +79,10 @@ None yet.
 - Decision Flag #1 (Vulkan init synchronization) is not fully closed by research alone — Phase 1 must validate via an actual concurrent-init stress test, not assume the shared-lock design is correct from reasoning alone
 - Decision Flag #2 (shaderc vs. glslang) is reconciled toward shaderc but should be explicitly confirmed during Phase 2 planning
 - CI currently has zero real-GPU or software-Vulkan-ICD signal, and zero macOS CI signal for Vulkan at all — Phase 4 must resolve this, not assume it away
+
+### Roadmap Evolution
+
+- Phase 01.1 inserted after Phase 1: CMake vk-bootstrap discovery (find_package in CommonBuildParameters.cmake), MNN processors migrated from CPU to VULKAN backend using the shared vulkan mutex, plus coverage step (URGENT)
 
 ## Deferred Items
 
