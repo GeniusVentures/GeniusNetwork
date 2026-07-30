@@ -69,7 +69,7 @@ Plans:
   3. `vulkan_init_guard.hpp`'s doc comment and `vulkan_init_concurrency_test.cpp`'s scope note no longer undercount the real, post-migration set of Vulkan-init call sites sharing the mutex (MIGR-02)
   4. The existing `ProcessingDatatypesTest` suite's 13 migration-candidate `*ProcessingTest` cases are re-verified against the newly-Vulkan-backed processors within their existing tolerance bounds — no gcov/lcov/OpenCppCoverage or other new coverage tooling is introduced (COV-01)
 
-**Plans**: 2/3 plans executed
+**Plans**: 3/3 plans complete
 
 Plans:
 **Wave 1**
@@ -79,7 +79,7 @@ Plans:
 
 **Wave 2** *(blocked on 01.1-02 completion)*
 
-- [ ] 01.1-03-PLAN.md — Doc-comment accuracy update + ProcessingDatatypesTest coverage re-verification (MIGR-02/COV-01)
+- [x] 01.1-03-PLAN.md — Doc-comment accuracy update + ProcessingDatatypesTest coverage re-verification (MIGR-02/COV-01)
 
 ### Phase 2: Schema Extension & Shader/SPIR-V Validation Pipeline
 
@@ -134,7 +134,7 @@ Phases execute in numeric order: 1 → 01.1 → 2 → 3 → 4 (Phase 01.1 is an 
 | Phase | Plans Complete | Status | Completed |
 |-------|-----------------|--------|-----------|
 | 1. Vulkan Foundation & Dispatch Plumbing | 6/6 | Complete | 2026-07-29 |
-| 01.1. CMake vk-bootstrap discovery, MNN CPU-to-VULKAN processor migration, and coverage (INSERTED) | 2/3 | In Progress|  |
+| 01.1. CMake vk-bootstrap discovery, MNN CPU-to-VULKAN processor migration, and coverage (INSERTED) | 3/3 | Complete   | 2026-07-30 |
 | 2. Schema Extension & Shader/SPIR-V Validation Pipeline | 0/TBD | Not started | - |
 | 3. RenderProcessor Implementation & Determinism | 0/TBD | Not started | - |
 | 4. Cross-Platform Build, CI & End-to-End Verification | 0/TBD | Not started | - |
