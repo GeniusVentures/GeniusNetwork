@@ -2,18 +2,18 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: Render Pass Execution (hand-rolled Vulkan)
-current_phase: 01
-current_phase_name: Vulkan Foundation & Dispatch Plumbing
-status: complete
-stopped_at: Phase 01 complete — all 6 plans executed
-last_updated: "2026-07-30T02:00:21.472Z"
-last_activity: 2026-07-29
-last_activity_desc: Phase 01 execution complete
+current_phase: 01.1
+current_phase_name: CMake vk-bootstrap discovery, MNN CPU-to-VULKAN processor migration, and coverage
+status: executing
+stopped_at: Completed 01.1-01-PLAN.md
+last_updated: "2026-07-30T02:52:45.073Z"
+last_activity: 2026-07-30
+last_activity_desc: Completed 01.1-01-PLAN.md (CMake vk-bootstrap find_package propagation)
 progress:
   total_phases: 5
   completed_phases: 1
-  total_plans: 6
-  completed_plans: 6
+  total_plans: 9
+  completed_plans: 7
   percent: 20
 ---
 
@@ -24,16 +24,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-07-29), workstream section "Workstream: sgproc-render"
 
 **Core value:** Make SGProcessingManager's `render` PassType a real, executable graphics pipeline via hand-rolled Vulkan — headless/offscreen, own independent `VkInstance`/`VkDevice`, no new GPU backend/engine, no OpenGL or CPU/software fallback tier.
-**Current focus:** Phase 01.1 - CMake vk-bootstrap discovery, MNN CPU-to-VULKAN processor migration, and coverage
+**Current focus:** Phase 01.1 — CMake vk-bootstrap discovery, MNN CPU-to-VULKAN processor migration, and coverage
 
 ## Current Position
 
-Phase: 01 (Vulkan Foundation & Dispatch Plumbing) — COMPLETE
-Plans: 6 of 6 completed
-Status: All deliverables shipped; ready for Phase 2
-Last activity: 2026-07-29 — Phase 01 execution complete
+Phase: 01.1 (CMake vk-bootstrap discovery, MNN CPU-to-VULKAN processor migration, and coverage) — EXECUTING
+Plans: 1 of 3 completed
+Status: Executing Phase 01.1
+Last activity: 2026-07-30 — Completed 01.1-01-PLAN.md (CMake vk-bootstrap find_package propagation)
 
-Progress: [████████████] 100%
+Progress: [████████░░] 78%
 
 ## Performance Metrics
 
@@ -56,6 +56,7 @@ Progress: [████████████] 100%
 
 *Updated after each plan completion*
 | Phase 01 P02 | 3min | 1 tasks | 0 files |
+| Phase 01.1 P01 | 15min | 2 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -69,6 +70,7 @@ Decisions are logged in PROJECT.md Key Decisions table (root project). Recent de
 - Roadmap: Phase 2 (schema/shader validation) is independently developable and could run parallel to Phase 1 (Vulkan context); sequenced after Phase 1 for planning clarity only, not a hard dependency
 - Roadmap: Dispatch plumbing (originally a separate research-suggested phase) folded into Phase 1 rather than standing alone — small/mechanical, no independent user-observable value on its own, and no hard ordering dependency on the rest of context setup
 - [Phase 01-02]: D-01 resolved: adopt vk-bootstrap (charles-lunarg/vk-bootstrap, MIT), pinned at v1.4.357 — Confirmed live by orchestrating agent per auto_advance/yolo config; macOS/MoltenVK portability-subset risk outweighs zero-net-new-vendoring preference
+- [Phase 01.1-01]: Bumped GeniusSDK/GeniusWallet submodule pointers after find_package(vk-bootstrap) fix, matching this project's chore(NN-NN): bump submodule pointer convention
 
 ### Pending Todos
 
@@ -94,6 +96,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-07-29T19:41:10.201Z
-Stopped at: Completed 01-02-PLAN.md
+Last session: 2026-07-30T02:52:33.537Z
+Stopped at: Completed 01.1-01-PLAN.md
 Resume file: None

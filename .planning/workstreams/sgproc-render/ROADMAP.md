@@ -69,12 +69,12 @@ Plans:
   3. `vulkan_init_guard.hpp`'s doc comment and `vulkan_init_concurrency_test.cpp`'s scope note no longer undercount the real, post-migration set of Vulkan-init call sites sharing the mutex (MIGR-02)
   4. The existing `ProcessingDatatypesTest` suite's 13 migration-candidate `*ProcessingTest` cases are re-verified against the newly-Vulkan-backed processors within their existing tolerance bounds — no gcov/lcov/OpenCppCoverage or other new coverage tooling is introduced (COV-01)
 
-**Plans**: 3 plans
+**Plans**: 1/3 plans executed
 
 Plans:
 **Wave 1**
 
-- [ ] 01.1-01-PLAN.md — CMake vk-bootstrap find_package propagation to GeniusSDK/GeniusWallet (CMAKE-01)
+- [x] 01.1-01-PLAN.md — CMake vk-bootstrap find_package propagation to GeniusSDK/GeniusWallet (CMAKE-01)
 - [ ] 01.1-02-PLAN.md — MNN CPU-to-VULKAN processor migration, 13 files/14 call sites (MIGR-01)
 
 **Wave 2** *(blocked on 01.1-02 completion)*
@@ -134,7 +134,7 @@ Phases execute in numeric order: 1 → 01.1 → 2 → 3 → 4 (Phase 01.1 is an 
 | Phase | Plans Complete | Status | Completed |
 |-------|-----------------|--------|-----------|
 | 1. Vulkan Foundation & Dispatch Plumbing | 6/6 | Complete | 2026-07-29 |
-| 01.1. CMake vk-bootstrap discovery, MNN CPU-to-VULKAN processor migration, and coverage (INSERTED) | 0/3 | Not started | - |
+| 01.1. CMake vk-bootstrap discovery, MNN CPU-to-VULKAN processor migration, and coverage (INSERTED) | 1/3 | In Progress|  |
 | 2. Schema Extension & Shader/SPIR-V Validation Pipeline | 0/TBD | Not started | - |
 | 3. RenderProcessor Implementation & Determinism | 0/TBD | Not started | - |
 | 4. Cross-Platform Build, CI & End-to-End Verification | 0/TBD | Not started | - |
