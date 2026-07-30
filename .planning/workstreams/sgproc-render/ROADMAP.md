@@ -94,7 +94,21 @@ Plans:
   4. Malformed or invalid SPIR-V — whether produced by GLSL compilation or submitted directly via `shader_config.type: "spirv"` — is rejected by a mandatory `spirv-val` gate with a clean error and never reaches `vkCreateShaderModule` (SHADER-02)
   5. `shader_config.type: "spirv"` is explicitly accepted for render passes as a validated input path, subject to the `spirv-val` gate — not silently rejected or silently trusted (SHADER-03)
 
-**Plans**: TBD
+**Plans**: 4 plans
+
+Plans:
+**Wave 1**
+
+- [ ] 02-01-PLAN.md — Fix blocking schema JSON bug, extend gnus-processing-schema.json (render_target/render_shader/vertex_layout/index_buffer/pipeline_state), regenerate quicktype headers (SCHEMA-01/02/03/04/05, SHADER-03)
+- [ ] 02-02-PLAN.md — Vendor shaderc + SPIRV-Tools + SPIRV-Headers as pinned git submodules with CMake IMPORTED targets (SHADER-01/02 vendoring)
+
+**Wave 2** *(blocked on 02-01/02-02 completion)*
+
+- [ ] 02-03-PLAN.md — ShaderCompiler component (shaderc compile + SPIRV-Tools validate) with unit tests (SHADER-01/02/03)
+
+**Wave 3** *(blocked on 02-03 completion)*
+
+- [ ] 02-04-PLAN.md — Wire ShaderCompiler into ProcessingManager (CheckProcessValidity/GetCidForProc), end-to-end dispatch tests (SCHEMA-01/02/03/04, SHADER-01/02/03)
 
 ### Phase 3: RenderProcessor Implementation & Determinism
 
@@ -135,7 +149,7 @@ Phases execute in numeric order: 1 → 01.1 → 2 → 3 → 4 (Phase 01.1 is an 
 |-------|-----------------|--------|-----------|
 | 1. Vulkan Foundation & Dispatch Plumbing | 6/6 | Complete | 2026-07-29 |
 | 01.1. CMake vk-bootstrap discovery, MNN CPU-to-VULKAN processor migration, and coverage (INSERTED) | 3/3 | Complete    | 2026-07-30 |
-| 2. Schema Extension & Shader/SPIR-V Validation Pipeline | 0/TBD | Not started | - |
+| 2. Schema Extension & Shader/SPIR-V Validation Pipeline | 0/4 | Planned | - |
 | 3. RenderProcessor Implementation & Determinism | 0/TBD | Not started | - |
 | 4. Cross-Platform Build, CI & End-to-End Verification | 0/TBD | Not started | - |
 
