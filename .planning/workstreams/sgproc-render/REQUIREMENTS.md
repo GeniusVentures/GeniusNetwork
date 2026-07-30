@@ -25,17 +25,17 @@ Requirements for milestone v1.0. Each maps to roadmap phases.
 
 ### Schema Extension
 
-- [ ] **SCHEMA-01**: Render pass schema defines a render-target/framebuffer config (color+depth attachment formats/dimensions/clear values)
-- [ ] **SCHEMA-02**: Render pass schema defines vertex/index buffer bindings + layout
-- [ ] **SCHEMA-03**: Render pass schema supports a multi-stage shader pipeline (vertex+fragment), replacing the single `shader_config` for render passes
-- [ ] **SCHEMA-04**: Render pass schema defines pipeline state (topology, cull mode, winding order, depth-test) configurable via schema
-- [ ] **SCHEMA-05**: quicktype-generated headers regenerated from the extended schema (`generated/` is never hand-edited)
+- [x] **SCHEMA-01**: Render pass schema defines a render-target/framebuffer config (color+depth attachment formats/dimensions/clear values)
+- [x] **SCHEMA-02**: Render pass schema defines vertex/index buffer bindings + layout
+- [x] **SCHEMA-03**: Render pass schema supports a multi-stage shader pipeline (vertex+fragment), replacing the single `shader_config` for render passes
+- [x] **SCHEMA-04**: Render pass schema defines pipeline state (topology, cull mode, winding order, depth-test) configurable via schema
+- [x] **SCHEMA-05**: quicktype-generated headers regenerated from the extended schema (`generated/` is never hand-edited)
 
 ### Shader Compilation & Validation
 
 - [ ] **SHADER-01**: GLSL shader source is compiled to SPIR-V in-process via a vendored `shaderc` toolchain, at job-load time, before any GPU call
 - [ ] **SHADER-02**: All SPIR-V reaching `vkCreateShaderModule` (whether compiled from GLSL or submitted directly as `shader_config.type: "spirv"`) passes a mandatory `spirv-val` validation gate — malformed/invalid SPIR-V is rejected with a clean error, never reaches the driver
-- [ ] **SHADER-03**: `shader_config.type: "spirv"` is explicitly accepted for render passes, subject to SHADER-02's validation gate
+- [x] **SHADER-03**: `shader_config.type: "spirv"` is explicitly accepted for render passes, subject to SHADER-02's validation gate
 
 ### Dispatch & Validation Plumbing
 
@@ -116,14 +116,14 @@ Explicitly excluded. Documented to prevent scope creep.
 | DISP-01 | Phase 1 | Pending |
 | DISP-02 | Phase 1 | Pending |
 | DISP-03 | Phase 1 | Pending |
-| SCHEMA-01 | Phase 2 | Pending |
-| SCHEMA-02 | Phase 2 | Pending |
-| SCHEMA-03 | Phase 2 | Pending |
-| SCHEMA-04 | Phase 2 | Pending |
-| SCHEMA-05 | Phase 2 | Pending |
+| SCHEMA-01 | Phase 2 | Complete |
+| SCHEMA-02 | Phase 2 | Complete |
+| SCHEMA-03 | Phase 2 | Complete |
+| SCHEMA-04 | Phase 2 | Complete |
+| SCHEMA-05 | Phase 2 | Complete |
 | SHADER-01 | Phase 2 | Pending |
 | SHADER-02 | Phase 2 | Pending |
-| SHADER-03 | Phase 2 | Pending |
+| SHADER-03 | Phase 2 | Complete |
 | RENDER-01 | Phase 3 | Pending |
 | RENDER-02 | Phase 3 | Pending |
 | RENDER-03 | Phase 3 | Pending |

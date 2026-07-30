@@ -2,18 +2,18 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: Render Pass Execution (hand-rolled Vulkan)
-current_phase: 2
+current_phase: 02
 current_phase_name: Schema Extension & Shader/SPIR-V Validation Pipeline
-status: completed
-stopped_at: Phase 2 context gathered
-last_updated: "2026-07-30T21:17:37.953Z"
+status: executing
+stopped_at: Phase 02 Plan 01 complete
+last_updated: "2026-07-30T23:11:47.391Z"
 last_activity: 2026-07-30
-last_activity_desc: Phase 01.1 complete, transitioned to Phase 2
+last_activity_desc: Phase 02 Plan 01 (schema extension + quicktype regeneration) complete
 progress:
   total_phases: 5
   completed_phases: 2
-  total_plans: 9
-  completed_plans: 9
+  total_plans: 13
+  completed_plans: 10
   percent: 40
 ---
 
@@ -24,16 +24,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-07-29), workstream section "Workstream: sgproc-render"
 
 **Core value:** Make SGProcessingManager's `render` PassType a real, executable graphics pipeline via hand-rolled Vulkan — headless/offscreen, own independent `VkInstance`/`VkDevice`, no new GPU backend/engine, no OpenGL or CPU/software fallback tier.
-**Current focus:** Phase 01.1 — CMake vk-bootstrap discovery, MNN CPU-to-VULKAN processor migration, and coverage
+**Current focus:** Phase 02 — Schema Extension & Shader/SPIR-V Validation Pipeline
 
 ## Current Position
 
-Phase: 2 — Schema Extension & Shader/SPIR-V Validation Pipeline
-Plans: 3 of 3 completed
-Status: Phase 01.1 complete. Phase 2 (Schema Extension & Shader/SPIR-V Validation Pipeline) not yet planned.
-Last activity: 2026-07-30 — Phase 01.1 complete, transitioned to Phase 2
+Phase: 02 (Schema Extension & Shader/SPIR-V Validation Pipeline) — EXECUTING
+Plans: 1 of 4 completed (02-01 done; 02-02, 02-03, 02-04 remain)
+Status: Executing Phase 02
+Last activity: 2026-07-30 — Phase 02 Plan 01 (schema extension + quicktype regeneration) complete
 
-Progress: [██████████] 100%
+Progress: [██░░░░░░░░] 25%
 
 ## Performance Metrics
 
@@ -75,6 +75,7 @@ Decisions are logged in PROJECT.md Key Decisions table (root project). Recent de
 - [Phase 01.1-01]: Bumped GeniusSDK/GeniusWallet submodule pointers after find_package(vk-bootstrap) fix, matching this project's chore(NN-NN): bump submodule pointer convention
 - [Phase 01.1-02]: Migrated all 13 remaining CPU-backed MNN processors (14 createSession() call sites) to MNN_FORWARD_VULKAN, guarded by the shared VulkanInitMutex(); bumped SGProcessingManager and SuperGenius submodule pointers to reference the migration
 - [Phase 01.1-03]: Fixed a third, previously-undiscovered vk-bootstrap CMake gap in SuperGenius/build/CommonBuildParameters.cmake (standalone build entry point) -- unblocked local build/run of ProcessingDatatypesTest and the concurrency stress test
+- [Phase 02-01]: Confirmed via an actual quicktype v23.2.6 run that D-11 Amendment's design (new sibling `render_shader` property rather than re-typing `shader` per pass type) and D-16 Amendment's `vertex_buffer` addition both regenerate exactly as spike-verified — RenderTarget/VertexBuffer's required fields are plain (non-`boost::optional`) members, `Pass.hpp` gains all six new render-only accessors, and `ShaderSourceType` is shared correctly between `ShaderConfig`/`ShaderStage`
 
 ### Pending Todos
 
@@ -100,6 +101,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-07-30T21:17:37.946Z
-Stopped at: Phase 2 context gathered
-Resume file: .planning/workstreams/sgproc-render/phases/02-schema-extension-shader-spir-v-validation-pipeline/02-CONTEXT.md
+Last session: 2026-07-30T23:11:47.391Z
+Stopped at: Phase 02 Plan 01 (schema extension + quicktype regeneration) complete
+Resume file: .planning/workstreams/sgproc-render/phases/02-schema-extension-shader-spir-v-validation-pipeline/02-02-PLAN.md
