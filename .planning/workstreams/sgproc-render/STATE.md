@@ -5,15 +5,15 @@ milestone_name: Render Pass Execution (hand-rolled Vulkan)
 current_phase: 02
 current_phase_name: Schema Extension & Shader/SPIR-V Validation Pipeline
 status: executing
-stopped_at: Phase 02 Plan 01 complete
-last_updated: "2026-07-30T23:11:47.391Z"
+stopped_at: Phase 02 Plan 02 complete
+last_updated: "2026-07-30T23:34:12.000Z"
 last_activity: 2026-07-30
-last_activity_desc: Phase 02 Plan 01 (schema extension + quicktype regeneration) complete
+last_activity_desc: Phase 02 Plan 02 (vendor shaderc/SPIRV-Tools/SPIRV-Headers + CMake targets) complete
 progress:
   total_phases: 5
   completed_phases: 2
   total_plans: 13
-  completed_plans: 10
+  completed_plans: 11
   percent: 40
 ---
 
@@ -29,17 +29,17 @@ See: .planning/PROJECT.md (updated 2026-07-29), workstream section "Workstream: 
 ## Current Position
 
 Phase: 02 (Schema Extension & Shader/SPIR-V Validation Pipeline) — EXECUTING
-Plans: 1 of 4 completed (02-01 done; 02-02, 02-03, 02-04 remain)
+Plans: 2 of 4 completed (02-01, 02-02 done; 02-03, 02-04 remain)
 Status: Executing Phase 02
-Last activity: 2026-07-30 — Phase 02 Plan 01 (schema extension + quicktype regeneration) complete
+Last activity: 2026-07-30 — Phase 02 Plan 02 (vendor shaderc/SPIRV-Tools/SPIRV-Headers + CMake targets) complete
 
-Progress: [██░░░░░░░░] 25%
+Progress: [█████░░░░░] 50%
 
 ## Performance Metrics
 
 **Velocity:**
 
-- Total plans completed: 3
+- Total plans completed: 4
 - Average duration: N/A
 - Total execution time: 0 hours
 
@@ -59,6 +59,7 @@ Progress: [██░░░░░░░░] 25%
 | Phase 01.1 P01 | 15min | 2 tasks | 2 files |
 | Phase 01.1 P02 | 15min | 3 tasks | 13 files |
 | Phase 01.1 P03 | 15min | 3 tasks | 3 files |
+| Phase 02 P02 | ~100min | 3 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -76,6 +77,7 @@ Decisions are logged in PROJECT.md Key Decisions table (root project). Recent de
 - [Phase 01.1-02]: Migrated all 13 remaining CPU-backed MNN processors (14 createSession() call sites) to MNN_FORWARD_VULKAN, guarded by the shared VulkanInitMutex(); bumped SGProcessingManager and SuperGenius submodule pointers to reference the migration
 - [Phase 01.1-03]: Fixed a third, previously-undiscovered vk-bootstrap CMake gap in SuperGenius/build/CommonBuildParameters.cmake (standalone build entry point) -- unblocked local build/run of ProcessingDatatypesTest and the concurrency stress test
 - [Phase 02-01]: Confirmed via an actual quicktype v23.2.6 run that D-11 Amendment's design (new sibling `render_shader` property rather than re-typing `shader` per pass type) and D-16 Amendment's `vertex_buffer` addition both regenerate exactly as spike-verified — RenderTarget/VertexBuffer's required fields are plain (non-`boost::optional`) members, `Pass.hpp` gains all six new render-only accessors, and `ShaderSourceType` is shared correctly between `ShaderConfig`/`ShaderStage`
+- [Phase 02-02]: Corrected SPIRV-Tools/SPIRV-Headers pins to the commits shaderc's own `v2024.3` tag's DEPS file references (`01c8438e`/`2a9b6f95`), not the plan's cited commits (read from shaderc `main`'s newer DEPS at research time); confirmed via a real local build+install that SPIRV-Tools installs a CMake CONFIG under bare (non-namespaced) target names, resolved via `find_package(SPIRV-Tools CONFIG)` + `add_library(SPIRV-Tools::SPIRV-Tools ALIAS SPIRV-Tools-static)`; shaderc confirmed to have no installed CMake config at all (hand-rolled IMPORTED target). Both `shaderc::shaderc`/`SPIRV-Tools::SPIRV-Tools` build-verified end-to-end (GLSL compiled to SPIR-V via shaderc, validated via SPIRV-Tools)
 
 ### Pending Todos
 
@@ -101,6 +103,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-07-30T23:11:47.391Z
-Stopped at: Phase 02 Plan 01 (schema extension + quicktype regeneration) complete
-Resume file: .planning/workstreams/sgproc-render/phases/02-schema-extension-shader-spir-v-validation-pipeline/02-02-PLAN.md
+Last session: 2026-07-30T23:34:12.000Z
+Stopped at: Phase 02 Plan 02 (vendor shaderc/SPIRV-Tools/SPIRV-Headers + CMake targets) complete
+Resume file: .planning/workstreams/sgproc-render/phases/02-schema-extension-shader-spir-v-validation-pipeline/02-03-PLAN.md
