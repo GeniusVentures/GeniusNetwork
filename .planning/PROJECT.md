@@ -50,6 +50,8 @@ This project now runs parallel workstreams (see `.planning/workstreams/`). Each 
 
 **Context:** `PassType::RENDER` currently exists only as a no-op stub in `CheckProcessValidity()` (SGProcessingManager/src/processingbase/ProcessingManager.cpp:151-152) — accepted but never validated or executed. MNN's Vulkan use is fully encapsulated (no exposed `VkInstance`/`VkDevice`); a renderer needs its own independent Vulkan context, coordinated with (not shared with) MNN's. `thirdparty/` is 100% git submodules, all permissive (Apache-2.0/MIT/BSD/zlib), including `Vulkan-Headers`/`Vulkan-Loader`/MoltenVK already vendored — no new vendoring is currently expected for this milestone.
 
+**Progress:** Phase 1 (Vulkan Foundation & Dispatch Plumbing) complete 2026-07-29 — headless Vulkan context, shared init-lock, deterministic device selection, and `PassType`-keyed dispatch all shipped. Phase 01.1 (urgent insertion, CMake vk-bootstrap discovery + MNN CPU-to-VULKAN migration + coverage) complete 2026-07-30 — `GeniusSDK`/`GeniusWallet` now resolve `vk-bootstrap::vk-bootstrap` transitively, all remaining MNN processors run on the Vulkan backend under the shared mutex, and the migration is proven via the existing regression-test suite (no new coverage tooling introduced). Next: Phase 2 (Schema Extension & Shader/SPIR-V Validation Pipeline).
+
 ### Workstream: gnus-subnets
 
 **Goal:** Produce design documentation defining how isolated GNUS subnets (e.g. `144.100` under main net `144`) address, communicate, bridge tokens, and isolate job/consensus processing — no implementation this milestone.
@@ -86,6 +88,10 @@ This project now runs parallel workstreams (see `.planning/workstreams/`). Each 
 - ✓ GeniusSDK builds cleanly against updated SuperGenius static lib — v2.4, fulfilled MVER-02 (user attestation only, no captured build log)
 - ✓ Full existing child-wallet test suite passes with zero regressions post-merge — v2.4, fulfilled MVER-03
 - ✓ `origin/develop`'s changes confirmed compatible with child-wallet consensus gates — v2.4, fulfilled MVER-04
+- ✓ `GeniusSDK`/`GeniusWallet` resolve `vk-bootstrap::vk-bootstrap` transitively via mirrored `find_package(vk-bootstrap CONFIG REQUIRED)` — sgproc-render Phase 01.1, fulfilled CMAKE-01
+- ✓ All 13 remaining CPU-backed MNN processors migrated to `MNN_FORWARD_VULKAN` under the existing shared `VulkanInitMutex()` — sgproc-render Phase 01.1, fulfilled MIGR-01
+- ✓ Vulkan-init call-site documentation/tests updated to describe the full post-migration caller set instead of a stale count — sgproc-render Phase 01.1, fulfilled MIGR-02
+- ✓ Migration correctness proven via the existing `ProcessingDatatypesTest` suite + concurrent-init stress test — no new coverage tooling introduced — sgproc-render Phase 01.1, fulfilled COV-01
 
 ### Active
 
@@ -174,4 +180,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-07-29 — sgproc-render workstream v1.0 restarted (hand-rolled Vulkan per SGProcessingManager#7, bgfx-based v1.0 archived as superseded)*
+*Last updated: 2026-07-30 — sgproc-render Phase 01.1 complete (CMake vk-bootstrap discovery, MNN CPU-to-VULKAN processor migration, coverage)*
