@@ -57,6 +57,30 @@ Plans:
 
 - [x] 01-06-PLAN.md — Concurrent Vulkan init stress test (CTX-02/D-05)
 
+### Phase 01.1: CMake vk-bootstrap discovery, MNN CPU-to-VULKAN processor migration, and coverage (INSERTED)
+
+**Goal**: `GeniusSDK`/`GeniusWallet` configure cleanly against a `SGProcessingManager` submodule pointer that includes Phase 1's vk-bootstrap vendoring; every MNN processor in `SGProcessingManager` runs on the Vulkan backend under the existing shared init-time mutex with zero new races; and the migration's correctness is proven via the existing local regression-test suite, not new coverage tooling.
+**Depends on**: Phase 1 (complete)
+**Requirements**: CMAKE-01, MIGR-01, MIGR-02, COV-01
+**Success Criteria** (what must be TRUE):
+
+  1. `GeniusSDK/cmake/CommonBuildParameters.cmake` and `GeniusWallet/cmake/CommonBuildParameters.cmake` both resolve `vk-bootstrap::vk-bootstrap` via `find_package(vk-bootstrap CONFIG REQUIRED)`, mirroring `SGProcessingManager`'s own established per-consumer convention (CMAKE-01)
+  2. All 13 remaining CPU-backed MNN processors (14 `createSession()` call sites) request `MNN_FORWARD_VULKAN` and are guarded by the existing shared `VulkanInitMutex()` — matching the already-migrated `image`/`string`/`volume` processors, with zero new synchronization primitives (MIGR-01)
+  3. `vulkan_init_guard.hpp`'s doc comment and `vulkan_init_concurrency_test.cpp`'s scope note no longer undercount the real, post-migration set of Vulkan-init call sites sharing the mutex (MIGR-02)
+  4. The existing `ProcessingDatatypesTest` suite's 13 migration-candidate `*ProcessingTest` cases are re-verified against the newly-Vulkan-backed processors within their existing tolerance bounds — no gcov/lcov/OpenCppCoverage or other new coverage tooling is introduced (COV-01)
+
+**Plans**: 3 plans
+
+Plans:
+**Wave 1**
+
+- [ ] 01.1-01-PLAN.md — CMake vk-bootstrap find_package propagation to GeniusSDK/GeniusWallet (CMAKE-01)
+- [ ] 01.1-02-PLAN.md — MNN CPU-to-VULKAN processor migration, 13 files/14 call sites (MIGR-01)
+
+**Wave 2** *(blocked on 01.1-02 completion)*
+
+- [ ] 01.1-03-PLAN.md — Doc-comment accuracy update + ProcessingDatatypesTest coverage re-verification (MIGR-02/COV-01)
+
 ### Phase 2: Schema Extension & Shader/SPIR-V Validation Pipeline
 
 **Goal**: The processing schema can fully describe a render pass, and every piece of SPIR-V that could reach the GPU — compiled from job-supplied GLSL or submitted directly — is validated before it ever reaches the driver.
@@ -105,11 +129,12 @@ Plans:
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 1 → 2 → 3 → 4 (Phase 2 is independently developable and could run in parallel with Phase 1 if desired; sequenced here for planning clarity)
+Phases execute in numeric order: 1 → 01.1 → 2 → 3 → 4 (Phase 01.1 is an urgent insertion between 1 and 2; Phase 2 is independently developable and could run in parallel with Phase 1 if desired; sequenced here for planning clarity)
 
 | Phase | Plans Complete | Status | Completed |
 |-------|-----------------|--------|-----------|
 | 1. Vulkan Foundation & Dispatch Plumbing | 6/6 | Complete | 2026-07-29 |
+| 01.1. CMake vk-bootstrap discovery, MNN CPU-to-VULKAN processor migration, and coverage (INSERTED) | 0/3 | Not started | - |
 | 2. Schema Extension & Shader/SPIR-V Validation Pipeline | 0/TBD | Not started | - |
 | 3. RenderProcessor Implementation & Determinism | 0/TBD | Not started | - |
 | 4. Cross-Platform Build, CI & End-to-End Verification | 0/TBD | Not started | - |

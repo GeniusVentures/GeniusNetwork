@@ -9,6 +9,13 @@ This is a full restart of the archived v1.0 attempt (bgfx + 3-tier hardware/soft
 
 Requirements for milestone v1.0. Each maps to roadmap phases.
 
+### CMake & MNN Vulkan Migration Coverage (Phase 01.1 — urgent insertion)
+
+- [ ] **CMAKE-01**: `find_package(vk-bootstrap CONFIG REQUIRED)` propagated to `GeniusSDK/cmake/CommonBuildParameters.cmake` and `GeniusWallet/cmake/CommonBuildParameters.cmake`, mirroring the existing per-consumer convention (not `find_dependency()` propagation), so both downstream consumers resolve `SGProcessingManager`'s PUBLIC-linked `vk-bootstrap::vk-bootstrap` transitive dependency at configure time
+- [ ] **MIGR-01**: All 13 remaining CPU-backed MNN processors (14 `createSession()` call sites) migrated from `MNN_FORWARD_CPU` to `MNN_FORWARD_VULKAN`, each wrapped in the existing shared `sgns::sgprocessing::VulkanInitMutex()` guard from Phase 1's CTX-02 — bringing all MNN processors in `SGProcessingManager` onto the Vulkan backend
+- [ ] **MIGR-02**: `vulkan_init_guard.hpp`'s doc comment and `vulkan_init_concurrency_test.cpp`'s scope documentation updated to reflect the true, larger set of Vulkan-init call sites sharing the mutex post-migration (no longer hardcoding the stale "3 MNN + RenderProcessor" figure)
+- [ ] **COV-01**: The existing `ProcessingDatatypesTest` suite's 13 migration-candidate `*ProcessingTest` cases re-verified against the newly-Vulkan-backed processors within their existing tolerance bounds (`mean_abs_diff < 1e-3`, `max_abs_diff < 1e-2`) — resolving "coverage" as test/verification-suite extension, not new code-coverage tooling (no gcov/lcov/OpenCppCoverage introduced)
+
 ### Vulkan Context & Coexistence
 
 - [ ] **CTX-01**: Headless Vulkan instance/device/queue created for `RenderProcessor` — no `VkSurfaceKHR`, no swapchain, no WSI extensions on any platform (Windows, Linux, macOS via MoltenVK)
@@ -98,6 +105,10 @@ Explicitly excluded. Documented to prevent scope creep.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
+| CMAKE-01 | Phase 01.1 | Pending |
+| MIGR-01 | Phase 01.1 | Pending |
+| MIGR-02 | Phase 01.1 | Pending |
+| COV-01 | Phase 01.1 | Pending |
 | CTX-01 | Phase 1 | Pending |
 | CTX-02 | Phase 1 | Pending |
 | CTX-03 | Phase 1 | Pending |
@@ -130,10 +141,10 @@ Explicitly excluded. Documented to prevent scope creep.
 | E2E-03 | Phase 4 | Pending |
 
 **Coverage:**
-- v1 requirements: 30 total
-- Mapped to phases: 30
+- v1 requirements: 34 total
+- Mapped to phases: 34
 - Unmapped: 0 ✓
 
 ---
 *Requirements defined: 2026-07-29*
-*Last updated: 2026-07-29 — roadmap created, 4 phases, 30/30 v1 requirements mapped (0 unmapped)*
+*Last updated: 2026-07-29 — Phase 01.1 (urgent insertion) added CMAKE-01/MIGR-01/MIGR-02/COV-01; 34/34 v1 requirements mapped (0 unmapped)*
