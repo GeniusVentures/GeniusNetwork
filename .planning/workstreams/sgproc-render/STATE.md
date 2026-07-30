@@ -5,15 +5,15 @@ milestone_name: Render Pass Execution (hand-rolled Vulkan)
 current_phase: 01.1
 current_phase_name: CMake vk-bootstrap discovery, MNN CPU-to-VULKAN processor migration, and coverage
 status: executing
-stopped_at: Completed 01.1-01-PLAN.md
-last_updated: "2026-07-30T02:52:45.073Z"
+stopped_at: Completed 01.1-02-PLAN.md
+last_updated: "2026-07-30T03:02:01.050Z"
 last_activity: 2026-07-30
-last_activity_desc: Completed 01.1-01-PLAN.md (CMake vk-bootstrap find_package propagation)
+last_activity_desc: Completed 01.1-02-PLAN.md (MNN CPU-to-VULKAN processor migration, 13 files/14 call sites)
 progress:
   total_phases: 5
   completed_phases: 1
   total_plans: 9
-  completed_plans: 7
+  completed_plans: 8
   percent: 20
 ---
 
@@ -29,11 +29,11 @@ See: .planning/PROJECT.md (updated 2026-07-29), workstream section "Workstream: 
 ## Current Position
 
 Phase: 01.1 (CMake vk-bootstrap discovery, MNN CPU-to-VULKAN processor migration, and coverage) — EXECUTING
-Plans: 1 of 3 completed
+Plans: 2 of 3 completed
 Status: Executing Phase 01.1
-Last activity: 2026-07-30 — Completed 01.1-01-PLAN.md (CMake vk-bootstrap find_package propagation)
+Last activity: 2026-07-30 — Completed 01.1-02-PLAN.md (MNN CPU-to-VULKAN processor migration, 13 files/14 call sites)
 
-Progress: [████████░░] 78%
+Progress: [████████░░] 89%
 
 ## Performance Metrics
 
@@ -57,6 +57,7 @@ Progress: [████████░░] 78%
 *Updated after each plan completion*
 | Phase 01 P02 | 3min | 1 tasks | 0 files |
 | Phase 01.1 P01 | 15min | 2 tasks | 2 files |
+| Phase 01.1 P02 | 15min | 3 tasks | 13 files |
 
 ## Accumulated Context
 
@@ -71,6 +72,7 @@ Decisions are logged in PROJECT.md Key Decisions table (root project). Recent de
 - Roadmap: Dispatch plumbing (originally a separate research-suggested phase) folded into Phase 1 rather than standing alone — small/mechanical, no independent user-observable value on its own, and no hard ordering dependency on the rest of context setup
 - [Phase 01-02]: D-01 resolved: adopt vk-bootstrap (charles-lunarg/vk-bootstrap, MIT), pinned at v1.4.357 — Confirmed live by orchestrating agent per auto_advance/yolo config; macOS/MoltenVK portability-subset risk outweighs zero-net-new-vendoring preference
 - [Phase 01.1-01]: Bumped GeniusSDK/GeniusWallet submodule pointers after find_package(vk-bootstrap) fix, matching this project's chore(NN-NN): bump submodule pointer convention
+- [Phase 01.1-02]: Migrated all 13 remaining CPU-backed MNN processors (14 createSession() call sites) to MNN_FORWARD_VULKAN, guarded by the shared VulkanInitMutex(); bumped SGProcessingManager and SuperGenius submodule pointers to reference the migration
 
 ### Pending Todos
 
@@ -96,6 +98,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-07-30T02:52:33.537Z
-Stopped at: Completed 01.1-01-PLAN.md
+Last session: 2026-07-30T03:02:01.045Z
+Stopped at: Completed 01.1-02-PLAN.md
 Resume file: None
