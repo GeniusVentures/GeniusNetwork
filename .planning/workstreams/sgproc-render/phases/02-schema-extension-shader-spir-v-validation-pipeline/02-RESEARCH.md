@@ -494,6 +494,7 @@ set_target_properties(shaderc::shaderc PROPERTIES
    - What we know: D-15 explicitly locks `render_target` as all-required, no defaults. D-13/D-14 describe `pipeline_state`'s enum value sets but don't explicitly state a required-vs-default posture the way D-15 does for `render_target`.
    - What's unclear: whether the user's "explicitness over boilerplate" preference (the stated rationale behind D-15) extends to `pipeline_state` too, or whether sensible defaults (e.g. `topology: triangle_list`, `cull_mode: back`, `front_face: ccw`, `depth_test: enabled`) are acceptable here since they're genuinely uncontroversial defaults for a typical render pass.
    - Recommendation: surface this explicitly to the user during `/gsd-plan-phase` rather than silently picking one — the two options produce meaningfully different schema/quicktype shapes (required plain members vs. `boost::optional` members with default-application logic in `CheckProcessValidity()` or `RenderProcessor`).
+   - **Resolved (plan revision, 2026-07-30):** all-optional-with-schema-defaults, not required. See 02-CONTEXT.md's "Open Question 3 Resolution" addendum for the full rationale (uncontroversial, additive-only defaults — unlike D-15's explicitness requirement for `render_target`, defaulting here forecloses nothing and carries no correctness risk).
 
 ## Environment Availability
 
