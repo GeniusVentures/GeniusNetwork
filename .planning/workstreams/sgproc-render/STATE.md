@@ -5,15 +5,15 @@ milestone_name: Render Pass Execution (hand-rolled Vulkan)
 current_phase: 02
 current_phase_name: Schema Extension & Shader/SPIR-V Validation Pipeline
 status: executing
-stopped_at: Phase 02 Plan 02 complete
-last_updated: "2026-07-30T23:34:12.000Z"
+stopped_at: Phase 02 Plan 03 complete
+last_updated: "2026-07-30T23:55:00.000Z"
 last_activity: 2026-07-30
-last_activity_desc: Phase 02 Plan 02 (vendor shaderc/SPIRV-Tools/SPIRV-Headers + CMake targets) complete
+last_activity_desc: Phase 02 Plan 03 (ShaderCompiler GLSL->SPIR-V compile+validate gate, 6 passing unit tests) complete
 progress:
   total_phases: 5
   completed_phases: 2
   total_plans: 13
-  completed_plans: 11
+  completed_plans: 12
   percent: 40
 ---
 
@@ -29,11 +29,11 @@ See: .planning/PROJECT.md (updated 2026-07-29), workstream section "Workstream: 
 ## Current Position
 
 Phase: 02 (Schema Extension & Shader/SPIR-V Validation Pipeline) — EXECUTING
-Plans: 2 of 4 completed (02-01, 02-02 done; 02-03, 02-04 remain)
+Plans: 3 of 4 completed (02-01, 02-02, 02-03 done; 02-04 remains)
 Status: Executing Phase 02
-Last activity: 2026-07-30 — Phase 02 Plan 02 (vendor shaderc/SPIRV-Tools/SPIRV-Headers + CMake targets) complete
+Last activity: 2026-07-30 — Phase 02 Plan 03 (ShaderCompiler GLSL->SPIR-V compile+validate gate, 6 passing unit tests) complete
 
-Progress: [█████░░░░░] 50%
+Progress: [███████░░░] 75%
 
 ## Performance Metrics
 
@@ -60,6 +60,7 @@ Progress: [█████░░░░░] 50%
 | Phase 01.1 P02 | 15min | 3 tasks | 13 files |
 | Phase 01.1 P03 | 15min | 3 tasks | 3 files |
 | Phase 02 P02 | ~100min | 3 tasks | 3 files |
+| Phase 02 P03 | ~60min | 2 tasks | 13 files |
 
 ## Accumulated Context
 
@@ -78,6 +79,7 @@ Decisions are logged in PROJECT.md Key Decisions table (root project). Recent de
 - [Phase 01.1-03]: Fixed a third, previously-undiscovered vk-bootstrap CMake gap in SuperGenius/build/CommonBuildParameters.cmake (standalone build entry point) -- unblocked local build/run of ProcessingDatatypesTest and the concurrency stress test
 - [Phase 02-01]: Confirmed via an actual quicktype v23.2.6 run that D-11 Amendment's design (new sibling `render_shader` property rather than re-typing `shader` per pass type) and D-16 Amendment's `vertex_buffer` addition both regenerate exactly as spike-verified — RenderTarget/VertexBuffer's required fields are plain (non-`boost::optional`) members, `Pass.hpp` gains all six new render-only accessors, and `ShaderSourceType` is shared correctly between `ShaderConfig`/`ShaderStage`
 - [Phase 02-02]: Corrected SPIRV-Tools/SPIRV-Headers pins to the commits shaderc's own `v2024.3` tag's DEPS file references (`01c8438e`/`2a9b6f95`), not the plan's cited commits (read from shaderc `main`'s newer DEPS at research time); confirmed via a real local build+install that SPIRV-Tools installs a CMake CONFIG under bare (non-namespaced) target names, resolved via `find_package(SPIRV-Tools CONFIG)` + `add_library(SPIRV-Tools::SPIRV-Tools ALIAS SPIRV-Tools-static)`; shaderc confirmed to have no installed CMake config at all (hand-rolled IMPORTED target). Both `shaderc::shaderc`/`SPIRV-Tools::SPIRV-Tools` build-verified end-to-end (GLSL compiled to SPIR-V via shaderc, validated via SPIRV-Tools)
+- [Phase 02-03]: Implemented `ShaderCompiler::CompileAndValidate()` with both the GLSL-compiled path and the direct-SPIR-V path each inlining their own `spvtools::SpirvTools::Validate()` call (not factored into a shared helper), so the plan's `grep -c "\.Validate("  == 2` acceptance criterion structurally proves neither path can skip the mandatory validation gate; build-verified end-to-end via a from-scratch MinGW+Ninja build of shaderc/SPIRV-Tools (this session's environment could not link against the MSVC-built project dependencies), all 6 unit tests passing including a mutated-valid-SPIR-V rejection test (the exact Pitfall 2 scenario)
 
 ### Pending Todos
 
@@ -103,6 +105,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-07-30T23:34:12.000Z
-Stopped at: Phase 02 Plan 02 (vendor shaderc/SPIRV-Tools/SPIRV-Headers + CMake targets) complete
-Resume file: .planning/workstreams/sgproc-render/phases/02-schema-extension-shader-spir-v-validation-pipeline/02-03-PLAN.md
+Last session: 2026-07-30T23:55:00.000Z
+Stopped at: Phase 02 Plan 03 (ShaderCompiler GLSL->SPIR-V compile+validate gate, 6 passing unit tests) complete
+Resume file: .planning/workstreams/sgproc-render/phases/02-schema-extension-shader-spir-v-validation-pipeline/02-04-PLAN.md
