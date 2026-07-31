@@ -5,15 +5,15 @@ milestone_name: Render Pass Execution (hand-rolled Vulkan)
 current_phase: 3
 current_phase_name: RenderProcessor Implementation & Determinism
 status: executing
-stopped_at: Completed 03-03-PLAN.md
-last_updated: "2026-07-31T19:01:21.460Z"
+stopped_at: Completed 03-04-PLAN.md
+last_updated: "2026-07-31T19:21:12.848Z"
 last_activity: 2026-07-31
 last_activity_desc: Phase 3 execution started
 progress:
   total_phases: 5
   completed_phases: 3
   total_plans: 19
-  completed_plans: 16
+  completed_plans: 17
   percent: 60
 ---
 
@@ -29,7 +29,7 @@ See: .planning/PROJECT.md (updated 2026-07-29), workstream section "Workstream: 
 ## Current Position
 
 Phase: 3 (RenderProcessor Implementation & Determinism) — EXECUTING
-Plan: 4 of 6
+Plan: 5 of 6
 Status: Ready to execute
 Last activity: 2026-07-31 — Phase 3 execution started
 
@@ -66,6 +66,7 @@ Progress: [░░░░░░░░░░] 0%
 | Phase 3 P03-01 | 35min | 2 tasks | 3 files |
 | Phase 03 P02 | 55min | 2 tasks | 1 files |
 | Phase 03 P03 | ~50min | 2 tasks | 2 files |
+| Phase 03 P04 | 35min | 2 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -92,6 +93,8 @@ Decisions are logged in PROJECT.md Key Decisions table (root project). Recent de
 - [Phase ?]: index_buffer with absent source treated as no-index-buffer (skip), not an error — Schema permits index_type-only declarations; plan explicitly instructs treating this as unusable-here rather than rejecting
 - [Phase 03-03]: MakeError() made static since it needs no instance state, letting also-static ParseCompiledStages()/ParseRenderPassConfig()/ResolveUniforms() call it directly — Avoids requiring an instance for wire-format-parsing helpers that don't otherwise touch RenderProcessor state
 - [Phase 03-03]: ParseRenderPassConfig() wrapped in a function-try-block converting generated-setter constraint-violation exceptions (e.g. RenderTarget::set_width()'s minimum:1 check) into a structured RESOURCE_RESOLUTION error — a malformed/truncated wire-format buffer must never crash the process
+- [Phase 03-04]: Added m_renderWidth/m_renderHeight member state so BuildPipeline() can build a mandatory fixed viewport/scissor -- the plan's signature never provided render-target dimensions to BuildPipeline() despite VkGraphicsPipelineCreateInfo requiring a concrete VkPipelineViewportStateCreateInfo when no dynamic viewport/scissor state is used
+- [Phase 03-04]: Depth image view aspectMask conditionally ORs in VK_IMAGE_ASPECT_STENCIL_BIT for D24_UNORM_S8_UINT (a stencil component the schema never exposes/uses, but Vulkan's depth-stencil-attachment image-view rules require the view's aspectMask to reflect every physically-present aspect)
 
 ### Pending Todos
 
@@ -118,6 +121,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-07-31T19:01:21.454Z
-Stopped at: Completed 03-03-PLAN.md
+Last session: 2026-07-31T19:21:12.842Z
+Stopped at: Completed 03-04-PLAN.md
 Resume file: None
