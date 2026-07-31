@@ -45,20 +45,20 @@ Requirements for milestone v1.0. Each maps to roadmap phases.
 
 ### Render Pipeline Execution
 
-- [ ] **RENDER-01**: `RenderProcessor` builds a vertex+fragment pipeline from schema-declared, validated SPIR-V
-- [ ] **RENDER-02**: `RenderProcessor` uploads vertex/index buffer data from `pass_io_binding`-resolved inputs via direct Vulkan buffer APIs
-- [ ] **RENDER-03**: `RenderProcessor` renders to an offscreen framebuffer (color+depth attachments) with depth testing, no swapchain
+- [x] **RENDER-01**: `RenderProcessor` builds a vertex+fragment pipeline from schema-declared, validated SPIR-V
+- [x] **RENDER-02**: `RenderProcessor` uploads vertex/index buffer data from `pass_io_binding`-resolved inputs via direct Vulkan buffer APIs
+- [x] **RENDER-03**: `RenderProcessor` renders to an offscreen framebuffer (color+depth attachments) with depth testing, no swapchain
 - [ ] **RENDER-04**: Pipeline state (topology, cull mode, winding order) is configurable via schema config (SCHEMA-04)
-- [ ] **RENDER-05**: `RenderProcessor` binds uniforms/parameters (e.g. MVP matrices) via push constants, sourced from `shader_config.uniforms`/`parameter:` refs, falling back to descriptor-set uniforms where push-constant size limits are exceeded
-- [ ] **RENDER-06**: `RenderProcessor` reads back rendered output (`vkCmdCopyImageToBuffer`) and exposes it as `texture2D` through the existing `pass_io_binding` output mechanism
-- [ ] **RENDER-07**: Rendered output can optionally flow through the existing `data_transform` post-processing step
-- [ ] **RENDER-08**: `RenderProcessor` output feeds the existing `ProcessingResult` → `FileManager::SaveASync` → hash path unmodified
-- [ ] **RENDER-09**: `VkResult` failures map to structured `ProcessingManager::Error` values with clear per-failure-point messages
+- [x] **RENDER-05**: `RenderProcessor` binds uniforms/parameters (e.g. MVP matrices) via push constants, sourced from `shader_config.uniforms`/`parameter:` refs, falling back to descriptor-set uniforms where push-constant size limits are exceeded
+- [x] **RENDER-06**: `RenderProcessor` reads back rendered output (`vkCmdCopyImageToBuffer`) and exposes it as `texture2D` through the existing `pass_io_binding` output mechanism
+- [x] **RENDER-07**: Rendered output can optionally flow through the existing `data_transform` post-processing step
+- [x] **RENDER-08**: `RenderProcessor` output feeds the existing `ProcessingResult` → `FileManager::SaveASync` → hash path unmodified
+- [x] **RENDER-09**: `VkResult` failures map to structured `ProcessingManager::Error` values with clear per-failure-point messages
 
 ### Determinism & CI
 
 - [ ] **DETV-01**: Render pass output is verified deterministic via same-node repeat execution (bit-exact hash match across N≥10 repeated runs on the same node/hardware); cross-node, cross-vendor, cross-driver tolerance-based verification is explicitly out of scope for v1
-- [ ] **DETV-02**: Determinism guards are architectural: explicit clear ops (never `DONT_CARE`) on hashed regions, `VK_SAMPLE_COUNT_1_BIT` always, fixed shader precision qualifiers, no unordered parallel-reduction shader math
+- [x] **DETV-02**: Determinism guards are architectural: explicit clear ops (never `DONT_CARE`) on hashed regions, `VK_SAMPLE_COUNT_1_BIT` always, fixed shader precision qualifiers, no unordered parallel-reduction shader math
 - [ ] **DETV-03**: CI exercises a hardware-independent tier (schema validation, shader compile, `spirv-val`, pipeline construction via a software Vulkan ICD, test-only — never product code) alongside a hardware-dependent tier (real draw+readback, the repeat-run determinism test) on a real-GPU runner
 
 ### End-to-End Verification
@@ -124,17 +124,17 @@ Explicitly excluded. Documented to prevent scope creep.
 | SHADER-01 | Phase 2 | Complete |
 | SHADER-02 | Phase 2 | Complete |
 | SHADER-03 | Phase 2 | Complete |
-| RENDER-01 | Phase 3 | Pending |
-| RENDER-02 | Phase 3 | Pending |
-| RENDER-03 | Phase 3 | Pending |
+| RENDER-01 | Phase 3 | Complete |
+| RENDER-02 | Phase 3 | Complete |
+| RENDER-03 | Phase 3 | Complete |
 | RENDER-04 | Phase 3 | Pending |
-| RENDER-05 | Phase 3 | Pending |
-| RENDER-06 | Phase 3 | Pending |
-| RENDER-07 | Phase 3 | Pending |
-| RENDER-08 | Phase 3 | Pending |
-| RENDER-09 | Phase 3 | Pending |
+| RENDER-05 | Phase 3 | Complete |
+| RENDER-06 | Phase 3 | Complete |
+| RENDER-07 | Phase 3 | Complete |
+| RENDER-08 | Phase 3 | Complete |
+| RENDER-09 | Phase 3 | Complete |
 | DETV-01 | Phase 3 | Pending |
-| DETV-02 | Phase 3 | Pending |
+| DETV-02 | Phase 3 | Complete |
 | DETV-03 | Phase 4 | Pending |
 | E2E-01 | Phase 4 | Pending |
 | E2E-02 | Phase 4 | Pending |
