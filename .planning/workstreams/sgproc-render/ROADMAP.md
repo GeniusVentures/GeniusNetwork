@@ -123,7 +123,32 @@ Plans:
   4. `VkResult` failures at any stage map to structured `ProcessingManager::Error` values with clear per-failure-point messages (RENDER-09)
   5. The same render pass definition executed N≥10 times on the same node/hardware produces a bit-exact matching output hash every time, achieved through architectural guards — explicit clear ops (never `DONT_CARE`) on hashed regions, `VK_SAMPLE_COUNT_1_BIT` always, fixed shader precision qualifiers, no unordered parallel-reduction shader math — rather than incidental behavior (DETV-01, DETV-02)
 
-**Plans**: TBD
+**Plans**: 6 plans
+
+Plans:
+**Wave 1**
+
+- [ ] 03-01-PLAN.md — ProcessingResult error field (D-25/D-26) + Process() failure gate (D-27/D-28) + SPIR-V entry_point wire-format extension (RENDER-09, RENDER-01)
+
+**Wave 2** *(blocked on 03-01 completion)*
+
+- [ ] 03-02-PLAN.md — vertex_buffer/index_buffer independent resolution + render_target/pipeline_state/vertex_layout/uniforms wire-format serialization (RENDER-02, RENDER-05)
+
+**Wave 3** *(blocked on 03-02 completion)*
+
+- [ ] 03-03-PLAN.md — RenderProcessor wire-format parsers, uniform resolution, dedicated buffer/image allocation, ordered teardown (RENDER-02, RENDER-05, RENDER-09)
+
+**Wave 4** *(blocked on 03-03 completion)*
+
+- [ ] 03-04-PLAN.md — Offscreen render pass/framebuffer + graphics pipeline construction (RENDER-01, RENDER-03, RENDER-04, DETV-02)
+
+**Wave 5** *(blocked on 03-04 completion)*
+
+- [ ] 03-05-PLAN.md — Buffer upload, draw submission, readback, data_transform stance, full StartProcessing() wiring (RENDER-01, RENDER-03, RENDER-06, RENDER-07, RENDER-08, RENDER-09, DETV-02)
+
+**Wave 6** *(blocked on 03-05 completion)*
+
+- [ ] 03-06-PLAN.md — Same-node N>=10 repeat-run determinism proof (DETV-01, DETV-02)
 
 ### Phase 4: Cross-Platform Build, CI & End-to-End Verification
 
@@ -150,7 +175,7 @@ Phases execute in numeric order: 1 → 01.1 → 2 → 3 → 4 (Phase 01.1 is an 
 | 1. Vulkan Foundation & Dispatch Plumbing | 6/6 | Complete | 2026-07-29 |
 | 01.1. CMake vk-bootstrap discovery, MNN CPU-to-VULKAN processor migration, and coverage (INSERTED) | 3/3 | Complete    | 2026-07-30 |
 | 2. Schema Extension & Shader/SPIR-V Validation Pipeline | 4/4 | Complete    | 2026-07-31 |
-| 3. RenderProcessor Implementation & Determinism | 0/TBD | Not started | - |
+| 3. RenderProcessor Implementation & Determinism | 0/6 | Not started | - |
 | 4. Cross-Platform Build, CI & End-to-End Verification | 0/TBD | Not started | - |
 
 ---
