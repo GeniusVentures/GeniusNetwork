@@ -5,15 +5,15 @@ milestone_name: Render Pass Execution (hand-rolled Vulkan)
 current_phase: 3
 current_phase_name: RenderProcessor Implementation & Determinism
 status: executing
-stopped_at: Phase 3 context gathered
-last_updated: "2026-07-31T18:08:44.056Z"
+stopped_at: Completed 03-01-PLAN.md
+last_updated: "2026-07-31T18:22:28.648Z"
 last_activity: 2026-07-31
-last_activity_desc: Phase 02 complete, transitioned to Phase 3
+last_activity_desc: Phase 3 execution started
 progress:
   total_phases: 5
   completed_phases: 3
-  total_plans: 13
-  completed_plans: 13
+  total_plans: 19
+  completed_plans: 14
   percent: 60
 ---
 
@@ -24,16 +24,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-07-29), workstream section "Workstream: sgproc-render"
 
 **Core value:** Make SGProcessingManager's `render` PassType a real, executable graphics pipeline via hand-rolled Vulkan — headless/offscreen, own independent `VkInstance`/`VkDevice`, no new GPU backend/engine, no OpenGL or CPU/software fallback tier.
-**Current focus:** Phase 02 — Schema Extension & Shader/SPIR-V Validation Pipeline
+**Current focus:** Phase 3 — RenderProcessor Implementation & Determinism
 
 ## Current Position
 
-Phase: 3 — RenderProcessor Implementation & Determinism
-Plans: 4 of 4 completed (02-01, 02-02, 02-03, 02-04 all done)
+Phase: 3 (RenderProcessor Implementation & Determinism) — EXECUTING
+Plan: 2 of 6
 Status: Ready to execute
-Last activity: 2026-07-31 — Phase 02 complete, transitioned to Phase 3
+Last activity: 2026-07-31 — Phase 3 execution started
 
-Progress: [██████████] 100%
+Progress: [░░░░░░░░░░] 0%
 
 ## Performance Metrics
 
@@ -63,6 +63,7 @@ Progress: [██████████] 100%
 | Phase 02 P02 | ~100min | 3 tasks | 3 files |
 | Phase 02 P03 | ~60min | 2 tasks | 13 files |
 | Phase 02 P04 | ~45min | 2 tasks | 11 files |
+| Phase 3 P03-01 | 35min | 2 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -83,6 +84,8 @@ Decisions are logged in PROJECT.md Key Decisions table (root project). Recent de
 - [Phase 02-02]: Corrected SPIRV-Tools/SPIRV-Headers pins to the commits shaderc's own `v2024.3` tag's DEPS file references (`01c8438e`/`2a9b6f95`), not the plan's cited commits (read from shaderc `main`'s newer DEPS at research time); confirmed via a real local build+install that SPIRV-Tools installs a CMake CONFIG under bare (non-namespaced) target names, resolved via `find_package(SPIRV-Tools CONFIG)` + `add_library(SPIRV-Tools::SPIRV-Tools ALIAS SPIRV-Tools-static)`; shaderc confirmed to have no installed CMake config at all (hand-rolled IMPORTED target). Both `shaderc::shaderc`/`SPIRV-Tools::SPIRV-Tools` build-verified end-to-end (GLSL compiled to SPIR-V via shaderc, validated via SPIRV-Tools)
 - [Phase 02-03]: Implemented `ShaderCompiler::CompileAndValidate()` with both the GLSL-compiled path and the direct-SPIR-V path each inlining their own `spvtools::SpirvTools::Validate()` call (not factored into a shared helper), so the plan's `grep -c "\.Validate("  == 2` acceptance criterion structurally proves neither path can skip the mandatory validation gate; build-verified end-to-end via a from-scratch MinGW+Ninja build of shaderc/SPIRV-Tools (this session's environment could not link against the MSVC-built project dependencies), all 6 unit tests passing including a mutated-valid-SPIR-V rejection test (the exact Pitfall 2 scenario)
 - [Phase 02-04]: Wired `ShaderCompiler` into `ProcessingManager::GetCidForProc()`'s render-pass branch (per-stage fetch queued alongside the existing image fetch, single `ioc->run()` unchanged), extended `CheckProcessValidity()`'s render branch to plan 02-01's new schema fields, and closed a newly-live `std::runtime_error`-from-narrowed-enum crash vector in `Init()`'s JSON parsing; full MSBuild link-build was blocked by this working tree's missing installed vk-bootstrap/shaderc/SPIRV-Tools packages (same ephemeral-build-directory constraint as 02-03), substituted with a real MSVC `cl.exe /Zs` syntax+semantic check against the project's actual include paths -- both modified C++ files passed with 0 errors. Phase 02 is now fully complete (all 4 plans)
+- [Phase 3]: ProcessingErrorStage/ProcessingError are plain (non-outcome::result) types on ProcessingResult per D-25's no-signature-change constraint
+- [Phase 3]: D-28 MNN retroactive fix satisfied by treating empty ProcessingResult::hash as an additional failure signal -- zero changes to any of the 15 MNN processor files
 
 ### Pending Todos
 
@@ -109,6 +112,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-07-31T09:35:11.247Z
-Stopped at: Phase 3 context gathered
+Last session: 2026-07-31T18:22:28.642Z
+Stopped at: Completed 03-01-PLAN.md
 Resume file: .planning/workstreams/sgproc-render/phases/03-renderprocessor-implementation-determinism/03-CONTEXT.md

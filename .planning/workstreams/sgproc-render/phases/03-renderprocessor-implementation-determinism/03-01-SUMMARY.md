@@ -94,6 +94,10 @@ None — plan executed exactly as written for both tasks; no Rule 1/2/3 auto-fix
 
 None encountered.
 
+### Requirements Marking Deferred
+
+This plan's frontmatter lists `requirements: [RENDER-09, RENDER-01]`, but both are multi-plan requirements in this phase's ROADMAP (RENDER-01 also owned by 03-04/03-05's actual pipeline-construction work; RENDER-09 also by 03-03/03-05, since the structured error field this plan adds isn't populated on any real render failure path until those plans run). Running `requirements mark-complete` now would incorrectly flip both to "Complete" in `REQUIREMENTS.md` while their actual functionality remains unbuilt. Deliberately skipped this plan; the last plan to touch each ID (03-05 for both, per the frontmatter survey across 03-01..03-06) should perform the mark-complete call.
+
 ## Self-Check: PASSED
 
 - `SuperGenius/SGProcessingManager/include/processors/processing_processor.hpp` — FOUND
