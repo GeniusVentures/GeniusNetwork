@@ -59,11 +59,11 @@ Requirements for milestone v1.0. Each maps to roadmap phases.
 
 - [x] **DETV-01**: Render pass output is verified deterministic via same-node repeat execution (bit-exact hash match across N≥10 repeated runs on the same node/hardware); cross-node, cross-vendor, cross-driver tolerance-based verification is explicitly out of scope for v1
 - [x] **DETV-02**: Determinism guards are architectural: explicit clear ops (never `DONT_CARE`) on hashed regions, `VK_SAMPLE_COUNT_1_BIT` always, fixed shader precision qualifiers, no unordered parallel-reduction shader math
-- [ ] **DETV-03**: CI exercises a hardware-independent tier (schema validation, shader compile, `spirv-val`, pipeline construction via a software Vulkan ICD, test-only — never product code) alongside a hardware-dependent tier (real draw+readback, the repeat-run determinism test) on a real-GPU runner
+- [x] **DETV-03**: CI exercises a hardware-independent tier (schema validation, shader compile, `spirv-val`, pipeline construction via a software Vulkan ICD, test-only — never product code) alongside a hardware-dependent tier (real draw+readback, the repeat-run determinism test) on a real-GPU runner
 
 ### End-to-End Verification
 
-- [ ] **E2E-01**: A real render pass definition executes end-to-end through the distributed processing pipeline and produces a verified output hash
+- [x] **E2E-01**: A real render pass definition executes end-to-end through the distributed processing pipeline and produces a verified output hash
 - [ ] **E2E-02**: The render path actually executes (not just compiles) on a MoltenVK/macOS target
 - [ ] **E2E-03**: The full existing MNN inference/retrain test suite passes with zero regressions alongside the new render path, including a concurrent-init stress test proving CTX-02's shared lock holds under real concurrent MNN-Vulkan-init + RenderProcessor-Vulkan-init load
 
@@ -135,8 +135,8 @@ Explicitly excluded. Documented to prevent scope creep.
 | RENDER-09 | Phase 3 | Complete |
 | DETV-01 | Phase 3 | Complete |
 | DETV-02 | Phase 3 | Complete |
-| DETV-03 | Phase 4 | Pending |
-| E2E-01 | Phase 4 | Pending |
+| DETV-03 | Phase 4 | Complete |
+| E2E-01 | Phase 4 | Complete |
 | E2E-02 | Phase 4 | Pending |
 | E2E-03 | Phase 4 | Pending |
 
