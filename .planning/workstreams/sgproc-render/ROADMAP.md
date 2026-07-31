@@ -163,7 +163,17 @@ Plans:
   4. The render path actually executes — not just compiles — on a MoltenVK/macOS target (E2E-02)
   5. The full existing MNN inference/retrain test suite passes with zero regressions alongside the new render path, including a concurrent-init stress test proving Phase 1's shared Vulkan-init lock holds under real concurrent MNN-Vulkan-init + `RenderProcessor`-Vulkan-init load (E2E-03)
 
-**Plans**: TBD
+**Plans**: 0/3 plans complete
+
+Plans:
+**Wave 1**
+
+- [ ] 04-01-PLAN.md — GPU probe (HasUsableVulkanDevice) + GTEST_SKIP retrofit + E2E-01 single-run render test (DETV-03/E2E-01)
+- [ ] 04-02-PLAN.md — cmake.yml CI annotation steps for GPU-gated test skips, Windows/Linux/OSX (DETV-03/E2E-02)
+
+**Wave 2** *(blocked on 04-01/04-02 completion)*
+
+- [ ] 04-03-PLAN.md — Zero-regressions confirmation: concurrency stress test + full MNN suite (E2E-03)
 
 ## Progress
 
@@ -176,7 +186,7 @@ Phases execute in numeric order: 1 → 01.1 → 2 → 3 → 4 (Phase 01.1 is an 
 | 01.1. CMake vk-bootstrap discovery, MNN CPU-to-VULKAN processor migration, and coverage (INSERTED) | 3/3 | Complete    | 2026-07-30 |
 | 2. Schema Extension & Shader/SPIR-V Validation Pipeline | 4/4 | Complete    | 2026-07-31 |
 | 3. RenderProcessor Implementation & Determinism | 6/6 | Complete    | 2026-07-31 |
-| 4. Cross-Platform Build, CI & End-to-End Verification | 0/TBD | Not started | - |
+| 4. Cross-Platform Build, CI & End-to-End Verification | 0/3 | Planned | - |
 
 ---
 *Roadmap created: 2026-07-29*
