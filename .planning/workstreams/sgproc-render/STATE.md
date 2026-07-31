@@ -5,15 +5,15 @@ milestone_name: Render Pass Execution (hand-rolled Vulkan)
 current_phase: 3
 current_phase_name: RenderProcessor Implementation & Determinism
 status: executing
-stopped_at: Completed 03-01-PLAN.md
-last_updated: "2026-07-31T18:43:13.677Z"
+stopped_at: Completed 03-03-PLAN.md
+last_updated: "2026-07-31T19:01:21.460Z"
 last_activity: 2026-07-31
 last_activity_desc: Phase 3 execution started
 progress:
   total_phases: 5
   completed_phases: 3
   total_plans: 19
-  completed_plans: 15
+  completed_plans: 16
   percent: 60
 ---
 
@@ -29,7 +29,7 @@ See: .planning/PROJECT.md (updated 2026-07-29), workstream section "Workstream: 
 ## Current Position
 
 Phase: 3 (RenderProcessor Implementation & Determinism) — EXECUTING
-Plan: 3 of 6
+Plan: 4 of 6
 Status: Ready to execute
 Last activity: 2026-07-31 — Phase 3 execution started
 
@@ -65,6 +65,7 @@ Progress: [░░░░░░░░░░] 0%
 | Phase 02 P04 | ~45min | 2 tasks | 11 files |
 | Phase 3 P03-01 | 35min | 2 tasks | 3 files |
 | Phase 03 P02 | 55min | 2 tasks | 1 files |
+| Phase 03 P03 | ~50min | 2 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -89,6 +90,8 @@ Decisions are logged in PROJECT.md Key Decisions table (root project). Recent de
 - [Phase 3]: D-28 MNN retroactive fix satisfied by treating empty ProcessingResult::hash as an additional failure signal -- zero changes to any of the 15 MNN processor files
 - [Phase ?]: vertexBuffer->empty() explicit check preserves pre-existing INPUT_UNAVAIL semantics now that mainbuffers->second is always non-empty for render passes — Required to satisfy plan's own acceptance criterion (RenderPassValidGlslShadersCompileAndValidateEndToEnd must still fail with INPUT_UNAVAIL)
 - [Phase ?]: index_buffer with absent source treated as no-index-buffer (skip), not an error — Schema permits index_type-only declarations; plan explicitly instructs treating this as unusable-here rather than rejecting
+- [Phase 03-03]: MakeError() made static since it needs no instance state, letting also-static ParseCompiledStages()/ParseRenderPassConfig()/ResolveUniforms() call it directly — Avoids requiring an instance for wire-format-parsing helpers that don't otherwise touch RenderProcessor state
+- [Phase 03-03]: ParseRenderPassConfig() wrapped in a function-try-block converting generated-setter constraint-violation exceptions (e.g. RenderTarget::set_width()'s minimum:1 check) into a structured RESOURCE_RESOLUTION error — a malformed/truncated wire-format buffer must never crash the process
 
 ### Pending Todos
 
@@ -115,6 +118,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-07-31T18:42:19.523Z
-Stopped at: Completed 03-01-PLAN.md
-Resume file: .planning/workstreams/sgproc-render/phases/03-renderprocessor-implementation-determinism/03-CONTEXT.md
+Last session: 2026-07-31T19:01:21.454Z
+Stopped at: Completed 03-03-PLAN.md
+Resume file: None
