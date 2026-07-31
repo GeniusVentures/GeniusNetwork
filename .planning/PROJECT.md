@@ -50,7 +50,7 @@ This project now runs parallel workstreams (see `.planning/workstreams/`). Each 
 
 **Context:** `PassType::RENDER` currently exists only as a no-op stub in `CheckProcessValidity()` (SGProcessingManager/src/processingbase/ProcessingManager.cpp:151-152) — accepted but never validated or executed. MNN's Vulkan use is fully encapsulated (no exposed `VkInstance`/`VkDevice`); a renderer needs its own independent Vulkan context, coordinated with (not shared with) MNN's. `thirdparty/` is 100% git submodules, all permissive (Apache-2.0/MIT/BSD/zlib), including `Vulkan-Headers`/`Vulkan-Loader`/MoltenVK already vendored — no new vendoring is currently expected for this milestone.
 
-**Progress:** Phase 1 (Vulkan Foundation & Dispatch Plumbing) complete 2026-07-29 — headless Vulkan context, shared init-lock, deterministic device selection, and `PassType`-keyed dispatch all shipped. Phase 01.1 (urgent insertion, CMake vk-bootstrap discovery + MNN CPU-to-VULKAN migration + coverage) complete 2026-07-30 — `GeniusSDK`/`GeniusWallet` now resolve `vk-bootstrap::vk-bootstrap` transitively, all remaining MNN processors run on the Vulkan backend under the shared mutex, and the migration is proven via the existing regression-test suite (no new coverage tooling introduced). Next: Phase 2 (Schema Extension & Shader/SPIR-V Validation Pipeline).
+**Progress:** Phase 1 (Vulkan Foundation & Dispatch Plumbing) complete 2026-07-29 — headless Vulkan context, shared init-lock, deterministic device selection, and `PassType`-keyed dispatch all shipped. Phase 01.1 (urgent insertion, CMake vk-bootstrap discovery + MNN CPU-to-VULKAN migration + coverage) complete 2026-07-30 — `GeniusSDK`/`GeniusWallet` now resolve `vk-bootstrap::vk-bootstrap` transitively, all remaining MNN processors run on the Vulkan backend under the shared mutex, and the migration is proven via the existing regression-test suite (no new coverage tooling introduced). Phase 2 (Schema Extension & Shader/SPIR-V Validation Pipeline) complete 2026-07-31 — schema fully describes a render pass, `shaderc`+SPIRV-Tools vendored and wired, all SPIR-V validated before reaching the driver. Phase 3 (RenderProcessor Implementation & Determinism) complete 2026-07-31 — `RenderProcessor::StartProcessing()` fully implemented (pipeline build, buffer upload, offscreen draw, readback, real SHA-256 hash); DETV-01's bit-exact-across-N≥10-runs claim empirically proven against real hardware, not just architecturally argued. Next: Phase 4 (Cross-Platform Build, CI & End-to-End Verification).
 
 ### Workstream: gnus-subnets
 
@@ -92,6 +92,13 @@ This project now runs parallel workstreams (see `.planning/workstreams/`). Each 
 - ✓ All 13 remaining CPU-backed MNN processors migrated to `MNN_FORWARD_VULKAN` under the existing shared `VulkanInitMutex()` — sgproc-render Phase 01.1, fulfilled MIGR-01
 - ✓ Vulkan-init call-site documentation/tests updated to describe the full post-migration caller set instead of a stale count — sgproc-render Phase 01.1, fulfilled MIGR-02
 - ✓ Migration correctness proven via the existing `ProcessingDatatypesTest` suite + concurrent-init stress test — no new coverage tooling introduced — sgproc-render Phase 01.1, fulfilled COV-01
+- ✓ Processing schema fully describes a render pass (render_target/vertex+index buffers/multi-stage shaders/pipeline state), quicktype-regenerated with zero hand-edits — sgproc-render Phase 2, fulfilled SCHEMA-01..05
+- ✓ GLSL compiled to SPIR-V via vendored `shaderc`; all SPIR-V (compiled or directly submitted) validated via mandatory `spirv-val` gate before reaching `vkCreateShaderModule` — sgproc-render Phase 2, fulfilled SHADER-01/02/03
+- ✓ `RenderProcessor` builds a vertex+fragment graphics pipeline from schema-declared, validated SPIR-V with schema-configurable pipeline state — sgproc-render Phase 3, fulfilled RENDER-01/04
+- ✓ Vertex/index buffers resolved and uploaded via direct Vulkan buffer APIs, rendering offscreen (no swapchain) with push-constant/descriptor-set uniform fallback at the 128-byte threshold — sgproc-render Phase 3, fulfilled RENDER-02/03/05
+- ✓ Rendered output read back via `vkCmdCopyImageToBuffer`, exposed as `texture2D` output, feeding the unmodified `ProcessingResult` → hash path — sgproc-render Phase 3, fulfilled RENDER-06/07/08
+- ✓ `VkResult` failures map to structured `ProcessingManager::Error` values with clear per-stage messages, for both the new render path and (per broadened scope) the pre-existing MNN dispatch path — sgproc-render Phase 3, fulfilled RENDER-09
+- ✓ Same render pass definition executed 10x on the same node produces a bit-exact matching output hash every time, empirically proven against real hardware — sgproc-render Phase 3, fulfilled DETV-01/02
 
 ### Active
 
@@ -127,6 +134,7 @@ This project now runs parallel workstreams (see `.planning/workstreams/`). Each 
 - v2.3 Phase 3 added `Blockchain::CheckCertifiedParent` (D-63 certified-parent lookup, zero `genius_node` dependency to preserve the one-directional `blockchain_genesis` ← `genius_node` library link) and a narrow D-60 signature-acceptance branch in `CheckTransactionAuthorization`/`ValidateWitness`, so a certified main's signature is accepted on a child-sourced recovery transaction without weakening any other signature check
 - While building Phase 3's regression tests, found and fixed a pre-existing gap: `TransactionManager`'s `transaction_parsers` dispatch table had no entry for the `"registration"` tx type, so every registration transaction was rejected as "Unknown tx type" before it could ever reach a certified state — the certified-parent mechanism this milestone depends on could never have worked without this fix
 - v2.4 merged both SuperGenius and GeniusSDK `dev_childwallet` branches current with `origin/develop` (162 commits caught up on SuperGenius), resolving the `DevConfig_st`→`GeniusNodeConfig` rename across ~17 files with zero child-wallet regressions; an unrelated `thirdparty` submodule drift was root-caused as blocking some real-networked E2E fixtures (DI-06-01), not a regression from the merge itself
+- sgproc-render Phase 3's final plan (03-06, the empirical N≥10 determinism test) discovered a real, previously-unknown bug on its first run: `RenderProcessor::InitializeContext()`'s `vkb::PhysicalDeviceSelector` defaults `require_present=true`, which rejects every physical device when no `VkSurfaceKHR` exists — invisible until this plan's fixture became the first render-pass definition to actually reach device selection with fetchable input data. Fixed via `selector.require_present(false)`; after the fix, 10/10 repeat runs produced byte-identical SHA-256 hashes and the full regression suite (31/31 MNN + 9 pre-existing dispatch tests) stayed green
 
 ## Known Issues
 
@@ -161,6 +169,8 @@ This project now runs parallel workstreams (see `.planning/workstreams/`). Each 
 | Merge commit over rebase for `dev_childwallet` (v2.4) | Both SuperGenius and GeniusSDK `dev_childwallet` branches already shared/pushed; rebase would rewrite shared history | ✓ Good |
 | `CrdtSet::mutex_` reentrancy root cause over original DAG-broadcast hypothesis (Phase 5, revisited v2.4) | Live-debugger stack trace during Phase 6 regression testing confirmed the fix (`std::recursive_mutex`) held under the merged `origin/develop` code paths too | ✓ Good |
 | Phase 7 (v2.4) completed outside formal GSD workflow, milestone closed via override | User completed the GeniusSDK merge/build verification directly; no `07-*` plan/verification artifacts exist, but git history independently confirms both merge commits are pushed | ⚠️ Revisit — same pattern as the v2.2 Phase 2 gap; consider running `/gsd-plan-phase`/`/gsd-execute-phase` retroactively if a future milestone needs a formal Phase 7 verification trail |
+| Fresh build + full teardown per `StartProcessing()` call, no cross-job Vulkan object caching (sgproc-render Phase 3, D-22) | Zero shared mutable GPU state between jobs gives the simplest possible story for DETV-01's determinism claim | ✓ Good — empirically confirmed: 10/10 repeat runs bit-exact |
+| Synchronous `vkDeviceWaitIdle` + full teardown before `StartProcessing()` returns, no deferred/async cleanup (sgproc-render Phase 3, D-23) | User raised a host-game-coexistence concern; resolved because RenderProcessor uses its own independent `VkInstance`/`VkDevice`/`VkQueue` (Phase 1, CTX-01), so this can only block RenderProcessor's own device, never a host application's separate one | ✓ Good — explicitly re-confirmed with the user, not silently revisited |
 
 ## Evolution
 
@@ -180,4 +190,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-07-30 — sgproc-render Phase 01.1 complete (CMake vk-bootstrap discovery, MNN CPU-to-VULKAN processor migration, coverage)*
+*Last updated: 2026-07-31 — sgproc-render Phase 3 complete (RenderProcessor Implementation & Determinism)*
