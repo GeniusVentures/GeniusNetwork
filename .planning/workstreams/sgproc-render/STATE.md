@@ -6,14 +6,14 @@ current_phase: 3
 current_phase_name: RenderProcessor Implementation & Determinism
 status: executing
 stopped_at: Completed 03-01-PLAN.md
-last_updated: "2026-07-31T18:22:28.648Z"
+last_updated: "2026-07-31T18:43:13.677Z"
 last_activity: 2026-07-31
 last_activity_desc: Phase 3 execution started
 progress:
   total_phases: 5
   completed_phases: 3
   total_plans: 19
-  completed_plans: 14
+  completed_plans: 15
   percent: 60
 ---
 
@@ -29,7 +29,7 @@ See: .planning/PROJECT.md (updated 2026-07-29), workstream section "Workstream: 
 ## Current Position
 
 Phase: 3 (RenderProcessor Implementation & Determinism) — EXECUTING
-Plan: 2 of 6
+Plan: 3 of 6
 Status: Ready to execute
 Last activity: 2026-07-31 — Phase 3 execution started
 
@@ -64,6 +64,7 @@ Progress: [░░░░░░░░░░] 0%
 | Phase 02 P03 | ~60min | 2 tasks | 13 files |
 | Phase 02 P04 | ~45min | 2 tasks | 11 files |
 | Phase 3 P03-01 | 35min | 2 tasks | 3 files |
+| Phase 03 P02 | 55min | 2 tasks | 1 files |
 
 ## Accumulated Context
 
@@ -86,6 +87,8 @@ Decisions are logged in PROJECT.md Key Decisions table (root project). Recent de
 - [Phase 02-04]: Wired `ShaderCompiler` into `ProcessingManager::GetCidForProc()`'s render-pass branch (per-stage fetch queued alongside the existing image fetch, single `ioc->run()` unchanged), extended `CheckProcessValidity()`'s render branch to plan 02-01's new schema fields, and closed a newly-live `std::runtime_error`-from-narrowed-enum crash vector in `Init()`'s JSON parsing; full MSBuild link-build was blocked by this working tree's missing installed vk-bootstrap/shaderc/SPIRV-Tools packages (same ephemeral-build-directory constraint as 02-03), substituted with a real MSVC `cl.exe /Zs` syntax+semantic check against the project's actual include paths -- both modified C++ files passed with 0 errors. Phase 02 is now fully complete (all 4 plans)
 - [Phase 3]: ProcessingErrorStage/ProcessingError are plain (non-outcome::result) types on ProcessingResult per D-25's no-signature-change constraint
 - [Phase 3]: D-28 MNN retroactive fix satisfied by treating empty ProcessingResult::hash as an additional failure signal -- zero changes to any of the 15 MNN processor files
+- [Phase ?]: vertexBuffer->empty() explicit check preserves pre-existing INPUT_UNAVAIL semantics now that mainbuffers->second is always non-empty for render passes — Required to satisfy plan's own acceptance criterion (RenderPassValidGlslShadersCompileAndValidateEndToEnd must still fail with INPUT_UNAVAIL)
+- [Phase ?]: index_buffer with absent source treated as no-index-buffer (skip), not an error — Schema permits index_type-only declarations; plan explicitly instructs treating this as unusable-here rather than rejecting
 
 ### Pending Todos
 
@@ -112,6 +115,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-07-31T18:22:28.642Z
+Last session: 2026-07-31T18:42:19.523Z
 Stopped at: Completed 03-01-PLAN.md
 Resume file: .planning/workstreams/sgproc-render/phases/03-renderprocessor-implementation-determinism/03-CONTEXT.md
