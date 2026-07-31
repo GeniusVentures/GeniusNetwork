@@ -48,7 +48,7 @@ Requirements for milestone v1.0. Each maps to roadmap phases.
 - [x] **RENDER-01**: `RenderProcessor` builds a vertex+fragment pipeline from schema-declared, validated SPIR-V
 - [x] **RENDER-02**: `RenderProcessor` uploads vertex/index buffer data from `pass_io_binding`-resolved inputs via direct Vulkan buffer APIs
 - [x] **RENDER-03**: `RenderProcessor` renders to an offscreen framebuffer (color+depth attachments) with depth testing, no swapchain
-- [ ] **RENDER-04**: Pipeline state (topology, cull mode, winding order) is configurable via schema config (SCHEMA-04)
+- [x] **RENDER-04**: Pipeline state (topology, cull mode, winding order) is configurable via schema config (SCHEMA-04)
 - [x] **RENDER-05**: `RenderProcessor` binds uniforms/parameters (e.g. MVP matrices) via push constants, sourced from `shader_config.uniforms`/`parameter:` refs, falling back to descriptor-set uniforms where push-constant size limits are exceeded
 - [x] **RENDER-06**: `RenderProcessor` reads back rendered output (`vkCmdCopyImageToBuffer`) and exposes it as `texture2D` through the existing `pass_io_binding` output mechanism
 - [x] **RENDER-07**: Rendered output can optionally flow through the existing `data_transform` post-processing step
@@ -127,7 +127,7 @@ Explicitly excluded. Documented to prevent scope creep.
 | RENDER-01 | Phase 3 | Complete |
 | RENDER-02 | Phase 3 | Complete |
 | RENDER-03 | Phase 3 | Complete |
-| RENDER-04 | Phase 3 | Pending |
+| RENDER-04 | Phase 3 | Complete |
 | RENDER-05 | Phase 3 | Complete |
 | RENDER-06 | Phase 3 | Complete |
 | RENDER-07 | Phase 3 | Complete |

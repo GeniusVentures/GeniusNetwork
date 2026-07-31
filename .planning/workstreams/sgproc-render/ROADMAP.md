@@ -175,7 +175,7 @@ Phases execute in numeric order: 1 → 01.1 → 2 → 3 → 4 (Phase 01.1 is an 
 | 1. Vulkan Foundation & Dispatch Plumbing | 6/6 | Complete | 2026-07-29 |
 | 01.1. CMake vk-bootstrap discovery, MNN CPU-to-VULKAN processor migration, and coverage (INSERTED) | 3/3 | Complete    | 2026-07-30 |
 | 2. Schema Extension & Shader/SPIR-V Validation Pipeline | 4/4 | Complete    | 2026-07-31 |
-| 3. RenderProcessor Implementation & Determinism | 6/6 | Complete   | 2026-07-31 |
+| 3. RenderProcessor Implementation & Determinism | 6/6 | Complete    | 2026-07-31 |
 | 4. Cross-Platform Build, CI & End-to-End Verification | 0/TBD | Not started | - |
 
 ---
