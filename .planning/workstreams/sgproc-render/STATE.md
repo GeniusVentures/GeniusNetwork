@@ -4,17 +4,17 @@ milestone: v1.0
 milestone_name: Render Pass Execution (hand-rolled Vulkan)
 current_phase: 02
 current_phase_name: Schema Extension & Shader/SPIR-V Validation Pipeline
-status: executing
-stopped_at: Phase 02 Plan 03 complete
-last_updated: "2026-07-30T23:55:00.000Z"
+status: phase_complete
+stopped_at: Phase 02 complete (all 4 plans done)
+last_updated: "2026-07-31T00:09:56.112Z"
 last_activity: 2026-07-30
-last_activity_desc: Phase 02 Plan 03 (ShaderCompiler GLSL->SPIR-V compile+validate gate, 6 passing unit tests) complete
+last_activity_desc: Phase 02 Plan 04 (ProcessingManager wired to ShaderCompiler, render-pass validity checks extended, 3 new end-to-end dispatch tests) complete -- Phase 02 fully complete
 progress:
   total_phases: 5
-  completed_phases: 2
+  completed_phases: 3
   total_plans: 13
-  completed_plans: 12
-  percent: 40
+  completed_plans: 13
+  percent: 60
 ---
 
 # Project State
@@ -28,12 +28,12 @@ See: .planning/PROJECT.md (updated 2026-07-29), workstream section "Workstream: 
 
 ## Current Position
 
-Phase: 02 (Schema Extension & Shader/SPIR-V Validation Pipeline) — EXECUTING
-Plans: 3 of 4 completed (02-01, 02-02, 02-03 done; 02-04 remains)
-Status: Executing Phase 02
-Last activity: 2026-07-30 — Phase 02 Plan 03 (ShaderCompiler GLSL->SPIR-V compile+validate gate, 6 passing unit tests) complete
+Phase: 02 (Schema Extension & Shader/SPIR-V Validation Pipeline) — COMPLETE
+Plans: 4 of 4 completed (02-01, 02-02, 02-03, 02-04 all done)
+Status: Phase 02 complete; ready for Phase 03
+Last activity: 2026-07-30 — Phase 02 Plan 04 (ProcessingManager wired to ShaderCompiler, render-pass validity checks extended, 3 new end-to-end dispatch tests) complete
 
-Progress: [███████░░░] 75%
+Progress: [██████████] 100%
 
 ## Performance Metrics
 
@@ -61,6 +61,7 @@ Progress: [███████░░░] 75%
 | Phase 01.1 P03 | 15min | 3 tasks | 3 files |
 | Phase 02 P02 | ~100min | 3 tasks | 3 files |
 | Phase 02 P03 | ~60min | 2 tasks | 13 files |
+| Phase 02 P04 | ~45min | 2 tasks | 11 files |
 
 ## Accumulated Context
 
@@ -80,6 +81,7 @@ Decisions are logged in PROJECT.md Key Decisions table (root project). Recent de
 - [Phase 02-01]: Confirmed via an actual quicktype v23.2.6 run that D-11 Amendment's design (new sibling `render_shader` property rather than re-typing `shader` per pass type) and D-16 Amendment's `vertex_buffer` addition both regenerate exactly as spike-verified — RenderTarget/VertexBuffer's required fields are plain (non-`boost::optional`) members, `Pass.hpp` gains all six new render-only accessors, and `ShaderSourceType` is shared correctly between `ShaderConfig`/`ShaderStage`
 - [Phase 02-02]: Corrected SPIRV-Tools/SPIRV-Headers pins to the commits shaderc's own `v2024.3` tag's DEPS file references (`01c8438e`/`2a9b6f95`), not the plan's cited commits (read from shaderc `main`'s newer DEPS at research time); confirmed via a real local build+install that SPIRV-Tools installs a CMake CONFIG under bare (non-namespaced) target names, resolved via `find_package(SPIRV-Tools CONFIG)` + `add_library(SPIRV-Tools::SPIRV-Tools ALIAS SPIRV-Tools-static)`; shaderc confirmed to have no installed CMake config at all (hand-rolled IMPORTED target). Both `shaderc::shaderc`/`SPIRV-Tools::SPIRV-Tools` build-verified end-to-end (GLSL compiled to SPIR-V via shaderc, validated via SPIRV-Tools)
 - [Phase 02-03]: Implemented `ShaderCompiler::CompileAndValidate()` with both the GLSL-compiled path and the direct-SPIR-V path each inlining their own `spvtools::SpirvTools::Validate()` call (not factored into a shared helper), so the plan's `grep -c "\.Validate("  == 2` acceptance criterion structurally proves neither path can skip the mandatory validation gate; build-verified end-to-end via a from-scratch MinGW+Ninja build of shaderc/SPIRV-Tools (this session's environment could not link against the MSVC-built project dependencies), all 6 unit tests passing including a mutated-valid-SPIR-V rejection test (the exact Pitfall 2 scenario)
+- [Phase 02-04]: Wired `ShaderCompiler` into `ProcessingManager::GetCidForProc()`'s render-pass branch (per-stage fetch queued alongside the existing image fetch, single `ioc->run()` unchanged), extended `CheckProcessValidity()`'s render branch to plan 02-01's new schema fields, and closed a newly-live `std::runtime_error`-from-narrowed-enum crash vector in `Init()`'s JSON parsing; full MSBuild link-build was blocked by this working tree's missing installed vk-bootstrap/shaderc/SPIRV-Tools packages (same ephemeral-build-directory constraint as 02-03), substituted with a real MSVC `cl.exe /Zs` syntax+semantic check against the project's actual include paths -- both modified C++ files passed with 0 errors. Phase 02 is now fully complete (all 4 plans)
 
 ### Pending Todos
 
@@ -90,6 +92,7 @@ None yet.
 - Decision Flag #1 (Vulkan init synchronization) is not fully closed by research alone — Phase 1 must validate via an actual concurrent-init stress test, not assume the shared-lock design is correct from reasoning alone
 - Decision Flag #2 (shaderc vs. glslang) is reconciled toward shaderc but should be explicitly confirmed during Phase 2 planning
 - CI currently has zero real-GPU or software-Vulkan-ICD signal, and zero macOS CI signal for Vulkan at all — Phase 4 must resolve this, not assume it away
+- Phase 02's full MSBuild link-build was never verified end-to-end in this working tree (Windows) — plans 02-02/02-03 relied on ephemeral from-source spike builds (MinGW) that no longer exist, and plan 02-04's verification was a real MSVC syntax+semantic check (`cl.exe /Zs`), not a full link. A real from-scratch (or restored ephemeral) build+test run of `ProcessingBase`/`processing_dispatch_test`/`shader_compiler_test` is recommended before or early in Phase 3
 
 ### Roadmap Evolution
 
@@ -105,6 +108,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-07-30T23:55:00.000Z
-Stopped at: Phase 02 Plan 03 (ShaderCompiler GLSL->SPIR-V compile+validate gate, 6 passing unit tests) complete
-Resume file: .planning/workstreams/sgproc-render/phases/02-schema-extension-shader-spir-v-validation-pipeline/02-04-PLAN.md
+Last session: 2026-07-31T00:09:56.112Z
+Stopped at: Phase 02 complete (Plan 04 -- ProcessingManager wired to ShaderCompiler, render-pass validity checks extended, 3 new end-to-end dispatch tests)
+Resume file: Ready to plan Phase 03 (RenderProcessor / Vulkan pipeline construction)

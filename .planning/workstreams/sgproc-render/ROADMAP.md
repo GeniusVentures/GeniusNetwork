@@ -14,7 +14,7 @@ This is a full restart of the archived bgfx-based v1.0 attempt (`.planning/miles
 Decimal phases appear between their surrounding integers in numeric order.
 
 - [ ] **Phase 1: Vulkan Foundation & Dispatch Plumbing** - Headless, coexistence-safe Vulkan context creation plus a non-crashing, dedicated dispatch path for render passes
-- [ ] **Phase 2: Schema Extension & Shader/SPIR-V Validation Pipeline** - Schema describes a full render pass; all SPIR-V is validated before it can reach the driver
+- [x] **Phase 2: Schema Extension & Shader/SPIR-V Validation Pipeline** - Schema describes a full render pass; all SPIR-V is validated before it can reach the driver (completed 2026-07-31)
 - [ ] **Phase 3: RenderProcessor Implementation & Determinism** - A schema-declared render pass actually executes and produces bit-exact repeatable output
 - [ ] **Phase 4: Cross-Platform Build, CI & End-to-End Verification** - The render path is proven end-to-end, cross-platform, in CI, with zero regressions
 
@@ -94,7 +94,7 @@ Plans:
   4. Malformed or invalid SPIR-V — whether produced by GLSL compilation or submitted directly via `shader_config.type: "spirv"` — is rejected by a mandatory `spirv-val` gate with a clean error and never reaches `vkCreateShaderModule` (SHADER-02)
   5. `shader_config.type: "spirv"` is explicitly accepted for render passes as a validated input path, subject to the `spirv-val` gate — not silently rejected or silently trusted (SHADER-03)
 
-**Plans**: 3/4 plans executed
+**Plans**: 4/4 plans complete
 
 Plans:
 **Wave 1**
@@ -108,7 +108,7 @@ Plans:
 
 **Wave 3** *(blocked on 02-03 completion)*
 
-- [ ] 02-04-PLAN.md — Wire ShaderCompiler into ProcessingManager (CheckProcessValidity/GetCidForProc), end-to-end dispatch tests (SCHEMA-01/02/03/04, SHADER-01/02/03)
+- [x] 02-04-PLAN.md — Wire ShaderCompiler into ProcessingManager (CheckProcessValidity/GetCidForProc), end-to-end dispatch tests (SCHEMA-01/02/03/04, SHADER-01/02/03)
 
 ### Phase 3: RenderProcessor Implementation & Determinism
 
@@ -149,7 +149,7 @@ Phases execute in numeric order: 1 → 01.1 → 2 → 3 → 4 (Phase 01.1 is an 
 |-------|-----------------|--------|-----------|
 | 1. Vulkan Foundation & Dispatch Plumbing | 6/6 | Complete | 2026-07-29 |
 | 01.1. CMake vk-bootstrap discovery, MNN CPU-to-VULKAN processor migration, and coverage (INSERTED) | 3/3 | Complete    | 2026-07-30 |
-| 2. Schema Extension & Shader/SPIR-V Validation Pipeline | 3/4 | In Progress|  |
+| 2. Schema Extension & Shader/SPIR-V Validation Pipeline | 4/4 | Complete   | 2026-07-31 |
 | 3. RenderProcessor Implementation & Determinism | 0/TBD | Not started | - |
 | 4. Cross-Platform Build, CI & End-to-End Verification | 0/TBD | Not started | - |
 
