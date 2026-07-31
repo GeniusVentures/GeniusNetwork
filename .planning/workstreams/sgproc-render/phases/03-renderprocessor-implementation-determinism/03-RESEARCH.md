@@ -456,19 +456,19 @@ precision highp float;   // explicit — never rely on an implicit/varying defau
 
 **All three above stem from training-knowledge Vulkan-spec recollection or reasonable-but-unverified inference about existing Phase 2 code behavior — none are blocking, but A3 in particular should be confirmed by reading `shader_compiler.cpp`'s actual `shaderc::Compiler::CompileGlslToSpv` call before finalizing the pipeline-shader-stage code.**
 
-## Open Questions
+## Open Questions (RESOLVED)
 
-1. **Where does vertex/index/uniform buffer resolution actually live?**
+1. **Where does vertex/index/uniform buffer resolution actually live?** — **RESOLVED in 03-02/03-03**: `ProcessingManager`'s wire format gained a dedicated `SerializeRenderPassConfig`/`ParseRenderPassConfig` channel (03-02 producer, 03-03 consumer) carrying render_target/pipeline_state/vertex_layout/uniforms alongside independently-resolved vertex/index buffer bytes — `RenderProcessor` does not reach into a broader data surface itself.
    - What we know: The schema convention (`source:`/`target:` prefix notation) is fully locked (Phase 2). The only working C++ resolver today is the single "input:name → index" map used once per job for the model-index lookup.
    - What's unclear: Whether Phase 3's plan should extend `ProcessingManager`'s fetch plumbing (`GetCidForProc`/`Process`) to resolve multiple named buffers per render job, or have `RenderProcessor` reach into a broader data surface itself.
    - Recommendation: Resolve this as an explicit planning decision (likely its own plan/task) before any pipeline-construction code is written — it gates RENDER-02, RENDER-05, and RENDER-06 simultaneously.
 
-2. **What exactly should RENDER-07's `data_transform` support in this phase?**
+2. **What exactly should RENDER-07's `data_transform` support in this phase?** — **RESOLVED in 03-05**: no-op passthrough when absent, structured error when present — no executor built this phase, per the recommendation below.
    - What we know: No executor exists at all today; the field is schema-only.
    - What's unclear: Whether "optionally flow through" implies Phase 3 must build a working (even if minimal) executor, or whether a no-op-when-absent/error-when-present stance satisfies the requirement's literal wording.
    - Recommendation: Treat as in-scope-but-minimal — a no-op passthrough is almost certainly sufficient for a first working vertical slice, given no fixture or requirement text describes a specific transform a render pass actually needs applied.
 
-3. **Does the Phase 2 wire format need to gain `entry_point` strings, or is `"main"`-always safe?**
+3. **Does the Phase 2 wire format need to gain `entry_point` strings, or is `"main"`-always safe?** — **RESOLVED in 03-01**: wire format extended (`SerializeCompiledStages`/`ParseCompiledStages` now carry `entry_point` per stage) rather than assuming `"main"`-always, closing the pipeline-creation failure risk for non-default entry points.
    - What we know: The wire format as built has no room for it; GLSL-compiled stages conventionally target `"main"`.
    - What's unclear: Whether directly-submitted (`spirv` type) stages with non-`"main"` entry points are a real near-term use case worth building for now vs. deferring.
    - Recommendation: Spot-check `shader_compiler.cpp`'s shaderc invocation to see whether entry-point renaming already happens; if the direct-`spirv` path is exercised by any real fixture/test, extending the wire format is probably cheaper than debugging a silent pipeline-creation failure later.
