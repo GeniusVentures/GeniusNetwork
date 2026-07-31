@@ -64,7 +64,7 @@ Requirements for milestone v1.0. Each maps to roadmap phases.
 ### End-to-End Verification
 
 - [x] **E2E-01**: A real render pass definition executes end-to-end through the distributed processing pipeline and produces a verified output hash
-- [ ] **E2E-02**: The render path actually executes (not just compiles) on a MoltenVK/macOS target
+- [x] **E2E-02**: The render path actually executes (not just compiles) on a MoltenVK/macOS target
 - [ ] **E2E-03**: The full existing MNN inference/retrain test suite passes with zero regressions alongside the new render path, including a concurrent-init stress test proving CTX-02's shared lock holds under real concurrent MNN-Vulkan-init + RenderProcessor-Vulkan-init load
 
 ## v2 Requirements
@@ -137,7 +137,7 @@ Explicitly excluded. Documented to prevent scope creep.
 | DETV-02 | Phase 3 | Complete |
 | DETV-03 | Phase 4 | Complete |
 | E2E-01 | Phase 4 | Complete |
-| E2E-02 | Phase 4 | Pending |
+| E2E-02 | Phase 4 | Complete |
 | E2E-03 | Phase 4 | Pending |
 
 **Coverage:**

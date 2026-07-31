@@ -6,14 +6,14 @@ current_phase: 04
 current_phase_name: Cross-Platform Build, CI & End-to-End Verification
 status: executing
 stopped_at: Phase 4 context gathered
-last_updated: "2026-07-31T23:51:29.264Z"
+last_updated: "2026-07-31T23:54:55.732Z"
 last_activity: 2026-07-31
 last_activity_desc: Phase 04 execution started
 progress:
   total_phases: 5
   completed_phases: 4
   total_plans: 22
-  completed_plans: 20
+  completed_plans: 21
   percent: 80
 ---
 
@@ -29,7 +29,7 @@ See: .planning/PROJECT.md (updated 2026-07-29), workstream section "Workstream: 
 ## Current Position
 
 Phase: 04 (Cross-Platform Build, CI & End-to-End Verification) — EXECUTING
-Plan: 2 of 3
+Plan: 3 of 3
 Status: Ready to execute
 Last activity: 2026-07-31 — Phase 04 execution started
 
@@ -71,6 +71,7 @@ Progress: [░░░░░░░░░░] 0%
 | Phase 03 P05 | 55min | 2 tasks | 3 files |
 | Phase 3 P03-06 | ~50 min | 2 tasks | 3 files |
 | Phase 04 P01 | 60min | 2 tasks | 5 files |
+| Phase 04 P02 | 15min | 1 tasks | 1 files |
 
 ## Accumulated Context
 
@@ -104,6 +105,7 @@ Decisions are logged in PROJECT.md Key Decisions table (root project). Recent de
 - [Phase 03-05]: RENDER-02/RENDER-05 marked complete alongside this plan's own frontmatter requirements, per 03-03-SUMMARY.md's explicit forward-reference naming plan 03-05 as the intended point to close them
 - [Phase 3]: Added vkb::PhysicalDeviceSelector::require_present(false) to InitializeContext() -- headless rendering has no VkSurfaceKHR; vk-bootstrap's require_present defaults true and rejected every device with no_surface_provided the first time a real fixture reached this code path
 - [Phase ?]: HasUsableVulkanDevice() wrapped in try/catch even though vk-bootstrap is result-based, not exception-based -- defense-in-depth for the plan's explicit 'must never throw' requirement
+- [Phase ?]: [Phase 04-02]: No deviations -- grep pattern/if: condition/working-directory for the 3 new GPU-gated-test-skip CI annotation steps copied verbatim from each platform's sibling 'Run tests' step
 
 ### Pending Todos
 
@@ -131,6 +133,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-07-31T23:50:53.485Z
+Last session: 2026-07-31T23:54:55.726Z
 Stopped at: Phase 4 context gathered
 Resume file: .planning/workstreams/sgproc-render/phases/04-cross-platform-build-ci-end-to-end-verification/04-CONTEXT.md
