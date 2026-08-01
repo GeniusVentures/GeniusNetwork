@@ -2,13 +2,13 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: Render Pass Execution (hand-rolled Vulkan)
-current_phase: 04
-current_phase_name: Cross-Platform Build, CI & End-to-End Verification
-status: verifying
-stopped_at: Completed 04-03-PLAN.md (E2E-03 zero-regressions confirmation)
-last_updated: "2026-08-01T00:02:32.841Z"
+current_phase: 05
+current_phase_name: Android/iOS Platform Compatibility: Thirdparty Library Builds
+status: discussing
+stopped_at: Phase 05 context gathered (2026-07-31)
+last_updated: "2026-07-31T00:00:00.000Z"
 last_activity: 2026-07-31
-last_activity_desc: Phase 04 execution started
+last_activity_desc: Phase 05 discuss-phase completed
 progress:
   total_phases: 5
   completed_phases: 5
@@ -24,7 +24,7 @@ progress:
 See: .planning/PROJECT.md (updated 2026-07-29), workstream section "Workstream: sgproc-render"
 
 **Core value:** Make SGProcessingManager's `render` PassType a real, executable graphics pipeline via hand-rolled Vulkan — headless/offscreen, own independent `VkInstance`/`VkDevice`, no new GPU backend/engine, no OpenGL or CPU/software fallback tier.
-**Current focus:** Phase 04 — Cross-Platform Build, CI & End-to-End Verification
+**Current focus:** Phase 05 — Android/iOS Platform Compatibility: Thirdparty Library Builds
 
 ## Current Position
 
@@ -124,6 +124,7 @@ None yet.
 ### Roadmap Evolution
 
 - Phase 01.1 inserted after Phase 1: CMake vk-bootstrap discovery (find_package in CommonBuildParameters.cmake), MNN processors migrated from CPU to VULKAN backend using the shared vulkan mutex, plus coverage step (URGENT)
+- Phase 5 added: Android/iOS Platform Compatibility: Thirdparty Library Builds — mobile-platform library builds in thirdparty, scoped separately from Phase 4; CI verification for these targets explicitly deferred out of this phase
 
 ## Deferred Items
 
