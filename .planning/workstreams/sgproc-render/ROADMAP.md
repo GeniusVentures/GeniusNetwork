@@ -188,6 +188,23 @@ Phases execute in numeric order: 1 → 01.1 → 2 → 3 → 4 (Phase 01.1 is an 
 | 3. RenderProcessor Implementation & Determinism | 6/6 | Complete    | 2026-07-31 |
 | 4. Cross-Platform Build, CI & End-to-End Verification | 3/3 | Needs Review (human verification pending) | - |
 
+### Phase 5: Android/iOS Platform Compatibility: Thirdparty Library Builds
+
+**Goal:** Make the thirdparty build system produce all four render-specific library dependencies (vk-bootstrap, SPIRV-Tools, shaderc, Vulkan-Loader) for Android (arm64-v8a, armeabi-v7a) and iOS (arm64 device), and verify SGProcessingManager's render path compiles and links against the mobile-built libraries.
+**Requirements**: MOBILE-01, MOBILE-02, MOBILE-03, MOBILE-04, MOBILE-05, MOBILE-06
+**Depends on:** Phase 4
+**Plans:** 2 plans
+
+Plans:
+
+**Wave 1**
+
+- [ ] 05-01-PLAN.md — Refactor CommonTargets.cmake: extract SPIRV-Headers, SPIRV-Tools, shaderc, vk-bootstrap from `if(NOT ANDROID)` to unconditional; add platform-conditional Vulkan wiring for vk-bootstrap (MOBILE-01/02/03)
+
+**Wave 2** *(blocked on 05-01 completion)*
+
+- [ ] 05-02-PLAN.md — Verify SGProcessingManager mobile link chain + create build documentation (MOBILE-04/05/06)
+
 ---
 *Roadmap created: 2026-07-29*
 *Granularity: coarse (4 phases)*

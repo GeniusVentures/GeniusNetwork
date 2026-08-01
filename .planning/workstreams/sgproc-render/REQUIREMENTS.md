@@ -67,6 +67,15 @@ Requirements for milestone v1.0. Each maps to roadmap phases.
 - [x] **E2E-02**: The render path actually executes (not just compiles) on a MoltenVK/macOS target
 - [x] **E2E-03**: The full existing MNN inference/retrain test suite passes with zero regressions alongside the new render path, including a concurrent-init stress test proving CTX-02's shared lock holds under real concurrent MNN-Vulkan-init + RenderProcessor-Vulkan-init load
 
+### Mobile Platform Thirdparty Library Builds (Phase 5)
+
+- [ ] **MOBILE-01**: SPIRV-Headers, SPIRV-Tools, shaderc, and vk-bootstrap ExternalProject_Add blocks in `thirdparty/build/CommonTargets.cmake` are unconditional — they build for all platforms including Android (arm64-v8a, armeabi-v7a) and iOS (arm64 device)
+- [ ] **MOBILE-02**: Vulkan-Headers and Vulkan-Loader ExternalProject_Add blocks remain inside the `if(NOT ANDROID)` guard — desktop only; Android uses NDK's Vulkan loader, iOS uses MoltenVK
+- [ ] **MOBILE-03**: vk-bootstrap's `VulkanHeaders_DIR` CMAKE_CACHE_ARG resolves correctly for all three platform groups: desktop (locally-built Vulkan-Headers via Vulkan-Loader install), Android (NDK-provided Vulkan headers), and iOS (MoltenVK-provided Vulkan headers)
+- [ ] **MOBILE-04**: SGShaderCompiler's `target_link_libraries` resolves `shaderc::shaderc` and `SPIRV-Tools::SPIRV-Tools` when building for Android and iOS — no platform guards needed (targets are unconditional after MOBILE-01)
+- [ ] **MOBILE-05**: SGProcessors' `target_link_libraries` resolves `Vulkan::Vulkan` and `vk-bootstrap::vk-bootstrap` when building for Android and iOS — no platform guards needed
+- [ ] **MOBILE-06**: Build documentation exists at `thirdparty/build/mobile/README.md` with exact cmake invocations for Android NDK and iOS Xcode thirdparty library builds, expected output artifacts, and troubleshooting guidance
+
 ## v2 Requirements
 
 Deferred to future milestones. Tracked but not in current roadmap.
@@ -139,13 +148,19 @@ Explicitly excluded. Documented to prevent scope creep.
 | E2E-01 | Phase 4 | Complete |
 | E2E-02 | Phase 4 | Complete |
 | E2E-03 | Phase 4 | Complete |
+| MOBILE-01 | Phase 5 | Pending |
+| MOBILE-02 | Phase 5 | Pending |
+| MOBILE-03 | Phase 5 | Pending |
+| MOBILE-04 | Phase 5 | Pending |
+| MOBILE-05 | Phase 5 | Pending |
+| MOBILE-06 | Phase 5 | Pending |
 
 **Coverage:**
 
-- v1 requirements: 34 total
-- Mapped to phases: 34
+- v1 requirements: 40 total
+- Mapped to phases: 40
 - Unmapped: 0 ✓
 
 ---
 *Requirements defined: 2026-07-29*
-*Last updated: 2026-07-29 — Phase 01.1 (urgent insertion) added CMAKE-01/MIGR-01/MIGR-02/COV-01; 34/34 v1 requirements mapped (0 unmapped)*
+*Last updated: 2026-07-31 — Phase 5 (Android/iOS Platform Compatibility) added MOBILE-01 through MOBILE-06; 40/40 v1 requirements mapped (0 unmapped)*
