@@ -16,7 +16,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [ ] **Phase 1: Vulkan Foundation & Dispatch Plumbing** - Headless, coexistence-safe Vulkan context creation plus a non-crashing, dedicated dispatch path for render passes
 - [x] **Phase 2: Schema Extension & Shader/SPIR-V Validation Pipeline** - Schema describes a full render pass; all SPIR-V is validated before it can reach the driver (completed 2026-07-31)
 - [x] **Phase 3: RenderProcessor Implementation & Determinism** - A schema-declared render pass actually executes and produces bit-exact repeatable output (completed 2026-07-31)
-- [x] **Phase 4: Cross-Platform Build, CI & End-to-End Verification** - The render path is proven end-to-end, cross-platform, in CI, with zero regressions (completed 2026-08-01)
+- [ ] **Phase 4: Cross-Platform Build, CI & End-to-End Verification** - The render path is proven end-to-end, cross-platform, in CI, with zero regressions (needs human verification — see 04-UAT.md)
 
 ## Phase Details
 
@@ -186,7 +186,7 @@ Phases execute in numeric order: 1 → 01.1 → 2 → 3 → 4 (Phase 01.1 is an 
 | 01.1. CMake vk-bootstrap discovery, MNN CPU-to-VULKAN processor migration, and coverage (INSERTED) | 3/3 | Complete    | 2026-07-30 |
 | 2. Schema Extension & Shader/SPIR-V Validation Pipeline | 4/4 | Complete    | 2026-07-31 |
 | 3. RenderProcessor Implementation & Determinism | 6/6 | Complete    | 2026-07-31 |
-| 4. Cross-Platform Build, CI & End-to-End Verification | 3/3 | Complete   | 2026-08-01 |
+| 4. Cross-Platform Build, CI & End-to-End Verification | 3/3 | Needs Review (human verification pending) | - |
 
 ---
 *Roadmap created: 2026-07-29*
