@@ -16,7 +16,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [ ] **Phase 1: Vulkan Foundation & Dispatch Plumbing** - Headless, coexistence-safe Vulkan context creation plus a non-crashing, dedicated dispatch path for render passes
 - [x] **Phase 2: Schema Extension & Shader/SPIR-V Validation Pipeline** - Schema describes a full render pass; all SPIR-V is validated before it can reach the driver (completed 2026-07-31)
 - [x] **Phase 3: RenderProcessor Implementation & Determinism** - A schema-declared render pass actually executes and produces bit-exact repeatable output (completed 2026-07-31)
-- [ ] **Phase 4: Cross-Platform Build, CI & End-to-End Verification** - The render path is proven end-to-end, cross-platform, in CI, with zero regressions
+- [x] **Phase 4: Cross-Platform Build, CI & End-to-End Verification** - The render path is proven end-to-end, cross-platform, in CI, with zero regressions (completed 2026-08-01)
 
 ## Phase Details
 
@@ -163,7 +163,7 @@ Plans:
   4. The render path actually executes — not just compiles — on a MoltenVK/macOS target (E2E-02)
   5. The full existing MNN inference/retrain test suite passes with zero regressions alongside the new render path, including a concurrent-init stress test proving Phase 1's shared Vulkan-init lock holds under real concurrent MNN-Vulkan-init + `RenderProcessor`-Vulkan-init load (E2E-03)
 
-**Plans**: 2/3 plans executed
+**Plans**: 3/3 plans complete
 
 Plans:
 **Wave 1**
@@ -173,7 +173,7 @@ Plans:
 
 **Wave 2** *(blocked on 04-01/04-02 completion)*
 
-- [ ] 04-03-PLAN.md — Zero-regressions confirmation: concurrency stress test + full MNN suite (E2E-03)
+- [x] 04-03-PLAN.md — Zero-regressions confirmation: concurrency stress test + full MNN suite (E2E-03)
 
 ## Progress
 
@@ -186,7 +186,7 @@ Phases execute in numeric order: 1 → 01.1 → 2 → 3 → 4 (Phase 01.1 is an 
 | 01.1. CMake vk-bootstrap discovery, MNN CPU-to-VULKAN processor migration, and coverage (INSERTED) | 3/3 | Complete    | 2026-07-30 |
 | 2. Schema Extension & Shader/SPIR-V Validation Pipeline | 4/4 | Complete    | 2026-07-31 |
 | 3. RenderProcessor Implementation & Determinism | 6/6 | Complete    | 2026-07-31 |
-| 4. Cross-Platform Build, CI & End-to-End Verification | 2/3 | In Progress|  |
+| 4. Cross-Platform Build, CI & End-to-End Verification | 3/3 | Complete   | 2026-08-01 |
 
 ---
 *Roadmap created: 2026-07-29*
