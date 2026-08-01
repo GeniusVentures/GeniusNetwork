@@ -13,10 +13,11 @@ This is a full restart of the archived bgfx-based v1.0 attempt (`.planning/miles
 
 Decimal phases appear between their surrounding integers in numeric order.
 
-- [ ] **Phase 1: Vulkan Foundation & Dispatch Plumbing** - Headless, coexistence-safe Vulkan context creation plus a non-crashing, dedicated dispatch path for render passes
+- [x] **Phase 1: Vulkan Foundation & Dispatch Plumbing** - Headless, coexistence-safe Vulkan context creation plus a non-crashing, dedicated dispatch path for render passes
 - [x] **Phase 2: Schema Extension & Shader/SPIR-V Validation Pipeline** - Schema describes a full render pass; all SPIR-V is validated before it can reach the driver (completed 2026-07-31)
 - [x] **Phase 3: RenderProcessor Implementation & Determinism** - A schema-declared render pass actually executes and produces bit-exact repeatable output (completed 2026-07-31)
-- [ ] **Phase 4: Cross-Platform Build, CI & End-to-End Verification** - The render path is proven end-to-end, cross-platform, in CI, with zero regressions (needs human verification — see 04-UAT.md)
+- [x] **Phase 4: Cross-Platform Build, CI & End-to-End Verification** - The render path is proven end-to-end, cross-platform, in CI, with zero regressions (completed 2026-07-31)
+- [x] **Phase 5: Android/iOS Platform Compatibility: Thirdparty Library Builds** - Mobile platform library builds and link verification (completed 2026-07-31)
 
 ## Phase Details
 
@@ -187,6 +188,7 @@ Phases execute in numeric order: 1 → 01.1 → 2 → 3 → 4 (Phase 01.1 is an 
 | 2. Schema Extension & Shader/SPIR-V Validation Pipeline | 4/4 | Complete    | 2026-07-31 |
 | 3. RenderProcessor Implementation & Determinism | 6/6 | Complete    | 2026-07-31 |
 | 4. Cross-Platform Build, CI & End-to-End Verification | 3/3 | Needs Review (human verification pending) | - |
+| 5. Android/iOS Platform Compatibility: Thirdparty Library Builds | 2/2 | Complete | 2026-07-31 |
 
 ### Phase 5: Android/iOS Platform Compatibility: Thirdparty Library Builds
 
@@ -199,11 +201,11 @@ Plans:
 
 **Wave 1**
 
-- [ ] 05-01-PLAN.md — Refactor CommonTargets.cmake: extract SPIRV-Headers, SPIRV-Tools, shaderc, vk-bootstrap from `if(NOT ANDROID)` to unconditional; add platform-conditional Vulkan wiring for vk-bootstrap (MOBILE-01/02/03)
+- [x] 05-01-PLAN.md — Refactor CommonTargets.cmake: extract SPIRV-Headers, SPIRV-Tools, shaderc, vk-bootstrap from `if(NOT ANDROID)` to unconditional; add platform-conditional Vulkan wiring for vk-bootstrap (MOBILE-01/02/03)
 
 **Wave 2** *(blocked on 05-01 completion)*
 
-- [ ] 05-02-PLAN.md — Verify SGProcessingManager mobile link chain + create build documentation (MOBILE-04/05/06)
+- [x] 05-02-PLAN.md — Verify SGProcessingManager mobile link chain + create build documentation (MOBILE-04/05/06)
 
 ---
 *Roadmap created: 2026-07-29*

@@ -4,16 +4,16 @@ milestone: v1.0
 milestone_name: Render Pass Execution (hand-rolled Vulkan)
 current_phase: 05
 current_phase_name: Android/iOS Platform Compatibility: Thirdparty Library Builds
-status: discussing
-stopped_at: Phase 05 context gathered (2026-07-31)
+status: complete
+stopped_at: Phase 05 execution complete (2026-07-31)
 last_updated: "2026-07-31T00:00:00.000Z"
 last_activity: 2026-07-31
-last_activity_desc: Phase 05 discuss-phase completed
+last_activity_desc: Phase 05 executed — CommonTargets.cmake refactored + mobile build docs
 progress:
   total_phases: 5
   completed_phases: 5
-  total_plans: 22
-  completed_plans: 22
+  total_plans: 24
+  completed_plans: 24
   percent: 100
 ---
 
@@ -24,14 +24,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-07-29), workstream section "Workstream: sgproc-render"
 
 **Core value:** Make SGProcessingManager's `render` PassType a real, executable graphics pipeline via hand-rolled Vulkan — headless/offscreen, own independent `VkInstance`/`VkDevice`, no new GPU backend/engine, no OpenGL or CPU/software fallback tier.
-**Current focus:** Phase 05 — Android/iOS Platform Compatibility: Thirdparty Library Builds
+**Current focus:** Phase 05 — Android/iOS Platform Compatibility: Thirdparty Library Builds (COMPLETE)
 
 ## Current Position
 
-Phase: 04 (Cross-Platform Build, CI & End-to-End Verification) — COMPLETE
-Plan: 3 of 3
-Status: Phase complete — ready for verification
-Last activity: 2026-07-31 — Phase 04 execution started
+Phase: 05 (Android/iOS Platform Compatibility: Thirdparty Library Builds) — COMPLETE
+Plan: 2 of 2
+Status: All phases complete — milestone ready for verification
+Last activity: 2026-07-31 — Phase 05 execution completed
 
 Progress: [██████████] 100%
 
@@ -39,7 +39,7 @@ Progress: [██████████] 100%
 
 **Velocity:**
 
-- Total plans completed: 13
+- Total plans completed: 24
 - Average duration: N/A
 - Total execution time: 0 hours
 
@@ -47,9 +47,12 @@ Progress: [██████████] 100%
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
+| 01 | 6 | - | - |
 | 01.1 | 3 | - | - |
 | 02 | 4 | - | - |
-| 3 | 6 | - | - |
+| 03 | 6 | - | - |
+| 04 | 3 | - | - |
+| 05 | 2 | - | - |
 
 **Recent Trend:**
 
