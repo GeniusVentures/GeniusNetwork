@@ -1,15 +1,72 @@
-# Requirements: sgproc-render (Render Pass Execution, hand-rolled Vulkan)
+# Requirements: sgproc-render
 
-**Defined:** 2026-07-29
-**Core Value:** Make SGProcessingManager's `render` PassType a real, executable render pass via hand-rolled Vulkan — headless/offscreen, own independent `VkInstance`/`VkDevice`, no new GPU backend/engine, no OpenGL or CPU/software fallback tier. Directly scoped to `GeniusVentures/SGProcessingManager#7`.
+**Last updated:** 2026-08-03
+**Current milestone:** v2.0 — Execution Contracts & Quality Gates
 
-This is a full restart of the archived v1.0 attempt (bgfx + 3-tier hardware/software fallback), which never actually satisfied issue #7's "do not add another GPU backend or duplicate platform setup" constraint. Archived intact at `.planning/milestones/ws-sgproc-render-2026-07-29/`.
+## v1 Requirements (Shipped: 2026-07-31)
 
-## v1 Requirements
+All v1.0 requirements shipped across 5 phases (24 plans). See `.planning/workstreams/sgproc-render/STATE.md` (v1.0 archive) for full details. Key categories: CTX (Vulkan context), SCHEMA (schema extension), SHADER (SPIR-V validation), DISP (dispatch plumbing), RENDER (RenderProcessor), DETV (determinism), E2E (end-to-end), CMAKE/MIGR/COV (CMake + MNN migration).
 
-Requirements for milestone v1.0. Each maps to roadmap phases.
+## v2.0 Requirements
 
-### CMake & MNN Vulkan Migration Coverage (Phase 01.1 — urgent insertion)
+Requirements for milestone v2.0. Each maps to roadmap phases.
+
+### CAP — Capability Validation (#12)
+
+- [ ] **CAP-01**: Node can validate whether it can execute a job (across all pass types) before downloading large inputs or claiming work — structured `CanExecute` result with unmet requirements when not executable
+- [ ] **CAP-02**: Unsupported Vulkan features, extensions, device limits, descriptor types, image formats, buffer sizes, or memory requirements return specific unmet-requirement reasons (not a generic "unsupported")
+- [ ] **CAP-03**: Unsupported model format, quantization, tokenizer/adapter, or model identity returns specific unmet-requirement reasons for MNN inference passes
+- [ ] **CAP-04**: Unsupported pass type (`PassType`) or missing executor registration returns a specific reason with the pass type and available executors
+- [ ] **CAP-05**: Input/output type, format, dimensions, and estimated memory/storage needs are validated against node capabilities; CPU architecture/instruction requirements checked for CPU processors
+- [ ] **CAP-06**: The selected executor identity and key compatibility identities (model, shader, quantization, runtime) are stable and surfaced in capability-check result metadata for scheduler consumption
+
+### EXEC — Execution Context (#13)
+
+- [ ] **EXEC-01**: A cooperative cancellation token is passed through `ProcessingManager` to every executor's `StartProcessing()` call; a cancelled job does not publish a successful result
+- [ ] **EXEC-02**: Per-pass deadlines produce distinct typed timeout failures (not a generic error) when the pass exceeds its time budget
+- [ ] **EXEC-03**: CPU, GPU, RAM/VRAM, disk, network, runtime, and output-size budgets are defined in the execution context and enforced where the executor can control resource consumption
+- [ ] **EXEC-04**: Structured progress events carry pass ID, stage identifier, completed work count, total work count, and a human-readable message — replacing the current single atomic float percentage
+- [ ] **EXEC-05**: Processors that support checkpointing expose a partial-result/checkpoint callback; processors without checkpoint support clearly report that they do not support it
+- [ ] **EXEC-06**: On cancellation, timeout, or budget-exceeded: Vulkan resources (pipelines, buffers, images, command pools), MNN sessions, loaded artifacts, and pending asynchronous saves are safely cleaned up without leaks
+- [ ] **EXEC-07**: All existing MNN and Vulkan processors remain usable through an adapter or wrapper during the migration period — no existing processor is broken by the new execution context contract
+
+### ARTF — Structured Artifacts & Manifests (#14)
+
+- [ ] **ARTF-01**: Each output artifact carries a declared resource name, stable artifact ID, producing pass identity, and output binding reference
+- [ ] **ARTF-02**: Each artifact includes data type, format, shape/dimensions, byte size, and media type
+- [ ] **ARTF-03**: Each artifact includes a content hash and chunk hashes for integrity verification
+- [ ] **ARTF-04**: The execution manifest includes: execution/attempt/task/subtask/pass IDs, selected executor and runtime compatibility identity, model/tokenizer/adapter/shader/quantization identities when used, input and output artifact hashes, start/end times, terminal state, error details, and resource-use summary
+- [ ] **ARTF-05**: The execution manifest serializes deterministically (byte-identical across runs with identical inputs) for hashing, signing, caching, and verification
+- [ ] **ARTF-06**: A migration adapter preserves the existing `ProcessingResult` shape and the SuperGenius newline-delimited output-location string for existing callers until the SuperGenius protobuf integration is updated
+
+### TEST — Conformance Test Suites (#15)
+
+- [ ] **TEST-01**: CTest targets (`ctest`) run from the standalone SGProcessingManager build AND when consumed as a submodule by `SuperGenius/develop` — tests use small deterministic fixtures
+- [ ] **TEST-02**: Schema parsing and pass-specific validation tests cover every `PassType` (including the render path from v1.0) with both valid and invalid inputs
+- [ ] **TEST-03**: Executor selection by pass type and backend is tested for every registered executor (MNN inference, Vulkan compute, Vulkan render)
+- [ ] **TEST-04**: Every existing MNN processor runs the same core conformance contract (pass-through or adapted) — no backend-specific drift
+- [ ] **TEST-05**: Native Vulkan compute/render and the existing MoltenVK path run equivalent fixtures where CI hardware permits; unsupported CI environments skip with an explicit reason
+- [ ] **TEST-06**: Output hashing, artifact metadata construction, persistence round-trip, and deterministic serialization are tested end-to-end
+- [ ] **TEST-07**: Cancellation, deadline expiry, budget exceeded, progress event emission, partial result delivery, and resource cleanup are each tested with at least one processor type
+- [ ] **TEST-08**: Capability acceptance cases (executable jobs) and rejection cases (unsupported features/formats/pass types) are both covered
+- [ ] **TEST-09**: The migration adapter from ARTF-06 is tested — existing callers' `ProcessingResult` shape and output-location string behavior is preserved
+- [ ] **TEST-10**: Regression tests cover the four concrete known bugs: (a) index mismatch in pass/input indexing, (b) model-only assumption crash in `ParseBlockSize()`, (c) output-buffer-zero fallback producing incorrect results, (d) unsupported pass type silently falling through without error
+
+### VVAL — Vulkan Validation Layers (CTX-04 carryover from v1.0)
+
+- [ ] **VVAL-01**: Vulkan validation layers (LunarG VK_LAYER_KHRONOS_validation or equivalent) are vendored as new `thirdparty/` git submodule(s), following the existing permissive-license convention (Apache-2.0/MIT)
+- [ ] **VVAL-02**: Validation layers are wired into the existing `CommonBuildParameters.cmake`/`CommonTargets` convention, producing linkable/loadable layer artifacts for all supported platforms (Windows, Linux, macOS)
+- [ ] **VVAL-03**: Validation layers can be enabled or disabled at runtime for `RenderProcessor`'s `VkInstance` (and any other SGProcessingManager-owned Vulkan instance) via a configuration flag — disabled by default in production, enabled in debug/test
+- [ ] **VVAL-04**: A documented decision replaces v1.0 CTX-04's written deferral, recording: which layer set was chosen, why, CMake integration pattern, and the runtime toggle mechanism
+
+## Traceability
+
+| REQ-ID | Phase | Status |
+|--------|-------|--------|
+| *(to be filled by roadmap)* | | |
+
+---
+*Requirements defined: 2026-08-03 — v2.0 Execution Contracts & Quality Gates*
 
 - [x] **CMAKE-01**: `find_package(vk-bootstrap CONFIG REQUIRED)` propagated to `GeniusSDK/cmake/CommonBuildParameters.cmake` and `GeniusWallet/cmake/CommonBuildParameters.cmake`, mirroring the existing per-consumer convention (not `find_dependency()` propagation), so both downstream consumers resolve `SGProcessingManager`'s PUBLIC-linked `vk-bootstrap::vk-bootstrap` transitive dependency at configure time
 - [x] **MIGR-01**: All 13 remaining CPU-backed MNN processors (14 `createSession()` call sites) migrated from `MNN_FORWARD_CPU` to `MNN_FORWARD_VULKAN`, each wrapped in the existing shared `sgns::sgprocessing::VulkanInitMutex()` guard from Phase 1's CTX-02 — bringing all MNN processors in `SGProcessingManager` onto the Vulkan backend
