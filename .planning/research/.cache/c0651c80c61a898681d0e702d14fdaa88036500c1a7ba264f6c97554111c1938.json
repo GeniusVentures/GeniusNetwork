@@ -1,0 +1,1 @@
+{"content":"No evidence found of a software/CPU RenderSystem for Ogre-Next -- only GPU-API-backed RenderSystems (D3D11, GL3Plus, Metal, Vulkan) exist. No CPU fallback path.","source":"web","provider":"websearch","confidence":"LOW","fetched_at":"2026-07-28T22:09:28.209Z","ttl":86400000,"kind":"web"}

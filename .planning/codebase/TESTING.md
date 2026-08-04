@@ -50,6 +50,8 @@ ctest --test-dir build/<Platform>/Debug -j --verbose
 ./test_bin/blob_test --gtest_filter=BlobTest.CreateFromValidHex
 ```
 
+**Verification convention:** Build/test verification always happens inside this existing `build/<Platform>/<Config>` tree, using SuperGenius's own build directory and `ctest`. Do NOT stand up a separate isolated mingw/ninja scratch build to sanity-check a change — the real tree is already mostly configured and exercises the actual `CommonBuildParameters.cmake`/`find_package` wiring that a scratch build would skip. If a change touches `thirdparty/`, build the new/changed thirdparty component in `build/<Platform>/<Config>` via cmake first, then add a `find_package(...)` entry in `SuperGenius/cmake/CommonBuildParameters.cmake` for it before building/testing SuperGenius.
+
 ### Dart (GeniusWallet)
 
 **Runner:**
