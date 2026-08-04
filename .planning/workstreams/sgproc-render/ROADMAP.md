@@ -1,212 +1,145 @@
-# Roadmap: sgproc-render (Render Pass Execution, hand-rolled Vulkan)
+﻿# Roadmap: sgproc-render v2.0 — Execution Contracts & Quality Gates
 
 ## Overview
 
-This is a full restart of the archived bgfx-based v1.0 attempt (`.planning/milestones/ws-sgproc-render-2026-07-29/`), which never actually satisfied `GeniusVentures/SGProcessingManager#7`'s "no new GPU backend, no duplicate platform setup" constraint. The journey: first make it possible to stand up a headless Vulkan context safely alongside MNN's existing Vulkan usage and route render passes to it without crashing (Phase 1); then teach the processing schema to describe a full render pass and make every piece of SPIR-V provably safe before it reaches the driver (Phase 2); then build the actual `RenderProcessor` that executes a schema-declared pipeline and produces bit-exact repeatable output (Phase 3); then prove the whole path end-to-end across platforms, in CI, with zero regressions to existing MNN behavior (Phase 4). Each phase produces something independently verifiable — this is Vulkan mechanics against a well-understood target, not exploratory feature work.
+Elevate SGProcessingManager from a "parse-and-hope" pipeline to a contract-driven execution engine. Four phases: (1) pre-execution validation — capability checks and Vulkan validation layers; (2) cancellable, budget-aware execution contexts; (3) typed artifact records and deterministic execution manifests; (4) a common conformance test suite covering every processor and every new contract. Each phase is independently verifiable and builds on the hand-rolled Vulkan foundation from v1.0.
 
 ## Phases
 
-**Phase Numbering:**
+**Phase Numbering:** Continues from v1.0's last phase (05). v2.0 starts at Phase 06.
 
-- Integer phases (1, 2, 3): Planned milestone work
-- Decimal phases (2.1, 2.2): Urgent insertions (marked with INSERTED)
-
-Decimal phases appear between their surrounding integers in numeric order.
-
-- [x] **Phase 1: Vulkan Foundation & Dispatch Plumbing** - Headless, coexistence-safe Vulkan context creation plus a non-crashing, dedicated dispatch path for render passes
-- [x] **Phase 2: Schema Extension & Shader/SPIR-V Validation Pipeline** - Schema describes a full render pass; all SPIR-V is validated before it can reach the driver (completed 2026-07-31)
-- [x] **Phase 3: RenderProcessor Implementation & Determinism** - A schema-declared render pass actually executes and produces bit-exact repeatable output (completed 2026-07-31)
-- [x] **Phase 4: Cross-Platform Build, CI & End-to-End Verification** - The render path is proven end-to-end, cross-platform, in CI, with zero regressions (completed 2026-07-31)
-- [x] **Phase 5: Android/iOS Platform Compatibility: Thirdparty Library Builds** - Mobile platform library builds and link verification (completed 2026-07-31)
+- [ ] **Phase 06: Capability & Validation Foundation** — Jobs are validated against node capabilities before any work begins; Vulkan validation layers are vendored and toggleable
+- [ ] **Phase 07: Cancellable Execution Context** — Every processor receives a cancellation token, deadline, budgets, and progress callbacks; resources are safely cleaned up on termination
+- [ ] **Phase 08: Structured Artifacts & Execution Manifests** — Results are typed artifact records with provenance; execution manifests serialize deterministically
+- [ ] **Phase 09: Processor & Pass-Graph Conformance Suites** — CTest targets cover every processor against a common contract; regression tests lock in known bug fixes
 
 ## Phase Details
 
-### Phase 1: Vulkan Foundation & Dispatch Plumbing
+### Phase 06: Capability & Validation Foundation
 
-**Goal**: A headless Vulkan context can be created for `RenderProcessor` safely alongside MNN's existing Vulkan usage, and `ProcessingManager` can route render passes through a dedicated, non-crashing dispatch path.
-**Depends on**: Nothing (first phase)
-**Requirements**: CTX-01, CTX-02, CTX-03, CTX-04, DISP-01, DISP-02, DISP-03
+**Goal**: Before a job is executed, the node validates whether it CAN execute it — across all pass types, Vulkan features, model formats, and resource requirements — returning specific unmet-requirement reasons. Vulkan validation layers are vendored, wired into CMake, and toggleable at runtime.
+
+**Depends on**: v1.0 foundation (Vulkan context, schema, RenderProcessor, shaderc/SPIRV-Tools)
+
+**Requirements**: CAP-01, CAP-02, CAP-03, CAP-04, CAP-05, CAP-06, VVAL-01, VVAL-02, VVAL-03, VVAL-04
+
 **Success Criteria** (what must be TRUE):
 
-  1. A headless `VkInstance`/`VkDevice`/`VkQueue` can be created for `RenderProcessor` with no `VkSurfaceKHR`, swapchain, or WSI extension present, on Windows, Linux, and macOS via MoltenVK (CTX-01)
-  2. A concurrent-init stress test demonstrates MNN's existing 3 Vulkan-instance-creation call sites and `RenderProcessor`'s new call site all serialize through one shared, process-wide synchronization primitive with zero crashes or races across repeated concurrent runs, replacing MNN's file-scoped `mnn_vulkan_mutex` (CTX-02)
-  3. Physical-device selection for `RenderProcessor` follows a documented, deterministic scoring policy — not "pick index 0" — and the same hardware always yields the same selected device across repeated runs (CTX-03)
-  4. A written decision documents Vulkan-ValidationLayers vendoring as explicitly deferred to v1.x, not silently dropped (CTX-04)
-  5. Submitting a render or compute pass (no `model` field) through `ParseBlockSize()` no longer crashes; `ProcessingManager::Process()` routes render passes through a new, separate `PassType`-keyed dispatch map (confirmed not colliding with the existing `DataType`-keyed map); and `CheckProcessValidity()` requires a shader config to be present for render passes (DISP-01, DISP-02, DISP-03)
+1. A job with unsupported Vulkan features returns a structured `CanExecute` rejection listing exactly which features/extensions/limits are unmet, not a generic "unsupported" message (CAP-02).
+2. A job with an unsupported model format, quantization, or tokenizer for MNN inference returns specific unmet-requirement reasons identifying the mismatch (CAP-03).
+3. A job with an unregistered `PassType` returns a rejection naming the pass type and listing available registered executors (CAP-04).
+4. The selected executor identity and compatibility identities (model, shader, quantization, runtime) are stable across repeated capability checks for the same job definition and surfaced in metadata (CAP-06).
+5. Vulkan validation layers build as `thirdparty/` submodule(s) through the existing `CommonBuildParameters.cmake`/`CommonTargets` convention on all supported platforms (VVAL-01, VVAL-02).
+6. Validation layers can be toggled on/off for `RenderProcessor`'s `VkInstance` via configuration — disabled by default in production, enabled in debug/test builds (VVAL-03).
 
-**Plans**: 6/6 plans executed
+**Plans**: TBD
 
-Plans:
-**Wave 1**
+### Phase 07: Cancellable Execution Context
 
-- [x] 01-01-PLAN.md — Vulkan init guard & MNN Vulkan call-site migration (CTX-02/D-04)
-- [x] 01-02-PLAN.md — vk-bootstrap dependency legitimacy checkpoint (D-01 vendoring gate)
+**Goal**: Every processor receives a cooperative cancellation token, per-pass deadline, resource budgets, and structured progress callbacks. On any terminal condition (cancel, timeout, budget exceeded, failure), all Vulkan/MNN resources and pending async saves are safely cleaned up. Existing processors work through an adapter during migration.
 
-**Wave 2** *(blocked on Wave 1 completion)*
+**Depends on**: Phase 06 (CAP — execution context design needs to know what capability information is available)
 
-- [x] 01-03-PLAN.md — vk-bootstrap vendoring & validation-layers deferral decision (CTX-01/CTX-04)
+**Requirements**: EXEC-01, EXEC-02, EXEC-03, EXEC-04, EXEC-05, EXEC-06, EXEC-07
 
-**Wave 3** *(blocked on Wave 2 completion)*
-
-- [x] 01-04-PLAN.md — RenderProcessor headless Vulkan context (CTX-01/CTX-03)
-
-**Wave 4** *(blocked on Wave 3 completion)*
-
-- [x] 01-05-PLAN.md — ProcessingManager dispatch plumbing (DISP-01/02/03)
-
-**Wave 5** *(blocked on Wave 4 completion)*
-
-- [x] 01-06-PLAN.md — Concurrent Vulkan init stress test (CTX-02/D-05)
-
-### Phase 01.1: CMake vk-bootstrap discovery, MNN CPU-to-VULKAN processor migration, and coverage (INSERTED)
-
-**Goal**: `GeniusSDK`/`GeniusWallet` configure cleanly against a `SGProcessingManager` submodule pointer that includes Phase 1's vk-bootstrap vendoring; every MNN processor in `SGProcessingManager` runs on the Vulkan backend under the existing shared init-time mutex with zero new races; and the migration's correctness is proven via the existing local regression-test suite, not new coverage tooling.
-**Depends on**: Phase 1 (complete)
-**Requirements**: CMAKE-01, MIGR-01, MIGR-02, COV-01
 **Success Criteria** (what must be TRUE):
 
-  1. `GeniusSDK/cmake/CommonBuildParameters.cmake` and `GeniusWallet/cmake/CommonBuildParameters.cmake` both resolve `vk-bootstrap::vk-bootstrap` via `find_package(vk-bootstrap CONFIG REQUIRED)`, mirroring `SGProcessingManager`'s own established per-consumer convention (CMAKE-01)
-  2. All 13 remaining CPU-backed MNN processors (14 `createSession()` call sites) request `MNN_FORWARD_VULKAN` and are guarded by the existing shared `VulkanInitMutex()` — matching the already-migrated `image`/`string`/`volume` processors, with zero new synchronization primitives (MIGR-01)
-  3. `vulkan_init_guard.hpp`'s doc comment and `vulkan_init_concurrency_test.cpp`'s scope note no longer undercount the real, post-migration set of Vulkan-init call sites sharing the mutex (MIGR-02)
-  4. The existing `ProcessingDatatypesTest` suite's 13 migration-candidate `*ProcessingTest` cases are re-verified against the newly-Vulkan-backed processors within their existing tolerance bounds — no gcov/lcov/OpenCppCoverage or other new coverage tooling is introduced (COV-01)
+1. A running MNN or Vulkan render job can be cancelled via the cancellation token; the job does NOT publish a successful result, and all Vulkan resources (pipelines, buffers, images, command pools), MNN sessions, and pending `FileManager::SaveASync` calls are cleaned up with zero leaks confirmed by a repeat-run leak detector (EXEC-01, EXEC-06).
+2. A per-pass deadline that expires mid-execution produces a distinct typed timeout failure, not a generic error, and the output distinguishes timeout from cancellation and from budget-exceeded (EXEC-02).
+3. An output-size budget that is exceeded before the pass completes produces a distinct budget-exceeded failure, and the partial output is NOT published as a successful result (EXEC-03).
+4. Progress events during a multi-stage render pass carry the pass ID, current stage name, completed work count, total work count, and a human-readable message — verified by capturing progress callbacks in a test (EXEC-04).
+5. A processor that does not support checkpointing returns a clear "checkpoint not supported" response when the checkpoint callback is queried, rather than silently ignoring it (EXEC-05).
+6. All existing MNN inference processors and the v1.0 `RenderProcessor` pass their existing test suites through the new execution-context adapter with zero behavior changes (EXEC-07).
 
-**Plans**: 3/3 plans complete
+**Plans**: TBD
 
-Plans:
-**Wave 1**
+### Phase 08: Structured Artifacts & Execution Manifests
 
-- [x] 01.1-01-PLAN.md — CMake vk-bootstrap find_package propagation to GeniusSDK/GeniusWallet (CMAKE-01)
-- [x] 01.1-02-PLAN.md — MNN CPU-to-VULKAN processor migration, 13 files/14 call sites (MIGR-01)
+**Goal**: Output artifacts are typed records with resource identity, format, dimensions, hashes, and producing-pass provenance — not loose byte buffers and newline-delimited strings. The execution manifest captures everything needed for deterministic hashing, signing, caching, and verification. Existing callers have a migration adapter.
 
-**Wave 2** *(blocked on 01.1-02 completion)*
+**Depends on**: Phase 07 (EXEC — artifacts need execution context for manifest fields like timings, terminal state, executor identity)
 
-- [x] 01.1-03-PLAN.md — Doc-comment accuracy update + ProcessingDatatypesTest coverage re-verification (MIGR-02/COV-01)
+**Requirements**: ARTF-01, ARTF-02, ARTF-03, ARTF-04, ARTF-05, ARTF-06
 
-### Phase 2: Schema Extension & Shader/SPIR-V Validation Pipeline
-
-**Goal**: The processing schema can fully describe a render pass, and every piece of SPIR-V that could reach the GPU — compiled from job-supplied GLSL or submitted directly — is validated before it ever reaches the driver.
-**Depends on**: None structurally (independently developable in parallel with Phase 1 — GLSL/SPIR-V validation needs no `VkInstance`; sequenced second here for planning clarity only, per research's phase-ordering rationale)
-**Requirements**: SCHEMA-01, SCHEMA-02, SCHEMA-03, SCHEMA-04, SCHEMA-05, SHADER-01, SHADER-02, SHADER-03
 **Success Criteria** (what must be TRUE):
 
-  1. A render pass definition in `gnus-processing-schema.json` can declare a render-target/framebuffer config (color+depth attachment formats, dimensions, clear values), vertex/index buffer bindings with per-attribute strides and offsets, a multi-stage (vertex+fragment) shader array, and pipeline state (topology, cull mode, winding order, depth-test) (SCHEMA-01, SCHEMA-02, SCHEMA-03, SCHEMA-04)
-  2. All of the above is consumable through quicktype-regenerated headers with zero hand-edits to `generated/` (SCHEMA-05)
-  3. GLSL shader source supplied by a job is compiled to SPIR-V in-process via a vendored `shaderc` toolchain at job-load time, before any GPU call is made (SHADER-01)
-  4. Malformed or invalid SPIR-V — whether produced by GLSL compilation or submitted directly via `shader_config.type: "spirv"` — is rejected by a mandatory `spirv-val` gate with a clean error and never reaches `vkCreateShaderModule` (SHADER-02)
-  5. `shader_config.type: "spirv"` is explicitly accepted for render passes as a validated input path, subject to the `spirv-val` gate — not silently rejected or silently trusted (SHADER-03)
+1. A multi-output render job returns independently typed artifact records, each with its own resource name, artifact ID, producing pass, output binding, format, dimensions, byte size, and media type — no newline parsing required to discover individual outputs (ARTF-01, ARTF-02).
+2. Each artifact carries a content hash and chunk hashes; modifying one byte of the output changes the content hash while leaving chunk hashes of unmodified chunks intact (ARTF-03).
+3. The execution manifest includes: all IDs (execution/attempt/task/subtask/pass), executor identity, model/shader/quantization identities when used, input and output artifact hashes, start/end times, terminal state, error details, and resource-use summary — and serializes to byte-identical output across two runs with identical inputs (ARTF-04, ARTF-05).
+4. Existing callers consuming the old `ProcessingResult` shape (hash + output names + byte buffers + output-location string) continue to work through the migration adapter with zero changes to their code (ARTF-06).
 
-**Plans**: 4/4 plans complete
+**Plans**: TBD
 
-Plans:
-**Wave 1**
+### Phase 09: Processor & Pass-Graph Conformance Suites
 
-- [x] 02-01-PLAN.md — Fix blocking schema JSON bug, extend gnus-processing-schema.json (render_target/render_shader/vertex_layout/index_buffer/pipeline_state), regenerate quicktype headers (SCHEMA-01/02/03/04/05, SHADER-03)
-- [x] 02-02-PLAN.md — Vendor shaderc + SPIRV-Tools + SPIRV-Headers as pinned git submodules with CMake IMPORTED targets (SHADER-01/02 vendoring)
+**Goal**: Every registered executor runs the same core conformance contract via CTest targets. Schema parsing, executor selection, output hashing, cancellation, capability checks, and backward-compat adapters are all tested. Regression tests lock in fixes for the four known bugs from v1.0.
 
-**Wave 2** *(blocked on 02-01/02-02 completion)*
+**Depends on**: Phase 06, Phase 07, Phase 08 (TEST tests everything those phases build)
 
-- [x] 02-03-PLAN.md — ShaderCompiler component (shaderc compile + SPIRV-Tools validate) with unit tests (SHADER-01/02/03)
+**Requirements**: TEST-01, TEST-02, TEST-03, TEST-04, TEST-05, TEST-06, TEST-07, TEST-08, TEST-09, TEST-10
 
-**Wave 3** *(blocked on 02-03 completion)*
-
-- [x] 02-04-PLAN.md — Wire ShaderCompiler into ProcessingManager (CheckProcessValidity/GetCidForProc), end-to-end dispatch tests (SCHEMA-01/02/03/04, SHADER-01/02/03)
-
-### Phase 3: RenderProcessor Implementation & Determinism
-
-**Goal**: A schema-declared render pass actually executes on the headless Vulkan context — pipeline built, buffers uploaded, offscreen draw performed, output read back — and produces bit-exact repeatable output on the same node.
-**Depends on**: Phase 1, Phase 2 (needs a working, coexistence-safe Vulkan context and dispatch path, plus validated SPIR-V, before a pipeline can be built and executed)
-**Requirements**: RENDER-01, RENDER-02, RENDER-03, RENDER-04, RENDER-05, RENDER-06, RENDER-07, RENDER-08, RENDER-09, DETV-01, DETV-02
 **Success Criteria** (what must be TRUE):
 
-  1. `RenderProcessor` builds a vertex+fragment graphics pipeline from schema-declared, validated SPIR-V, with pipeline state (topology, cull mode, winding order) configurable via schema (RENDER-01, RENDER-04)
-  2. Vertex/index buffer data resolved from `pass_io_binding` inputs uploads via direct Vulkan buffer APIs and renders to an offscreen, depth-tested framebuffer with no swapchain, with uniforms/parameters bound via push constants and falling back to descriptor-set uniforms when push-constant size limits are exceeded (RENDER-02, RENDER-03, RENDER-05)
-  3. Rendered output is read back via `vkCmdCopyImageToBuffer` and exposed as `texture2D` through the existing `pass_io_binding` output mechanism, optionally flows through the existing `data_transform` post-processing step, and feeds the unmodified `ProcessingResult` → `FileManager::SaveASync` → hash path (RENDER-06, RENDER-07, RENDER-08)
-  4. `VkResult` failures at any stage map to structured `ProcessingManager::Error` values with clear per-failure-point messages (RENDER-09)
-  5. The same render pass definition executed N≥10 times on the same node/hardware produces a bit-exact matching output hash every time, achieved through architectural guards — explicit clear ops (never `DONT_CARE`) on hashed regions, `VK_SAMPLE_COUNT_1_BIT` always, fixed shader precision qualifiers, no unordered parallel-reduction shader math — rather than incidental behavior (DETV-01, DETV-02)
+1. `ctest` runs from the standalone `SGProcessingManager` build and passes; the same tests run and pass when `SGProcessingManager` is consumed as a submodule by `SuperGenius/develop` (TEST-01).
+2. Every registered executor type (MNN inference, Vulkan compute, Vulkan render) runs the same core conformance contract — schema parsing, executor selection, basic execution, output validation — with no backend-specific test divergence (TEST-02, TEST-03, TEST-04).
+3. Native Vulkan and MoltenVK paths run equivalent render fixtures where CI hardware permits; CI environments without GPU support skip those tests with an explicit "SKIPPED: no Vulkan device" reason rather than silently passing or hanging (TEST-05).
+4. A dedicated cancellation test starts a job, cancels it mid-execution, and asserts: no successful result published, progress events show the cancellation stage, resources cleaned up — for at least one MNN and one Vulkan processor (TEST-07).
+5. Capability rejection tests cover: unsupported Vulkan feature, unsupported model format, unsupported pass type, missing executor — each produces a distinct, human-readable rejection reason (TEST-08).
+6. The four regression tests pass: (a) index mismatch produces correct error, (b) model-only pass no longer crashes in `ParseBlockSize()`, (c) output-buffer-zero produces correct result, (d) unsupported pass type produces error instead of silent fallthrough (TEST-10).
 
-**Plans**: 6/6 plans complete
-
-Plans:
-**Wave 1**
-
-- [x] 03-01-PLAN.md — ProcessingResult error field (D-25/D-26) + Process() failure gate (D-27/D-28) + SPIR-V entry_point wire-format extension (RENDER-09, RENDER-01)
-
-**Wave 2** *(blocked on 03-01 completion)*
-
-- [x] 03-02-PLAN.md — vertex_buffer/index_buffer independent resolution + render_target/pipeline_state/vertex_layout/uniforms wire-format serialization (RENDER-02, RENDER-05)
-
-**Wave 3** *(blocked on 03-02 completion)*
-
-- [x] 03-03-PLAN.md — RenderProcessor wire-format parsers, uniform resolution, dedicated buffer/image allocation, ordered teardown (RENDER-02, RENDER-05, RENDER-09)
-
-**Wave 4** *(blocked on 03-03 completion)*
-
-- [x] 03-04-PLAN.md — Offscreen render pass/framebuffer + graphics pipeline construction (RENDER-01, RENDER-03, RENDER-04, DETV-02)
-
-**Wave 5** *(blocked on 03-04 completion)*
-
-- [x] 03-05-PLAN.md — Buffer upload, draw submission, readback, data_transform stance, full StartProcessing() wiring (RENDER-01, RENDER-03, RENDER-06, RENDER-07, RENDER-08, RENDER-09, DETV-02)
-
-**Wave 6** *(blocked on 03-05 completion)*
-
-- [x] 03-06-PLAN.md — Same-node N>=10 repeat-run determinism proof (DETV-01, DETV-02)
-
-### Phase 4: Cross-Platform Build, CI & End-to-End Verification
-
-**Goal**: The render path is proven end-to-end across target platforms (including macOS/MoltenVK) and continuously verified in CI, with zero regressions to existing MNN inference/retrain behavior.
-**Depends on**: Phase 3 (needs a working `RenderProcessor` before end-to-end execution, cross-platform runs, and CI tiers can be meaningfully validated)
-**Requirements**: DETV-03, E2E-01, E2E-02, E2E-03
-**Success Criteria** (what must be TRUE):
-
-  1. CI runs a hardware-independent tier — schema validation, shader compile, `spirv-val`, pipeline construction via a software Vulkan ICD — on every build, test-only and never exercised from product code (DETV-03)
-  2. CI runs a hardware-dependent tier — real draw+readback, the N≥10 repeat-run determinism test — on a real-GPU runner (DETV-03)
-  3. A real render pass definition executes end-to-end through the actual distributed processing pipeline and produces a verified output hash (E2E-01)
-  4. The render path actually executes — not just compiles — on a MoltenVK/macOS target (E2E-02)
-  5. The full existing MNN inference/retrain test suite passes with zero regressions alongside the new render path, including a concurrent-init stress test proving Phase 1's shared Vulkan-init lock holds under real concurrent MNN-Vulkan-init + `RenderProcessor`-Vulkan-init load (E2E-03)
-
-**Plans**: 3/3 plans complete
-
-Plans:
-**Wave 1**
-
-- [x] 04-01-PLAN.md — GPU probe (HasUsableVulkanDevice) + GTEST_SKIP retrofit + E2E-01 single-run render test (DETV-03/E2E-01)
-- [x] 04-02-PLAN.md — cmake.yml CI annotation steps for GPU-gated test skips, Windows/Linux/OSX (DETV-03/E2E-02)
-
-**Wave 2** *(blocked on 04-01/04-02 completion)*
-
-- [x] 04-03-PLAN.md — Zero-regressions confirmation: concurrency stress test + full MNN suite (E2E-03)
+**Plans**: TBD
 
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 1 → 01.1 → 2 → 3 → 4 (Phase 01.1 is an urgent insertion between 1 and 2; Phase 2 is independently developable and could run in parallel with Phase 1 if desired; sequenced here for planning clarity)
+Phases execute in numeric order: 06 → 07 → 08 → 09. Phase 06's CAP and VVAL sub-streams are independently developable and may be planned as separate waves within the phase.
 
 | Phase | Plans Complete | Status | Completed |
 |-------|-----------------|--------|-----------|
-| 1. Vulkan Foundation & Dispatch Plumbing | 6/6 | Complete | 2026-07-29 |
-| 01.1. CMake vk-bootstrap discovery, MNN CPU-to-VULKAN processor migration, and coverage (INSERTED) | 3/3 | Complete    | 2026-07-30 |
-| 2. Schema Extension & Shader/SPIR-V Validation Pipeline | 4/4 | Complete    | 2026-07-31 |
-| 3. RenderProcessor Implementation & Determinism | 6/6 | Complete    | 2026-07-31 |
-| 4. Cross-Platform Build, CI & End-to-End Verification | 3/3 | Needs Review (human verification pending) | - |
-| 5. Android/iOS Platform Compatibility: Thirdparty Library Builds | 2/2 | Complete | 2026-07-31 |
+| 06. Capability & Validation Foundation | 0/TBD | Not started | - |
+| 07. Cancellable Execution Context | 0/TBD | Not started | - |
+| 08. Structured Artifacts & Manifests | 0/TBD | Not started | - |
+| 09. Conformance Test Suites | 0/TBD | Not started | - |
 
-### Phase 5: Android/iOS Platform Compatibility: Thirdparty Library Builds
+## Requirement Coverage
 
-**Goal:** Make the thirdparty build system produce all four render-specific library dependencies (vk-bootstrap, SPIRV-Tools, shaderc, Vulkan-Loader) for Android (arm64-v8a, armeabi-v7a) and iOS (arm64 device), and verify SGProcessingManager's render path compiles and links against the mobile-built libraries.
-**Requirements**: MOBILE-01, MOBILE-02, MOBILE-03, MOBILE-04, MOBILE-05, MOBILE-06
-**Depends on:** Phase 4
-**Plans:** 2 plans
+| REQ-ID | Phase | Category |
+|--------|-------|----------|
+| CAP-01 | 06 | Capability — executability gate |
+| CAP-02 | 06 | Capability — Vulkan feature reasons |
+| CAP-03 | 06 | Capability — model format reasons |
+| CAP-04 | 06 | Capability — pass type reasons |
+| CAP-05 | 06 | Capability — resource validation |
+| CAP-06 | 06 | Capability — executor identity |
+| VVAL-01 | 06 | Vulkan layers — vendoring |
+| VVAL-02 | 06 | Vulkan layers — CMake wiring |
+| VVAL-03 | 06 | Vulkan layers — runtime toggle |
+| VVAL-04 | 06 | Vulkan layers — documented decision |
+| EXEC-01 | 07 | Execution — cancellation token |
+| EXEC-02 | 07 | Execution — deadline failures |
+| EXEC-03 | 07 | Execution — resource budgets |
+| EXEC-04 | 07 | Execution — progress events |
+| EXEC-05 | 07 | Execution — checkpoint support |
+| EXEC-06 | 07 | Execution — safe cleanup |
+| EXEC-07 | 07 | Execution — migration adapter |
+| ARTF-01 | 08 | Artifacts — typed records |
+| ARTF-02 | 08 | Artifacts — format metadata |
+| ARTF-03 | 08 | Artifacts — content hashes |
+| ARTF-04 | 08 | Artifacts — execution manifest |
+| ARTF-05 | 08 | Artifacts — deterministic serialization |
+| ARTF-06 | 08 | Artifacts — migration adapter |
+| TEST-01 | 09 | Tests — CTest targets |
+| TEST-02 | 09 | Tests — schema parsing |
+| TEST-03 | 09 | Tests — executor selection |
+| TEST-04 | 09 | Tests — MNN conformance |
+| TEST-05 | 09 | Tests — Vulkan/MoltenVK |
+| TEST-06 | 09 | Tests — hashing/serialization |
+| TEST-07 | 09 | Tests — cancellation/budgets |
+| TEST-08 | 09 | Tests — capability cases |
+| TEST-09 | 09 | Tests — backward compat |
+| TEST-10 | 09 | Tests — regression bugs |
 
-Plans:
-
-**Wave 1**
-
-- [x] 05-01-PLAN.md — Refactor CommonTargets.cmake: extract SPIRV-Headers, SPIRV-Tools, shaderc, vk-bootstrap from `if(NOT ANDROID)` to unconditional; add platform-conditional Vulkan wiring for vk-bootstrap (MOBILE-01/02/03)
-
-**Wave 2** *(blocked on 05-01 completion)*
-
-- [x] 05-02-PLAN.md — Verify SGProcessingManager mobile link chain + create build documentation (MOBILE-04/05/06)
+**Coverage:** 29/29 requirements mapped ✓
 
 ---
-*Roadmap created: 2026-07-29*
-*Granularity: coarse (4 phases)*
+*Roadmap created: 2026-08-03 — v2.0 Execution Contracts & Quality Gates*
