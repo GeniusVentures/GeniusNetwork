@@ -94,7 +94,18 @@ Elevate SGProcessingManager from a "parse-and-hope" pipeline to a contract-drive
 3. The execution manifest includes: all IDs (execution/attempt/task/subtask/pass), executor identity, model/shader/quantization identities when used, input and output artifact hashes, start/end times, terminal state, error details, and resource-use summary — and serializes to byte-identical output across two runs with identical inputs (ARTF-04, ARTF-05).
 4. Existing callers consuming the old `ProcessingResult` shape (hash + output names + byte buffers + output-location string) continue to work through the migration adapter with zero changes to their code (ARTF-06).
 
-**Plans**: TBD
+**Plans**: 3 plans in 3 waves
+
+**Plans:**
+- [ ] 08-01-PLAN.md — Artifact & Manifest type system + SHA-256 content hashing (TerminalState, Artifact, ExecutionManifest structs)
+- [ ] 08-02-PLAN.md — Deterministic binary serialization (fixed-field LE layout) + unit tests
+- [ ] 08-03-PLAN.md — ProcessingManager integration + ProcessOutput + migration adapter + SuperGenius caller update
+
+| Plan | Wave | Requirements | Autonomous |
+|------|------|-------------|------------|
+| 08-01 | 1 (Types) | ARTF-01, ARTF-02, ARTF-03, ARTF-04 | yes |
+| 08-02 | 2 (Serialization) | ARTF-05 | yes |
+| 08-03 | 3 (Integration) | ARTF-01, ARTF-02, ARTF-03, ARTF-06 | no (checkpoint:human-verify) |
 
 ### Phase 09: Processor & Pass-Graph Conformance Suites
 
@@ -124,7 +135,7 @@ Phases execute in numeric order: 06 → 07 → 08 → 09. Phase 06's CAP and VVA
 |-------|-----------------|--------|-----------|
 | 06. Capability & Validation Foundation | 4/4 | Planned | - |
 | 07. Cancellable Execution Context | 5/5 | Executed | - |
-| 08. Structured Artifacts & Manifests | 0/TBD | Not started | - |
+| 08. Structured Artifacts & Manifests | 0/3 | Planned | - |
 | 09. Conformance Test Suites | 0/TBD | Not started | - |
 
 ## Requirement Coverage
