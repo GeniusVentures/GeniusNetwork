@@ -8,8 +8,8 @@ Elevate SGProcessingManager from a "parse-and-hope" pipeline to a contract-drive
 
 **Phase Numbering:** Continues from v1.0's last phase (05). v2.0 starts at Phase 06.
 
-- [ ] **Phase 06: Capability & Validation Foundation** — Jobs are validated against node capabilities before any work begins; Vulkan validation layers are vendored and toggleable
-- [ ] **Phase 07: Cancellable Execution Context** — Every processor receives a cancellation token, deadline, budgets, and progress callbacks; resources are safely cleaned up on termination
+- [x] **Phase 06: Capability & Validation Foundation** — Jobs are validated against node capabilities before any work begins; Vulkan validation layers are toggleable (best-effort, no vendoring)
+- [x] **Phase 07: Cancellable Execution Context** — Every processor receives a cancellation token, deadline, budgets, and progress callbacks; resources are safely cleaned up on termination
 - [ ] **Phase 08: Structured Artifacts & Execution Manifests** — Results are typed artifact records with provenance; execution manifests serialize deterministically
 - [ ] **Phase 09: Processor & Pass-Graph Conformance Suites** — CTest targets cover every processor against a common contract; regression tests lock in known bug fixes
 
@@ -17,7 +17,7 @@ Elevate SGProcessingManager from a "parse-and-hope" pipeline to a contract-drive
 
 ### Phase 06: Capability & Validation Foundation
 
-**Goal**: Before a job is executed, the node validates whether it CAN execute it — across all pass types, Vulkan features, model formats, and resource requirements — returning specific unmet-requirement reasons. Vulkan validation layers are vendored, wired into CMake, and toggleable at runtime.
+**Goal**: Before a job is executed, the node validates whether it CAN execute it — across all pass types, Vulkan features, model formats, and resource requirements — returning specific unmet-requirement reasons. Vulkan validation layers are a best-effort, debug-only toggle (no vendoring).
 
 **Depends on**: v1.0 foundation (Vulkan context, schema, RenderProcessor, shaderc/SPIRV-Tools)
 
@@ -28,11 +28,24 @@ Elevate SGProcessingManager from a "parse-and-hope" pipeline to a contract-drive
 1. A job with unsupported Vulkan features returns a structured `CanExecute` rejection listing exactly which features/extensions/limits are unmet, not a generic "unsupported" message (CAP-02).
 2. A job with an unsupported model format, quantization, or tokenizer for MNN inference returns specific unmet-requirement reasons identifying the mismatch (CAP-03).
 3. A job with an unregistered `PassType` returns a rejection naming the pass type and listing available registered executors (CAP-04).
-4. The selected executor identity and compatibility identities (model, shader, quantization, runtime) are stable across repeated capability checks for the same job definition and surfaced in metadata (CAP-06).
-5. Vulkan validation layers build as `thirdparty/` submodule(s) through the existing `CommonBuildParameters.cmake`/`CommonTargets` convention on all supported platforms (VVAL-01, VVAL-02).
-6. Validation layers can be toggled on/off for `RenderProcessor`'s `VkInstance` via configuration — disabled by default in production, enabled in debug/test builds (VVAL-03).
+4. The selected executor identity is stable across repeated capability checks for the same job definition (CAP-06).
+5. ~~Vulkan validation layers build as `thirdparty/` submodule(s)~~ **OVERRIDDEN by D-20:** Layers are best-effort only — loaded by name via vk-bootstrap if present on system; not vendored. See `06-CONTEXT.md` D-20 through D-25.
+6. Validation layers can be toggled on/off for `RenderProcessor`'s `VkInstance` via the CMake option `ENABLE_VULKAN_VALIDATION` — ON by default in Debug, OFF in Release (VVAL-03).
 
-**Plans**: TBD
+**Plans**: 4 plans in 2 waves
+
+**Plans:**
+- [x] 06-01-PLAN.md — Capability data types + CapabilityValidator header + BuildSnapshot
+- [x] 06-02-PLAN.md — CanExecute implementation: Vulkan/MNN/PassType/Resource validation + identity hash
+- [x] 06-03-PLAN.md — ProcessingManager integration + unit tests covering all rejection categories
+- [x] 06-04-PLAN.md — CMake option ENABLE_VULKAN_VALIDATION + #ifdef gate in RenderProcessor + build verification
+
+| Plan | Wave | Requirements | Autonomous |
+|------|------|-------------|------------|
+| 06-01 | 1 (CAP) | CAP-01, CAP-06 | yes |
+| 06-02 | 1 (CAP) | CAP-02, CAP-03, CAP-04, CAP-05 | yes |
+| 06-03 | 1 (CAP) | CAP-01 | no (checkpoint:human-verify) |
+| 06-04 | 2 (VVAL) | VVAL-01, VVAL-02, VVAL-03, VVAL-04 | yes |
 
 ### Phase 07: Cancellable Execution Context
 
@@ -47,11 +60,24 @@ Elevate SGProcessingManager from a "parse-and-hope" pipeline to a contract-drive
 1. A running MNN or Vulkan render job can be cancelled via the cancellation token; the job does NOT publish a successful result, and all Vulkan resources (pipelines, buffers, images, command pools), MNN sessions, and pending `FileManager::SaveASync` calls are cleaned up with zero leaks confirmed by a repeat-run leak detector (EXEC-01, EXEC-06).
 2. A per-pass deadline that expires mid-execution produces a distinct typed timeout failure, not a generic error, and the output distinguishes timeout from cancellation and from budget-exceeded (EXEC-02).
 3. An output-size budget that is exceeded before the pass completes produces a distinct budget-exceeded failure, and the partial output is NOT published as a successful result (EXEC-03).
-4. Progress events during a multi-stage render pass carry the pass ID, current stage name, completed work count, total work count, and a human-readable message — verified by capturing progress callbacks in a test (EXEC-04).
+4. Progress events during a multi-stage render pass carry the pass ID, stage name, and percent (0–100 float) — verified by capturing progress callbacks in a test (EXEC-04, D-11).
 5. A processor that does not support checkpointing returns a clear "checkpoint not supported" response when the checkpoint callback is queried, rather than silently ignoring it (EXEC-05).
 6. All existing MNN inference processors and the v1.0 `RenderProcessor` pass their existing test suites through the new execution-context adapter with zero behavior changes (EXEC-07).
 
-**Plans**: TBD
+**Plans**: 4 plans in 3 waves
+
+**Plans:**
+- [x] 07-01-PLAN.md — ExecutionContext type system + teardown stack + schema budgets + registry checkpointing flag
+- [x] 07-02-PLAN.md — ProcessingManager integration: try/catch, ExecutionContext lifecycle, deadline timer, adapter removal
+- [x] 07-03-PLAN.md — All 15 processors: cancel checks, progress events, MNN teardown stack adoption
+- [x] 07-04-PLAN.md — Integration tests: cancel, timeout, budget, progress, leak detection, migration adapter
+
+| Plan | Wave | Requirements | Autonomous |
+|------|------|-------------|------------|
+| 07-01 | 1 (Types) | EXEC-01, EXEC-02, EXEC-03, EXEC-04, EXEC-05 | yes |
+| 07-02 | 2 (Integration) | EXEC-06, EXEC-07 | yes |
+| 07-03 | 2 (Processors) | EXEC-01, EXEC-02, EXEC-03, EXEC-04 | yes |
+| 07-04 | 3 (Tests) | EXEC-01, EXEC-02, EXEC-03, EXEC-04, EXEC-05, EXEC-06, EXEC-07 | no (checkpoint:human-verify) |
 
 ### Phase 08: Structured Artifacts & Execution Manifests
 
@@ -96,8 +122,8 @@ Phases execute in numeric order: 06 → 07 → 08 → 09. Phase 06's CAP and VVA
 
 | Phase | Plans Complete | Status | Completed |
 |-------|-----------------|--------|-----------|
-| 06. Capability & Validation Foundation | 0/TBD | Not started | - |
-| 07. Cancellable Execution Context | 0/TBD | Not started | - |
+| 06. Capability & Validation Foundation | 4/4 | Planned | - |
+| 07. Cancellable Execution Context | 5/5 | Executed | - |
 | 08. Structured Artifacts & Manifests | 0/TBD | Not started | - |
 | 09. Conformance Test Suites | 0/TBD | Not started | - |
 
