@@ -4,17 +4,17 @@ milestone: v2.0
 milestone_name: Execution Contracts & Quality Gates
 current_phase: 09
 current_phase_name: Processor & Pass-Graph Conformance Suites
-status: context-complete
-stopped_at: Phase 09 context gathered — 6 decisions across 5 areas (fixtures, CTest layout, GPU tiers, conformance scope, regression, test location)
+status: planned
+stopped_at: Phase 09 planned — 7 plans in 3 waves; waiting for execution
 last_updated: "2026-08-05T00:00:00.000Z"
 last_activity: 2026-08-05
-last_activity_desc: Phase 09 discuss — Processor & Pass-Graph Conformance Suites: 6 decisions captured (fixtures follow processing_datatypes, per-category CTest, GTEST_SKIP GPU probe, full-pipeline conformance, synthetic regression triggers, tests in SuperGenius/test/src/)
+last_activity_desc: Phase 09 planned — 7 plans (09-01 through 09-07) in 3 waves. Wave 1: shared infrastructure. Wave 2: 5 parallel test executables. Wave 3: CMake integration.
 progress:
   total_phases: 4
   completed_phases: 3
-  total_plans: 15
+  total_plans: 22
   completed_plans: 15
-  percent: 75
+  percent: 68
 ---
 
 # Project State

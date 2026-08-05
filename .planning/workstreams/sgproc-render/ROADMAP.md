@@ -124,7 +124,26 @@ Elevate SGProcessingManager from a "parse-and-hope" pipeline to a contract-drive
 5. Capability rejection tests cover: unsupported Vulkan feature, unsupported model format, unsupported pass type, missing executor — each produces a distinct, human-readable rejection reason (TEST-08).
 6. The four regression tests pass: (a) index mismatch produces correct error, (b) model-only pass no longer crashes in `ParseBlockSize()`, (c) output-buffer-zero produces correct result, (d) unsupported pass type produces error instead of silent fallthrough (TEST-10).
 
-**Plans**: TBD
+**Plans**: 7 plans in 3 waves
+
+Plans:
+- [ ] 09-01-PLAN.md — Shared infrastructure: ProcessorConformanceFixture, Python MNN model scripts, SPIR-V fixtures
+- [ ] 09-02-PLAN.md — Extend processing_datatypes_test for 5 remaining MNN types (audio, image, ml, string, volume)
+- [ ] 09-03-PLAN.md — Schema validation + executor selection test executables
+- [ ] 09-04-PLAN.md — Output hashing + migration adapter test executables
+- [ ] 09-05-PLAN.md — Cancellation + capability conformance test executables
+- [ ] 09-06-PLAN.md — Regression tests + RenderProcessor GPU conformance
+- [ ] 09-07-PLAN.md — CMake integration: add_subdirectory entries + CTest verification
+
+| Plan | Wave | Requirements | Autonomous |
+|------|------|-------------|------------|
+| 09-01 | 1 (Infra) | TEST-04, TEST-05 | yes |
+| 09-02 | 2 (Tests) | TEST-04 | yes |
+| 09-03 | 2 (Tests) | TEST-02, TEST-03 | yes |
+| 09-04 | 2 (Tests) | TEST-06, TEST-09 | yes |
+| 09-05 | 2 (Tests) | TEST-07, TEST-08 | yes |
+| 09-06 | 2 (Tests) | TEST-10, TEST-04, TEST-05 | yes |
+| 09-07 | 3 (Integration) | TEST-01 | yes |
 
 ## Progress
 
@@ -136,7 +155,7 @@ Phases execute in numeric order: 06 → 07 → 08 → 09. Phase 06's CAP and VVA
 | 06. Capability & Validation Foundation | 4/4 | Planned | - |
 | 07. Cancellable Execution Context | 5/5 | Executed | - |
 | 08. Structured Artifacts & Manifests | 0/3 | Planned | - |
-| 09. Conformance Test Suites | 0/TBD | Not started | - |
+| 09. Conformance Test Suites | 0/7 | Planned | - |
 
 ## Requirement Coverage
 
