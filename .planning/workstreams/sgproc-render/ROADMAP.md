@@ -127,13 +127,13 @@ Elevate SGProcessingManager from a "parse-and-hope" pipeline to a contract-drive
 **Plans**: 7 plans in 3 waves
 
 Plans:
-- [ ] 09-01-PLAN.md — Shared infrastructure: ProcessorConformanceFixture, Python MNN model scripts, SPIR-V fixtures
-- [ ] 09-02-PLAN.md — Extend processing_datatypes_test for 5 remaining MNN types (audio, image, ml, string, volume)
-- [ ] 09-03-PLAN.md — Schema validation + executor selection test executables
-- [ ] 09-04-PLAN.md — Output hashing + migration adapter test executables
-- [ ] 09-05-PLAN.md — Cancellation + capability conformance test executables
-- [ ] 09-06-PLAN.md — Regression tests + RenderProcessor GPU conformance
-- [ ] 09-07-PLAN.md — CMake integration: add_subdirectory entries + CTest verification
+- [x] 09-01-PLAN.md — Shared infrastructure: ProcessorConformanceFixture, Python MNN model scripts, SPIR-V fixtures
+- [x] 09-02-PLAN.md — Extend processing_datatypes_test for 5 remaining MNN types (audio, image, ml, string, volume)
+- [x] 09-03-PLAN.md — Schema validation + executor selection test executables
+- [x] 09-04-PLAN.md — Output hashing + migration adapter test executables
+- [x] 09-05-PLAN.md — Cancellation + capability conformance test executables
+- [x] 09-06-PLAN.md — Regression tests + RenderProcessor GPU conformance
+- [x] 09-07-PLAN.md — CMake integration: add_subdirectory entries + CTest verification
 
 | Plan | Wave | Requirements | Autonomous |
 |------|------|-------------|------------|
@@ -152,10 +152,10 @@ Phases execute in numeric order: 06 → 07 → 08 → 09. Phase 06's CAP and VVA
 
 | Phase | Plans Complete | Status | Completed |
 |-------|-----------------|--------|-----------|
-| 06. Capability & Validation Foundation | 4/4 | Planned | - |
-| 07. Cancellable Execution Context | 5/5 | Executed | - |
-| 08. Structured Artifacts & Manifests | 0/3 | Planned | - |
-| 09. Conformance Test Suites | 0/7 | Planned | - |
+| 06. Capability & Validation Foundation | 4/4 | Executed | 2026-08-05 |
+| 07. Cancellable Execution Context | 5/5 | Executed | 2026-08-05 |
+| 08. Structured Artifacts & Manifests | 3/3 | Executed | 2026-08-05 |
+| 09. Conformance Test Suites | 7/7 | Executed | 2026-08-05 |
 
 ## Requirement Coverage
 
