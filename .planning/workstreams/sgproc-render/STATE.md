@@ -4,11 +4,11 @@ milestone: v2.0
 milestone_name: Execution Contracts & Quality Gates
 current_phase: 09
 current_phase_name: Processor & Pass-Graph Conformance Suites
-status: execute-complete
-stopped_at: Phase 08 executed — 3 plans completed (type system, serialization, integration)
+status: context-complete
+stopped_at: Phase 09 context gathered — 6 decisions across 5 areas (fixtures, CTest layout, GPU tiers, conformance scope, regression, test location)
 last_updated: "2026-08-05T00:00:00.000Z"
 last_activity: 2026-08-05
-last_activity_desc: Phase 08 executed — Structured Artifacts & Execution Manifests: 3/3 plans complete (artifact_types.hpp, execution_manifest.hpp, artifact_serializer.hpp/.cpp, test, Process() integration, FromProcessOutput adapter)
+last_activity_desc: Phase 09 discuss — Processor & Pass-Graph Conformance Suites: 6 decisions captured (fixtures follow processing_datatypes, per-category CTest, GTEST_SKIP GPU probe, full-pipeline conformance, synthetic regression triggers, tests in SuperGenius/test/src/)
 progress:
   total_phases: 4
   completed_phases: 3
@@ -28,11 +28,11 @@ See: .planning/PROJECT.md (updated 2026-08-03), workstream section "Workstream: 
 
 ## Current Position
 
-Phase: 08 — Structured Artifacts & Execution Manifests
-Status: Context gathered — 15 decisions across 5 areas; ready for planning
-Last activity: 2026-08-05 — Phase 08 discuss (artifact identity, manifest serialization, hash scheme, adapter lifespan, manifest scope)
+Phase: 09 — Processor & Pass-Graph Conformance Suites
+Status: Context gathered — 8 decisions across 6 areas; ready for planning
+Last activity: 2026-08-05 — Phase 09 discuss (test fixtures, CTest granularity, GPU tiers, conformance contract, regression triggers, test location)
 
-Progress: [█████░░░░░] 50% (4/4 Phase 06; 5/5 Phase 07; Phase 08 context ready; Phase 09 pending)
+Progress: [████████░░] 75% (4/4 Phase 06; 5/5 Phase 07; 3/3 Phase 08; Phase 09 context ready)
 
 ## Performance Metrics
 
