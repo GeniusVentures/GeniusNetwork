@@ -127,7 +127,7 @@ Elevate SGProcessingManager from a "parse-and-hope" pipeline to a contract-drive
 5. Capability rejection tests cover: unsupported Vulkan feature, unsupported model format, unsupported pass type, missing executor — each produces a distinct, human-readable rejection reason (TEST-08).
 6. The four regression tests pass: (a) index mismatch produces correct error, (b) model-only pass no longer crashes in `ParseBlockSize()`, (c) output-buffer-zero produces correct result, (d) unsupported pass type produces error instead of silent fallthrough (TEST-10).
 
-**Plans**: 8/10 plans executed
+**Plans**: 9/10 plans executed
 
 Plans:
 
@@ -139,7 +139,7 @@ Plans:
 - [x] 09-06-PLAN.md — Regression tests + RenderProcessor GPU conformance
 - [x] 09-07-PLAN.md — CMake integration: add_subdirectory entries + CTest verification
 - [x] 09-08-PLAN.md — Gap closure: fix JSON fixture/inline-literal field-name mismatches (Gap 1)
-- [ ] 09-09-PLAN.md — Gap closure: granular error propagation, model-format, pass-type validation (Gaps 2/4/5)
+- [x] 09-09-PLAN.md — Gap closure: granular error propagation, model-format, pass-type validation (Gaps 2/4/5)
 - [ ] 09-10-PLAN.md — Gap closure: deterministic ProcessOutput.combinedHash + full regression sweep (Gap 3)
 
 | Plan | Wave | Requirements | Autonomous |
@@ -162,7 +162,7 @@ Phases execute in numeric order: 06 → 07 → 08 → 09. Phase 06's CAP and VVA
 | 06. Capability & Validation Foundation | 4/4 | Executed | 2026-08-05 |
 | 07. Cancellable Execution Context | 5/5 | Executed | 2026-08-05 |
 | 08. Structured Artifacts & Manifests | 3/3 | Executed | 2026-08-05 |
-| 09. Conformance Test Suites | 8/10 | In Progress|  |
+| 09. Conformance Test Suites | 9/10 | In Progress|  |
 
 ## Requirement Coverage
 
