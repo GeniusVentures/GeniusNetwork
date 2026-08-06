@@ -11,7 +11,7 @@ Elevate SGProcessingManager from a "parse-and-hope" pipeline to a contract-drive
 - [x] **Phase 06: Capability & Validation Foundation** — Jobs are validated against node capabilities before any work begins; Vulkan validation layers are toggleable (best-effort, no vendoring)
 - [x] **Phase 07: Cancellable Execution Context** — Every processor receives a cancellation token, deadline, budgets, and progress callbacks; resources are safely cleaned up on termination
 - [ ] **Phase 08: Structured Artifacts & Execution Manifests** — Results are typed artifact records with provenance; execution manifests serialize deterministically
-- [x] **Phase 09: Processor & Pass-Graph Conformance Suites** — CTest targets cover every processor against a common contract; regression tests lock in known bug fixes (completed 2026-08-06)
+- [ ] **Phase 09: Processor & Pass-Graph Conformance Suites** — CTest targets cover every processor against a common contract; regression tests lock in known bug fixes (round-2 goal-backward verification found 5 further gaps 2026-08-06; plans 09-11..09-13 close them)
 
 ## Phase Details
 
@@ -127,7 +127,7 @@ Elevate SGProcessingManager from a "parse-and-hope" pipeline to a contract-drive
 5. Capability rejection tests cover: unsupported Vulkan feature, unsupported model format, unsupported pass type, missing executor — each produces a distinct, human-readable rejection reason (TEST-08).
 6. The four regression tests pass: (a) index mismatch produces correct error, (b) model-only pass no longer crashes in `ParseBlockSize()`, (c) output-buffer-zero produces correct result, (d) unsupported pass type produces error instead of silent fallthrough (TEST-10).
 
-**Plans**: 10/10 plans complete
+**Plans**: 13 plans (10 complete, 3 planned — round 2 gap closure)
 
 Plans:
 
@@ -141,6 +141,9 @@ Plans:
 - [x] 09-08-PLAN.md — Gap closure: fix JSON fixture/inline-literal field-name mismatches (Gap 1)
 - [x] 09-09-PLAN.md — Gap closure: granular error propagation, model-format, pass-type validation (Gaps 2/4/5)
 - [x] 09-10-PLAN.md — Gap closure: deterministic ProcessOutput.combinedHash + full regression sweep (Gap 3)
+- [ ] 09-11-PLAN.md — Gap closure round 2: wire capability_conformance_test to real CanExecute(), RenderConformanceTest to real Vulkan pipeline, output_hashing_test's missing artifact/manifest cases
+- [ ] 09-12-PLAN.md — Gap closure round 2: ExecutionContext-accepting Process() overload + real cancellation/budget/progress conformance tests (MNN + Vulkan)
+- [ ] 09-13-PLAN.md — Gap closure round 2: fix MNN string processor reshape/resize bug (StringInputProcessingTest + StringConformanceProcessingTest)
 
 | Plan | Wave | Requirements | Autonomous |
 |------|------|-------------|------------|
@@ -151,6 +154,9 @@ Plans:
 | 09-05 | 2 (Tests) | TEST-07, TEST-08 | yes |
 | 09-06 | 2 (Tests) | TEST-10, TEST-04, TEST-05 | yes |
 | 09-07 | 3 (Integration) | TEST-01 | yes |
+| 09-11 | 1 (Gap closure R2) | TEST-08, TEST-05, TEST-06 | yes |
+| 09-12 | 1 (Gap closure R2) | TEST-07 | yes |
+| 09-13 | 1 (Gap closure R2) | TEST-04 | yes |
 
 ## Progress
 
@@ -162,7 +168,7 @@ Phases execute in numeric order: 06 → 07 → 08 → 09. Phase 06's CAP and VVA
 | 06. Capability & Validation Foundation | 4/4 | Executed | 2026-08-05 |
 | 07. Cancellable Execution Context | 5/5 | Executed | 2026-08-05 |
 | 08. Structured Artifacts & Manifests | 3/3 | Executed | 2026-08-05 |
-| 09. Conformance Test Suites | 10/10 | Complete   | 2026-08-06 |
+| 09. Conformance Test Suites | 10/13 | Gap closure round 2 in progress | — |
 
 ## Requirement Coverage
 
