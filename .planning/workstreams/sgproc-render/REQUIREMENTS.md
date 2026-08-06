@@ -46,7 +46,7 @@ Requirements for milestone v2.0. Each maps to roadmap phases.
 - [x] **TEST-03**: Executor selection by pass type and backend is tested for every registered executor (MNN inference, Vulkan compute, Vulkan render)
 - [ ] **TEST-04**: Every existing MNN processor runs the same core conformance contract (pass-through or adapted) — no backend-specific drift
 - [ ] **TEST-05**: Native Vulkan compute/render and the existing MoltenVK path run equivalent fixtures where CI hardware permits; unsupported CI environments skip with an explicit reason
-- [ ] **TEST-06**: Output hashing, artifact metadata construction, persistence round-trip, and deterministic serialization are tested end-to-end
+- [x] **TEST-06**: Output hashing, artifact metadata construction, persistence round-trip, and deterministic serialization are tested end-to-end
 - [ ] **TEST-07**: Cancellation, deadline expiry, budget exceeded, progress event emission, partial result delivery, and resource cleanup are each tested with at least one processor type
 - [x] **TEST-08**: Capability acceptance cases (executable jobs) and rejection cases (unsupported features/formats/pass types) are both covered
 - [ ] **TEST-09**: The migration adapter from ARTF-06 is tested — existing callers' `ProcessingResult` shape and output-location string behavior is preserved
