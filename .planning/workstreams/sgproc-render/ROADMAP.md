@@ -130,20 +130,27 @@ Elevate SGProcessingManager from a "parse-and-hope" pipeline to a contract-drive
 **Plans**: 13 plans (10 complete, 3 planned — round 2 gap closure)
 
 Plans:
+**Wave 1**
 
 - [x] 09-01-PLAN.md — Shared infrastructure: ProcessorConformanceFixture, Python MNN model scripts, SPIR-V fixtures
+- [x] 09-08-PLAN.md — Gap closure: fix JSON fixture/inline-literal field-name mismatches (Gap 1)
+- [x] 09-09-PLAN.md — Gap closure: granular error propagation, model-format, pass-type validation (Gaps 2/4/5)
+- [ ] 09-11-PLAN.md — Gap closure round 2: wire capability_conformance_test to real CanExecute(), RenderConformanceTest to real Vulkan pipeline, output_hashing_test's missing artifact/manifest cases
+- [ ] 09-12-PLAN.md — Gap closure round 2: ExecutionContext-accepting Process() overload + real cancellation/budget/progress conformance tests (MNN + Vulkan)
+- [ ] 09-13-PLAN.md — Gap closure round 2: fix MNN string processor reshape/resize bug (StringInputProcessingTest + StringConformanceProcessingTest)
+
+**Wave 2** *(blocked on Wave 1 completion)*
+
 - [x] 09-02-PLAN.md — Extend processing_datatypes_test for 5 remaining MNN types (audio, image, ml, string, volume)
 - [x] 09-03-PLAN.md — Schema validation + executor selection test executables
 - [x] 09-04-PLAN.md — Output hashing + migration adapter test executables
 - [x] 09-05-PLAN.md — Cancellation + capability conformance test executables
 - [x] 09-06-PLAN.md — Regression tests + RenderProcessor GPU conformance
-- [x] 09-07-PLAN.md — CMake integration: add_subdirectory entries + CTest verification
-- [x] 09-08-PLAN.md — Gap closure: fix JSON fixture/inline-literal field-name mismatches (Gap 1)
-- [x] 09-09-PLAN.md — Gap closure: granular error propagation, model-format, pass-type validation (Gaps 2/4/5)
 - [x] 09-10-PLAN.md — Gap closure: deterministic ProcessOutput.combinedHash + full regression sweep (Gap 3)
-- [ ] 09-11-PLAN.md — Gap closure round 2: wire capability_conformance_test to real CanExecute(), RenderConformanceTest to real Vulkan pipeline, output_hashing_test's missing artifact/manifest cases
-- [ ] 09-12-PLAN.md — Gap closure round 2: ExecutionContext-accepting Process() overload + real cancellation/budget/progress conformance tests (MNN + Vulkan)
-- [ ] 09-13-PLAN.md — Gap closure round 2: fix MNN string processor reshape/resize bug (StringInputProcessingTest + StringConformanceProcessingTest)
+
+**Wave 3** *(blocked on Wave 2 completion)*
+
+- [x] 09-07-PLAN.md — CMake integration: add_subdirectory entries + CTest verification
 
 | Plan | Wave | Requirements | Autonomous |
 |------|------|-------------|------------|
