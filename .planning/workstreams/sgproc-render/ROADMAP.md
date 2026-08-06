@@ -35,6 +35,7 @@ Elevate SGProcessingManager from a "parse-and-hope" pipeline to a contract-drive
 **Plans**: 4 plans in 2 waves
 
 **Plans:**
+
 - [x] 06-01-PLAN.md — Capability data types + CapabilityValidator header + BuildSnapshot
 - [x] 06-02-PLAN.md — CanExecute implementation: Vulkan/MNN/PassType/Resource validation + identity hash
 - [x] 06-03-PLAN.md — ProcessingManager integration + unit tests covering all rejection categories
@@ -67,6 +68,7 @@ Elevate SGProcessingManager from a "parse-and-hope" pipeline to a contract-drive
 **Plans**: 4 plans in 3 waves
 
 **Plans:**
+
 - [x] 07-01-PLAN.md — ExecutionContext type system + teardown stack + schema budgets + registry checkpointing flag
 - [x] 07-02-PLAN.md — ProcessingManager integration: try/catch, ExecutionContext lifecycle, deadline timer, adapter removal
 - [x] 07-03-PLAN.md — All 15 processors: cancel checks, progress events, MNN teardown stack adoption
@@ -97,6 +99,7 @@ Elevate SGProcessingManager from a "parse-and-hope" pipeline to a contract-drive
 **Plans**: 3 plans in 3 waves
 
 **Plans:**
+
 - [ ] 08-01-PLAN.md — Artifact & Manifest type system + SHA-256 content hashing (TerminalState, Artifact, ExecutionManifest structs)
 - [ ] 08-02-PLAN.md — Deterministic binary serialization (fixed-field LE layout) + unit tests
 - [ ] 08-03-PLAN.md — ProcessingManager integration + ProcessOutput + migration adapter + SuperGenius caller update
@@ -124,9 +127,10 @@ Elevate SGProcessingManager from a "parse-and-hope" pipeline to a contract-drive
 5. Capability rejection tests cover: unsupported Vulkan feature, unsupported model format, unsupported pass type, missing executor — each produces a distinct, human-readable rejection reason (TEST-08).
 6. The four regression tests pass: (a) index mismatch produces correct error, (b) model-only pass no longer crashes in `ParseBlockSize()`, (c) output-buffer-zero produces correct result, (d) unsupported pass type produces error instead of silent fallthrough (TEST-10).
 
-**Plans**: 10 plans in 4 waves (7 original + 3 gap-closure)
+**Plans**: 8/10 plans executed
 
 Plans:
+
 - [x] 09-01-PLAN.md — Shared infrastructure: ProcessorConformanceFixture, Python MNN model scripts, SPIR-V fixtures
 - [x] 09-02-PLAN.md — Extend processing_datatypes_test for 5 remaining MNN types (audio, image, ml, string, volume)
 - [x] 09-03-PLAN.md — Schema validation + executor selection test executables
@@ -134,7 +138,7 @@ Plans:
 - [x] 09-05-PLAN.md — Cancellation + capability conformance test executables
 - [x] 09-06-PLAN.md — Regression tests + RenderProcessor GPU conformance
 - [x] 09-07-PLAN.md — CMake integration: add_subdirectory entries + CTest verification
-- [ ] 09-08-PLAN.md — Gap closure: fix JSON fixture/inline-literal field-name mismatches (Gap 1)
+- [x] 09-08-PLAN.md — Gap closure: fix JSON fixture/inline-literal field-name mismatches (Gap 1)
 - [ ] 09-09-PLAN.md — Gap closure: granular error propagation, model-format, pass-type validation (Gaps 2/4/5)
 - [ ] 09-10-PLAN.md — Gap closure: deterministic ProcessOutput.combinedHash + full regression sweep (Gap 3)
 
@@ -158,7 +162,7 @@ Phases execute in numeric order: 06 → 07 → 08 → 09. Phase 06's CAP and VVA
 | 06. Capability & Validation Foundation | 4/4 | Executed | 2026-08-05 |
 | 07. Cancellable Execution Context | 5/5 | Executed | 2026-08-05 |
 | 08. Structured Artifacts & Manifests | 3/3 | Executed | 2026-08-05 |
-| 09. Conformance Test Suites | 7/7 | Executed | 2026-08-05 |
+| 09. Conformance Test Suites | 8/10 | In Progress|  |
 
 ## Requirement Coverage
 

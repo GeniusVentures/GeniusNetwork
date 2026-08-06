@@ -3,18 +3,18 @@ gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: Execution Contracts & Quality Gates
 current_phase: 09
-current_phase_name: Processor & Pass-Graph Conformance Suites
-status: executed
-stopped_at: Phase 09 executed — 7 plans completed across 3 waves
-last_updated: "2026-08-05T00:00:00.000Z"
-last_activity: 2026-08-05
-last_activity_desc: Phase 09 executed — 7 plans (09-01 through 09-07) in 3 waves. Wave 1: shared infrastructure (fixture, Python scripts, SPIR-V). Wave 2: 5 parallel test executables (schema, executor, hashing, migration, cancellation, capability, regression/render). Wave 3: CMake integration (7 add_subdirectory entries).
+current_phase_name: processor-pass-graph-conformance-suites
+status: executing
+stopped_at: Plan 09-08 executed — schema/capability/executor fixture field-name fixes (Gap 1)
+last_updated: "2026-08-06T21:37:08.979Z"
+last_activity: 2026-08-06
+last_activity_desc: Phase 09 Plan 08 executed (Gap 1 fixture/inline-JSON field-name fixes)
 progress:
   total_phases: 4
-  completed_phases: 4
-  total_plans: 22
-  completed_plans: 22
-  percent: 100
+  completed_phases: 0
+  total_plans: 24
+  completed_plans: 17
+  percent: 0
 ---
 
 # Project State
@@ -24,15 +24,15 @@ progress:
 See: .planning/PROJECT.md (updated 2026-08-03), workstream section "Workstream: sgproc-render"
 
 **Core value:** Elevate SGProcessingManager from a "parse-and-hope" pipeline to a contract-driven execution engine — jobs are validated before work starts, execution is cancellable and budget-aware, results are typed artifacts with provenance, and every processor is covered by a common test suite.
-**Current focus:** Defining requirements and roadmap for v2.0
+**Current focus:** Phase 09 — processor-pass-graph-conformance-suites
 
 ## Current Position
 
-Phase: 09 — Processor & Pass-Graph Conformance Suites
-Status: Context gathered — 8 decisions across 6 areas; ready for planning
-Last activity: 2026-08-05 — Phase 09 discuss (test fixtures, CTest granularity, GPU tiers, conformance contract, regression triggers, test location)
+Phase: 09 (processor-pass-graph-conformance-suites) — EXECUTING
+Status: Executing Phase 09
+Last activity: 2026-08-06 — Plan 09-08 executed (Gap 1 fixture/inline-JSON field-name fixes)
 
-Progress: [████████░░] 75% (4/4 Phase 06; 5/5 Phase 07; 3/3 Phase 08; Phase 09 context ready)
+Progress: [████████░░] 75% (4/4 Phase 06; 5/5 Phase 07; 3/3 Phase 08; Phase 09 8/10 plans)
 
 ## Performance Metrics
 
@@ -47,9 +47,10 @@ Progress: [████████░░] 75% (4/4 Phase 06; 5/5 Phase 07; 3/3 
 | 06 — Capability & Validation Foundation | 4/4 | ✓ Complete |
 | 07 — Cancellable Execution Context | 5/5 | ✓ Complete (tests pending HW verification) |
 | 08 — Structured Artifacts & Manifests | 3/3 | ✓ Complete |
-| 09 — Processor & Pass-Graph Conformance Suites | TBD | ◌ Pending |
+| 09 — Processor & Pass-Graph Conformance Suites | 8/10 | ◌ In Progress |
 
 *Updated after each plan completion*
+| Phase 09 P08 | 25min | 2 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -87,6 +88,10 @@ None — Phase 06 complete.
 
 ## Session Continuity
 
-Last session: 2026-08-05
-Stopped at: Phase 08 executed
-Resume file: .planning/workstreams/sgproc-render/phases/08-structured-artifacts-execution-manifests/
+Last session: 2026-08-06T21:37:08.974Z
+Stopped at: Plan 09-08 executed — schema/capability/executor fixture field-name fixes (Gap 1)
+Resume file: .planning/workstreams/sgproc-render/phases/09-processor-pass-graph-conformance-suites/
+
+## Decisions
+
+- [Phase ?]: Used DataType::FLOAT (not TENSOR) for corrected inference-input fixtures/literals, matching the [1,16] model shape and float-processing-definition.json precedent
