@@ -124,7 +124,7 @@ Elevate SGProcessingManager from a "parse-and-hope" pipeline to a contract-drive
 5. Capability rejection tests cover: unsupported Vulkan feature, unsupported model format, unsupported pass type, missing executor — each produces a distinct, human-readable rejection reason (TEST-08).
 6. The four regression tests pass: (a) index mismatch produces correct error, (b) model-only pass no longer crashes in `ParseBlockSize()`, (c) output-buffer-zero produces correct result, (d) unsupported pass type produces error instead of silent fallthrough (TEST-10).
 
-**Plans**: 7 plans in 3 waves
+**Plans**: 10 plans in 4 waves (7 original + 3 gap-closure)
 
 Plans:
 - [x] 09-01-PLAN.md — Shared infrastructure: ProcessorConformanceFixture, Python MNN model scripts, SPIR-V fixtures
@@ -134,6 +134,9 @@ Plans:
 - [x] 09-05-PLAN.md — Cancellation + capability conformance test executables
 - [x] 09-06-PLAN.md — Regression tests + RenderProcessor GPU conformance
 - [x] 09-07-PLAN.md — CMake integration: add_subdirectory entries + CTest verification
+- [ ] 09-08-PLAN.md — Gap closure: fix JSON fixture/inline-literal field-name mismatches (Gap 1)
+- [ ] 09-09-PLAN.md — Gap closure: granular error propagation, model-format, pass-type validation (Gaps 2/4/5)
+- [ ] 09-10-PLAN.md — Gap closure: deterministic ProcessOutput.combinedHash + full regression sweep (Gap 3)
 
 | Plan | Wave | Requirements | Autonomous |
 |------|------|-------------|------------|
