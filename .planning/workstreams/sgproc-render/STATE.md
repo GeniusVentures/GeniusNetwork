@@ -1,20 +1,16 @@
 ---
 gsd_state_version: 1.0
-milestone: v2.0
-milestone_name: Execution Contracts & Quality Gates
-current_phase: 09
-status: completed
-stopped_at: Completed 09-15-PLAN.md -- Gap 2/3 closure (processing_dispatch_test ctest working-directory + happy-path combinedHash fixture fix); Phase 09 fully closed
-last_updated: "2026-08-07T03:42:13.040Z"
+milestone: v2.1
+milestone_name: Cross-Hardware Hash Tolerance
+status: planning
+last_updated: "2026-08-07T22:54:16.917Z"
 last_activity: 2026-08-07
-last_activity_desc: Phase 09 complete
 progress:
-  total_phases: 4
-  completed_phases: 1
-  total_plans: 29
-  completed_plans: 24
-  percent: 25
-current_phase_name: processor-pass-graph-conformance-suites
+  total_phases: 0
+  completed_phases: 0
+  total_plans: 0
+  completed_plans: 0
+  percent: 0
 ---
 
 # Project State
@@ -24,15 +20,14 @@ current_phase_name: processor-pass-graph-conformance-suites
 See: .planning/PROJECT.md (updated 2026-08-03), workstream section "Workstream: sgproc-render"
 
 **Core value:** Elevate SGProcessingManager from a "parse-and-hope" pipeline to a contract-driven execution engine — jobs are validated before work starts, execution is cancellable and budget-aware, results are typed artifacts with provenance, and every processor is covered by a common test suite.
-**Current focus:** Phase 09 — processor-pass-graph-conformance-suites
+**Current focus:** v2.1 — Cross-Hardware Hash Tolerance
 
 ## Current Position
 
-Phase: 09
-Status: Gap-closure round 3 complete — all three gaps (09-13, 09-14, 09-15) closed against TEST-01
-Last activity: 2026-08-07 — Phase 09 complete
-
-Progress: [████████░░] 83% (4/4 Phase 06; 5/5 Phase 07; 3/3 Phase 08; 15/15 Phase 09)
+Phase: Not started (defining requirements)
+Plan: —
+Status: Defining requirements
+Last activity: 2026-08-07 — Milestone v2.1 started
 
 ## Performance Metrics
 

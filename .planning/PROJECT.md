@@ -38,16 +38,19 @@ This project now runs parallel workstreams (see `.planning/workstreams/`). Each 
 
 **Goal:** Make SGProcessingManager's `render` PassType a real, executable graphics pipeline via hand-rolled Vulkan — headless/offscreen, own independent `VkInstance`/`VkDevice`, no new GPU backend/engine, no OpenGL or CPU/software fallback tier. Directly scoped to `GeniusVentures/SGProcessingManager#7`.
 
-**Target features (v2.0):**
-- **#12 Capability-validation contract** — Validate whether a node can execute a job (Vulkan features, model format, shader needs, resource budgets) before downloading inputs or claiming work. Returns structured `CanExecute`/unmet requirements.
-- **#13 Cancellable execution contexts** — Cooperative cancellation tokens, per-pass deadlines, CPU/GPU/RAM budgets, structured progress events, partial-result callbacks, and safe resource cleanup for Vulkan/MNN sessions.
-- **#14 Structured artifacts & execution manifests** — Replace loose buffer+string outputs with typed artifact records (hash, dimensions, format, producing pass, content hash) and an execution manifest (executor identity, timings, terminal state).
-- **#15 Processor & pass-graph conformance test suites** — CTest targets covering schema parsing, executor selection, pass graphs, MNN/Vulkan processors, output hashing, cancellation, capability checks, and backward-compat adapters.
-- **CTX-04 Vulkan Validation Layers** — Vendored Vulkan validation layers, explicitly deferred from v1.0 with a written decision, now delivered in v2.0.
+**Target features (v2.1):**
+- Cross-hardware capture test harness (render + MNN jobs) — dumps raw output values, chunk hashes, and the combined hash per run, for cross-machine comparison
+- Diff tool comparing capture files across machines — per-element divergence stats (max delta, mantissa-bit differences, etc.)
+- Quantization/rounding step applied before hashing (render + MNN output paths), fixed precision — not schema-configurable this milestone
+- Empirically validated: the same job run on ≥3 different machines (including the user's Mac + PC) produces matching post-quantization hashes
+- Fulfills `XNODE-01` (explicitly deferred from v1.0: "cross-node tolerance/redundancy-based verification")
 
-**Shipped (v1.0):** All 5 phases, 24 plans complete (2026-07-31) — headless Vulkan context + shared init-lock + dispatch plumbing; schema extension + shaderc/SPIRV-Tools + mandatory spirv-val gate; RenderProcessor (pipeline build, offscreen draw, readback, SHA-256 hash); cross-platform CI + E2E; Android/iOS platform compatibility. See `.planning/workstreams/sgproc-render/STATE.md` for details.
+**Deferred candidates carried forward from v2.1 scoping:**
+- `ProcessingValidationCore::ValidateResults`'s concatenation bug — it never actually diffs two subtasks' hashes for the same chunk, so a genuine cross-node mismatch would silently pass today; this milestone makes the hash itself tolerant but does not fix the comparison mechanism around it
+- Schema-configurable quantization precision (per-data-type tuning) — fixed precision only this milestone
+- Actual cross-node consensus/redundant-execution comparison plumbing
 
-**Phase 09 (issue #15, conformance test suites) complete (2026-08-07)** — 15/15 plans, three gap-closure rounds. This was the last roadmapped phase for v2.0. Full v2.0/milestone completion is not asserted here: Phase 07's `EXEC-*` and Phase 08's `ARTF-*` requirement checkboxes in `.planning/workstreams/sgproc-render/REQUIREMENTS.md` remain unchecked, and STATE.md notes Phase 07 tests are "pending HW verification" — that determination belongs to `/gsd-complete-milestone`, not this update.
+**Shipped (v1.0 + v2.0):** v1.0 — all 5 phases, 24 plans complete (2026-07-31): headless Vulkan context + shared init-lock + dispatch plumbing; schema extension + shaderc/SPIRV-Tools + mandatory spirv-val gate; RenderProcessor (pipeline build, offscreen draw, readback, SHA-256 hash); cross-platform CI + E2E; Android/iOS platform compatibility. v2.0 — Phase 09 (issue #15, conformance test suites) complete (2026-08-07), 15/15 plans across three gap-closure rounds; this was the last roadmapped phase for v2.0. Full v2.0 milestone completion was never formally asserted via `/gsd-complete-milestone`: Phase 07's `EXEC-*` and Phase 08's `ARTF-*` requirement checkboxes in `.planning/workstreams/sgproc-render/REQUIREMENTS.md` remain unchecked, and STATE.md notes Phase 07 tests are "pending HW verification". See `.planning/workstreams/sgproc-render/STATE.md` for details.
 
 **Context:** All v2.0 work on the SGProcessingManager branch consumed by `SuperGenius/develop`. Issues #12/#13/#14 support GCS/EIS integration. Issue #15 tracks issues #7–#14. No new GPU backend — continues the hand-rolled Vulkan approach from v1.0. Vulkan Validation Layers were explicitly deferred from v1.0 CTX-04.
 
@@ -190,4 +193,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-08-07 — sgproc-render Phase 09 complete (Processor & Pass-Graph Conformance Suites)*
+*Last updated: 2026-08-07 — sgproc-render milestone v2.1 (Cross-Hardware Hash Tolerance) started*
