@@ -47,6 +47,8 @@ This project now runs parallel workstreams (see `.planning/workstreams/`). Each 
 
 **Shipped (v1.0):** All 5 phases, 24 plans complete (2026-07-31) — headless Vulkan context + shared init-lock + dispatch plumbing; schema extension + shaderc/SPIRV-Tools + mandatory spirv-val gate; RenderProcessor (pipeline build, offscreen draw, readback, SHA-256 hash); cross-platform CI + E2E; Android/iOS platform compatibility. See `.planning/workstreams/sgproc-render/STATE.md` for details.
 
+**Phase 09 (issue #15, conformance test suites) complete (2026-08-07)** — 15/15 plans, three gap-closure rounds. This was the last roadmapped phase for v2.0. Full v2.0/milestone completion is not asserted here: Phase 07's `EXEC-*` and Phase 08's `ARTF-*` requirement checkboxes in `.planning/workstreams/sgproc-render/REQUIREMENTS.md` remain unchecked, and STATE.md notes Phase 07 tests are "pending HW verification" — that determination belongs to `/gsd-complete-milestone`, not this update.
+
 **Context:** All v2.0 work on the SGProcessingManager branch consumed by `SuperGenius/develop`. Issues #12/#13/#14 support GCS/EIS integration. Issue #15 tracks issues #7–#14. No new GPU backend — continues the hand-rolled Vulkan approach from v1.0. Vulkan Validation Layers were explicitly deferred from v1.0 CTX-04.
 
 ### Workstream: gnus-subnets
@@ -96,6 +98,7 @@ This project now runs parallel workstreams (see `.planning/workstreams/`). Each 
 - ✓ Rendered output read back via `vkCmdCopyImageToBuffer`, exposed as `texture2D` output, feeding the unmodified `ProcessingResult` → hash path — sgproc-render Phase 3, fulfilled RENDER-06/07/08
 - ✓ `VkResult` failures map to structured `ProcessingManager::Error` values with clear per-stage messages, for both the new render path and (per broadened scope) the pre-existing MNN dispatch path — sgproc-render Phase 3, fulfilled RENDER-09
 - ✓ Same render pass definition executed 10x on the same node produces a bit-exact matching output hash every time, empirically proven against real hardware — sgproc-render Phase 3, fulfilled DETV-01/02
+- ✓ CTest conformance suites cover every registered executor against a common contract — schema parsing, executor selection, output hashing, cancellation, capability checks, backward-compat adapters, and regression locks for all four known v1.0 bugs — sgproc-render Phase 09, fulfilled TEST-01..10 (round 3 gap closure: capability_validator PassType rejection message, processing_dispatch_test ctest working-directory, render-pass happy-path combinedHash)
 
 ### Active
 
@@ -187,4 +190,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-07-31 — sgproc-render Phase 3 complete (RenderProcessor Implementation & Determinism)*
+*Last updated: 2026-08-07 — sgproc-render Phase 09 complete (Processor & Pass-Graph Conformance Suites)*
