@@ -5,16 +5,16 @@ milestone_name: Execution Contracts & Quality Gates
 current_phase: 09
 current_phase_name: processor-pass-graph-conformance-suites
 status: executing
-stopped_at: Plan 09-10 executed — deterministic ProcessOutput.combinedHash + full regression sweep (Gap 3)
-last_updated: "2026-08-06T23:46:06.150Z"
-last_activity: 2026-08-06
-last_activity_desc: Plan 09-10 executed (Gap 3 deterministic combinedHash)
+stopped_at: Plan 09-11 executed — CanExecute()/Vulkan-Process()/manifest-metadata gap closure (Gap 1/3/4)
+last_updated: "2026-08-07T00:08:50.000Z"
+last_activity: 2026-08-07
+last_activity_desc: Phase 09 Plan 11 executed (Gap 1/3/4 test-authoring closure + BUFFER-format crash fix)
 progress:
   total_phases: 4
   completed_phases: 0
-  total_plans: 24
-  completed_plans: 19
-  percent: 79
+  total_plans: 27
+  completed_plans: 20
+  percent: 74
 ---
 
 # Project State
@@ -28,17 +28,17 @@ See: .planning/PROJECT.md (updated 2026-08-03), workstream section "Workstream: 
 
 ## Current Position
 
-Phase: 09 (processor-pass-graph-conformance-suites) — COMPLETE
-Status: Ready to execute
-Last activity: 2026-08-06 — Plan 09-10 executed (Gap 3 deterministic combinedHash)
+Phase: 09 (processor-pass-graph-conformance-suites) — EXECUTING
+Status: Executing Phase 09 gap-closure round 2 (plans 09-11..09-13)
+Last activity: 2026-08-07 — Plan 09-11 executed (Gap 1/3/4 test-authoring closure)
 
-Progress: [████████░] 79% (4/4 Phase 06; 5/5 Phase 07; 3/3 Phase 08; Phase 09 10/10 plans)
+Progress: [███████░░] 74% (4/4 Phase 06; 5/5 Phase 07; 3/3 Phase 08; Phase 09 11/13 plans)
 
 ## Performance Metrics
 
 **Velocity:**
 
-- Total plans completed: 6 (this milestone)
+- Total plans completed: 7 (this milestone)
 - Previous milestone (v1.0): 24 plans across 5 phases
 
 **By Phase:**
@@ -47,12 +47,13 @@ Progress: [████████░] 79% (4/4 Phase 06; 5/5 Phase 07; 3/3 Pha
 | 06 — Capability & Validation Foundation | 4/4 | ✓ Complete |
 | 07 — Cancellable Execution Context | 5/5 | ✓ Complete (tests pending HW verification) |
 | 08 — Structured Artifacts & Manifests | 3/3 | ✓ Complete |
-| 09 — Processor & Pass-Graph Conformance Suites | 10/10 | ✓ Complete |
+| 09 — Processor & Pass-Graph Conformance Suites | 11/13 | ◌ In Progress (gap-closure round 2) |
 
 *Updated after each plan completion*
 | Phase 09 P08 | 25min | 2 tasks | 4 files |
 | Phase 09 P09 | 35min | 2 tasks | 2 files |
 | Phase 09 P10 | 20min | 2 tasks | 1 file |
+| Phase 09 P11 | 68min | 3 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -90,8 +91,8 @@ None — Phase 06 complete.
 
 ## Session Continuity
 
-Last session: 2026-08-06T21:49:49.000Z
-Stopped at: Plan 09-10 executed — deterministic ProcessOutput.combinedHash + full regression sweep (Gap 3); Phase 09 complete
+Last session: 2026-08-07T00:08:50.000Z
+Stopped at: Plan 09-11 executed — CanExecute()/Vulkan-Process()/manifest-metadata gap closure (Gap 1/3/4); plans 09-12/09-13 remain
 Resume file: .planning/workstreams/sgproc-render/phases/09-processor-pass-graph-conformance-suites/
 
 ## Decisions
@@ -99,3 +100,5 @@ Resume file: .planning/workstreams/sgproc-render/phases/09-processor-pass-graph-
 - [Phase ?]: Used DataType::FLOAT (not TENSOR) for corrected inference-input fixtures/literals, matching the [1,16] model shape and float-processing-definition.json precedent
 - [Phase 09 P09]: Model-format rejection split across two layers — unrecognized format strings caught pre-parse in Init() as MODEL_FORMAT_UNSUPPORTED; recognized-but-non-MNN formats (ONNX/PyTorch/TensorFlow) caught post-parse in CheckProcessValidity()'s explicit ModelFormat::MNN check, same error/message
 - [Phase 09 P10]: combinedHash/manifest.manifestHash computed over a timing-zeroed ExecutionManifest copy rather than modifying SerializeManifest()/ComputeManifestHash() themselves — preserves byte-for-byte compatibility with Phase 08's artifact_serializer_test.cpp round-trip tests over real timestamps
+- [Phase 09 P11]: InferenceCanExecuteReflectsPassTypeRegistryGap documents (not fixes) that INFERENCE passes are schema-valid but not capability-registered — registering INFERENCE/RETRAIN into the capability registry is a separate, larger cross-phase change, deferred as a follow-up item
+- [Phase 09 P11]: Fixed a genuine pre-existing crash in ProcessOutput's artifact-metadata builder (procInput.get_format().value() on an optional BUFFER-type inputs may omit) via value_or(INT8), mirroring CheckProcessValidity()'s existing default — newly exposed by the first-ever Process() call for a render pass
