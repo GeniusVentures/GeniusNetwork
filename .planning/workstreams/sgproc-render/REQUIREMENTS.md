@@ -41,7 +41,7 @@ Requirements for milestone v2.0. Each maps to roadmap phases.
 
 ### TEST — Conformance Test Suites (#15)
 
-- [ ] **TEST-01**: CTest targets (`ctest`) run from the standalone SGProcessingManager build AND when consumed as a submodule by `SuperGenius/develop` — tests use small deterministic fixtures
+- [x] **TEST-01**: CTest targets (`ctest`) run from the standalone SGProcessingManager build AND when consumed as a submodule by `SuperGenius/develop` — tests use small deterministic fixtures
 - [x] **TEST-02**: Schema parsing and pass-specific validation tests cover every `PassType` (including the render path from v1.0) with both valid and invalid inputs
 - [x] **TEST-03**: Executor selection by pass type and backend is tested for every registered executor (MNN inference, Vulkan compute, Vulkan render)
 - [x] **TEST-04**: Every existing MNN processor runs the same core conformance contract (pass-through or adapted) — no backend-specific drift

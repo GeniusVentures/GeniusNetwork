@@ -127,7 +127,7 @@ Elevate SGProcessingManager from a "parse-and-hope" pipeline to a contract-drive
 5. Capability rejection tests cover: unsupported Vulkan feature, unsupported model format, unsupported pass type, missing executor — each produces a distinct, human-readable rejection reason (TEST-08).
 6. The four regression tests pass: (a) index mismatch produces correct error, (b) model-only pass no longer crashes in `ParseBlockSize()`, (c) output-buffer-zero produces correct result, (d) unsupported pass type produces error instead of silent fallthrough (TEST-10).
 
-**Plans**: 13/15 plans complete
+**Plans**: 14/15 plans executed
 
 Plans:
 **Wave 1**
@@ -138,7 +138,7 @@ Plans:
 - [x] 09-11-PLAN.md — Gap closure round 2: wire capability_conformance_test to real CanExecute(), RenderConformanceTest to real Vulkan pipeline, output_hashing_test's missing artifact/manifest cases
 - [x] 09-12-PLAN.md — Gap closure round 2: ExecutionContext-accepting Process() overload + real cancellation/budget/progress conformance tests (MNN + Vulkan)
 - [x] 09-13-PLAN.md — Gap closure round 2: fix MNN string processor reshape/resize bug (StringInputProcessingTest + StringConformanceProcessingTest)
-- [ ] 09-14-PLAN.md — Gap closure round 3 (UAT): capability_validator_test PassType rejection message name (Gap 1, standalone build only)
+- [x] 09-14-PLAN.md — Gap closure round 3 (UAT): capability_validator_test PassType rejection message name (Gap 1, standalone build only)
 - [ ] 09-15-PLAN.md — Gap closure round 3 (UAT): processing_dispatch_test ctest working-directory fix + happy-path render fixture combinedHash (Gaps 2/3)
 
 **Wave 2** *(blocked on Wave 1 completion)*
@@ -179,7 +179,7 @@ Phases execute in numeric order: 06 → 07 → 08 → 09. Phase 06's CAP and VVA
 | 06. Capability & Validation Foundation | 4/4 | Executed | 2026-08-05 |
 | 07. Cancellable Execution Context | 5/5 | Executed | 2026-08-05 |
 | 08. Structured Artifacts & Manifests | 3/3 | Executed | 2026-08-05 |
-| 09. Conformance Test Suites | 13/15 | In Progress (UAT gap closure) | — |
+| 09. Conformance Test Suites | 14/15 | In Progress|  |
 
 ## Requirement Coverage
 
