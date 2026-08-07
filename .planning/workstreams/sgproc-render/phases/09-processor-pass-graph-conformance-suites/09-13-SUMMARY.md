@@ -115,6 +115,7 @@ Each task was committed atomically (multi-repo: fix committed in the `SGProcessi
 
 ## Issues Encountered
 - Initial application of the plan's literal fix passed `StringInputProcessingTest` but left `StringConformanceProcessingTest` failing with the same symptom as before. Diagnosed via temporary debug logging (`tensor->elementSize()`, `tensor->shape()`) added and then removed before the final commit, confirming the tiny model's input tensor has a dynamic/unresolved declared shape (`[1, -1]`) at session-creation time — there is no way to infer the required fixed length of 16 from the tensor itself; it can only come from the job's schema (`maxLength` parameter or `model.input_nodes[0].shape`), which is exactly what the corrected fix now reads.
+- `gsd-tools state update-progress --ws sgproc-render` recomputed the STATE.md frontmatter `progress.percent` field as `completed_phases/total_phases*100` (25%, since `completed_phases` flipped 0→1) instead of the plan-based `completed_plans/total_plans*100` (81%) that this field has consistently held across every prior plan in this workstream (e.g. 78% for 21/27 before this plan). Manually corrected `percent` back to 81 and `completed_phases` back to 0 in STATE.md's frontmatter, since Phase 09 is not actually fully verified/complete yet (a fresh goal-backward re-verification is still pending per "Next Phase Readiness" below) — flagging this as a likely pre-existing tool inconsistency for future investigation, out of this plan's scope to fix.
 
 ## User Setup Required
 
@@ -127,3 +128,11 @@ None - no external service configuration required.
 ---
 *Phase: 09-processor-pass-graph-conformance-suites*
 *Completed: 2026-08-06*
+
+## Self-Check: PASSED
+
+- FOUND: `.planning/workstreams/sgproc-render/phases/09-processor-pass-graph-conformance-suites/09-13-SUMMARY.md`
+- FOUND: `SGProcessingManager@bc74bc0` (fix commit)
+- FOUND: `SuperGenius@95e46966` (pointer bump)
+- FOUND: `GeniusNetwork@71c5172` (pointer bump)
+- FOUND: `GeniusNetwork@0416409` (this summary's commit)

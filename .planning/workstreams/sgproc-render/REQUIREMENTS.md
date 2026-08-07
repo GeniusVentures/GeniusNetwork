@@ -44,7 +44,7 @@ Requirements for milestone v2.0. Each maps to roadmap phases.
 - [ ] **TEST-01**: CTest targets (`ctest`) run from the standalone SGProcessingManager build AND when consumed as a submodule by `SuperGenius/develop` — tests use small deterministic fixtures
 - [x] **TEST-02**: Schema parsing and pass-specific validation tests cover every `PassType` (including the render path from v1.0) with both valid and invalid inputs
 - [x] **TEST-03**: Executor selection by pass type and backend is tested for every registered executor (MNN inference, Vulkan compute, Vulkan render)
-- [ ] **TEST-04**: Every existing MNN processor runs the same core conformance contract (pass-through or adapted) — no backend-specific drift
+- [x] **TEST-04**: Every existing MNN processor runs the same core conformance contract (pass-through or adapted) — no backend-specific drift
 - [x] **TEST-05**: Native Vulkan compute/render and the existing MoltenVK path run equivalent fixtures where CI hardware permits; unsupported CI environments skip with an explicit reason
 - [x] **TEST-06**: Output hashing, artifact metadata construction, persistence round-trip, and deterministic serialization are tested end-to-end
 - [x] **TEST-07**: Cancellation, deadline expiry, budget exceeded, progress event emission, partial result delivery, and resource cleanup are each tested with at least one processor type
