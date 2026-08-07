@@ -1,9 +1,9 @@
 ---
-status: resolved
+status: complete
 phase: 09-processor-pass-graph-conformance-suites
 source: [09-VERIFICATION.md]
 started: 2026-08-07T01:10:00.000Z
-updated: 2026-08-07T03:32:05.000Z
+updated: 2026-08-07T04:20:00.000Z
 ---
 
 ## Current Test
@@ -18,15 +18,15 @@ expected: |
   SuperGenius submodule) and run `ctest` there; separately, confirm
   SuperGenius/develop consuming SGProcessingManager as a submodule produces
   the same passing test results.
-result: issue
-reported: "CapabilityValidatorTest.RejectUnregisteredPassType fails in SGProcessingManager. As far as SuperGenius procesing_ tests, only processing_dispatch_test is failing, which i'm not sure if that is part of this phase, but should be addressed."
+result: pass
+reported: "Originally reported as an issue (CapabilityValidatorTest.RejectUnregisteredPassType failing, plus processing_dispatch_test failures). All 3 root-caused bugs closed by plans 09-14/09-15; 09-VERIFICATION.md (Round 3) independently re-ran the affected binaries and confirmed status: passed with gaps_remaining: []. Re-confirmed closed without a repeat manual re-run per user direction (close out phase 9 to proceed to next milestone)."
 severity: blocker
 
 ## Summary
 
 total: 1
-passed: 0
-issues: 1
+passed: 1
+issues: 0
 pending: 0
 skipped: 0
 blocked: 0
