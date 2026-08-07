@@ -5,16 +5,16 @@ milestone_name: Execution Contracts & Quality Gates
 current_phase: 09
 current_phase_name: processor-pass-graph-conformance-suites
 status: executing
-stopped_at: Plan 09-11 executed — CanExecute()/Vulkan-Process()/manifest-metadata gap closure (Gap 1/3/4)
-last_updated: "2026-08-07T00:08:50.000Z"
+stopped_at: Plan 09-12 executed — caller-owned ExecutionContext overload + cancellation conformance rewrite (Gap 2)
+last_updated: "2026-08-07T00:32:00.000Z"
 last_activity: 2026-08-07
-last_activity_desc: Phase 09 Plan 11 executed (Gap 1/3/4 test-authoring closure + BUFFER-format crash fix)
+last_activity_desc: Phase 09 Plan 12 executed (Gap 2/TEST-07 closure — ExecutionContext overload + cancellation test rewrite)
 progress:
   total_phases: 4
   completed_phases: 0
   total_plans: 27
-  completed_plans: 20
-  percent: 74
+  completed_plans: 21
+  percent: 78
 ---
 
 # Project State
@@ -30,15 +30,15 @@ See: .planning/PROJECT.md (updated 2026-08-03), workstream section "Workstream: 
 
 Phase: 09 (processor-pass-graph-conformance-suites) — EXECUTING
 Status: Executing Phase 09 gap-closure round 2 (plans 09-11..09-13)
-Last activity: 2026-08-07 — Plan 09-11 executed (Gap 1/3/4 test-authoring closure)
+Last activity: 2026-08-07 — Plan 09-12 executed (Gap 2/TEST-07 closure)
 
-Progress: [███████░░] 74% (4/4 Phase 06; 5/5 Phase 07; 3/3 Phase 08; Phase 09 11/13 plans)
+Progress: [███████░░] 78% (4/4 Phase 06; 5/5 Phase 07; 3/3 Phase 08; Phase 09 12/13 plans)
 
 ## Performance Metrics
 
 **Velocity:**
 
-- Total plans completed: 7 (this milestone)
+- Total plans completed: 8 (this milestone)
 - Previous milestone (v1.0): 24 plans across 5 phases
 
 **By Phase:**
@@ -47,13 +47,14 @@ Progress: [███████░░] 74% (4/4 Phase 06; 5/5 Phase 07; 3/3 Pha
 | 06 — Capability & Validation Foundation | 4/4 | ✓ Complete |
 | 07 — Cancellable Execution Context | 5/5 | ✓ Complete (tests pending HW verification) |
 | 08 — Structured Artifacts & Manifests | 3/3 | ✓ Complete |
-| 09 — Processor & Pass-Graph Conformance Suites | 11/13 | ◌ In Progress (gap-closure round 2) |
+| 09 — Processor & Pass-Graph Conformance Suites | 12/13 | ◌ In Progress (gap-closure round 2) |
 
 *Updated after each plan completion*
 | Phase 09 P08 | 25min | 2 tasks | 4 files |
 | Phase 09 P09 | 35min | 2 tasks | 2 files |
 | Phase 09 P10 | 20min | 2 tasks | 1 file |
 | Phase 09 P11 | 68min | 3 tasks | 5 files |
+| Phase 09 P12 | 22min | 3 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -91,8 +92,8 @@ None — Phase 06 complete.
 
 ## Session Continuity
 
-Last session: 2026-08-07T00:08:50.000Z
-Stopped at: Plan 09-11 executed — CanExecute()/Vulkan-Process()/manifest-metadata gap closure (Gap 1/3/4); plans 09-12/09-13 remain
+Last session: 2026-08-07T00:32:00.000Z
+Stopped at: Plan 09-12 executed — caller-owned ExecutionContext overload + cancellation conformance rewrite (Gap 2); plan 09-13 remains
 Resume file: .planning/workstreams/sgproc-render/phases/09-processor-pass-graph-conformance-suites/
 
 ## Decisions
@@ -102,3 +103,4 @@ Resume file: .planning/workstreams/sgproc-render/phases/09-processor-pass-graph-
 - [Phase 09 P10]: combinedHash/manifest.manifestHash computed over a timing-zeroed ExecutionManifest copy rather than modifying SerializeManifest()/ComputeManifestHash() themselves — preserves byte-for-byte compatibility with Phase 08's artifact_serializer_test.cpp round-trip tests over real timestamps
 - [Phase 09 P11]: InferenceCanExecuteReflectsPassTypeRegistryGap documents (not fixes) that INFERENCE passes are schema-valid but not capability-registered — registering INFERENCE/RETRAIN into the capability registry is a separate, larger cross-phase change, deferred as a follow-up item
 - [Phase 09 P11]: Fixed a genuine pre-existing crash in ProcessOutput's artifact-metadata builder (procInput.get_format().value() on an optional BUFFER-type inputs may omit) via value_or(INT8), mirroring CheckProcessValidity()'s existing default — newly exposed by the first-ever Process() call for a render pass
+- [Phase 09 P12]: ProcessingManager::Process() gained a backward-compatible 5-arg overload accepting a caller-owned ExecutionContext (Gap 2/TEST-07); both overloads delegate to a shared private ProcessInternal(). Schema-derived budget fields AND progressCallback now apply only when the caller left the field unset — extended beyond the plan's literal text (which named only the 3 numeric fields) because the pre-existing unconditional progressCallback overwrite would have silently defeated the plan's own ProgressEventsEmitted test

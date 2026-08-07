@@ -127,7 +127,7 @@ Elevate SGProcessingManager from a "parse-and-hope" pipeline to a contract-drive
 5. Capability rejection tests cover: unsupported Vulkan feature, unsupported model format, unsupported pass type, missing executor — each produces a distinct, human-readable rejection reason (TEST-08).
 6. The four regression tests pass: (a) index mismatch produces correct error, (b) model-only pass no longer crashes in `ParseBlockSize()`, (c) output-buffer-zero produces correct result, (d) unsupported pass type produces error instead of silent fallthrough (TEST-10).
 
-**Plans**: 13 plans (11 complete, 2 planned — round 2 gap closure)
+**Plans**: 12/13 plans executed
 
 Plans:
 **Wave 1**
@@ -136,7 +136,7 @@ Plans:
 - [x] 09-08-PLAN.md — Gap closure: fix JSON fixture/inline-literal field-name mismatches (Gap 1)
 - [x] 09-09-PLAN.md — Gap closure: granular error propagation, model-format, pass-type validation (Gaps 2/4/5)
 - [x] 09-11-PLAN.md — Gap closure round 2: wire capability_conformance_test to real CanExecute(), RenderConformanceTest to real Vulkan pipeline, output_hashing_test's missing artifact/manifest cases
-- [ ] 09-12-PLAN.md — Gap closure round 2: ExecutionContext-accepting Process() overload + real cancellation/budget/progress conformance tests (MNN + Vulkan)
+- [x] 09-12-PLAN.md — Gap closure round 2: ExecutionContext-accepting Process() overload + real cancellation/budget/progress conformance tests (MNN + Vulkan)
 - [ ] 09-13-PLAN.md — Gap closure round 2: fix MNN string processor reshape/resize bug (StringInputProcessingTest + StringConformanceProcessingTest)
 
 **Wave 2** *(blocked on Wave 1 completion)*
@@ -175,7 +175,7 @@ Phases execute in numeric order: 06 → 07 → 08 → 09. Phase 06's CAP and VVA
 | 06. Capability & Validation Foundation | 4/4 | Executed | 2026-08-05 |
 | 07. Cancellable Execution Context | 5/5 | Executed | 2026-08-05 |
 | 08. Structured Artifacts & Manifests | 3/3 | Executed | 2026-08-05 |
-| 09. Conformance Test Suites | 11/13 | Gap closure round 2 in progress | — |
+| 09. Conformance Test Suites | 12/13 | In Progress|  |
 
 ## Requirement Coverage
 
