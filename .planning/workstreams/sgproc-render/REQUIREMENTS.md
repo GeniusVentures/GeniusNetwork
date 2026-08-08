@@ -62,24 +62,26 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| CAPT-01 | — | Pending |
-| CAPT-02 | — | Pending |
-| CAPT-03 | — | Pending |
-| DIFF-01 | — | Pending |
-| DIFF-02 | — | Pending |
-| DIFF-03 | — | Pending |
-| QUANT-01 | — | Pending |
-| QUANT-02 | — | Pending |
-| QUANT-03 | — | Pending |
-| QUANT-04 | — | Pending |
-| SECV-01 | — | Pending |
-| VALD-01 | — | Pending |
+| CAPT-01 | Phase 10 | Pending |
+| CAPT-02 | Phase 10 | Pending |
+| CAPT-03 | Phase 10 | Pending |
+| DIFF-01 | Phase 10 | Pending |
+| DIFF-02 | Phase 10 | Pending |
+| DIFF-03 | Phase 10 | Pending |
+| QUANT-01 | Phase 12 | Pending |
+| QUANT-02 | Phase 12 | Pending |
+| QUANT-03 | Phase 12 | Pending |
+| QUANT-04 | Phase 12 | Pending |
+| SECV-01 | Phase 12 | Pending |
+| VALD-01 | Phase 13 | Pending |
 
 **Coverage:**
 - v2.1 requirements: 12 total
-- Mapped to phases: 0
-- Unmapped: 12 ⚠️ (roadmap not yet created)
+- Mapped to phases: 12
+- Unmapped: 0 ✓
+
+**Note:** Phase 11 (Empirical Cross-Machine Capture Run) covers no requirement directly — it is a hands-on data-gathering checkpoint (run Phase 10's tooling on ≥3 real machines) that produces the empirical input Phase 12's QUANT-04 depends on. See ROADMAP.md Phase 11 for detail.
 
 ---
 *Requirements defined: 2026-08-07*
-*Last updated: 2026-08-07 — v2.1 Cross-Hardware Hash Tolerance requirements defined*
+*Last updated: 2026-08-07 — v2.1 roadmap created: 4 phases (10-13), 12/12 requirements mapped*
