@@ -1,5 +1,45 @@
 # Milestones
 
+## v2.0 Execution Contracts & Quality Gates — sgproc-render workstream (Shipped: 2026-08-07)
+
+**Phases completed:** 4 phases, 27 plans, 39 tasks
+
+**Key accomplishments:**
+
+- 06-01-PLAN.md
+- 06-02-PLAN.md
+- 06-03-PLAN.md
+- 06-04-PLAN.md
+- 07-01-PLAN.md
+- 07-02-PLAN.md
+- 07-03-PLAN.md
+- 07-04-PLAN.md
+- 07-05-PLAN.md
+- 09-01 — Shared infrastructure for Phase 09 conformance tests
+- 09-02 — Extend processing_datatypes_test for 5 remaining MNN types
+- 09-03 — Schema validation + executor selection test executables
+- 09-04 — Output hashing & migration adapter test executables
+- 09-05 — Cancellation & capability conformance test executables
+- 09-06 — Regression tests + RenderProcessor GPU conformance test executable
+- 09-07 — Wire all conformance tests into CTest build
+- Corrected 2 shared schema fixtures + 4 duplicated inline JSON literals across 2 test files to use ProcessingManager's real Pass/DataType field names (render_shader/render_target/vertex_buffer/vertex_layout, DataType::FLOAT+dimensions), fixing all 6 named UAT-reported acceptance-test failures.
+- Added 4 new `ProcessingManager::Error` values with field-specific messages, an explicit `ModelFormat::MNN` executability check in `CheckProcessValidity()`, and a pre-parse raw-JSON scan in `Init()` that intercepts unrecognized `passes[].type`/`passes[].model.format` strings before quicktype's `from_json()` discards their context — closing UAT Gaps 2, 4, and 5.
+- Fixed two concrete, unrelated-to-MNN causes of non-deterministic `combinedHash`: brace-initialize `ProcessOutput` so `ExecutionManifest`'s char/uint8_t array fields no longer leak indeterminate stack memory into the hash, and compute the manifest self-hash over a timing-zeroed copy so legitimate per-run wall-clock provenance data no longer varies the content-identity hash.
+- Closed 3 goal-backward verification gaps (Gap 1/3/4) by wiring capability_conformance_test to real ProcessingManager::CanExecute() calls, RenderConformanceTest to a real Vulkan device probe + Process() execution, and output_hashing_test to cover artifact metadata + manifest-serialization determinism — plus fixed a genuine pre-existing crash in artifact-metadata building that this work newly exposed.
+- Added a backward-compatible 5-arg `ProcessingManager::Process()` overload accepting a caller-owned `ExecutionContext`, then rewrote `cancellation_conformance_test.cpp`'s 5 hollow cases into 6 genuine ones that cancel a real MNN run and a real Vulkan RenderProcessor run mid-flight, enforce a 1-byte output budget, and capture real `ProgressEvent`s — closing Gap 2 (TEST-07), the last confirmed cross-phase production gap from `09-VERIFICATION.md`.
+- Schema-driven `maxLength` parameter (16 vs. 128, read from the job's declared parameters) replaces a hardcoded resize literal in `MNN_String::Process()`, fixing the tiny embedding model's reshape error while keeping the legacy BERT model passing, plus a checked `runSession()` return code that now surfaces failures as structured `ProcessingResult.error` instead of reading garbage tensor memory.
+- Added a `PassTypeToString()` helper so `CanExecute()`'s PASS_TYPE rejection message and `ListAvailablePassTypes()` embed the human-readable pass-type name alongside the raw int, fixing a stale numeric assumption in `RejectUnregisteredPassType` that broke when quicktype's alphabetized `PassType` enum made `INFERENCE == 2` instead of the assumed `1`.
+- Fixed two independent, pre-existing bugs in `processing_dispatch_test`: a CTest working-directory mismatch that caused spurious GLSL `#version` errors on 4 sub-tests, and an empty `outputs: []` declaration on the happy-path render fixture that kept `combinedHash` perpetually empty — closing TEST-01's "full suite passes under ctest" gap and eliminating a vacuous-pass mode in the bit-exact repeat-run test.
+
+### Known Gaps
+
+- **Phase 04 (v1.0 carryover) never formally closed**: `04-UAT.md` has 1 pending scenario and `04-VERIFICATION.md` is marked `human_needed` — pre-existing gaps that predate v2.0, surfaced by the pre-close artifact audit and acknowledged rather than resolved at this milestone's close.
+- **Phases 06, 07, 08 are not `phase_complete`/verification-passed per `init.manager`**: only Phase 09 (conformance suites) is formally complete and verified. `EXEC-*` (Phase 07) and `ARTF-*` (Phase 08) requirement checkboxes remain unchecked in the archived requirements. Phase 07's tests are specifically noted as "pending HW verification" in STATE.md history.
+- Milestone closed via explicit user override (`closeout_type=override_closeout`) rather than blocking on the above — same pattern as this project's v2.2/v2.4 closeouts. HW/formal verification for Phases 06-08 is deferred to a future checkpoint (v2.1 or v3.0), not resolved here.
+- Full archive: `.planning/milestones/sgproc-render-v2.0-ROADMAP.md`, `.planning/milestones/sgproc-render-v2.0-REQUIREMENTS.md` (filenames workstream-qualified to avoid colliding with the child-wallet workstream's own v2.0 milestone archive).
+
+---
+
 ## v2.4 Merge origin/develop into dev_childwallet (Shipped: 2026-07-24)
 
 **Phases completed:** 2 phases (6 formally planned/executed via GSD, 7 completed directly by the user), 5 plans, 2 tasks

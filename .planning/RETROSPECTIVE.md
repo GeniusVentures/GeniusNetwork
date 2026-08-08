@@ -230,6 +230,40 @@
 - Sessions: entirely same-day (2026-07-23 for Phase 6, 2026-07-23/24 for Phase 7's manual completion)
 - Notable: Phase 6's 5 plans ran efficiently (10min-70min each) except the deferred-items root-cause investigation in Plan 04; Phase 7 had zero GSD-tracked cost since it bypassed the workflow entirely
 
+## Milestone: sgproc-render v2.0 — Execution Contracts & Quality Gates
+
+**Shipped:** 2026-08-07 (closed via override, known gaps)
+**Phases:** 4 (06-09) | **Plans:** 27 | **Tasks:** 39
+
+### What Was Built
+
+Capability-validation contract (CAP-*, pre-execution `CanExecute` gate), cancellable/budget-aware execution contexts (EXEC-*, cooperative cancellation, deadlines, resource budgets, structured progress), typed artifacts + deterministic execution manifests (ARTF-*), and a full CTest conformance suite (TEST-01..10) covering every registered executor with regression locks for all four known v1.0 bugs. Phase 09 alone absorbed 15 plans across three gap-closure rounds (goal-backward verification found further gaps twice, UAT found a third round).
+
+### What Worked
+
+- Gap-closure rounds caught real, previously-invisible bugs (e.g. a genuine crash in artifact-metadata building, a non-deterministic `combinedHash` from uninitialized struct padding, a CTest working-directory bug masking 4 sub-tests as failing) that a single verification pass would have missed.
+- Reusing the existing `sha256`/artifact-serialization conventions kept Phase 08/09 additive rather than requiring rework of Phases 06-07.
+
+### What Was Inefficient
+
+- Phase 04 (v1.0 carryover) was never formally closed — 1 pending UAT scenario and a `human_needed` verification gap sat unresolved through the entire v2.0 milestone and only surfaced again at v2.0's own close via the pre-close artifact audit.
+- Phases 06-08 were never run through a formal verification pass — `init.manager` reports all three as `phase_complete: false` at milestone close, with Phase 07 specifically noted as "tests pending HW verification." Only Phase 09 (the last phase) got real verification, which retroactively also validated most of 06-08 by exercising them, but the formal artifacts for 06-08 individually don't exist.
+
+### Patterns Established
+
+- Milestone close in a multi-workstream project must pass a **workstream-qualified** version/name to any archival step that writes to shared paths — `gsd-tools.cjs query milestone.complete "v2.0" --ws sgproc-render` archives to the shared `.planning/milestones/v2.0-*` paths with no workstream namespacing in the filename itself, and this collided with the child-wallet workstream's own pre-existing `v2.0-ROADMAP.md`/`v2.0-REQUIREMENTS.md` (both workstreams reached "v2.0" independently). Caught before commit via `git status`/`git diff` showing unexpected modifications to already-tracked files; recovered via `git checkout --` on the two collided files, then re-archived sgproc-render's content under `sgproc-render-v2.0-*` filenames instead. **Lesson: before running `milestone.complete` in a multi-workstream repo, check `.planning/milestones/` for an existing file at the exact version string being archived, regardless of which workstream "owns" that version number.**
+
+### Key Lessons
+
+- `init.manager`'s `phase_complete`/`verification_status` fields are the authoritative readiness signal for milestone close — PROJECT.md's own prose claims about phase completeness should be cross-checked against this before trusting them.
+- The pre-close artifact audit (`audit-open`) surfaces gaps that predate the milestone being closed (here, a v1.0 Phase 04 gap) — always run it fresh rather than assuming only the current milestone's phases could have open items.
+
+### Cost Observations
+
+- Model mix: not tracked separately for this milestone
+- Sessions: spans 2026-08-04 through 2026-08-07
+- Notable: Phase 09's three gap-closure rounds (15 plans total) dwarfed the other three phases' combined plan count (12) — conformance testing surfaced more real work than the phases it was testing
+
 ## Cross-Milestone Trends
 
 | Milestone | Phases | Plans | Duration | Notes |
@@ -240,3 +274,4 @@
 | v2.2 GeniusSDK Child Wallet Interfaces | 1 | 1 | 3 days (20min impl + 2-day build-blocker fix) | Verification override: no formal VERIFICATION.md; segfault-on-teardown flake still deferred |
 | v2.3 Child Wallet Transfers | 2 | 5 | 1 day | CheckParentChildAuthority consensus gate; found/fixed missing registration-tx dispatch entry |
 | v2.4 Merge origin/develop into dev_childwallet | 2 | 5 | 2 days | Phase 7 completed outside GSD workflow; verification override on milestone close (--force) |
+| sgproc-render v2.0 Execution Contracts & Quality Gates | 4 | 27 | 4 days (2026-08-04 to 08-07) | Verification override: Phases 06-08 not phase_complete/verified, Phase 04 carryover gap; milestone-archive filename collision with child-wallet's own v2.0 caught and fixed before commit |

@@ -2,15 +2,18 @@
 gsd_state_version: 1.0
 milestone: v2.1
 milestone_name: Cross-Hardware Hash Tolerance
-status: planning
-last_updated: "2026-08-07T22:54:16.917Z"
+current_phase: 0
+status: Awaiting next milestone
+stopped_at: Completed 09-15-PLAN.md -- Gap 2/3 closure (processing_dispatch_test ctest working-directory + happy-path combinedHash fixture fix); Phase 09 fully closed
+last_updated: "2026-08-07T23:56:19.341Z"
 last_activity: 2026-08-07
+last_activity_desc: Milestone v2.0 completed and archived
 progress:
-  total_phases: 0
-  completed_phases: 0
-  total_plans: 0
-  completed_plans: 0
-  percent: 0
+  total_phases: 4
+  completed_phases: 1
+  total_plans: 29
+  completed_plans: 24
+  percent: 25
 ---
 
 # Project State
@@ -24,10 +27,10 @@ See: .planning/PROJECT.md (updated 2026-08-03), workstream section "Workstream: 
 
 ## Current Position
 
-Phase: Not started (defining requirements)
+Phase: Milestone v2.0 complete
 Plan: —
-Status: Defining requirements
-Last activity: 2026-08-07 — Milestone v2.1 started
+Status: Awaiting next milestone
+Last activity: 2026-08-07 — Milestone v2.0 completed and archived
 
 ## Performance Metrics
 
@@ -88,6 +91,16 @@ None — Phase 06 complete.
 | Phase 08 | Error message strings in manifest | Deferred | 2026-08-05 |
 | Phase 08 | Schema evolution for binary format | Deferred | 2026-08-05 |
 
+Items acknowledged and deferred at milestone v2.0 close on 2026-08-07:
+
+| Category | Item | Status |
+|----------|------|--------|
+| uat | Phase 04: 04-UAT.md — 1 pending scenario | testing |
+| verification | Phase 04: 04-VERIFICATION.md | human_needed |
+| verification | Phase 06 (Capability & Validation Foundation) — `phase_complete=false` per init.manager | override_closeout |
+| verification | Phase 07 (Cancellable Execution Context) — `phase_complete=false` per init.manager; tests pending HW verification | override_closeout |
+| verification | Phase 08 (Structured Artifacts & Manifests) — `phase_complete=false` per init.manager | override_closeout |
+
 ## Session Continuity
 
 Last session: 2026-08-07T03:26:34.255Z
@@ -107,3 +120,7 @@ Resume file: None
 - [Phase 09]: [Phase 09 P15]: Fixed processing_dispatch_test's ctest WORKING_DIRECTORY via a single-target set_tests_properties() override rather than modifying cmake/functions.cmake's shared addtest() helper, so the other ~60 SuperGenius ctest targets are unaffected
 - [Phase 09]: [Phase 09 P15]: Gave render-pass-happy-path-definition.json a real outputs[0] entry mirroring regression-b-parseblocksize-model-only.json's already-proven pattern, rather than modifying ProcessingManager.cpp's already-correct !outputs.empty() gate
 - [Phase 09]: [Phase 09 P15]: RenderPassSameNodeRepeatedExecutionProducesBitExactHash now asserts each iteration's combinedHash.size()==32 via a named iterHash local before pushing it, closing the vacuous-pass-on-empty-hashes gap
+
+## Operator Next Steps
+
+- Start the next milestone with /gsd-new-milestone

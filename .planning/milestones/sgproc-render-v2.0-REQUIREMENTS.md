@@ -1,3 +1,12 @@
+# Requirements Archive: v2.0 Execution Contracts & Quality Gates
+
+**Archived:** 2026-08-07
+**Status:** SHIPPED (with known gaps — see MILESTONES.md Known Gaps for sgproc-render v2.0: Phase 04 UAT/verification carryover, Phases 06/07/08 not formally verification-passed per init.manager, Phase 07 tests pending HW verification)
+
+For current requirements, see `.planning/workstreams/sgproc-render/REQUIREMENTS.md`.
+
+---
+
 # Requirements: sgproc-render
 
 **Last updated:** 2026-08-03
@@ -148,7 +157,7 @@ Deferred to future milestones. Tracked but not in current roadmap.
 
 ### Verification & Backend
 
-- **XNODE-01**: Cross-node tolerance/redundancy-based verification (only needed once heterogeneous-hardware verification is actually required)
+- **XNODE-01**: Cross-node tolerance/redundancy-based verification (only needed once heterogeneous-hardware verification is actually required) — **now being addressed by v2.1 "Cross-Hardware Hash Tolerance"** (quantization-only slice; the full redundant-execution/consensus plumbing remains deferred beyond v2.1)
 - **VALLAYER-01**: Vulkan-ValidationLayers wired into debug/CI builds (deferred per CTX-04)
 
 ## Out of Scope

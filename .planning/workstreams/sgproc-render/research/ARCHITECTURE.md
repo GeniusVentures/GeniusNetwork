@@ -1,283 +1,369 @@
-# Architecture Research: Hand-Rolled Vulkan RenderProcessor Integration
+# Architecture Research: Cross-Hardware Deterministic Hashing (Quantization + Capture Harness)
 
-**Domain:** Headless Vulkan render-pass execution inside SGProcessingManager's distributed processing pipeline
-**Researched:** 2026-07-29
-**Confidence:** HIGH for codebase findings (direct source reads with file:line citations); MEDIUM for cross-verified Vulkan spec/loader claims (external, cross-checked across 2+ sources, not primary-spec-text quoted verbatim)
+**Domain:** Cross-hardware hash tolerance for SGProcessingManager job outputs (render + MNN inference pipelines)
+**Researched:** 2026-08-07
+**Confidence:** HIGH — every claim below is a direct source read with file:line citations against the current `SGProcessingManager` tree (post-Phase-09/v2.0). No external/web sources were needed; this is entirely a codebase-structure question.
+
+**Relationship to v1.0 architecture research:** `.planning/workstreams/sgproc-render/research/ARCHITECTURE.md`'s prior content (Vulkan context creation, `RenderProcessor`'s pipeline-build/dispatch integration, PassType-vs-DataType enum collision, GLSL→SPIR-V compilation, coexistence-risk analysis) is **superseded by this milestone's scope** and not reproduced here — that pipeline is now built and shipped (v1.0 + v2.0 Phase 09). This document covers **only** what changed since: the artifact/manifest system (Phase 08, `ARTF-*`) and execution-context callback plumbing (Phase 07, `EXEC-*`) that this milestone's quantization/capture work must integrate with. Where useful, this doc references the shipped v1.0 render pipeline by file:line rather than re-describing it.
+
+## Correction to the Milestone's Own Framing (read this first)
+
+The milestone brief describes "ONE generic hashing call site: `sgns::sgprocmanagersha::sha256()` in `ProcessingManager.cpp` (around lines 1460-1509)." **This is not accurate for the hash that actually matters for cross-node comparison**, and the roadmap should be built around the corrected picture:
+
+- `ProcessingManager.cpp:1460-1509` is real, but it computes the **model identity hash** (SHA-256 of the model/shader file bytes) and drives `ComputeArtifactIdentity()`/`ComputeManifestHash()` — these are **Phase 08 artifact/manifest bookkeeping**, added *after* a processor has already finished and already hashed its own output.
+- The hash that is actually checked cross-node — `SGProcessing::SubTaskResult::chunk_hashes()`, consumed by `ProcessingValidationCore::ValidateResults`/`CheckSubTaskResultHashes` (`SuperGenius/src/processing/processing_validation_core.cpp:53-125,173-198`) — is populated from the `chunkhashes` vector that **each individual processor fills in during `StartProcessing()`**, long before `ProcessingManager.cpp`'s artifact code runs.
+- There are in fact **~27 independent `sgns::sgprocmanagersha::sha256(...)` call sites**, not one:
+  - 13 MNN processor files (`processing_processor_mnn_*.cpp`) × 2 calls each (one per-chunk, one combined) = 26
+  - 1 in `processing_processor_render.cpp:2156` (single combined hash, no chunking)
+  - Plus the Phase 08 bookkeeping calls in `ProcessingManager.cpp` (model identity), `artifact_types.hpp:78` (`ComputeArtifactIdentity`), and `artifact_serializer.hpp:63` (`ComputeManifestHash`) — these hash *already-produced* output bytes and are downstream of, not upstream of, the hashes that matter.
+
+This matters directly for where quantization goes: **quantizing only at the `ProcessingManager.cpp` artifact-building layer would not touch the `chunkhashes` values that `ProcessingValidationCore` actually compares.** Quantization has to happen inside each processor, before its own hash calls — see Pattern 2.
 
 ## Standard Architecture
 
-### System Overview (as it exists today, annotated with the new RENDER path)
+### System Overview (three hashing layers, annotated with the quantization insertion points this milestone adds)
 
 ```
-┌──────────────────────────────────────────────────────────────────────────┐
-│  ProcessingCoreImpl::ProcessSubTask()                                     │
-│  (SuperGenius/src/processing/impl/processing_core_impl.cpp:55-140)        │
-│  - loads Task json from CRDT, parses ModelNode from SubTask json          │
-│  - calls ProcessingManager::Process(ioc, chunkhashes, model, out_locs)    │
-└───────────────────────────────┬────────────────────────────────────────┘
-                                 │
-┌───────────────────────────────▼────────────────────────────────────────┐
-│  ProcessingManager (SGProcessingManager/src/processingbase/)             │
-│                                                                            │
-│  CheckProcessValidity()  — pass.get_type() switch, RENDER currently a    │
-│    no-op (ProcessingManager.cpp:151-152) — validated, never routed        │
-│                                                                            │
-│  Process(ioc, chunkhashes, model, out_locations)                         │
-│   ├─ index = GetInputIndex(model.get_source())      [cpp:671]           │
-│   ├─ NEW: pass = processing_.get_passes()[index]     ← same index today  │
-│   │        is already (undocumented-ly) reused to index get_passes()      │
-│   │        at cpp:840 inside GetCidForProc — see Integration Points       │
-│   ├─ switch(pass.get_type())                                             │
-│   │    ├─ RENDER  → NEW m_passFactories[PassType::RENDER] → RenderProcessor│
-│   │    └─ default → existing m_processorFactories[DataType(...)] → MNN_*  │
-│   └─ processResult = m_processor->StartProcessing(...) [cpp:689]         │
-│        (same ProcessingResult contract for both paths)                   │
-│                                                                            │
-│   output_buffers → FileManager::SaveASync(...) [cpp:696-817]  — UNCHANGED │
-└───────────────────────────────┬────────────────────────────────────────┘
-                                 │
-        ┌────────────────────────┴─────────────────────────┐
-        │                                                    │
-┌───────▼────────────────┐                     ┌────────────▼───────────────┐
-│ MNN_* processor family  │                     │ RenderProcessor (NEW)       │
-│ (processing_processor_  │                     │ processing_processor_       │
-│  mnn_*.cpp, 17 classes) │                     │ render.cpp/.hpp             │
-│ : public ProcessingProcessor                    │ : public ProcessingProcessor│
-│ owns MNN::Interpreter   │                     │ owns OWN VkInstance/VkDevice│
-│ (Vulkan fully internal   │                     │ (headless, no swapchain)    │
-│  to MNN, never exposed) │                     │ own physical device pick,   │
-│                          │                     │ own queue, own command pool │
-└──────────────────────────┘                     └─────────────────────────────┘
-        │                                                    │
-        └──────────────────── same physical GPU ────────────┘
-             (independent VkInstance/VkDevice each — see Coexistence Risk)
+┌────────────────────────────────────────────────────────────────────────────────┐
+│  ProcessingManager::Process() / ProcessInternal()                              │
+│  (SGProcessingManager/src/processingbase/ProcessingManager.cpp)                │
+│                                                                                  │
+│  m_processor->StartProcessing(chunkhashes, proc, imageData, modelFile,         │
+│                                 parameters, execCtx)          [cpp:1304-1309]   │
+└──────────────────────────────────┬───────────────────────────────────────────┘
+                                    │
+        ┌───────────────────────────┴────────────────────────────┐
+        │                                                          │
+┌───────▼─────────────────────────────┐          ┌────────────────▼──────────────────┐
+│ MNN_* family (13 classes)            │          │ RenderProcessor (1 class)          │
+│ processing_processor_mnn_*.cpp       │          │ processing_processor_render.cpp    │
+│                                       │          │                                     │
+│ ALL 13 types call                    │          │ readback is ALWAYS raw uint8        │
+│ procresults->host<float>() for the   │          │ RGBA8/RGB8 bytes (ToVkFormat() only  │
+│ output tensor — regardless of the    │          │ ever returns VK_FORMAT_R8G8B8A8_UNORM│
+│ processor's own DataType label       │          │ or VK_FORMAT_R8G8B8_UNORM,           │
+│ (INT/BOOL/BUFFER/IMAGE/etc.) — the   │          │ render.cpp:1052-1056). No chunking.  │
+│ DataType label affects *input*       │          │                                     │
+│ interpretation, not the hashed       │          │  ★ NEW quantization insertion:      │
+│ output representation.               │          │    Readback() output, before        │
+│                                       │          │    render.cpp:2156                  │
+│  ★ NEW quantization insertion #1:    │          │    (byte/bit-level rounding —        │
+│    per-chunk `data`/`dataSize`       │          │    tolerate ±1-2 LSB vendor          │
+│    (float*), before the per-chunk    │          │    rasterizer/UNORM8-conversion      │
+│    sha256 call inside the chunk loop │          │    rounding differences)             │
+│    (float rounding — same function   │          │                                     │
+│    for all 13 types)                 │          │  chunkhashes param explicitly        │
+│                                       │          │  ignored: render.cpp:1992            │
+│  ★ NEW quantization insertion #2     │          │  `(void)chunkhashes;` — single        │
+│    (STITCHED family only, 6 of 13    │          │  combined hash only.                 │
+│    types — see Pattern 1b): the      │          │                                     │
+│    `stitchedOutput` accumulator,     │          │                                     │
+│    before the combined sha256 call   │          │                                     │
+└──────────────────┬────────────────────┘          └────────────────┬────────────────────┘
+                    │                                                 │
+                    └──────────────────┬──────────────────────────────┘
+                                        │
+                    chunkhashes (Layer A — cross-node-authoritative)
+                    processResult.hash / result.hash (Layer B — combined per-subtask hash)
+                    processResult.output_buffers (raw bytes, quantized, flow onward unchanged)
+                                        │
+┌───────────────────────────────────────▼──────────────────────────────────────────┐
+│ ProcessingManager.cpp — ProcessOutput / Artifact / ExecutionManifest builder     │
+│ (cpp:1360-1511) — Phase 08, ARTF-01..06                                          │
+│                                                                                    │
+│ ComputeArtifactIdentity(art, bufferData[outIdx], ...)   [cpp:1426-1428]          │
+│   → hashes the SAME bytes the processor already quantized — automatically       │
+│     consistent, ZERO additional change needed here (Layer C, non-authoritative  │
+│     for cross-node comparison, but benefits "for free")                          │
+│                                                                                    │
+│ AddChunkHash(art, ch) for ch in chunkhashes  [cpp:1430-1437]                     │
+│   → COPIES Layer A's already-quantized chunk hashes; not a new hash computation  │
+└───────────────────────────────────────┬──────────────────────────────────────────┘
+                                         │
+                    FileManager::SaveASync(...) — UNCHANGED, cpp:1513-1817
 ```
 
 ### Component Responsibilities
 
 | Component | Responsibility | File(s) |
 |-----------|----------------|---------|
-| `ProcessingManager` | Parses `SgnsProcessing` JSON, validates passes, dispatches one pass's execution to a `ProcessingProcessor` implementation, forwards output buffers to `FileManager` for save/IPFS-publish | `SGProcessingManager/src/processingbase/ProcessingManager.cpp` |
-| `ProcessingProcessor` (base) | Generic one-shot "take chunk hashes + IoDeclaration + two raw byte buffers + optional parameters, return `ProcessingResult`" contract; no MNN- or Vulkan-specific assumptions baked in | `SGProcessingManager/include/processors/processing_processor.hpp:27-56` |
-| `MNN_*` family (17 classes) | Bind an `MNN::Interpreter` model (fed via the "modelFile" buffer) against differently-shaped input data (fed via the "imageData" buffer), keyed by `DataType` of the model's designated input | `SGProcessingManager/src/processors/processing_processor_mnn_*.cpp` |
-| `RenderProcessor` (NEW) | Own independent headless Vulkan instance/device; builds a graphics pipeline from schema `shader_config` + new render-target/buffer-binding fields; executes one offscreen render pass; reads back the color attachment into a host buffer | `SGProcessingManager/src/processors/processing_processor_render.cpp` (new) |
-| `Vulkan::Vulkan` CMake target | Already-vendored Vulkan-Loader + Vulkan-Headers, resolved via standard `find_package(Vulkan)` against `VULKAN_SDK` pointed at the thirdparty-built loader | `thirdparty/build/CommonTargets.cmake:363-391`, consumed at `SGProcessingManager/src/processors/CMakeLists.txt:58` |
-| MNN's internal Vulkan backend | `MNN::VulkanInstance`/`VulkanDevice` — fully private to MNN's `backend/vulkan/` implementation, never included by any header SGProcessingManager uses | `thirdparty/MNN/source/backend/vulkan/component/VulkanInstance.hpp:17-37` |
+| `MNN_*` family (13 classes) | Own the ONLY point in the codebase where MNN's `float*` output tensor is materialized; each already computes 2 SHA-256 calls per pass today | `src/processors/processing_processor_mnn_*.cpp` |
+| `RenderProcessor` | Owns the ONLY point where the Vulkan readback buffer (uint8 RGBA8/RGB8) is materialized; computes 1 SHA-256 call | `src/processors/processing_processor_render.cpp:2126-2160` |
+| `ExecutionContext` | Already-established callback-injection bundle (cancel token, progress callback, budgets), threaded into every `StartProcessing()` call | `include/execution/execution_context.hpp:122-146` |
+| `ProcessingManager` | Builds `ProcessOutput` (Artifacts + ExecutionManifest) from already-hashed processor output; does NOT see typed/raw values, only opaque `std::vector<char>` buffers + string metadata it derives itself from schema, not from the processor | `src/processingbase/ProcessingManager.cpp:1360-1511` |
+| `Artifact` / `artifact_types.hpp` | Post-hoc metadata + hash record (dataType/format/dims/contentHash/chunkHashes strings); metadata is populated from `procInput.get_type()`/`get_format()` (schema-declared), not inspected at runtime from the actual buffer — confirms metadata-driven runtime dispatch is not how type identity flows in this codebase | `include/artifacts/artifact_types.hpp` |
+| `artifact_serializer.{hpp,cpp}` | Deterministic fixed-layout binary serialization of `Artifact`/`ExecutionManifest` (`ARTIFACT_SERIALIZED_SIZE = 33880` bytes, `MANIFEST_SERIALIZED_SIZE = 5649` bytes) — **directly reusable as the capture file's metadata+hash record format** | `include/artifacts/artifact_serializer.hpp`, `src/artifacts/artifact_serializer.cpp` |
+| `sgprocmanagersha` | Existing standalone CMake library wrapping OpenSSL SHA-256; the pattern to clone for a new quantization library | `src/util/CMakeLists.txt:14-26`, `include/util/sha256.hpp` |
+| `ProcessingValidationCore` | The actual cross-node consumer of chunk hashes — `chunk_hashes()` comparison, currently has the known concatenation bug (out of scope this milestone, see PROJECT.md deferred) | `SuperGenius/src/processing/processing_validation_core.cpp` |
 
 ## Recommended Project Structure
 
 ```
 SGProcessingManager/
-├── gnus-processing-schema.json        # extend "pass" (render_target,
-│                                       #   vertex/index buffer bindings,
-│                                       #   vertex+fragment shader stages)
-├── generated/                         # regenerate via quicktype — NEVER hand-edit
-│   ├── PassType.hpp                   # unchanged (RENDER already exists)
-│   ├── DataType.hpp                   # unchanged
-│   └── SgnsProcessing.hpp             # new render-pass fields land here
-├── include/processors/
-│   ├── processing_processor.hpp       # unchanged base interface
-│   └── processing_processor_render.hpp  # NEW — parallel to mnn_*.hpp siblings
-├── include/processingbase/
-│   └── ProcessingManager.hpp          # + m_passFactories, RegisterPassProcessorFactory,
-│                                       #   SetProcessorByPassType (additive only)
-└── src/
-    ├── processingbase/ProcessingManager.cpp  # + PassType branch in Process(),
-    │                                          #   guard in ParseBlockSize()
-    └── processors/
-        ├── CMakeLists.txt             # + processing_processor_render.cpp,
-        │                              #   + link new SPIR-V compiler lib
-        └── processing_processor_render.cpp   # NEW
+├── include/util/
+│   └── quantization.hpp            # NEW — sibling to sha256.hpp, same namespace style
+├── src/util/
+│   ├── quantization.cpp            # NEW — sibling to sha256.cpp
+│   └── CMakeLists.txt              # + add_library(sgprocmanagerquant ...), mirrors
+│                                    #   sgprocmanagersha's block exactly (lines 14-26)
+├── src/processors/
+│   ├── CMakeLists.txt              # + link sgprocmanagerquant (alongside existing
+│   │                                #   sgprocmanagersha link at line 76)
+│   ├── processing_processor_mnn_*.cpp   # MODIFIED (13 files) — 1 or 2 new lines each,
+│   │                                #   immediately before each file's existing sha256 call(s)
+│   └── processing_processor_render.cpp  # MODIFIED — 1 new line before render.cpp:2156
+├── include/execution/
+│   └── execution_context.hpp       # MODIFIED — + one new optional callback field
+│                                    #   (raw pre-hash bytes hook), reusing the existing
+│                                    #   progressCallback/cancelToken injection pattern
+├── tools/capture/                  # NEW — standalone CLI tools, NOT under test/,
+│   │                                #   NOT CTest-gated (see Pattern 5)
+│   ├── CMakeLists.txt              # NEW — 2 add_executable() targets, no add_test()
+│   ├── capture_harness.cpp         # NEW — runs a job, writes a capture file
+│   ├── capture_diff.cpp            # NEW — reads 2 capture files, reports divergence
+│   └── capture_file_format.hpp     # NEW — shared record struct: reuses
+│                                    #   SerializeArtifact()/SerializeManifest() for the
+│                                    #   metadata+hash portion, appends raw pre-/post-
+│                                    #   quantization bytes (the one thing not persisted
+│                                    #   anywhere today)
+└── test/capture/                   # NEW, separate from tools/ — a THIN CTest smoke test
+    ├── CMakeLists.txt              # NEW — 1 add_executable() + add_test(), GTest-based,
+    │                                #   mirrors test/capability/CMakeLists.txt's convention
+    └── capture_smoke_test.cpp      # NEW — asserts the harness runs and produces a
+                                     #   well-formed file; does NOT assert cross-machine
+                                     #   hash equality (that's the manual workflow)
 ```
 
 ### Structure Rationale
 
-- `RenderProcessor` sits as a **sibling file next to the MNN family**, not a new module/library — it reuses the same `SGProcessors` static-library target, the same `ProcessingProcessor` base class, and the same `Vulkan::Vulkan` link dependency that target already declares (`CMakeLists.txt:58`) for MNN's sake. No new CMake target is needed for the class itself.
-- Schema/generated separation is already enforced by convention (`generated/` is quicktype output) — the milestone's own scoping already states this, confirmed by the presence of `Generators.hpp`/`helper.hpp` boilerplate headers in every generated file.
+- **`tools/capture/` is a new top-level directory, not `test/capture/` alone**, because the capture harness and diff tool are not test *assertions* — a capture run always "succeeds" if it writes a well-formed file; there is no pass/fail condition until a human (or a later script) compares two files from two machines. Naming it `tools/` signals "manual/operator workflow" distinctly from the existing GTest/CTest conformance suite under `test/` (Phase 09's `TEST-01..10`), which is deliberately structured for one-shot automated pass/fail per plan.
+- **A thin smoke test still lives under `test/capture/`**, following the existing hardware-tier convention already established by `processing_dispatch_test` (`SuperGenius/test/src/processing_dispatch/CMakeLists.txt`) and the Phase 09 conformance suites — this catches "the harness doesn't build" or "the harness crashes on this CI runner's GPU" without trying to make CTest responsible for a job that inherently needs 2+ different physical machines to be meaningful.
+- **`quantization.hpp`/`.cpp` mirrors `sha256.hpp`/`.cpp` exactly** (same directory, same namespacing convention `sgns::sgprocmanager<name>`, same standalone CMake library pattern) because it is used from the exact same ~14 call sites, with the same "small utility library linked by every processor" shape sha256 already has.
+- **`execution_context.hpp` gets ONE new field, not a new parameter threaded through `StartProcessing()`'s signature** — `StartProcessing()`'s 6-argument signature is a stable, already-`= 0`-versioned virtual interface implemented identically by 14 classes; adding a 7th positional parameter would require touching all 14 overrides for a capture-only feature. `ExecutionContext` is already the designated "extra stuff a processor might want, wired in without touching the pure-virtual signature" extension point (this is exactly why `progressCallback`/`cancelToken`/budgets live there instead of as `StartProcessing()` parameters).
 
 ## Architectural Patterns
 
-### Pattern 1: PassType-keyed dispatch alongside DataType-keyed dispatch (additive, not replacing)
+### Pattern 1: Quantization is bimodal (2 strategies), not per-DataType (13 strategies) or metadata-dispatched
 
-**What:** Add a second dispatch table, `m_passFactories: unordered_map<PassType, factory>`, checked in `Process()` before falling through to the existing `m_processorFactories` (DataType-keyed) path.
+**What:** There are exactly two families of raw output representation in this codebase, not thirteen:
 
-**Why a *separate* map is required, not reuse of `m_processorFactories`:** `RegisterProcessorFactory`/`SetProcessorByName` key on a plain `int` cast from `DataType` (`ProcessingManager.hpp:59-63`, `.cpp:72-103`). Casting `PassType` to the same `int` space collides directly:
+1. **MNN family (13 classes, all of them):** every single MNN processor's output tensor is read via `procresults->host<float>()` (confirmed by direct grep across all 13 files — `processing_processor_mnn_int.cpp:238`, `_bool.cpp:300`, `_buffer.cpp:231`, `_image.cpp:103`, `_string.cpp:127`, `_texture1d.cpp:372`, `_tensor.cpp:323`, `_texturecube.cpp:143,473,507`, `_volume.cpp:403`, `_mat2.cpp:300`, `_mat3.cpp:335`, `_mat4.cpp:335`, `_float.cpp:272`). The processor's declared `DataType` (INT/BOOL/BUFFER/IMAGE/STRING/TEXTURE1_D/TENSOR/TEXTURE_CUBE/VOLUME/MAT2/MAT3/MAT4/FLOAT) governs how the *input* is interpreted and how the artifact's metadata string is labeled after the fact — it has **no bearing on the hashed output's binary representation**, which is always raw IEEE-754 float32. One quantization function (float rounding) covers all 13 types.
+2. **Render (1 class):** the readback buffer is always raw `uint8_t` RGBA8 or RGB8 (`ToVkFormat()` only ever returns `VK_FORMAT_R8G8B8A8_UNORM` or `VK_FORMAT_R8G8B8_UNORM`, `render.cpp:1052-1056` — no floating-point color-attachment format is reachable from the current schema/code). One quantization function (integer byte/bit rounding) covers this single type.
+
+**Why metadata-driven (`artifact_types.hpp`'s `dataType`/`format` strings) dispatch is the wrong hook, even though it's tempting:** that metadata is populated in `ProcessingManager.cpp:1383-1412` **after** `StartProcessing()` has already returned and already hashed its output (both the per-chunk hash and the combined hash). Dispatching quantization there would be too late for the one hash that's actually cross-node-authoritative (`chunkhashes`, feeding `SubTaskResult::chunk_hashes`). The correct dispatch signal is simply **"which processor class is executing"** — a compile-time fact each `.cpp` file already knows about itself, not a runtime metadata lookup.
+
+**Trade-off:** if a future milestone adds a floating-point render target format (e.g., HDR color attachments) or a genuinely non-float MNN output path, this bimodal split would need a third strategy — but nothing in the current schema/code reaches either case today, so building metadata-driven dispatch now would be speculative generality for a case that cannot currently occur.
+
+### Pattern 1b: MNN's two combined-hash sub-families need different quantization insertion counts
+
+**What:** Within the 13 MNN types, the **combined** (per-subtask) hash is built two different ways:
+
+- **"Stitched" family (6 types: Float, Int, Mat2, Mat3, Mat4, Tensor):** accumulates a `stitchedOutput` float array via weighted averaging across overlapping patches (`_float.cpp:280-326`), then hashes `stitchedOutput`'s raw bytes directly (`_float.cpp:328-330`). This is a **different array with different values** than the per-chunk `data` pointer hashed earlier in the loop (`_float.cpp:307`) — averaging happens in between. **Requires 2 separate quantization insertion points**: once on `data` before the per-chunk hash, once on `stitchedOutput` before the combined hash.
+- **"Chained" family (7 types: Bool, Buffer, Image, String, Texture1D, TextureCube, Volume):** the combined hash is a **rolling hash-of-hashes** — `combinedHash = previous_subTaskResultHash_bytes + current_chunk_hash_hex; subTaskResultHash = sha256(combinedHash)` (`_image.cpp:105-110`, same pattern in the other 6). **Requires only 1 quantization insertion point** — quantizing the per-chunk `data` before its own hash call automatically makes the chained combined hash deterministic too, since the combined hash is a pure function of already-quantized chunk hashes.
+
+**Why this matters for build order/effort estimate:** it is not "13 types × 2 insertion points = 26 call sites needing independent logic." It is 1 shared quantization function, called at 13 (chunk) + 6 (stitched-combined) = 19 MNN insertion points, plus 1 render insertion point = **20 total insertion points**, all calling the same 2 small utility functions.
+
+### Pattern 2: Quantize inside each processor, at (or immediately before) its existing hash call sites — not centrally in `ProcessingManager.cpp`
+
+**What:** Insert `sgns::sgprocmanagerquant::QuantizeFloat(...)` (or the render equivalent) as the line immediately preceding each existing `sgprocmanagersha::sha256(...)` call already identified in Pattern 1/1b, mutating a **local copy** of the float buffer (not the MNN-owned tensor memory returned by `host<float>()`, which is `const float*` and may be reused/aliased internally by MNN — copy-then-quantize-then-hash, never mutate MNN's tensor buffer in place).
+
+**Why here and not centrally:**
+1. It is the only point in the whole call graph where both the raw values AND their true type (float vs. uint8-RGBA) are simultaneously and unambiguously known — see Pattern 1.
+2. It automatically fixes all three hashing layers with a single change per insertion point: Layer A (`chunkhashes`, cross-node-authoritative) is fixed directly; Layer B (`subTaskResultHash`/`result.hash`) is fixed either directly (stitched family, render) or transitively (chained family, Pattern 1b); Layer C (`Artifact.contentHash`/`ComputeArtifactIdentity`, `ProcessingManager.cpp:1426-1428`) is fixed **for free**, because `output_buffers` (the bytes Layer C hashes) is built from the *same already-quantized* `stitchedOutput`/`readbackBytes` array (confirmed: `_float.cpp:353-362` copies `stitchedOutput` — the same array already hashed at line 330 — into `output_buffers`; `render.cpp:2157-2160` does the same with `readbackBytes`). No change is needed anywhere in `ProcessingManager.cpp`'s artifact-building code at all.
+3. It keeps `ARTF-05`'s deterministic-serialization contract for `Artifact`/`ExecutionManifest` completely untouched — those structs' shapes and `SerializeArtifact`/`SerializeManifest` layouts don't change; only the bytes flowing *into* `ComputeArtifactIdentity` change, which was always going to vary run-to-run anyway (that's the entire point of ARTF-03's content-hash design).
+
+**Trade-off:** this means the diff touches 14 processor `.cpp` files (13 MNN + 1 render) instead of 1 central file. This is the correct trade-off given the constraint that the cross-node-authoritative hash (`chunkhashes`) is produced inside those files and nowhere else — a "generic" central quantization step cannot reach it without restructuring `StartProcessing()`'s interface, which is out of scope and unnecessary.
+
+### Pattern 3: One shared quantization utility library, N call-site invocations — not N bespoke implementations
+
+**What:** `sgprocmanagerquant` (new library, mirrors `sgprocmanagersha`'s structure exactly) exposes two small free functions:
 
 ```cpp
-// generated/DataType.hpp:19
-enum class DataType : int { BOOL, BUFFER, FLOAT, INT, MAT2, MAT3, MAT4, STRING, ... };
-//                                                  ^ INT = 3
-
-// generated/PassType.hpp:26
-enum class PassType : int { COMPUTE, DATA_TRANSFORM, INFERENCE, RENDER, RETRAIN };
-//                                                              ^ RENDER = 3
-```
-
-`static_cast<int>(PassType::RENDER) == static_cast<int>(DataType::INT) == 3`. Reusing `m_processorFactories` for both would silently dispatch a RENDER pass to whatever factory is registered for `DataType::INT` (currently `MNN_Int`). This is not a hypothetical risk — it is a confirmed, exact collision in the current generated enums. The new `m_passFactories` map must key on the `PassType` enum type itself (or an explicitly disjoint integer range), not on `static_cast<int>`.
-
-**Where dispatch belongs in `Process()`:** immediately after `index = GetInputIndex(modelname)` at `ProcessingManager.cpp:671`. Today, that same `index` is *already* reused (undocumented, but present in the shipped code) to index `processing_.get_passes()` at `cpp:840`:
-
-```cpp
-// ProcessingManager.cpp:840 — inside GetCidForProc
-std::string modelFile = processing_.get_passes()[index.value()].get_model().value().get_source_uri_param();
-```
-
-This confirms the existing implicit convention: **input array index == pass array index** (passes and inputs are expected to be positionally parallel). This is the cheapest, least-disruptive hook — no signature change to `Process()`, no change to `ProcessingCoreImpl`'s call site (`processing_core_impl.cpp:102`), no change to how subtasks are split today. The new code simply reads `processing_.get_passes()[index.value()].get_type()` and branches:
-
-```cpp
-const auto &pass = processing_.get_passes()[index.value()];
-if ( pass.get_type() == PassType::RENDER )
+// include/util/quantization.hpp
+namespace sgns::sgprocmanagerquant
 {
-    if ( !SetProcessorByPassType( PassType::RENDER ) )
-        return outcome::failure( Error::NO_PROCESSOR );
-}
-else
-{
-    if ( !SetProcessorByName( static_cast<int>( processing_.get_inputs()[index.value()].get_type() ) ) )
-        return outcome::failure( Error::NO_PROCESSOR );
+    /// Rounds each float32 value in-place to a fixed precision (decimal places or
+    /// ULP-mask, exact strategy chosen empirically per the build-order note below).
+    /// Used by all 13 MNN processor types — same function, same call signature,
+    /// regardless of the processor's own DataType label.
+    void QuantizeFloatBuffer( float *data, size_t count );
+
+    /// Rounds/masks each uint8 channel value in-place to tolerate ±N LSB cross-vendor
+    /// rasterizer rounding differences. Used only by RenderProcessor.
+    void QuantizeByteBuffer( uint8_t *data, size_t count );
 }
 ```
 
-**Trade-off / flag for the roadmap:** this reuses a convention that is currently *implicit and untested* (passes[i] ↔ inputs[i] positional pairing). It is real and already load-bearing in shipped code (`cpp:840`), so relying on it is not introducing a new risk — but it means the schema/job-splitter must keep emitting passes and inputs in matching order for any pass type, render included. This is worth an explicit assertion/validation addition in `CheckProcessValidity()` (passes.size() == inputs.size(), or an explicit index field) as a small hardening step, not a blocker.
+Each of the 20 insertion points from Pattern 1b becomes a 2-line change: copy the buffer if needed (MNN chunk case, since `host<float>()` returns `const float*`), call the appropriate function, hash the result — using the exact same call shape already present at every site today.
 
-**`GetCidForProc` also needs a parallel branch:** it unconditionally calls `model.get_model().value().get_source_uri_param()`-equivalent logic assuming a `model_config` (`cpp:840`). For a RENDER pass there is no `model` at all (schema requires `shader` instead — `gnus-processing-schema.json:205-222`, the `allOf`/`if`/`then` block). The render branch must instead read `pass.get_shader().value().get_source()` for the shader URI and fetch the schema's new vertex/index buffer binding(s) the same way — reusing the exact same `FileManager`/`GetSubCidForProc` async-fetch machinery (`cpp:885-913`), just pointed at different fields.
+**When a per-processor bespoke implementation would have been justified (and isn't here):** if any MNN type's "float" output actually meant something semantically different per type (e.g., MNN_Bool's floats being 0.0/1.0 booleans where "rounding" should mean thresholding to exactly 0 or 1, not decimal-place rounding) such that one shared function couldn't serve all 13 correctly. This is worth flagging as a real, if narrow, risk: `MNN_Bool`'s output being literal booleans encoded as float 0.0/1.0 might already be "quantization-tolerant" by construction (no rounding needed, since the values are already exactly representable), while `MNN_Float`/`MNN_Tensor`'s outputs are genuine continuous values needing real rounding. **Recommendation:** keep one shared function, but verify empirically (via the capture harness, Pattern 4) whether any of the 13 types show near-zero cross-machine divergence already (meaning quantization is a no-op safety margin for that type) versus types that show real divergence (where the rounding precision actually matters) — this is exactly the kind of decision the empirical capture data should drive, not a priori per-type logic.
 
-### Pattern 2: `RenderProcessor` reuses the existing `ProcessingProcessor` interface — no new sibling hierarchy
+### Pattern 4: Capture file = existing `Artifact`/`ExecutionManifest` binary serialization + one new raw-bytes section
 
-**What:** `RenderProcessor : public sgns::sgprocessing::ProcessingProcessor`, implementing the same `StartProcessing(chunkhashes, proc, imageData, modelFile, parameters) -> ProcessingResult` signature as every `MNN_*` class.
+**What:** The capture file format should not be invented from scratch. `SerializeArtifact()`/`SerializeManifest()` (`artifact_serializer.hpp:39-64`) already produce a fixed-layout, deterministic binary blob (`ARTIFACT_SERIALIZED_SIZE = 33880` bytes, `MANIFEST_SERIALIZED_SIZE = 5649` bytes) containing exactly the metadata + hashes (`dataType`, `format`, `width`/`height`/`depth`, `byteSize`, `contentHash`, up to 1024 `chunkHashes`) that the diff tool needs to report "per-element divergence" context against. The capture harness's job is to call `ProcessingManager::Process()` (getting `ProcessOutput` — Artifacts + Manifest + `combinedHash` — for free, since `Process()` already returns this), then append one new section this milestone actually needs and which does **not exist anywhere today**: the raw pre-hash (and post-quantization) byte buffer itself.
 
-**Why this fits without modification:** the interface (`processing_processor.hpp:37-41`) is already generic — two raw `std::vector<char>&` buffers plus an `IoDeclaration` plus optional parameters. Nothing in the signature is MNN-specific:
-- `modelFile` buffer → reinterpreted as compiled SPIR-V bytes (or GLSL source bytes needing runtime compilation — see Pattern 3) instead of an MNN `.mnn` model blob.
-- `imageData` buffer → reinterpreted as packed vertex/index buffer bytes instead of an input tensor/image.
-- `ProcessingResult::output_buffers` (a `pair<vector<string>, vector<vector<char>>>`, same as every MNN processor already produces) → the readback-from-framebuffer bytes, flowing unchanged through `Process()`'s existing output-save path (`cpp:696-817`, `FileManager::SaveASync`).
+**Why raw bytes don't exist anywhere today:** `ProcessOutput` (`ProcessingManager.hpp:46-60`) carries only `artifacts` (metadata+hashes, no raw bytes), `manifest`, and `combinedHash`. `ProcessingResult::output_buffers` (which *does* hold the raw bytes) is internal to `ProcessingManager::Process()`'s implementation and is never returned to `Process()`'s own caller. `FileManager::SaveASync` persists final bytes to IPFS/file storage (`ProcessingManager.cpp:1513-1817`), but that path is about distributed storage, not a structured, easily-diffable local capture record, and it doesn't run in the "job never gets scheduled through IPFS" manual-harness workflow this milestone needs.
 
-**When a new sibling hierarchy would have been justified (and isn't here):** if the render pass needed a fundamentally different return shape (e.g., streaming partial results, or a different progress-reporting contract) or if it needed to bypass the "chunkhashes" concept entirely. Neither is true — `RenderProcessor` produces exactly one shot of output bytes per invocation, identical in shape to what `MNN_Image`/`MNN_Buffer` already produce. Reusing the base class keeps `m_processor` (the single polymorphic `unique_ptr<ProcessingProcessor>` member in `ProcessingManager.hpp:129`) uniform across both dispatch paths — no second processor-holder member needed.
+**Recommended data-flow change:** add one new optional field to `ExecutionContext` (`execution_context.hpp:122-146`), following the exact same "no-op by default" pattern already established by `progressCallback`:
 
-**Trade-off:** the buffer-repurposing (shader bytes in the "model" slot, vertex/index bytes in the "image" slot) is a naming/semantic stretch on the base interface's parameter names. This is acceptable for a "least-disruptive" v1 but is worth a documentation comment on `RenderProcessor::StartProcessing` explaining the reinterpretation, since a future reader skimming `processing_processor.hpp`'s doc comments (which say "Reference to task to get image split data") would otherwise be confused.
+```cpp
+// execution_context.hpp — NEW field, alongside progressCallback
+std::function<void( const std::vector<uint8_t> &quantizedBytes,
+                     const std::vector<uint8_t> &preQuantizeBytes )> rawOutputCapture;
+```
 
-### Pattern 3: Runtime GLSL→SPIR-V compilation, not a build-time-only CLI step
+Each of the 14 processor files invokes this callback (if set) at the same point it invokes `QuantizeFloatBuffer`/`QuantizeByteBuffer` — one extra `if (execCtx.rawOutputCapture) execCtx.rawOutputCapture(...)` line per insertion point. The capture harness constructs its own `ExecutionContext` and calls the existing 5-argument `Process(ioc, chunkhashes, model, output_locations, externalExecCtx)` overload (`ProcessingManager.hpp:105-109`) — which was **already built for exactly this purpose** ("Lets a caller cancel mid-execution... before calling" — the same override point generalizes cleanly to "lets a caller observe raw bytes"). No change to `ProcessOutput`'s shape, no change to `StartProcessing()`'s pure-virtual signature, no change to production callers (who never set `rawOutputCapture` and pay zero cost).
 
-**What:** shader source (`pass.get_shader().get_source()`, per schema `shader_config.source` at `gnus-processing-schema.json:326-356`) is fetched at job-execution time via the same IPFS/file/URL `source_uri_param` mechanism every other input already uses (`ProcessingManager.cpp:885-913`). This means the shader's GLSL text is not known until runtime — it arrives as fetched bytes per-subtask, exactly like a model file does today.
+**Trade-off:** this does mean `ExecutionContext` (already documented as "bundles everything a processor needs for an execution") grows a capture-only concern. This is consistent with its existing role, but worth a one-line doc comment noting the field is capture/debug-oriented and expected to stay unset (nullptr) in production job execution — mirroring how `ExecutionContext::NoOp()` (`execution_context.hpp:139-145`) already documents the "test-only" no-op construction pattern.
 
-**Confirmed gap — no reusable GLSL→SPIR-V toolchain currently exists in this repo:**
-- `thirdparty/Vulkan-Headers` and `thirdparty/Vulkan-Loader` are vendored and already wired via `find_package(Vulkan)` → `Vulkan::Vulkan` (`thirdparty/build/CommonTargets.cmake:363-391`; consumed at `SGProcessingManager/src/processors/CMakeLists.txt:58`). These provide the Vulkan API/loader only — no shader compiler.
-- `thirdparty/MoltenVK/MoltenVKShaderConverter/glslang` exists, but it is a **nested submodule scoped to MoltenVK's own SPIR-V→Metal shader converter build**, not an exposed, independently linkable `glslang` target usable from `SGProcessingManager`.
-- MNN's own Vulkan backend (`thirdparty/MNN/source/backend/vulkan/.../compiler/VulkanCodeGen.py`) is a code-generation scaffold for MNN's *own* precompiled operator shaders (baked into `AllShader.h` at MNN build time) — not a general-purpose runtime compiler, and not exposed outside MNN's internal backend.
-- No standalone `glslang`, `shaderc`, or `SPIRV-Tools` submodule exists at `thirdparty/` top level.
+### Pattern 5: Capture harness + diff tool are standalone CLI executables, outside CTest pass/fail — with a thin CTest smoke test alongside the existing conformance suite for regression coverage only
 
-**Implication:** since shader source arrives as runtime-fetched bytes (not a build-time artifact), a build-time-only `glslangValidator`/`glslc` CLI invocation does not fit the existing fetch pattern — `RenderProcessor` needs an **in-process, linkable** GLSL→SPIR-V compiler library, called at `StartProcessing()` time on the fetched bytes. This points to vendoring `glslang` (Khronos, BSD-3/MIT-style permissive — compatible with the project's all-permissive `thirdparty/` policy) as its own top-level submodule, built through the same ExternalProject/ImportedTarget pattern already used for Vulkan-Headers/Vulkan-Loader in `thirdparty/build/CommonTargets.cmake`. `shaderc` (Apache-2.0, also permissive) is the alternative — it wraps `glslang` + `SPIRV-Tools` behind a friendlier single-call C API (`shaderc_compile_into_spv`) and is the more common choice specifically because callers want "compile this GLSL string to SPIR-V bytes right now" rather than driving `glslang`'s own multi-step C++ API. Recommend `shaderc` for the smaller integration surface, unless the added `SPIRV-Tools`/`glslang` transitive dependency weight is a concern, in which case bare `glslang` is workable with more integration code.
+**What:** Two new `add_executable()` targets under `tools/capture/`, **not** registered via `add_test()`/CTest. `capture_harness` runs one job definition end-to-end (through `ProcessingManager::Process()`, as Pattern 4 describes) and writes a capture file. `capture_diff` takes two capture file paths and reports per-artifact/per-chunk divergence (byte-exact match / max delta / mantissa-bit differences, reusing `DeserializeArtifact()`/`DeserializeManifest()` to parse both files).
 
-**Trade-off:** compiling shaders at runtime, per-job, adds latency (glslang/shaderc compilation of a small vertex+fragment pair is typically single-digit milliseconds, negligible next to network/IPFS fetch time already in the critical path) and a new attack surface (untrusted GLSL source from job definitions reaching a compiler) — worth flagging for a later security-review pass, out of scope for this architecture research.
+**Why not CTest-gated:** the entire point of this workflow is comparing output **across two different physical machines** (the user's Mac + PC, per the milestone's acceptance criterion) — CTest runs on one machine per invocation. There is no meaningful automated pass/fail CTest could assert *before* the empirical capture data exists to pick a quantization precision (see Build Order below); forcing this into CTest's single-run-per-machine model would either be a no-op (capture-only, nothing to assert) or would need artificial two-machine CI orchestration this milestone doesn't call for.
+
+**Why still register a thin smoke test:** following the exact convention already established by `test/capability/CMakeLists.txt` (GTest executable + `add_test`) and Phase 09's hardware-tier conformance suites, add `test/capture/capture_smoke_test.cpp` that runs `capture_harness` once (or calls its internals directly) on the current CI machine and asserts only: the process exits 0, the output file is non-empty, and `DeserializeArtifact`/`DeserializeManifest` can round-trip it. This catches "the harness doesn't build" or "the harness crashes on this GPU" regressions in ordinary CI, without pretending to validate cross-machine hash equality.
 
 ## Data Flow
 
-### Render Pass Execution Flow
+### Augmented Hashing + Capture Flow (this milestone's additions marked ★)
 
 ```
-SubTask.json_data() (contains RENDER pass reference)
-    ↓
-ProcessingCoreImpl::ProcessSubTask (processing_core_impl.cpp:55-140, UNCHANGED)
-    ↓
-ProcessingManager::Process(ioc, chunkhashes, model, output_locations)
-    ↓
-index = GetInputIndex(...)  →  pass = get_passes()[index]  →  pass.get_type() == RENDER
-    ↓
-GetCidForProc — NEW branch: fetch shader source bytes + vertex/index buffer bytes
-  via FileManager::LoadASync (cpp:885-913, reused verbatim)
-    ↓
-SetProcessorByPassType(RENDER) → m_processor = RenderProcessor
-    ↓
-RenderProcessor::StartProcessing(chunkhashes, proc, vertexIndexBytes, shaderBytes, parameters)
-    ├─ compile GLSL → SPIR-V (shaderc/glslang, runtime)
-    ├─ build pipeline from schema render_target/framebuffer config
-    ├─ record + submit command buffer (own VkDevice, own queue)
-    ├─ vkQueueWaitIdle / fence wait
-    └─ copy color attachment → host-visible staging buffer → ProcessingResult.output_buffers
-    ↓
-Process() output-save path (cpp:696-817, UNCHANGED) — FileManager::SaveASync,
-  IPFS dual-save, output_locations populated exactly as MNN passes already do
+MNN_Float::StartProcessing() / RenderProcessor::StartProcessing()
+    │
+    ├─ (MNN, per patch in loop) data = procresults->host<float>()   [_float.cpp:272]
+    │      ★ NEW: localCopy = copy(data); QuantizeFloatBuffer(localCopy, count)
+    │      ★ NEW: if (execCtx.rawOutputCapture) capture(quantized=localCopy, raw=data)
+    │      chunkhashes.push_back( sha256(localCopy, ...) )     [was: sha256(data,...), _float.cpp:307]
+    │
+    ├─ (MNN, stitched family only) stitchedOutput built via weighted average [_float.cpp:280-326]
+    │      ★ NEW: QuantizeFloatBuffer(stitchedOutput.data(), stitchedOutput.size())
+    │      ★ NEW: if (execCtx.rawOutputCapture) capture(...)
+    │      subTaskResultHash = sha256(stitchedOutput bytes)     [was unquantized, _float.cpp:330]
+    │      output_buffers built FROM stitchedOutput (now quantized, no extra work) [_float.cpp:353-362]
+    │
+    ├─ (Render) readbackBytes = Readback(...)                  [render.cpp:2126-2131]
+    │      ★ NEW: QuantizeByteBuffer(readbackBytes.data(), readbackBytes.size())
+    │      ★ NEW: if (execCtx.rawOutputCapture) capture(...)
+    │      result.hash = sha256(readbackBytes)                  [was unquantized, render.cpp:2156]
+    │      output_buffers built FROM readbackBytes (now quantized) [render.cpp:2157-2160]
+    │
+    ▼
+ProcessingManager.cpp — ProcessOutput builder [cpp:1360-1511]
+    │  ComputeArtifactIdentity(bufferData) — hashes already-quantized bytes, UNCHANGED code
+    │  AddChunkHash(chunkhashes) — copies already-quantized Layer-A hashes, UNCHANGED code
+    ▼
+returns ProcessOutput { artifacts, manifest, combinedHash }
+    │
+    ├─────────────────────────────────────────────┐
+    ▼                                              ▼
+FileManager::SaveASync(...) — UNCHANGED    ★ NEW: capture_harness (tools/capture/)
+(IPFS/file persistence, production path)      calls Process(ioc, chunkhashes, model,
+                                               output_locations, externalExecCtx)
+                                               with its own ExecutionContext whose
+                                               rawOutputCapture is set; serializes
+                                               ProcessOutput via existing
+                                               SerializeArtifact/SerializeManifest +
+                                               appends the captured raw/quantized bytes
+                                               → writes ONE capture file
+                                                    │
+                                          (run again on a 2nd/3rd machine)
+                                                    │
+                                                    ▼
+                                          ★ NEW: capture_diff (tools/capture/)
+                                          reads 2 capture files, reports per-artifact
+                                          max delta / mantissa-bit diff / hash match
 ```
 
 ### Key Data Flows
 
-1. **Schema → pipeline config:** the extended `shader_config`/new render fields drive Vulkan `VkGraphicsPipelineCreateInfo` construction directly inside `RenderProcessor` — no intermediate abstraction layer, since this milestone explicitly prohibits a new rendering engine.
-2. **Output → existing save infra:** render output rides the exact same `ProcessingResult::output_buffers` → `FileManager::SaveASync` → IPFS/file path that MNN inference output already uses. This is the "bridge into `pass_io_binding`" the question asks about — it does not require new plumbing in `Process()`'s output section at all, only in how `RenderProcessor` populates the `output_buffers` pair.
-
-## Scaling Considerations
-
-Not meaningfully applicable in the traditional "N users" sense — this is a single-process compute-node executing one pass per `Process()` call, synchronously, per subtask. The relevant "scale" axis is **passes-per-job and concurrent-subtasks-per-node**, addressed under Coexistence Risk below rather than a user-scale table.
-
-## Integration Points — Coexistence Risk Verdict
-
-**Question:** does genuinely independent `VkInstance`/`VkDevice` ownership (RenderProcessor's own vs. MNN's fully-internal one) require any explicit synchronization/locking?
-
-**Verdict: NO. No explicit synchronization or locking mechanism is required.** This is evidence-based, not a cautious guess:
-
-1. **Vulkan has no instance-spanning global state by design.** Per-application state lives entirely inside a `VkInstance`; objects allocated from a `VkDevice` are private to that device and must not be used on any other device ([Vulkan Documentation Project — Fundamentals](https://docs.vulkan.org/spec/latest/chapters/fundamentals.html)). Two independent `VkInstance`/`VkDevice` pairs in one process do not share any handle, memory allocation, or dispatch state by construction — there is nothing to race over unless the application itself hands the same handle to two threads, which does not happen here (MNN never exposes its instance/device; `RenderProcessor` owns and never shares its own).
-2. **Confirmed no exposure path exists today.** `MNN::VulkanInstance` (`thirdparty/MNN/source/backend/vulkan/component/VulkanInstance.hpp:17-37`) is a private implementation type inside MNN's internal `backend/vulkan/` tree — not included by, or reachable from, any public MNN header SGProcessingManager consumes (`MNN::MNN` target only). There is no code path today, and none planned, by which `RenderProcessor` and MNN could accidentally end up sharing a `VkInstance`/`VkDevice`/`VkQueue` handle.
-3. **The Vulkan Loader's own global bookkeeping (ICD discovery/enumeration, per-instance dispatch table construction) is documented as internally thread-safe.** The loader "uses multiple mutexes to ensure thread-safe access to global instance and device state" ([KhronosGroup/Vulkan-Loader — LoaderInterfaceArchitecture.md](https://github.com/KhronosGroup/Vulkan-Loader/blob/main/docs/LoaderInterfaceArchitecture.md)). This is the exact loader vendored at `thirdparty/Vulkan-Loader` and already linked as `Vulkan::Vulkan`. Even if MNN's lazy Vulkan-backend init and `RenderProcessor`'s init were ever called concurrently from separate threads (they are not, today — see point 4), the loader itself already serializes the shared bookkeeping (ICD enumeration cache, layer chain construction) internally; the application does not need to add its own lock around `vkCreateInstance`/`vkCreateDevice`.
-4. **No concurrency exists today that would even exercise this.** `ProcessingManager::Process()` is called synchronously, once per subtask, from `ProcessingCoreImpl::ProcessSubTask` (`processing_core_impl.cpp:55-140`); the only asynchronous work in the current pipeline is network/file IO via `boost::asio::io_context::run()` (`cpp:805-806`, `855-856`), not the Vulkan-touching compute/render call itself. There is no code path in the current architecture where MNN's Vulkan init and a render pass's Vulkan init race on separate threads.
-
-**Real coexistence considerations — operational, not correctness/synchronization:**
-
-| Concern | Nature | Mitigation |
-|---------|--------|------------|
-| GPU scheduling contention | Two independent `VkDevice`s on the same physical GPU compete for compute units/VRAM bandwidth at the driver level if ever run concurrently — same as any two independent Vulkan applications sharing a GPU today | Document as expected; not a correctness bug. No code-level fix needed at v1 scope (today's pipeline doesn't run MNN inference and a render pass concurrently anyway) |
-| Physical device selection consistency | If the host has multiple GPUs, MNN's backend and `RenderProcessor`'s own `vkEnumeratePhysicalDevices` selection logic could independently pick *different* physical devices | Policy/config decision (e.g., prefer device index 0, or make it explicitly configurable), not a threading bug — flag for RenderProcessor's headless-init design, not for this dispatch-plumbing work |
-| Teardown ordering | Each owns full RAII lifecycle (`vkDestroyDevice`→`vkDestroyInstance`) independently; Vulkan has no process-wide instance-teardown handshake requirement | None needed — standard RAII destructor ordering suffices |
-| Validation layers (if `VK_INSTANCE_LAYERS` env var set) | Loader inserts requested layers into **each** instance's own dispatch chain independently | Non-issue — per-instance, not shared |
-
-**One nuance surfaced by direct source read (not disqualifying the verdict):** `MNN::VulkanInstance` has an `explicit VulkanInstance(VkInstance instance)` constructor (`VulkanInstance.hpp:20`), meaning MNN's *internal* implementation is technically capable of accepting an externally-supplied instance — but this constructor is not reachable through any public MNN API/header, and this milestone explicitly does not intend to patch MNN itself. Mentioned only to close the loop on "is MNN's Vulkan use *truly* unreachable" — yes, in practice, via the public surface this project links against.
+1. **Quantization flows automatically into all 3 hash layers from a single insertion point per array** (Pattern 2) — this is the load-bearing design decision. No separate "quantize for artifacts" step is ever needed.
+2. **Raw bytes reach the capture harness via a new opt-in `ExecutionContext` callback, not via a new return-value field** (Pattern 4) — keeps `ProcessOutput`'s ARTF-05 deterministic-serialization contract untouched, and keeps zero cost for production callers who never set the callback.
+3. **The capture file's metadata/hash section is not a new format** — it's the existing `SerializeArtifact`/`SerializeManifest` binary layout, with one new appended raw-bytes section per artifact.
 
 ## Anti-Patterns
 
-### Anti-Pattern 1: Keying the new render dispatch on the same `int`-cast `m_processorFactories` map
+### Anti-Pattern 1: Dispatching quantization strategy from `Artifact.dataType`/`format` strings in `ProcessingManager.cpp`
 
-**What people would do:** add `RegisterProcessorFactory(static_cast<int>(PassType::RENDER), ...)` because it looks like the path of least resistance (one map, one registration call style already established).
-**Why it's wrong:** confirmed collision — `static_cast<int>(PassType::RENDER) == 3 == static_cast<int>(DataType::INT)` (see Pattern 1 above). This would silently misroute.
-**Do this instead:** a separate `m_passFactories` map keyed on `PassType` directly (or an explicit `SetProcessorByPassType`/`RegisterPassProcessorFactory` pair mirroring the existing method names but operating on the new map).
+**What people would do:** since `artifact_types.hpp` already carries `dataType`/`format` char arrays, and the milestone question explicitly asks "should quantization be dtype-dispatched using the existing artifact-metadata type info" — it's tempting to add a `switch(artifact.dataType)` in `ProcessingManager.cpp`'s artifact-building loop (`cpp:1370-1440`) that calls a quantization function before `ComputeArtifactIdentity()`.
+**Why it's wrong:** that metadata is populated *after* `StartProcessing()` already returned and already computed `chunkhashes` (Layer A) and `processResult.hash` (Layer B) — the two hashes that actually matter for cross-node comparison and for the milestone's own acceptance criterion ("same job run on ≥3 different machines... produces matching post-quantization hashes"). Quantizing only at this layer would leave the actually-compared hashes unquantized.
+**Do this instead:** quantize inside each processor at its existing hash call sites (Pattern 2); metadata-string dispatch is unnecessary because the type is already known unambiguously by which of the 14 processor files is executing (Pattern 1).
 
-### Anti-Pattern 2: Trying to fix `ParseBlockSize()` and add render-pass block-size computation as a single change
+### Anti-Pattern 2: Mutating the MNN tensor's `host<float>()` buffer in place
 
-**What people would do:** while fixing the `pass.get_model().value()` crash (`cpp:649`), also try to make `ParseBlockSize()` return a meaningful value for render passes' vertex/index buffer sizes in the same patch.
-**Why it's wrong:** the crash fix (guard against model-less passes) is a pure bug fix, independent of whatever the "block size" concept should mean for a render pass (likely vertex/index buffer byte length, not input-tensor block length) — conflating them risks under-scoping the crash fix or over-scoping a schema decision that hasn't been made yet.
-**Do this instead:** fix the crash first (treat model-less passes as contributing 0 to `block_total_len`, or `continue`), land it independently, then decide render block-size semantics once the schema extension (render_target/buffer bindings) is finalized.
+**What people would do:** call `QuantizeFloatBuffer(const_cast<float*>(data), count)` directly on the pointer returned by `procresults->host<float>()`, to avoid an extra copy.
+**Why it's wrong:** that memory is owned by MNN's `Tensor`/session internals, not the calling processor code — mutating it in place risks corrupting values MNN itself may still read (e.g., during teardown, or if the same tensor backing store is reused across patches in the per-chunk loop), and violates the `const float*` contract the MNN API itself declares.
+**Do this instead:** copy into a locally-owned `std::vector<float>`, quantize the copy, hash the copy. This is a small, bounded-size copy (one chunk's worth of floats) already happening implicitly at several of these call sites in spirit (e.g. `_float.cpp`'s `patch` vector), so the pattern is already idiomatic here.
 
-### Anti-Pattern 3: Reaching for `VK_EXT_headless_surface` or any WSI extension
+### Anti-Pattern 3: Treating all 13 MNN types as needing 2 quantization insertion points each
 
-**What people would do (carried over from bgfx-era thinking):** request `VK_KHR_surface`/`VK_KHR_win32_surface`/`VK_EXT_headless_surface` to "do headless properly," by analogy with how OpenGL/EGL needs a headless context extension.
-**Why it's wrong:** `VK_EXT_headless_surface` exists only for tools that still want to exercise the `VkSurfaceKHR`/swapchain code path without a real window (e.g., CI systems testing swapchain logic). Since this milestone creates **no swapchain and no `VkSurfaceKHR` at all** — the render target is a plain `VkImage` with `VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT`, read back via a host-visible staging buffer — no WSI extension of any kind is needed on any platform.
-**Do this instead:** request zero WSI/surface extensions; instance/device creation only needs core Vulkan (+ whatever debug/validation extensions are desired).
+**What people would do:** assume uniform structure across all 13 processor types and add "quantize before per-chunk hash" + "quantize before combined hash" everywhere, 26 insertion points.
+**Why it's wrong:** 7 of the 13 types (the "chained" family, Pattern 1b) compute their combined hash as `sha256(previousHash + currentChunkHashHex)` — a hash-of-hashes with no independent float buffer to re-quantize. Adding a second quantization call there would be dead code (there's no second float array to quantize) or, worse, someone might mistakenly try to quantize the *hash bytes themselves*, which is meaningless.
+**Do this instead:** quantize only where an actual float buffer exists before a hash call — 13 chunk-level insertions + 6 stitched-combined-level insertions (not 7) = 19 MNN insertions + 1 render insertion = 20 total (Pattern 1b).
 
-## Integration Points — Platform Scope
+### Anti-Pattern 4: Making the capture harness / diff tool GTest CTest assertions that gate CI
 
-**Confirmed: genuinely headless/offscreen Vulkan (no `VkSurfaceKHR`, no swapchain, ever) is platform-agnostic in the way that matters here, and the prior bgfx research's WGL/EGL/GLX concerns do not carry over.**
+**What people would do:** wrap `capture_harness` in a GTest `TEST()` that asserts specific hash values, or wrap `capture_diff` in a test that fails CI if two captures from the *same* CI machine don't match.
+**Why it's wrong:** same-machine determinism is already covered by the existing `DETV-01`/`DETV-02` requirements and their v1.0 tests (10/10 repeat-run bit-exact hash matching, per PROJECT.md's Phase 3 history) — that's a different, already-solved problem. This milestone's actual question (cross-*hardware* tolerance) cannot be validated by a single CI runner at all; asserting anything cross-machine-shaped from a single-machine CTest run would be a false signal.
+**Do this instead:** the thin smoke test (Pattern 5) only asserts the harness runs and produces a well-formed file — the real validation is the manual multi-machine workflow the milestone describes, run by the user across their Mac + PC + a third machine.
 
-- WGL (Windows), GLX/EGL (Linux), and NSOpenGL/EAGL context creation are OpenGL-specific windowing-system integration concerns — they exist because OpenGL contexts are inherently tied to a native window/pixel-format handle even for "hidden window" offscreen tricks. Vulkan's WSI layer (`VK_KHR_surface` + platform surface extensions) is **additive and optional** — a `VkInstance`/`VkDevice` created without requesting any `VK_KHR_*_surface` extension never touches platform windowing APIs at all.
-- The prior bgfx-based research's platform considerations applied specifically to bgfx's **three-tier fallback** design, where the OpenGL tier needed a real (even if hidden/dummy) native window/context per platform. That entire class of concern is inapplicable here: this milestone has no OpenGL tier and no swapchain.
-- **macOS/MoltenVK:** already vendored at `thirdparty/MoltenVK`. MoltenVK acts as a Vulkan ICD (translating Vulkan calls to Metal) and supports headless rendering to a plain `VkImage`-backed render target without requiring a `CAMetalLayer`/`NSView` — a Metal-backed surface is only needed if the caller explicitly creates a `VK_EXT_metal_surface`/`VK_MVK_macos_surface`, which this design does not do. So MoltenVK's presence in `thirdparty/` is sufficient; no additional macOS-specific windowing shim is required beyond what's already vendored.
-- **Windows/Linux:** the vendored `Vulkan-Loader` (`thirdparty/Vulkan-Loader`, wired via `find_package(Vulkan)` → `Vulkan::Vulkan`, already linked at `SGProcessingManager/src/processors/CMakeLists.txt:58`) discovers whatever ICD driver is present on the host (NVIDIA/AMD/Intel/Mesa) exactly the same way regardless of windowing — again, no surface extension requested, no platform branch needed in `RenderProcessor` itself.
-- **Net effect:** `RenderProcessor`'s Vulkan init code can be written once, with zero `#ifdef _WIN32`/`#ifdef __APPLE__` branches for windowing purposes. Any platform `#ifdef`s that do end up needed (if any) would be incidental build/link concerns already handled by the existing `SGProcessors` CMakeLists.txt's `if(APPLE)` framework-linking block (`CMakeLists.txt:63-84`), not new Vulkan-surface-related branching.
+### Anti-Pattern 5: Choosing a quantization precision before running the capture harness on real hardware
+
+**What people would do:** pick a rounding precision (e.g. "round every float to 4 decimal places" or "mask the low 2 bits of every RGBA8 channel") upfront, based on intuition about typical float/GPU rounding error, then build the capture harness afterward just to confirm it worked.
+**Why it's wrong:** the milestone explicitly defers "schema-configurable quantization precision" and wants a *fixed* precision chosen for real — but the actual cross-hardware divergence magnitude (mantissa bits differing between the user's Mac's Metal/MoltenVK backend and a PC's native Vulkan ICD, or between two different MNN CPU/Vulkan backend float rounding modes) is an empirical fact this codebase cannot predict from source alone. Guessing a precision risks either (a) too coarse — destroying legitimate output fidelity for no reason, or (b) too fine — not actually absorbing the real divergence, silently failing the milestone's own acceptance criterion.
+**Do this instead:** ship the capture harness with quantization as a currently-identity/no-op-precision hook first (Build Order below), gather real Mac-vs-PC-vs-third-machine capture files, run `capture_diff` to see the actual observed max-delta/mantissa-bit-difference distribution, **then** pick the fixed precision from that data.
+
+## Integration Points (file:line specificity)
+
+| Integration point | File:line | New vs. Modified |
+|---|---|---|
+| Quantization library | `include/util/quantization.hpp`, `src/util/quantization.cpp` | **NEW** |
+| Quantization library CMake target | `src/util/CMakeLists.txt` (append after line 26, mirror lines 14-26) | **MODIFIED** |
+| Link quantization lib into processors | `src/processors/CMakeLists.txt:76` (alongside existing `sgprocmanagersha`) | **MODIFIED** |
+| MNN per-chunk quantize+capture hook, 13 files | e.g. `processing_processor_mnn_float.cpp:306-307` (immediately before the existing chunk `sha256` call); same pattern at `_int.cpp:~272`, `_bool.cpp:~334`, `_buffer.cpp:~265`, `_image.cpp:104-105`, `_string.cpp:~142`, `_texture1d.cpp:~406`, `_tensor.cpp:~357`, `_texturecube.cpp:~475,~509`, `_volume.cpp:~516`, `_mat2.cpp:~334`, `_mat3.cpp:~334`, `_mat4.cpp:~334` | **MODIFIED** (13 files) |
+| MNN stitched-combined quantize+capture hook, 6 files | `processing_processor_mnn_float.cpp:327-330` (immediately before `stitchedStr`/combined `sha256`); same pattern at `_int.cpp:~295`, `_mat2.cpp:~357`, `_mat3.cpp:~357`, `_mat4.cpp:~357`, `_tensor.cpp:~380` | **MODIFIED** (6 files) |
+| Render quantize+capture hook | `processing_processor_render.cpp:2126-2156` (quantize `readbackBytes` right after `Readback()` returns, before line 2156's `sha256`) | **MODIFIED** |
+| `ExecutionContext` new capture-callback field | `include/execution/execution_context.hpp:122-146` (add field alongside `progressCallback`) | **MODIFIED** |
+| Capture harness entry point | `tools/capture/capture_harness.cpp` — calls `ProcessingManager::Process(ioc, chunkhashes, model, output_locations, externalExecCtx)` per `include/processingbase/ProcessingManager.hpp:105-109` | **NEW** |
+| Diff tool entry point | `tools/capture/capture_diff.cpp` — uses `DeserializeArtifact`/`DeserializeManifest` per `include/artifacts/artifact_serializer.hpp:41-55` | **NEW** |
+| Capture file format helper | `tools/capture/capture_file_format.hpp` — wraps `SerializeArtifact`/`SerializeManifest` (`artifact_serializer.hpp:39,45`) plus a new raw-bytes section | **NEW** |
+| CTest smoke test | `test/capture/CMakeLists.txt`, `test/capture/capture_smoke_test.cpp` (mirrors `test/capability/CMakeLists.txt` convention) | **NEW** |
+| Root test registration | `test/CMakeLists.txt:1-4` — add `add_subdirectory(capture)` | **MODIFIED** |
+| Unaffected (confirm no change needed) | `include/processingbase/ProcessingManager.hpp:46-60` (`ProcessOutput`), `ProcessingManager.cpp:1360-1511` (Artifact/Manifest builder), `include/artifacts/artifact_types.hpp`, `include/artifacts/artifact_serializer.hpp` | **NONE** — confirmed these automatically benefit from quantized bytes with zero code changes (Pattern 2) |
+
+## Build Order (accounts for: empirical data must come before precision is fixed)
+
+1. **Capture harness first, with quantization as an identity/no-op stub.** Add the `ExecutionContext::rawOutputCapture` field and the 20 insertion points (Pattern 1b), but have `QuantizeFloatBuffer`/`QuantizeByteBuffer` do nothing yet (or round to a deliberately-obviously-wrong placeholder like 15 decimal places, effectively a no-op) — this validates all the plumbing (capture callback fires, capture file writes, `capture_diff` parses two files) without yet claiming a real answer.
+2. **Build `capture_diff`** (reads 2 files, reports max delta / mantissa-bit-difference distribution / hash-match boolean) — needed immediately after step 1 to make the captured data legible at all.
+3. **Run the harness on the user's Mac + PC + a third machine** (per the milestone's own acceptance criterion) on a small representative job set (at least one MNN pass, one render pass). Collect 3+ capture files per job.
+4. **Diff pairwise, observe real divergence** — this produces the actual mantissa-bit/byte-delta distribution needed to pick a real, justified fixed precision (e.g., "floats diverge only in the last 2-3 decimal digits → round to 4 decimal places is safely conservative"; "RGBA8 channels diverge by at most ±1 → mask the low bit is sufficient").
+5. **Implement the real quantization logic** in `QuantizeFloatBuffer`/`QuantizeByteBuffer` using the precision chosen from step 4's data.
+6. **Re-run the harness + diff on all 3+ machines** to empirically confirm post-quantization hashes now match — this is the milestone's literal acceptance criterion and should be the last step, not assumed from source-level reasoning alone.
+7. **Land the thin CTest smoke test** (Pattern 5) once the harness's shape is stable, so future refactors don't silently break the harness without at least one machine's CI noticing.
+
+This order deliberately defers "what precision" as long as possible while still landing all the invasive, review-heavy plumbing (14 processor files + `ExecutionContext`) early, once, in a form that doesn't need to be revisited when the precision number changes later — only the two small function bodies in `quantization.cpp` change between step 1 and step 5.
+
+## Scaling Considerations
+
+Not applicable in the traditional sense — this is a per-job, per-process hashing pipeline running once per subtask, not a service under load. The only "scale" concern is: the capture file's raw-bytes section is O(output size) per artifact, uncapped (unlike `Artifact.chunkHashes[1024]`'s fixed cap) — for very large render targets or tensor outputs, the capture harness should stream to disk rather than buffer the full raw-bytes section in memory, but this is an implementation detail of `tools/capture/capture_harness.cpp`, not an architectural concern requiring a scaling table.
 
 ## Sources
 
-- Direct source reads (HIGH confidence, primary source):
-  - `SuperGenius/SGProcessingManager/src/processingbase/ProcessingManager.cpp` (full file)
-  - `SuperGenius/SGProcessingManager/include/processingbase/ProcessingManager.hpp` (full file)
-  - `SuperGenius/SGProcessingManager/include/processors/processing_processor.hpp` (full file)
-  - `SuperGenius/SGProcessingManager/src/processors/CMakeLists.txt` (full file)
-  - `SuperGenius/SGProcessingManager/generated/PassType.hpp`, `DataType.hpp`
-  - `SuperGenius/SGProcessingManager/gnus-processing-schema.json` (full file)
-  - `SuperGenius/src/processing/impl/processing_core_impl.cpp:1-140`
-  - `thirdparty/MNN/source/backend/vulkan/component/VulkanInstance.hpp` (full file)
-  - `thirdparty/build/CommonTargets.cmake:363-391`, `thirdparty/build/cmake/kompute-fix.cmake`
-  - `GeniusWallet/cmake/CommonBuildParameters.cmake:102-104`, `GeniusSDK/cmake/CommonBuildParameters.cmake:24-26`, `SuperGenius/build/CommonBuildParameters.cmake:253-255` (confirming `Vulkan::Vulkan` resolution path)
-  - `thirdparty/` submodule inventory (`git submodule status`) confirming `Vulkan-Headers`, `Vulkan-Loader`, `MoltenVK` present at top level; no standalone `glslang`/`shaderc`/`SPIRV-Tools`
-- External, cross-checked (MEDIUM confidence):
-  - [Vulkan Documentation Project — Fundamentals](https://docs.vulkan.org/spec/latest/chapters/fundamentals.html) — object/device scoping, no cross-device handle sharing
-  - [KhronosGroup/Vulkan-Loader — LoaderInterfaceArchitecture.md](https://github.com/KhronosGroup/Vulkan-Loader/blob/main/docs/LoaderInterfaceArchitecture.md) — loader-internal mutex-guarded global instance/device bookkeeping
-  - [Vulkan Documentation Project — Initialization](https://docs.vulkan.org/spec/latest/chapters/initialization.html) — `vkCreateInstance`/multi-instance behavior
+Direct source reads (HIGH confidence, primary source, all file:line cited inline above):
+- `SGProcessingManager/src/processingbase/ProcessingManager.cpp` (lines 1260-1817, plus `Process()`/`ProcessInternal()` declarations)
+- `SGProcessingManager/include/processingbase/ProcessingManager.hpp` (full file)
+- `SGProcessingManager/include/processors/processing_processor.hpp` (full file)
+- `SGProcessingManager/include/execution/execution_context.hpp` (full file)
+- `SGProcessingManager/include/artifacts/artifact_types.hpp` (full file)
+- `SGProcessingManager/include/artifacts/artifact_serializer.hpp` (full file)
+- `SGProcessingManager/include/util/sha256.hpp`, `src/util/sha256.cpp`, `src/util/CMakeLists.txt` (full files)
+- All 13 `SGProcessingManager/src/processors/processing_processor_mnn_*.cpp` files (grepped for `sha256`/`host<`/`data`/`dataSize` call sites; `_float.cpp` and `_image.cpp` read in full detail as representative of the "stitched" and "chained" sub-families respectively)
+- `SGProcessingManager/src/processors/processing_processor_render.cpp` (lines 350-370, 1040-1310, 2080-2168)
+- `SuperGenius/src/processing/processing_validation_core.cpp` (full file) — confirms `chunkhashes`/`chunk_hashes()` is the actual cross-node-compared field
+- `SGProcessingManager/test/CMakeLists.txt`, `test/capability/CMakeLists.txt`, `SuperGenius/test/src/processing_dispatch/CMakeLists.txt` — existing conformance-suite/CTest conventions
+- `.planning/workstreams/sgproc-render/research/ARCHITECTURE.md` (v1.0 doc, read for established render-pipeline conventions, not re-researched here)
+- `.planning/workstreams/sgproc-render/REQUIREMENTS.md`, `.planning/PROJECT.md` — milestone scope and history
 
 ---
-*Architecture research for: sgproc-render workstream (hand-rolled headless Vulkan RenderProcessor)*
-*Researched: 2026-07-29*
+*Architecture research for: sgproc-render workstream v2.1 (Cross-Hardware Hash Tolerance)*
+*Researched: 2026-08-07*
