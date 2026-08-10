@@ -57,7 +57,14 @@ Full detail archived at `.planning/milestones/sgproc-render-v2.0-ROADMAP.md`.
   3. Running `capture_harness` twice in a row on the same machine against the same fixture and diffing the two capture files with `capture_diff` reports 0 divergence across every output element, every chunk hash, and the combined hash.
   4. `capture_diff` run on two capture files reports, per output element, absolute delta, relative delta, and ULP distance, plus whole-buffer summary stats (max absolute delta, max relative delta, max ULP distance, and percentage of elements exceeding a threshold).
   5. `capture_diff` explicitly reports, as a separate boolean-style result, whether the combined hash and each chunk hash match or differ across the two compared captures.
-**Plans**: TBD
+**Plans**: 6 plans
+Plans:
+- [ ] 10-01-PLAN.md — sgprocmanagerquant identity-stub library + ExecutionContext::rawOutputCapture field
+- [ ] 10-02-PLAN.md — MNN stitched-family (Float/Int/Mat2/Mat3/Mat4/Tensor) quantize+capture wiring
+- [ ] 10-03-PLAN.md — MNN chained-family (Bool/Buffer/Image/String/Texture1D/TextureCube/Volume) quantize+capture wiring
+- [ ] 10-04-PLAN.md — RenderProcessor quantize+capture wiring + capture file binary format
+- [ ] 10-05-PLAN.md — capture_harness + capture_diff standalone CLI tools
+- [ ] 10-06-PLAN.md — test/capture CTest smoke test + SGProcessingManager/test build wiring fix
 
 ### Phase 11: Empirical Cross-Machine Capture Run
 **Goal**: Real cross-hardware divergence statistics exist across the user's own machines (Mac + PC + a third), gathered using Phase 10's tooling with quantization still a no-op — this is a hands-on data-gathering step the whole milestone's precision decision depends on, not a coding or research activity, and it is deliberately kept as its own phase rather than folded into Phase 10 or Phase 12 per the milestone's confirmed hard dependency order.
@@ -107,7 +114,7 @@ Full detail archived at `.planning/milestones/sgproc-render-v2.0-ROADMAP.md`.
 | 07. Cancellable Execution Context | v2.0 | 5/5 | Complete (override, HW verification pending) | 2026-08-05 |
 | 08. Structured Artifacts & Manifests | v2.0 | 3/3 | Complete (override) | 2026-08-05 |
 | 09. Processor & Pass-Graph Conformance Suites | v2.0 | 15/15 | Complete, verified | 2026-08-07 |
-| 10. Capture Harness & Diff Tool (Quantization Stub) | v2.1 | 0/TBD | Not started | - |
+| 10. Capture Harness & Diff Tool (Quantization Stub) | v2.1 | 0/6 | Planned | - |
 | 11. Empirical Cross-Machine Capture Run | v2.1 | 0/TBD | Not started | - |
 | 12. Quantization / Normalization Implementation | v2.1 | 0/TBD | Not started | - |
 | 13. Re-Validation & Scope Boundary Documentation | v2.1 | 0/TBD | Not started | - |
