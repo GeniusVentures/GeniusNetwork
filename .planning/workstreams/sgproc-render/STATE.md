@@ -5,15 +5,15 @@ milestone_name: Cross-Hardware Hash Tolerance
 current_phase: 10
 current_phase_name: capture-harness-diff-tool-quantization-stub
 status: executing
-stopped_at: Completed 10-03-PLAN.md
-last_updated: "2026-08-10T19:27:48.778Z"
+stopped_at: Completed 10-04-PLAN.md
+last_updated: "2026-08-10T19:39:19.913Z"
 last_activity: 2026-08-10
 last_activity_desc: Phase 10 execution started
 progress:
   total_phases: 4
   completed_phases: 0
   total_plans: 6
-  completed_plans: 3
+  completed_plans: 4
   percent: 0
 ---
 
@@ -29,7 +29,7 @@ See: .planning/PROJECT.md (updated 2026-08-03), workstream section "Workstream: 
 ## Current Position
 
 Phase: 10 (capture-harness-diff-tool-quantization-stub) — EXECUTING
-Plan: 4 of 6
+Plan: 5 of 6
 Status: Ready to execute
 Last activity: 2026-08-10 — Phase 10 execution started
 
@@ -65,6 +65,7 @@ Last activity: 2026-08-10 — Phase 10 execution started
 | Phase 10 P01 | 3min | 2 tasks | 5 files |
 | Phase 10 P02 | 12min | 2 tasks | 6 files |
 | Phase 10 P03 | 10min | 3 tasks | 7 files |
+| Phase 10 P04 | 20min | 2 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -123,8 +124,8 @@ Items acknowledged and deferred at milestone v2.0 close on 2026-08-07:
 
 ## Session Continuity
 
-Last session: 2026-08-10T19:27:48.772Z
-Stopped at: Completed 10-03-PLAN.md
+Last session: 2026-08-10T19:39:19.908Z
+Stopped at: Completed 10-04-PLAN.md
 Resume file: 
 
 None
@@ -151,3 +152,5 @@ None
 ## Decisions
 
 - [Phase ?]: Used unqualified sgprocmanagerquant::QuantizeFloatBuffer (not sgns::sgprocmanagerquant::...) in the 7 chained-family MNN processors, matching Plan 10-02's precedent and each file's existing unqualified sgprocmanagersha::sha256 call convention
+- [Phase 10-04]: combinedHash uses a 4-byte length prefix while per-record preQuantizeBytes/quantizedBytes use 8-byte length prefixes, matching the plan's exact wire-format spec — combinedHash is always exactly 32 bytes; capture records can plausibly hold megapixel-scale raw output
+- [Phase 10-04]: Verified round-trip/truncation/oversized-length acceptance criteria via a standalone scratch CMake build rather than a permanent CTest target — this plan's files_modified scope is the .hpp/.cpp pair only; a permanent test/capture/ CMakeLists.txt + smoke test is assigned to a later wave per 10-PATTERNS.md
