@@ -101,6 +101,7 @@ None — Phase 10 planned (6 plans, 4 waves). Next: `/gsd-execute-phase 10`.
 - Phase 11 requires physical access to ≥3 distinct machines (user's Mac + PC + a third) — this is a real-world logistical dependency, not a code blocker, but it gates Phase 12/13 from starting.
 - Build verification pending on prior phases — C++ compilation not retested in this session
 - Validation layers: system-level layer availability varies by platform (Vulkan SDK, NDK, MoltenVK)
+- **Pre-existing bug found during Phase 10's regression gate (not caused by Phase 10 — confirmed via diff, none of the implicated files were touched by any of Phase 10's 6 plans):** `ProcessingDatatypesTest`/`ProcessingDispatchTest`/`vulkan_init_concurrency_test` all deadlock/crash in `ProcessingManager::Create()`'s Vulkan capability-probe path (`VulkanInitMutex()` re-entered on the same thread) whenever a real Vulkan device is present. Tracked at `.planning/todos/pending/2026-08-10-fix-vulkan-capability-probe-deadlock-in-processingmanager-cr.md`. Does not block Phase 10 — `processing_conformance_hashing_test` (the most directly relevant regression check for Phase 10's changes) and `CaptureSmokeTest` both pass.
 
 ## Deferred Items
 
