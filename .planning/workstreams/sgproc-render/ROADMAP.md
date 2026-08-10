@@ -60,11 +60,11 @@ Full detail archived at `.planning/milestones/sgproc-render-v2.0-ROADMAP.md`.
   4. `capture_diff` run on two capture files reports, per output element, absolute delta, relative delta, and ULP distance, plus whole-buffer summary stats (max absolute delta, max relative delta, max ULP distance, and percentage of elements exceeding a threshold).
   5. `capture_diff` explicitly reports, as a separate boolean-style result, whether the combined hash and each chunk hash match or differ across the two compared captures.
 
-**Plans**: 6 plans
+**Plans**: 1/6 plans executed
 Plans:
 **Wave 1**
 
-- [ ] 10-01-PLAN.md — sgprocmanagerquant identity-stub library + ExecutionContext::rawOutputCapture field
+- [x] 10-01-PLAN.md — sgprocmanagerquant identity-stub library + ExecutionContext::rawOutputCapture field
 
 **Wave 2** *(blocked on Wave 1 completion)*
 
@@ -137,7 +137,7 @@ Plans:
 | 07. Cancellable Execution Context | v2.0 | 5/5 | Complete (override, HW verification pending) | 2026-08-05 |
 | 08. Structured Artifacts & Manifests | v2.0 | 3/3 | Complete (override) | 2026-08-05 |
 | 09. Processor & Pass-Graph Conformance Suites | v2.0 | 15/15 | Complete, verified | 2026-08-07 |
-| 10. Capture Harness & Diff Tool (Quantization Stub) | v2.1 | 0/6 | Planned | - |
+| 10. Capture Harness & Diff Tool (Quantization Stub) | v2.1 | 1/6 | In Progress|  |
 | 11. Empirical Cross-Machine Capture Run | v2.1 | 0/TBD | Not started | - |
 | 12. Quantization / Normalization Implementation | v2.1 | 0/TBD | Not started | - |
 | 13. Re-Validation & Scope Boundary Documentation | v2.1 | 0/TBD | Not started | - |

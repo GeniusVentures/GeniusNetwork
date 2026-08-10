@@ -3,17 +3,17 @@ gsd_state_version: 1.0
 milestone: v2.1
 milestone_name: Cross-Hardware Hash Tolerance
 current_phase: 10
-current_phase_name: Quantization Stub
-status: Phase 10 planned — ready to execute
-stopped_at: Phase 10 planned (6 plans, 4 waves)
-last_updated: "2026-08-10T00:00:00.000Z"
+current_phase_name: capture-harness-diff-tool-quantization-stub
+status: executing
+stopped_at: Completed 10-01-PLAN.md
+last_updated: "2026-08-10T19:08:08.745Z"
 last_activity: 2026-08-10
-last_activity_desc: Phase 10 planned — 6 plans across 4 waves; CAPT-01/02/03 + DIFF-01/02/03 (6/6) and all 7 CONTEXT.md decisions covered; plan-checker verification passed
+last_activity_desc: Phase 10 execution started
 progress:
   total_phases: 4
   completed_phases: 0
-  total_plans: 0
-  completed_plans: 0
+  total_plans: 6
+  completed_plans: 1
   percent: 0
 ---
 
@@ -24,14 +24,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-08-03), workstream section "Workstream: sgproc-render"
 
 **Core value:** Elevate SGProcessingManager from a "parse-and-hope" pipeline to a contract-driven execution engine — jobs are validated before work starts, execution is cancellable and budget-aware, results are typed artifacts with provenance, and every processor is covered by a common test suite.
-**Current focus:** v2.1 — Cross-Hardware Hash Tolerance
+**Current focus:** Phase 10 — capture-harness-diff-tool-quantization-stub
 
 ## Current Position
 
-Phase: 10 — Capture Harness & Diff Tool (Quantization Stub) — planned, ready to execute
-Plan: 6 plans across 4 waves (10-01 through 10-06)
-Status: Phase 10 planned (6 plans, 4 waves) — ready for `/gsd-execute-phase 10`
-Last activity: 2026-08-10 — Phase 10 planned: 6 plans, all 6 REQ-IDs + 7 CONTEXT.md decisions covered, verification passed
+Phase: 10 (capture-harness-diff-tool-quantization-stub) — EXECUTING
+Plan: 2 of 6
+Status: Ready to execute
+Last activity: 2026-08-10 — Phase 10 execution started
 
 ## Performance Metrics
 
@@ -62,6 +62,7 @@ Last activity: 2026-08-10 — Phase 10 planned: 6 plans, all 6 REQ-IDs + 7 CONTE
 | Phase 09 P13 | 25min | 2 tasks | 1 files |
 | Phase 09 P14 | 20min | 2 tasks | 2 files |
 | Phase 09 P15 | 40min | 3 tasks | 3 files |
+| Phase 10 P01 | 3min | 2 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -120,9 +121,9 @@ Items acknowledged and deferred at milestone v2.0 close on 2026-08-07:
 
 ## Session Continuity
 
-Last session: 2026-08-10T00:00:00.000Z
-Stopped at: Phase 10 planned (6 plans, 4 waves) — ready to execute
-Resume file: .planning/workstreams/sgproc-render/phases/10-capture-harness-diff-tool-quantization-stub/10-05-PLAN.md
+Last session: 2026-08-10T19:08:08.739Z
+Stopped at: Completed 10-01-PLAN.md
+Resume file: 
 
 ## Decisions
 
@@ -138,6 +139,7 @@ Resume file: .planning/workstreams/sgproc-render/phases/10-capture-harness-diff-
 - [Phase 09]: [Phase 09 P15]: Gave render-pass-happy-path-definition.json a real outputs[0] entry mirroring regression-b-parseblocksize-model-only.json's already-proven pattern, rather than modifying ProcessingManager.cpp's already-correct !outputs.empty() gate
 - [Phase 09]: [Phase 09 P15]: RenderPassSameNodeRepeatedExecutionProducesBitExactHash now asserts each iteration's combinedHash.size()==32 via a named iterHash local before pushing it, closing the vacuous-pass-on-empty-hashes gap
 - [v2.1 Roadmap]: Phase structure (10-13) mirrors research/SUMMARY.md's "Implications for Roadmap" section verbatim in dependency order — capture+diff tooling, then empirical multi-machine run, then real quantization+security counter-test, then re-validation+scope documentation. No requirements were reassigned or reordered from the research's suggested sequence.
+- [Phase 10-01]: rawOutputCapture deliberately excluded from ExecutionContext::NoOp()'s assignments, unlike progressCallback, with an inline comment warning future readers not to fix this to match progressCallback's pattern
 
 ## Operator Next Steps
 

@@ -10,7 +10,7 @@ Requirements for milestone v2.1. Each maps to roadmap phases.
 ### Capture Harness
 
 - [ ] **CAPT-01**: Capture harness runs Phase 09's existing render + MNN fixtures and records, per run: raw per-element output values, per-chunk hashes, and the combined hash, tagged with the executing machine's identity
-- [ ] **CAPT-02**: Capture harness reads the literal bytes passed into each existing hash call site (not a downstream copy), so captured data provably matches what production hashing actually saw
+- [x] **CAPT-02**: Capture harness reads the literal bytes passed into each existing hash call site (not a downstream copy), so captured data provably matches what production hashing actually saw
 - [ ] **CAPT-03**: Capture harness confirms same-node hash stability (N≥2 repeat runs) on each machine before that machine's capture is used for cross-machine comparison
 
 ### Diff Tool
@@ -63,7 +63,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | Requirement | Phase | Status |
 |-------------|-------|--------|
 | CAPT-01 | Phase 10 | Pending |
-| CAPT-02 | Phase 10 | Pending |
+| CAPT-02 | Phase 10 | Complete |
 | CAPT-03 | Phase 10 | Pending |
 | DIFF-01 | Phase 10 | Pending |
 | DIFF-02 | Phase 10 | Pending |
@@ -76,6 +76,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | VALD-01 | Phase 13 | Pending |
 
 **Coverage:**
+
 - v2.1 requirements: 12 total
 - Mapped to phases: 12
 - Unmapped: 0 ✓
