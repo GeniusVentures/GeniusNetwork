@@ -5,15 +5,15 @@ milestone_name: Cross-Hardware Hash Tolerance
 current_phase: 10
 current_phase_name: capture-harness-diff-tool-quantization-stub
 status: executing
-stopped_at: Completed 10-04-PLAN.md
-last_updated: "2026-08-10T19:39:19.913Z"
+stopped_at: Completed 10-05-PLAN.md
+last_updated: "2026-08-10T20:02:50.441Z"
 last_activity: 2026-08-10
 last_activity_desc: Phase 10 execution started
 progress:
   total_phases: 4
   completed_phases: 0
   total_plans: 6
-  completed_plans: 4
+  completed_plans: 5
   percent: 0
 ---
 
@@ -29,7 +29,7 @@ See: .planning/PROJECT.md (updated 2026-08-03), workstream section "Workstream: 
 ## Current Position
 
 Phase: 10 (capture-harness-diff-tool-quantization-stub) — EXECUTING
-Plan: 5 of 6
+Plan: 6 of 6
 Status: Ready to execute
 Last activity: 2026-08-10 — Phase 10 execution started
 
@@ -66,6 +66,7 @@ Last activity: 2026-08-10 — Phase 10 execution started
 | Phase 10 P02 | 12min | 2 tasks | 6 files |
 | Phase 10 P03 | 10min | 3 tasks | 7 files |
 | Phase 10 P04 | 20min | 2 tasks | 3 files |
+| Phase 10 P05 | 25min | 2 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -124,11 +125,9 @@ Items acknowledged and deferred at milestone v2.0 close on 2026-08-07:
 
 ## Session Continuity
 
-Last session: 2026-08-10T19:39:19.908Z
-Stopped at: Completed 10-04-PLAN.md
+Last session: 2026-08-10T20:02:50.435Z
+Stopped at: Completed 10-05-PLAN.md
 Resume file: 
-
-None
 
 - [Phase 09 P09]: Model-format rejection split across two layers — unrecognized format strings caught pre-parse in Init() as MODEL_FORMAT_UNSUPPORTED; recognized-but-non-MNN formats (ONNX/PyTorch/TensorFlow) caught post-parse in CheckProcessValidity()'s explicit ModelFormat::MNN check, same error/message
 - [Phase 09 P10]: combinedHash/manifest.manifestHash computed over a timing-zeroed ExecutionManifest copy rather than modifying SerializeManifest()/ComputeManifestHash() themselves — preserves byte-for-byte compatibility with Phase 08's artifact_serializer_test.cpp round-trip tests over real timestamps
@@ -154,3 +153,5 @@ None
 - [Phase ?]: Used unqualified sgprocmanagerquant::QuantizeFloatBuffer (not sgns::sgprocmanagerquant::...) in the 7 chained-family MNN processors, matching Plan 10-02's precedent and each file's existing unqualified sgprocmanagersha::sha256 call convention
 - [Phase 10-04]: combinedHash uses a 4-byte length prefix while per-record preQuantizeBytes/quantizedBytes use 8-byte length prefixes, matching the plan's exact wire-format spec — combinedHash is always exactly 32 bytes; capture records can plausibly hold megapixel-scale raw output
 - [Phase 10-04]: Verified round-trip/truncation/oversized-length acceptance criteria via a standalone scratch CMake build rather than a permanent CTest target — this plan's files_modified scope is the .hpp/.cpp pair only; a permanent test/capture/ CMakeLists.txt + smoke test is assigned to a later wave per 10-PATTERNS.md
+- [Phase ?]: capture_diff hard-exits on chunkHashCount mismatch between compared .cap files (incompatible comparison), but treats a quantizedBytes byte-length mismatch as non-fatal (sizeMismatch flag, skip numeric pass only)
+- [Phase ?]: sgproccapture CMake target needed an added SGProcessingManager-root include dir so capture_file_format.cpp's root-relative include resolves through the real build

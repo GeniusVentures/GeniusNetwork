@@ -9,15 +9,15 @@ Requirements for milestone v2.1. Each maps to roadmap phases.
 
 ### Capture Harness
 
-- [ ] **CAPT-01**: Capture harness runs Phase 09's existing render + MNN fixtures and records, per run: raw per-element output values, per-chunk hashes, and the combined hash, tagged with the executing machine's identity
+- [x] **CAPT-01**: Capture harness runs Phase 09's existing render + MNN fixtures and records, per run: raw per-element output values, per-chunk hashes, and the combined hash, tagged with the executing machine's identity
 - [x] **CAPT-02**: Capture harness reads the literal bytes passed into each existing hash call site (not a downstream copy), so captured data provably matches what production hashing actually saw
-- [ ] **CAPT-03**: Capture harness confirms same-node hash stability (N≥2 repeat runs) on each machine before that machine's capture is used for cross-machine comparison
+- [x] **CAPT-03**: Capture harness confirms same-node hash stability (N≥2 repeat runs) on each machine before that machine's capture is used for cross-machine comparison
 
 ### Diff Tool
 
-- [ ] **DIFF-01**: Diff tool reports, per output element, absolute delta, relative delta, and ULP distance between two or more capture files
-- [ ] **DIFF-02**: Diff tool reports whole-buffer summary stats: max absolute delta, max relative delta, max ULP distance, and percentage of elements exceeding a threshold
-- [ ] **DIFF-03**: Diff tool reports whether the combined hash and each chunk hash match across compared captures
+- [x] **DIFF-01**: Diff tool reports, per output element, absolute delta, relative delta, and ULP distance between two or more capture files
+- [x] **DIFF-02**: Diff tool reports whole-buffer summary stats: max absolute delta, max relative delta, max ULP distance, and percentage of elements exceeding a threshold
+- [x] **DIFF-03**: Diff tool reports whether the combined hash and each chunk hash match across compared captures
 
 ### Quantization / Normalization
 
@@ -62,12 +62,12 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| CAPT-01 | Phase 10 | Pending |
+| CAPT-01 | Phase 10 | Complete |
 | CAPT-02 | Phase 10 | Complete |
-| CAPT-03 | Phase 10 | Pending |
-| DIFF-01 | Phase 10 | Pending |
-| DIFF-02 | Phase 10 | Pending |
-| DIFF-03 | Phase 10 | Pending |
+| CAPT-03 | Phase 10 | Complete |
+| DIFF-01 | Phase 10 | Complete |
+| DIFF-02 | Phase 10 | Complete |
+| DIFF-03 | Phase 10 | Complete |
 | QUANT-01 | Phase 12 | Pending |
 | QUANT-02 | Phase 12 | Pending |
 | QUANT-03 | Phase 12 | Pending |
