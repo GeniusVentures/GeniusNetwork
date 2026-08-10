@@ -40,7 +40,7 @@ Full detail archived at `.planning/milestones/sgproc-render-v2.0-ROADMAP.md`.
 
 **Dependency order note:** These four phases have a hard, research-confirmed dependency chain and must execute in numeric order without flattening or reordering: the quantization precision literally cannot be chosen (Phase 12) before real cross-machine divergence data exists (Phase 11), which in turn needs the capture/diff tooling built first (Phase 10). Phase 13's re-validation is meaningless before Phase 12's real quantization logic lands.
 
-- [ ] **Phase 10: Capture Harness & Diff Tool (Quantization Stub)** - Build and validate the capture harness + diff tool plumbing (14 processor files + `ExecutionContext` capture field) against Phase 09's existing fixtures, with quantization wired in as a no-op/identity stub
+- [x] **Phase 10: Capture Harness & Diff Tool (Quantization Stub)** - Build and validate the capture harness + diff tool plumbing (14 processor files + `ExecutionContext` capture field) against Phase 09's existing fixtures, with quantization wired in as a no-op/identity stub (completed 2026-08-10)
 - [ ] **Phase 11: Empirical Cross-Machine Capture Run** - Hands-on data-gathering checkpoint: run Phase 10's tooling on the user's Mac + PC + a third machine to produce real cross-hardware divergence statistics
 - [ ] **Phase 12: Quantization / Normalization Implementation** - Implement the real normalization logic (technique chosen from Phase 11's data, not fixed in advance) on both render and MNN paths, plus the SECV-01 wrong-result-still-diverges counter-test
 - [ ] **Phase 13: Re-Validation & Scope Boundary Documentation** - Re-run the ≥3-machine capture/diff cycle with real quantization active to confirm VALD-01, re-confirm SECV-01 at the final precision, and document the milestone's scope boundary
@@ -60,7 +60,7 @@ Full detail archived at `.planning/milestones/sgproc-render-v2.0-ROADMAP.md`.
   4. `capture_diff` run on two capture files reports, per output element, absolute delta, relative delta, and ULP distance, plus whole-buffer summary stats (max absolute delta, max relative delta, max ULP distance, and percentage of elements exceeding a threshold).
   5. `capture_diff` explicitly reports, as a separate boolean-style result, whether the combined hash and each chunk hash match or differ across the two compared captures.
 
-**Plans**: 5/6 plans executed
+**Plans**: 6/6 plans complete
 Plans:
 **Wave 1**
 
@@ -78,7 +78,7 @@ Plans:
 
 **Wave 4** *(blocked on Wave 3 completion)*
 
-- [ ] 10-06-PLAN.md — test/capture CTest smoke test + SGProcessingManager/test build wiring fix
+- [x] 10-06-PLAN.md — test/capture CTest smoke test + SGProcessingManager/test build wiring fix
 
 ### Phase 11: Empirical Cross-Machine Capture Run
 
@@ -137,7 +137,7 @@ Plans:
 | 07. Cancellable Execution Context | v2.0 | 5/5 | Complete (override, HW verification pending) | 2026-08-05 |
 | 08. Structured Artifacts & Manifests | v2.0 | 3/3 | Complete (override) | 2026-08-05 |
 | 09. Processor & Pass-Graph Conformance Suites | v2.0 | 15/15 | Complete, verified | 2026-08-07 |
-| 10. Capture Harness & Diff Tool (Quantization Stub) | v2.1 | 5/6 | In Progress|  |
+| 10. Capture Harness & Diff Tool (Quantization Stub) | v2.1 | 6/6 | Complete   | 2026-08-10 |
 | 11. Empirical Cross-Machine Capture Run | v2.1 | 0/TBD | Not started | - |
 | 12. Quantization / Normalization Implementation | v2.1 | 0/TBD | Not started | - |
 | 13. Re-Validation & Scope Boundary Documentation | v2.1 | 0/TBD | Not started | - |

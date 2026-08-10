@@ -4,17 +4,17 @@ milestone: v2.1
 milestone_name: Cross-Hardware Hash Tolerance
 current_phase: 10
 current_phase_name: capture-harness-diff-tool-quantization-stub
-status: executing
+status: verifying
 stopped_at: Completed 10-05-PLAN.md
-last_updated: "2026-08-10T20:02:50.441Z"
+last_updated: "2026-08-10T20:17:34.870Z"
 last_activity: 2026-08-10
 last_activity_desc: Phase 10 execution started
 progress:
   total_phases: 4
-  completed_phases: 0
+  completed_phases: 1
   total_plans: 6
-  completed_plans: 5
-  percent: 0
+  completed_plans: 6
+  percent: 25
 ---
 
 # Project State
@@ -30,7 +30,7 @@ See: .planning/PROJECT.md (updated 2026-08-03), workstream section "Workstream: 
 
 Phase: 10 (capture-harness-diff-tool-quantization-stub) — EXECUTING
 Plan: 6 of 6
-Status: Ready to execute
+Status: Phase complete — ready for verification
 Last activity: 2026-08-10 — Phase 10 execution started
 
 ## Performance Metrics
@@ -67,6 +67,7 @@ Last activity: 2026-08-10 — Phase 10 execution started
 | Phase 10 P03 | 10min | 3 tasks | 7 files |
 | Phase 10 P04 | 20min | 2 tasks | 3 files |
 | Phase 10 P05 | 25min | 2 tasks | 5 files |
+| Phase 10 P06 | 20min | 2 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -125,11 +126,12 @@ Items acknowledged and deferred at milestone v2.0 close on 2026-08-07:
 
 ## Session Continuity
 
-Last session: 2026-08-10T20:02:50.435Z
+Last session: 2026-08-10T20:17:34.864Z
 Stopped at: Completed 10-05-PLAN.md
 Resume file: 
 
-- [Phase 09 P09]: Model-format rejection split across two layers — unrecognized format strings caught pre-parse in Init() as MODEL_FORMAT_UNSUPPORTED; recognized-but-non-MNN formats (ONNX/PyTorch/TensorFlow) caught post-parse in CheckProcessValidity()'s explicit ModelFormat::MNN check, same error/message
+None
+
 - [Phase 09 P10]: combinedHash/manifest.manifestHash computed over a timing-zeroed ExecutionManifest copy rather than modifying SerializeManifest()/ComputeManifestHash() themselves — preserves byte-for-byte compatibility with Phase 08's artifact_serializer_test.cpp round-trip tests over real timestamps
 - [Phase 09 P11]: InferenceCanExecuteReflectsPassTypeRegistryGap documents (not fixes) that INFERENCE passes are schema-valid but not capability-registered — registering INFERENCE/RETRAIN into the capability registry is a separate, larger cross-phase change, deferred as a follow-up item
 - [Phase 09 P11]: Fixed a genuine pre-existing crash in ProcessOutput's artifact-metadata builder (procInput.get_format().value() on an optional BUFFER-type inputs may omit) via value_or(INT8), mirroring CheckProcessValidity()'s existing default — newly exposed by the first-ever Process() call for a render pass
@@ -155,3 +157,4 @@ Resume file:
 - [Phase 10-04]: Verified round-trip/truncation/oversized-length acceptance criteria via a standalone scratch CMake build rather than a permanent CTest target — this plan's files_modified scope is the .hpp/.cpp pair only; a permanent test/capture/ CMakeLists.txt + smoke test is assigned to a later wave per 10-PATTERNS.md
 - [Phase ?]: capture_diff hard-exits on chunkHashCount mismatch between compared .cap files (incompatible comparison), but treats a quantizedBytes byte-length mismatch as non-fatal (sizeMismatch flag, skip numeric pass only)
 - [Phase ?]: sgproccapture CMake target needed an added SGProcessingManager-root include dir so capture_file_format.cpp's root-relative include resolves through the real build
+- [Phase 10-06]: Moved enable_testing() before add_subdirectory(ProofSystem/SGProcessingManager/evmrelay/src) in SuperGenius/build/CommonBuildParameters.cmake — Pre-existing ordering bug made every test under SGProcessingManager/test/ (Phase 06-08 suites + this plan's capture_smoke_test) permanently undiscoverable by ctest, since CTestTestfile.cmake generation requires testing to already be enabled in a directory's ancestor scope at configure time
