@@ -4,11 +4,11 @@ milestone: v2.1
 milestone_name: Cross-Hardware Hash Tolerance
 current_phase: 10
 current_phase_name: Quantization Stub
-status: Roadmap created — ready to plan Phase 10
-stopped_at: Phase 10 context gathered
-last_updated: "2026-08-08T06:32:52.272Z"
-last_activity: 2026-08-07
-last_activity_desc: v2.1 roadmap created, REQUIREMENTS.md traceability updated (12/12 mapped)
+status: Phase 10 planned — ready to execute
+stopped_at: Phase 10 planned (6 plans, 4 waves)
+last_updated: "2026-08-10T00:00:00.000Z"
+last_activity: 2026-08-10
+last_activity_desc: Phase 10 planned — 6 plans across 4 waves; CAPT-01/02/03 + DIFF-01/02/03 (6/6) and all 7 CONTEXT.md decisions covered; plan-checker verification passed
 progress:
   total_phases: 4
   completed_phases: 0
@@ -28,10 +28,10 @@ See: .planning/PROJECT.md (updated 2026-08-03), workstream section "Workstream: 
 
 ## Current Position
 
-Phase: 10 — Capture Harness & Diff Tool (Quantization Stub) — not started
-Plan: —
-Status: Roadmap created (Phases 10-13), awaiting `/gsd-plan-phase 10`
-Last activity: 2026-08-07 — v2.1 roadmap created, REQUIREMENTS.md traceability updated (12/12 mapped)
+Phase: 10 — Capture Harness & Diff Tool (Quantization Stub) — planned, ready to execute
+Plan: 6 plans across 4 waves (10-01 through 10-06)
+Status: Phase 10 planned (6 plans, 4 waves) — ready for `/gsd-execute-phase 10`
+Last activity: 2026-08-10 — Phase 10 planned: 6 plans, all 6 REQ-IDs + 7 CONTEXT.md decisions covered, verification passed
 
 ## Performance Metrics
 
@@ -48,7 +48,7 @@ Last activity: 2026-08-07 — v2.1 roadmap created, REQUIREMENTS.md traceability
 | 07 — Cancellable Execution Context | 5/5 | ✓ Complete (tests pending HW verification) |
 | 08 — Structured Artifacts & Manifests | 3/3 | ✓ Complete |
 | 09 — Processor & Pass-Graph Conformance Suites | 15/15 | ✓ Complete (gap-closure round 3 done: 09-13, 09-14, 09-15) |
-| 10 — Capture Harness & Diff Tool (Quantization Stub) | 0/TBD | Not started |
+| 10 — Capture Harness & Diff Tool (Quantization Stub) | 0/6 | Planned |
 | 11 — Empirical Cross-Machine Capture Run | 0/TBD | Not started |
 | 12 — Quantization / Normalization Implementation | 0/TBD | Not started |
 | 13 — Re-Validation & Scope Boundary Documentation | 0/TBD | Not started |
@@ -88,7 +88,7 @@ Last activity: 2026-08-07 — v2.1 roadmap created, REQUIREMENTS.md traceability
 
 ### Pending Todos
 
-None — roadmap just created. Next: `/gsd-plan-phase 10`.
+None — Phase 10 planned (6 plans, 4 waves). Next: `/gsd-execute-phase 10`.
 
 ### Blockers/Concerns
 
@@ -120,9 +120,9 @@ Items acknowledged and deferred at milestone v2.0 close on 2026-08-07:
 
 ## Session Continuity
 
-Last session: 2026-08-08T06:32:52.264Z
-Stopped at: Phase 10 context gathered
-Resume file: .planning/workstreams/sgproc-render/phases/10-capture-harness-diff-tool-quantization-stub/10-CONTEXT.md
+Last session: 2026-08-10T00:00:00.000Z
+Stopped at: Phase 10 planned (6 plans, 4 waves) — ready to execute
+Resume file: .planning/workstreams/sgproc-render/phases/10-capture-harness-diff-tool-quantization-stub/10-05-PLAN.md
 
 ## Decisions
 
@@ -141,5 +141,5 @@ Resume file: .planning/workstreams/sgproc-render/phases/10-capture-harness-diff-
 
 ## Operator Next Steps
 
-- Run `/gsd-plan-phase 10` to begin planning Phase 10: Capture Harness & Diff Tool (Quantization Stub)
+- Run `/gsd-execute-phase 10` to execute Phase 10's 6 plans (wave order: 10-01 → 10-02/10-03/10-04 in parallel → 10-05 → 10-06)
 - Phase 11 will require coordinating access to ≥3 physical machines (user's Mac + PC + a third) before it can execute — worth flagging early since it gates Phase 12/13
