@@ -1,14 +1,16 @@
 ---
 phase: 10-capture-harness-diff-tool-quantization-stub
 verified: 2026-08-10T21:19:18Z
-status: human_needed
+status: passed
 score: 5/5 roadmap truths verified (0 failed, 2 plan-level sub-truths present-but-behavior-unverified)
 behavior_unverified: 2
 overrides_applied: 0
 human_verification:
+
   - test: "Force a --repeat instability (e.g. temporarily patch QuantizeFloatBuffer to alternate its output between two iterations, or otherwise make two runs of the same fixture disagree) and run capture_harness --repeat 2 against it."
     expected: "capture_harness prints an 'instability detected' message identifying which field diverged, exits non-zero, and writes NO .cap file to --output-dir (D-05's hard requirement)."
     why_human: "CheckStability()'s failure branch (capture_harness.cpp) is only reachable when two runs of the same fixture actually disagree. Phase 09's render/MNN fixtures are deterministic by design (confirmed live: 2/2 and 3/3 stable runs, 0 divergence), so this phase's own fixtures cannot exercise the failure branch, and no unit/CTest test forces a synthetic mismatch to exercise it either. Presence + control-flow reading (file-write is gated behind CheckStability() returning true) shows the code is wired correctly, but the actual abort-and-write-nothing behavior has not been observed running."
+
   - test: "Force a CAPT-02 self-check mismatch (e.g. temporarily make QuantizeFloatBuffer mutate data after rawOutputCapture already captured the pre-quantize snapshot but before the real hash call reads the same buffer, or otherwise desync captured bytes from the hash actually computed) and run capture_harness once."
     expected: "SelfCheckCapturedBytes() prints which chunk/combined check failed, capture_harness exits non-zero, and writes NO .cap file."
     why_human: "SelfCheckCapturedBytes()'s failure branch is likewise never reached by the current wiring (by construction, every insertion point hashes the exact same buffer it captures), so there is no natural or test-driven way to observe the mismatch-abort path firing. Same category as the stability check above — logically sound by code inspection and the invariant it enforces is documented, but not behaviorally exercised."

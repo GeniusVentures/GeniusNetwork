@@ -2,13 +2,13 @@
 gsd_state_version: 1.0
 milestone: v2.1
 milestone_name: Cross-Hardware Hash Tolerance
-current_phase: 10
-current_phase_name: capture-harness-diff-tool-quantization-stub
+current_phase: 11
+current_phase_name: Empirical Cross-Machine Capture Run
 status: verifying
 stopped_at: Completed 10-05-PLAN.md
-last_updated: "2026-08-10T20:17:34.870Z"
-last_activity: 2026-08-10
-last_activity_desc: Phase 10 execution started
+last_updated: "2026-08-11T21:47:20.752Z"
+last_activity: 2026-08-11
+last_activity_desc: Phase 10 complete, transitioned to Phase 11
 progress:
   total_phases: 4
   completed_phases: 1
@@ -28,10 +28,10 @@ See: .planning/PROJECT.md (updated 2026-08-03), workstream section "Workstream: 
 
 ## Current Position
 
-Phase: 10 (capture-harness-diff-tool-quantization-stub) — EXECUTING
-Plan: 6 of 6
+Phase: 11 — Empirical Cross-Machine Capture Run
+Plan: Not started
 Status: Phase complete — ready for verification
-Last activity: 2026-08-10 — Phase 10 execution started
+Last activity: 2026-08-11 — Phase 10 complete, transitioned to Phase 11
 
 ## Performance Metrics
 
@@ -94,11 +94,13 @@ Last activity: 2026-08-10 — Phase 10 execution started
 
 ### Pending Todos
 
-None — Phase 10 planned (6 plans, 4 waves). Next: `/gsd-execute-phase 10`.
+- Phase 11 data gathering already started ahead of formal phase kickoff: `capture_harness` run on Mac (Fuu's-Mac-mini, macOS) and Windows (Mofu, Windows) for both the MNN-float and render-happy-path fixtures; 4 `.cap` files + 2 `capture_diff` JSON reports live in `caps/` at repo root (not yet moved into a phase-owned location). Still need a third machine's captures for full v2.1 3-machine coverage.
+- **Empirical finding for Phase 12 planning:** MNN float genuinely diverges cross-hardware (Mac vs Windows) — `maxAbsDelta≈1.04e-07`, `maxRelDelta≈7.27e-05`, `maxUlpDistance=768`, 0% over the fixed 1e-4 relative threshold. Render pass is bit-identical cross-hardware (`contentHashMatch: true`, 0 divergence) — `combinedHashMatch: false` on render is expected/by-design (manifest-level hash includes per-machine `executorIdentity`, not a content difference); Phase 11/12 tooling should key off `contentHashMatch`/numeric stats, not `combinedHashMatch`, for cross-machine equivalence.
+- Next: formally kick off `/gsd-discuss-phase 11 --ws sgproc-render` (or fold the already-gathered 2-machine data in when it starts) once the third machine is available.
 
 ### Blockers/Concerns
 
-- Phase 11 requires physical access to ≥3 distinct machines (user's Mac + PC + a third) — this is a real-world logistical dependency, not a code blocker, but it gates Phase 12/13 from starting.
+- Phase 11 requires physical access to ≥3 distinct machines (user's Mac + PC + a third) — 2 of 3 already captured (see Pending Todos); still need the third machine before Phase 11 can be considered complete, but this gates Phase 12/13 from starting.
 - Build verification pending on prior phases — C++ compilation not retested in this session
 - Validation layers: system-level layer availability varies by platform (Vulkan SDK, NDK, MoltenVK)
 - **Pre-existing bug found during Phase 10's regression gate (not caused by Phase 10 — confirmed via diff, none of the implicated files were touched by any of Phase 10's 6 plans):** `ProcessingDatatypesTest`/`ProcessingDispatchTest`/`vulkan_init_concurrency_test` all deadlock/crash in `ProcessingManager::Create()`'s Vulkan capability-probe path (`VulkanInitMutex()` re-entered on the same thread) whenever a real Vulkan device is present. Tracked at `.planning/todos/pending/2026-08-10-fix-vulkan-capability-probe-deadlock-in-processingmanager-cr.md`. Does not block Phase 10 — `processing_conformance_hashing_test` (the most directly relevant regression check for Phase 10's changes) and `CaptureSmokeTest` both pass.
@@ -127,11 +129,9 @@ Items acknowledged and deferred at milestone v2.0 close on 2026-08-07:
 
 ## Session Continuity
 
-Last session: 2026-08-10T20:17:34.864Z
-Stopped at: Completed 10-05-PLAN.md
-Resume file: 
-
-None
+Last session: 2026-08-11
+Stopped at: Phase 10 UAT complete (both D-05/CAPT-02 abort paths verified live via temporary patch-and-revert), phase marked complete, transitioned to Phase 11. Ad-hoc Phase 11 data gathering started (2/3 machines, see Pending Todos).
+Resume file: None
 
 - [Phase 09 P10]: combinedHash/manifest.manifestHash computed over a timing-zeroed ExecutionManifest copy rather than modifying SerializeManifest()/ComputeManifestHash() themselves — preserves byte-for-byte compatibility with Phase 08's artifact_serializer_test.cpp round-trip tests over real timestamps
 - [Phase 09 P11]: InferenceCanExecuteReflectsPassTypeRegistryGap documents (not fixes) that INFERENCE passes are schema-valid but not capability-registered — registering INFERENCE/RETRAIN into the capability registry is a separate, larger cross-phase change, deferred as a follow-up item
@@ -148,8 +148,8 @@ None
 
 ## Operator Next Steps
 
-- Run `/gsd-execute-phase 10` to execute Phase 10's 6 plans (wave order: 10-01 → 10-02/10-03/10-04 in parallel → 10-05 → 10-06)
-- Phase 11 will require coordinating access to ≥3 physical machines (user's Mac + PC + a third) before it can execute — worth flagging early since it gates Phase 12/13
+- Phase 10 complete. `/gsd-discuss-phase 11 --ws sgproc-render` when ready to formally scope Phase 11 (2 of 3 required machines already captured ad-hoc this session — see Pending Todos).
+- Get the third machine's `.cap` files (MNN-float + render, `--repeat 2` minimum) before Phase 11 can close out.
 
 ## Decisions
 

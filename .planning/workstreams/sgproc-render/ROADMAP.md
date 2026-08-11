@@ -137,7 +137,7 @@ Plans:
 | 07. Cancellable Execution Context | v2.0 | 5/5 | Complete (override, HW verification pending) | 2026-08-05 |
 | 08. Structured Artifacts & Manifests | v2.0 | 3/3 | Complete (override) | 2026-08-05 |
 | 09. Processor & Pass-Graph Conformance Suites | v2.0 | 15/15 | Complete, verified | 2026-08-07 |
-| 10. Capture Harness & Diff Tool (Quantization Stub) | v2.1 | 6/6 | Complete   | 2026-08-10 |
+| 10. Capture Harness & Diff Tool (Quantization Stub) | v2.1 | 6/6 | Complete    | 2026-08-10 |
 | 11. Empirical Cross-Machine Capture Run | v2.1 | 0/TBD | Not started | - |
 | 12. Quantization / Normalization Implementation | v2.1 | 0/TBD | Not started | - |
 | 13. Re-Validation & Scope Boundary Documentation | v2.1 | 0/TBD | Not started | - |
