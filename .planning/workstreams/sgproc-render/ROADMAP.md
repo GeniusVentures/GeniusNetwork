@@ -92,7 +92,9 @@ Plans:
   3. `capture_diff` has been run pairwise across all captured machine combinations for both fixtures, producing real max-absolute-delta / max-relative-delta / max-ULP-distance / mantissa-bit-difference statistics, separately for the render (uint8) and MNN (float32) output types.
   4. The resulting divergence statistics are written down (not just observed ad hoc), so Phase 12's normalization design can cite specific captured numbers as its justification rather than a guessed constant.
 
-**Plans**: TBD
+**Plans**: 1 plan
+Plans:
+- [ ] 11-01-PLAN.md — Relocate ad-hoc capture evidence into phase-owned captures/, write 11-CAPTURE-RESULTS.md citing exact diff numbers, and reconcile ROADMAP.md/REQUIREMENTS.md wording to the accepted 2-machine scope
 
 ### Phase 12: Quantization / Normalization Implementation
 
