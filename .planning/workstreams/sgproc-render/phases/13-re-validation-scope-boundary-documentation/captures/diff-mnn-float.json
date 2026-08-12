@@ -1,0 +1,28 @@
+{
+  "chunkHashesMatch": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    true,
+    false,
+    true,
+    false,
+    false,
+    false,
+    true
+  ],
+  "combinedHashMatch": false,
+  "contentHashMatch": false,
+  "elementCount": 512,
+  "elementType": "float32",
+  "maxAbsDelta": 9.5367431640625e-07,
+  "maxRelDelta": 5.3748990467283875e-05,
+  "maxUlpDistance": 512,
+  "percentExceedingThreshold": 0.0,
+  "sizeMismatch": false
+}
