@@ -4,9 +4,9 @@ milestone: v2.1
 milestone_name: Cross-Hardware Hash Tolerance
 current_phase: 11
 current_phase_name: empirical-cross-machine-capture-run
-status: executing
-stopped_at: Phase 11 context gathered
-last_updated: "2026-08-12T00:00:02.751Z"
+status: verifying
+stopped_at: Completed 11-01-PLAN.md
+last_updated: "2026-08-12T00:08:13.045Z"
 last_activity: 2026-08-12
 last_activity_desc: Phase 11 execution started
 progress:
@@ -30,7 +30,7 @@ See: .planning/PROJECT.md (updated 2026-08-03), workstream section "Workstream: 
 
 Phase: 11 (empirical-cross-machine-capture-run) — EXECUTING
 Plan: 1 of 1
-Status: Executing Phase 11
+Status: Phase complete — ready for verification
 Last activity: 2026-08-12 — Phase 11 execution started
 
 ## Performance Metrics
@@ -68,6 +68,7 @@ Last activity: 2026-08-12 — Phase 11 execution started
 | Phase 10 P04 | 20min | 2 tasks | 3 files |
 | Phase 10 P05 | 25min | 2 tasks | 5 files |
 | Phase 10 P06 | 20min | 2 tasks | 5 files |
+| Phase 11 P01 | 4min | 3 tasks | 10 files |
 
 ## Accumulated Context
 
@@ -133,9 +134,9 @@ Items acknowledged and deferred at milestone v2.0 close on 2026-08-07:
 
 ## Session Continuity
 
-Last session: 2026-08-11T23:22:33.276Z
-Stopped at: Phase 11 context gathered
-Resume file: .planning/workstreams/sgproc-render/phases/11-empirical-cross-machine-capture-run/11-CONTEXT.md
+Last session: 2026-08-12T00:08:01.608Z
+Stopped at: Completed 11-01-PLAN.md
+Resume file: None
 
 - [Phase 09 P10]: combinedHash/manifest.manifestHash computed over a timing-zeroed ExecutionManifest copy rather than modifying SerializeManifest()/ComputeManifestHash() themselves — preserves byte-for-byte compatibility with Phase 08's artifact_serializer_test.cpp round-trip tests over real timestamps
 - [Phase 09 P11]: InferenceCanExecuteReflectsPassTypeRegistryGap documents (not fixes) that INFERENCE passes are schema-valid but not capability-registered — registering INFERENCE/RETRAIN into the capability registry is a separate, larger cross-phase change, deferred as a follow-up item
@@ -163,3 +164,5 @@ Resume file: .planning/workstreams/sgproc-render/phases/11-empirical-cross-machi
 - [Phase ?]: capture_diff hard-exits on chunkHashCount mismatch between compared .cap files (incompatible comparison), but treats a quantizedBytes byte-length mismatch as non-fatal (sizeMismatch flag, skip numeric pass only)
 - [Phase ?]: sgproccapture CMake target needed an added SGProcessingManager-root include dir so capture_file_format.cpp's root-relative include resolves through the real build
 - [Phase 10-06]: Moved enable_testing() before add_subdirectory(ProofSystem/SGProcessingManager/evmrelay/src) in SuperGenius/build/CommonBuildParameters.cmake — Pre-existing ordering bug made every test under SGProcessingManager/test/ (Phase 06-08 suites + this plan's capture_smoke_test) permanently undiscoverable by ctest, since CTestTestfile.cmake generation requires testing to already be enabled in a directory's ancestor scope at configure time
+- [Phase 11-01]: Dropped WSL/llvmpipe MNN-float capture deleted outright (not archived) per D-09 executor discretion
+- [Phase 11-01]: ROADMAP.md Phase 11 phase-list summary bullet ('Mac + PC + a third') left untouched -- plan named only SC1 and the Phase Details Goal line as in-scope discretionary edits
