@@ -119,3 +119,11 @@ None - no external service configuration required.
 ---
 *Phase: 13-re-validation-scope-boundary-documentation*
 *Completed: 2026-08-12*
+
+## Self-Check: PASSED
+
+- FOUND: `.planning/workstreams/sgproc-render/phases/13-re-validation-scope-boundary-documentation/13-SECV01-RERUN.txt`
+- FOUND: `.planning/workstreams/sgproc-render/phases/13-re-validation-scope-boundary-documentation/13-02-SUMMARY.md`
+- FOUND commit: `12f9517` (Task 1)
+- FOUND commit: `0cddb46` (Task 2)
+- FOUND commit: `2c805c6` (SUMMARY.md)
