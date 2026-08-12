@@ -5,8 +5,8 @@ milestone_name: Cross-Hardware Hash Tolerance
 current_phase: 13
 current_phase_name: Re-Validation & Scope Boundary Documentation
 status: verifying
-stopped_at: Completed 12-02-PLAN.md
-last_updated: "2026-08-12T04:33:23.622Z"
+stopped_at: Phase 13 context gathered
+last_updated: "2026-08-12T19:42:59.333Z"
 last_activity: 2026-08-12
 last_activity_desc: Phase 12 complete, transitioned to Phase 13
 progress:
@@ -136,9 +136,9 @@ Items acknowledged and deferred at milestone v2.0 close on 2026-08-07:
 
 ## Session Continuity
 
-Last session: 2026-08-12T02:26:15.425Z
-Stopped at: Completed 12-02-PLAN.md
-Resume file: None
+Last session: 2026-08-12T19:42:59.324Z
+Stopped at: Phase 13 context gathered
+Resume file: .planning/workstreams/sgproc-render/phases/13-re-validation-scope-boundary-documentation/13-CONTEXT.md
 
 - [Phase 09 P10]: combinedHash/manifest.manifestHash computed over a timing-zeroed ExecutionManifest copy rather than modifying SerializeManifest()/ComputeManifestHash() themselves — preserves byte-for-byte compatibility with Phase 08's artifact_serializer_test.cpp round-trip tests over real timestamps
 - [Phase 09 P11]: InferenceCanExecuteReflectsPassTypeRegistryGap documents (not fixes) that INFERENCE passes are schema-valid but not capability-registered — registering INFERENCE/RETRAIN into the capability registry is a separate, larger cross-phase change, deferred as a follow-up item
