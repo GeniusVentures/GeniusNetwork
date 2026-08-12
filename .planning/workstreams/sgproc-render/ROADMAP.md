@@ -43,7 +43,7 @@ Full detail archived at `.planning/milestones/sgproc-render-v2.0-ROADMAP.md`.
 - [x] **Phase 10: Capture Harness & Diff Tool (Quantization Stub)** - Build and validate the capture harness + diff tool plumbing (14 processor files + `ExecutionContext` capture field) against Phase 09's existing fixtures, with quantization wired in as a no-op/identity stub (completed 2026-08-10)
 - [x] **Phase 11: Empirical Cross-Machine Capture Run** - Hands-on data-gathering checkpoint: run Phase 10's tooling on the user's Mac + PC + a third machine to produce real cross-hardware divergence statistics (completed 2026-08-12)
 - [x] **Phase 12: Quantization / Normalization Implementation** - Implement the real normalization logic (technique chosen from Phase 11's data, not fixed in advance) on both render and MNN paths, plus the SECV-01 wrong-result-still-diverges counter-test (completed 2026-08-12)
-- [x] **Phase 13: Re-Validation & Scope Boundary Documentation** - Re-run the ≥2-machine capture/diff cycle with real quantization active to confirm VALD-01, re-confirm SECV-01 at the final precision, and document the milestone's scope boundary (completed 2026-08-12)
+- [ ] **Phase 13: Re-Validation & Scope Boundary Documentation** - Re-run the ≥2-machine capture/diff cycle with real quantization active to confirm VALD-01, re-confirm SECV-01 at the final precision, and document the milestone's scope boundary (all 3 plans executed 2026-08-12, but goal verification found VALD-01 only partial — render fixture matches cross-hardware, MNN fixture does not; see 13-VERIFICATION.md)
 
 ## Phase Details
 
@@ -156,4 +156,4 @@ Plans:
 | 10. Capture Harness & Diff Tool (Quantization Stub) | v2.1 | 6/6 | Complete    | 2026-08-10 |
 | 11. Empirical Cross-Machine Capture Run | v2.1 | 1/1 | Complete    | 2026-08-12 |
 | 12. Quantization / Normalization Implementation | v2.1 | 2/2 | Complete    | 2026-08-12 |
-| 13. Re-Validation & Scope Boundary Documentation | v2.1 | 3/3 | Complete   | 2026-08-12 |
+| 13. Re-Validation & Scope Boundary Documentation | v2.1 | 3/3 | Gaps found (VALD-01 partial) | 2026-08-12 |
