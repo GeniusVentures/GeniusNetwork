@@ -4,17 +4,17 @@ milestone: v2.1
 milestone_name: Cross-Hardware Hash Tolerance
 current_phase: 13
 current_phase_name: re-validation-scope-boundary-documentation
-status: executing
-stopped_at: Completed 13-01-PLAN.md
-last_updated: "2026-08-12T21:33:44.265Z"
+status: verifying
+stopped_at: Completed 13-03-PLAN.md (Phase 13 fully executed, VALD-01 open gap noted)
+last_updated: "2026-08-12T21:39:23.329Z"
 last_activity: 2026-08-12
 last_activity_desc: Phase 13 execution started
 progress:
   total_phases: 4
-  completed_phases: 3
+  completed_phases: 4
   total_plans: 12
-  completed_plans: 11
-  percent: 75
+  completed_plans: 12
+  percent: 100
 ---
 
 # Project State
@@ -30,7 +30,7 @@ See: .planning/PROJECT.md (updated 2026-08-03), workstream section "Workstream: 
 
 Phase: 13 (re-validation-scope-boundary-documentation) — EXECUTING
 Plan: 3 of 3
-Status: Ready to execute
+Status: Phase complete — ready for verification
 Last activity: 2026-08-12 — Phase 13 execution started
 
 ## Performance Metrics
@@ -73,6 +73,7 @@ Last activity: 2026-08-12 — Phase 13 execution started
 | Phase 12 P02 | 35min | 2 tasks | 5 files |
 | Phase 13 P02 | 18min | 2 tasks | 3 files |
 | Phase 13 P01 | 5min | 1 tasks | 5 files |
+| Phase 13 P03 | 15min | 2 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -112,7 +113,8 @@ Last activity: 2026-08-12 — Phase 13 execution started
   - `48b4dbe "Log out device"` — added diagnostic logging in `RenderProcessor::InitializeContext()` that logs every enumerated Vulkan device's name/type/vendorID/deviceID/apiVersion before the acceptability filter runs, so future "why did this reject my device" questions are answerable from a plain run instead of a debugger.
 - Build verification pending on prior phases — C++ compilation not retested in this session
 - Validation layers: system-level layer availability varies by platform (Vulkan SDK, NDK, MoltenVK)
-- **Pre-existing bug found during Phase 10's regression gate (not caused by Phase 10 — confirmed via diff, none of the implicated files were touched by any of Phase 10's 6 plans):** `ProcessingDatatypesTest`/`ProcessingDispatchTest`/`vulkan_init_concurrency_test` all deadlock/crash in `ProcessingManager::Create()`'s Vulkan capability-probe path (`VulkanInitMutex()` re-entered on the same thread) whenever a real Vulkan device is present. Tracked at `.planning/todos/pending/2026-08-10-fix-vulkan-capability-probe-deadlock-in-processingmanager-cr.md`. Does not block Phase 10 — `processing_conformance_hashing_test` (the most directly relevant regression check for Phase 10's changes) and `CaptureSmokeTest` both pass.
+- **Pre-existing bug found during Phase 10's regression gate (not caused by Phase 10 — confirmed via diff, of the implicated files were touched by any of Phase 10's 6 plans):** `ProcessingDatatypesTest`/`ProcessingDispatchTest`/`vulkan_init_concurrency_test` all deadlock/crash in `ProcessingManager::Create()`'s Vulkan capability-probe path (`VulkanInitMutex()` re-entered on the same thread) whenever a real Vulkan device is present. Tracked at `.planning/todos/pending/2026-08-10-fix-vulkan-capability-probe-deadlock-in-processingmanager-cr.md`. Does not block Phase 10 — `processing_conformance_hashing_test` (the most directly relevant regression check for Phase 10's changes) and `CaptureSmokeTest` both pass.
+- VALD-01 only partially satisfied: fresh re-validation (13-SCOPE-BOUNDARY.md) shows render fixture's processor-level hash matches cross-hardware, but MNN float32 fixture's does not (12/15 chunkHashesMatch still false post-quantization) -- open gap for future follow-up, not resolved by Phase 13
 
 ## Deferred Items
 
@@ -138,8 +140,8 @@ Items acknowledged and deferred at milestone v2.0 close on 2026-08-07:
 
 ## Session Continuity
 
-Last session: 2026-08-12T21:33:44.259Z
-Stopped at: Completed 13-01-PLAN.md
+Last session: 2026-08-12T21:39:23.323Z
+Stopped at: Completed 13-03-PLAN.md (Phase 13 fully executed, VALD-01 open gap noted)
 Resume file: None
 
 - [Phase 09 P10]: combinedHash/manifest.manifestHash computed over a timing-zeroed ExecutionManifest copy rather than modifying SerializeManifest()/ComputeManifestHash() themselves — preserves byte-for-byte compatibility with Phase 08's artifact_serializer_test.cpp round-trip tests over real timestamps
@@ -176,3 +178,5 @@ Resume file: None
 - [Phase 13-02]: REQUIREMENTS.md VALD-01 / ROADMAP.md Phase 13 SC1 wording corrected to '2 distinct physical machines' and 'processor-level result/chunk hashes' via scoped Edit calls — Mirrors Phase 11's own D-03 wording-fix precedent; keeps roadmap/requirements consistent with the milestone's actual accepted scope and hash target
 - [Phase 13]: [Phase 13-01] .cap files initially landed directly in the phase dir (capture_harness did not auto-create captures/); orchestrator relocated them via plain mkdir+mv, no content changes, before this continuation verified them
 - [Phase 13]: [Phase 13-01] Accepted user's 'captured' resume-signal as sufficient confirmation both machines' capture_harness binaries were rebuilt against Phase 12's quantization commits -- not independently derivable from .cap bytes per the plan's own threat model
+- [Phase 13-03]: Reported the MNN fixture's contentHashMatch:false / 12-of-15 chunkHashesMatch:false honestly as an open gap against SC1, rather than reinterpreting the smaller post-quantization maxAbsDelta as a passing result
+- [Phase 13-03]: Explicitly explained combinedHashMatch's expected-false status (manifest hash bakes in machine-specific executorIdentity/gpuMemoryUsedBytes by design, D-03) as distinct from the processor-level contentHashMatch/chunkHashesMatch SC1 actually requires
