@@ -127,7 +127,7 @@ Plans:
   3. A written document records the milestone's scope boundary in plain terms: hash comparison is now cross-hardware tolerant; `ProcessingValidationCore::ValidateResults`'s comparison-mechanism bug remains unfixed; no cross-node consensus/redundant-execution plumbing was built. No downstream consumer should read this milestone's output as "verification" or "consensus-ready."
   4. The final chosen normalization constants and their empirical derivation (citing Phase 11's captured numbers) are documented alongside the re-validation result, closing the milestone's traceability loop.
 
-**Plans**: 3/3 plans complete
+**Plans**: 3/5 plans complete (gap closure: 13-04, 13-05 added after verification found VALD-01 partial — see 13-VERIFICATION.md)
 
 Plans:
 **Wave 1**
@@ -138,6 +138,14 @@ Plans:
 **Wave 2** *(blocked on 13-01 + 13-02 completion)*
 
 - [x] 13-03-PLAN.md — capture_diff on fresh captures + write 13-SCOPE-BOUNDARY.md (combined re-validation results + scope boundary)
+
+**Wave 3** *(blocked on 13-03 completion; gap closure for VALD-01's MNN open gap)*
+
+- [ ] 13-04-PLAN.md — Widen QuantizeFloatBuffer's grid to S=2^14 (from 13-VERIFICATION.md's gap) + hands-on MNN-only re-capture on Mac + Windows (checkpoint)
+
+**Wave 4** *(blocked on 13-04 completion)*
+
+- [ ] 13-05-PLAN.md — capture_diff on widened-grid MNN captures + 13-SCOPE-BOUNDARY.md Refit section + conditional REQUIREMENTS.md/ROADMAP.md VALD-01 status update
 
 ## Progress
 
