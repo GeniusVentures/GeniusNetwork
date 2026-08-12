@@ -123,3 +123,7 @@ None - no external service configuration required. This task was itself the hand
 ---
 *Phase: 13-re-validation-scope-boundary-documentation*
 *Completed: 2026-08-12*
+
+## Self-Check: PASSED
+
+All 4 created `.cap` files and this SUMMARY.md verified present on disk; commit `ec17b30` verified present in `git log --oneline --all`.

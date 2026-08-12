@@ -5,15 +5,15 @@ milestone_name: Cross-Hardware Hash Tolerance
 current_phase: 13
 current_phase_name: re-validation-scope-boundary-documentation
 status: executing
-stopped_at: Completed 13-02-PLAN.md
-last_updated: "2026-08-12T20:19:37.061Z"
+stopped_at: Completed 13-01-PLAN.md
+last_updated: "2026-08-12T21:33:44.265Z"
 last_activity: 2026-08-12
 last_activity_desc: Phase 13 execution started
 progress:
   total_phases: 4
   completed_phases: 3
   total_plans: 12
-  completed_plans: 10
+  completed_plans: 11
   percent: 75
 ---
 
@@ -29,7 +29,7 @@ See: .planning/PROJECT.md (updated 2026-08-03), workstream section "Workstream: 
 ## Current Position
 
 Phase: 13 (re-validation-scope-boundary-documentation) — EXECUTING
-Plan: 2 of 3
+Plan: 3 of 3
 Status: Ready to execute
 Last activity: 2026-08-12 — Phase 13 execution started
 
@@ -72,6 +72,7 @@ Last activity: 2026-08-12 — Phase 13 execution started
 | Phase 12 P01 | 25min | 2 tasks | 6 files |
 | Phase 12 P02 | 35min | 2 tasks | 5 files |
 | Phase 13 P02 | 18min | 2 tasks | 3 files |
+| Phase 13 P01 | 5min | 1 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -137,8 +138,8 @@ Items acknowledged and deferred at milestone v2.0 close on 2026-08-07:
 
 ## Session Continuity
 
-Last session: 2026-08-12T20:19:37.053Z
-Stopped at: Completed 13-02-PLAN.md
+Last session: 2026-08-12T21:33:44.259Z
+Stopped at: Completed 13-01-PLAN.md
 Resume file: None
 
 - [Phase 09 P10]: combinedHash/manifest.manifestHash computed over a timing-zeroed ExecutionManifest copy rather than modifying SerializeManifest()/ComputeManifestHash() themselves — preserves byte-for-byte compatibility with Phase 08's artifact_serializer_test.cpp round-trip tests over real timestamps
@@ -173,3 +174,5 @@ Resume file: None
 - [Phase 12-02]: Render job JSON needs an explicit pipeline_state (topology: point_list) to guarantee visible fragment rasterization -- the default TRIANGLE_LIST topology with arbitrary vertex data can silently render zero fragments, making a fragment-shader-only counter-test vacuous
 - [Phase 13-02]: No new SECV-01 test logic written (D-07) -- Phase 12's constants are the final precision, this plan only re-runs the existing unmodified secv01_counter_test.cpp — Mirrors the phase's explicit no-new-code mandate
 - [Phase 13-02]: REQUIREMENTS.md VALD-01 / ROADMAP.md Phase 13 SC1 wording corrected to '2 distinct physical machines' and 'processor-level result/chunk hashes' via scoped Edit calls — Mirrors Phase 11's own D-03 wording-fix precedent; keeps roadmap/requirements consistent with the milestone's actual accepted scope and hash target
+- [Phase 13]: [Phase 13-01] .cap files initially landed directly in the phase dir (capture_harness did not auto-create captures/); orchestrator relocated them via plain mkdir+mv, no content changes, before this continuation verified them
+- [Phase 13]: [Phase 13-01] Accepted user's 'captured' resume-signal as sufficient confirmation both machines' capture_harness binaries were rebuilt against Phase 12's quantization commits -- not independently derivable from .cap bytes per the plan's own threat model
