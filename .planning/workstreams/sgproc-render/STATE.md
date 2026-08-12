@@ -3,17 +3,17 @@ gsd_state_version: 1.0
 milestone: v2.1
 milestone_name: Cross-Hardware Hash Tolerance
 current_phase: 13
-current_phase_name: Re-Validation & Scope Boundary Documentation
+current_phase_name: re-validation-scope-boundary-documentation
 status: executing
-stopped_at: Phase 13 context gathered
-last_updated: "2026-08-12T20:08:24.661Z"
+stopped_at: Completed 13-02-PLAN.md
+last_updated: "2026-08-12T20:19:37.061Z"
 last_activity: 2026-08-12
-last_activity_desc: Phase 12 complete, transitioned to Phase 13
+last_activity_desc: Phase 13 execution started
 progress:
   total_phases: 4
   completed_phases: 3
-  total_plans: 9
-  completed_plans: 9
+  total_plans: 12
+  completed_plans: 10
   percent: 75
 ---
 
@@ -24,14 +24,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-08-03), workstream section "Workstream: sgproc-render"
 
 **Core value:** Elevate SGProcessingManager from a "parse-and-hope" pipeline to a contract-driven execution engine — jobs are validated before work starts, execution is cancellable and budget-aware, results are typed artifacts with provenance, and every processor is covered by a common test suite.
-**Current focus:** Phase 12 — quantization-normalization-implementation
+**Current focus:** Phase 13 — re-validation-scope-boundary-documentation
 
 ## Current Position
 
-Phase: 13 — Re-Validation & Scope Boundary Documentation
-Plan: Not started
+Phase: 13 (re-validation-scope-boundary-documentation) — EXECUTING
+Plan: 2 of 3
 Status: Ready to execute
-Last activity: 2026-08-12 — Phase 12 complete, transitioned to Phase 13
+Last activity: 2026-08-12 — Phase 13 execution started
 
 ## Performance Metrics
 
@@ -71,6 +71,7 @@ Last activity: 2026-08-12 — Phase 12 complete, transitioned to Phase 13
 | Phase 11 P01 | 4min | 3 tasks | 10 files |
 | Phase 12 P01 | 25min | 2 tasks | 6 files |
 | Phase 12 P02 | 35min | 2 tasks | 5 files |
+| Phase 13 P02 | 18min | 2 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -136,9 +137,9 @@ Items acknowledged and deferred at milestone v2.0 close on 2026-08-07:
 
 ## Session Continuity
 
-Last session: 2026-08-12T19:42:59.324Z
-Stopped at: Phase 13 context gathered
-Resume file: .planning/workstreams/sgproc-render/phases/13-re-validation-scope-boundary-documentation/13-CONTEXT.md
+Last session: 2026-08-12T20:19:37.053Z
+Stopped at: Completed 13-02-PLAN.md
+Resume file: None
 
 - [Phase 09 P10]: combinedHash/manifest.manifestHash computed over a timing-zeroed ExecutionManifest copy rather than modifying SerializeManifest()/ComputeManifestHash() themselves — preserves byte-for-byte compatibility with Phase 08's artifact_serializer_test.cpp round-trip tests over real timestamps
 - [Phase 09 P11]: InferenceCanExecuteReflectsPassTypeRegistryGap documents (not fixes) that INFERENCE passes are schema-valid but not capability-registered — registering INFERENCE/RETRAIN into the capability registry is a separate, larger cross-phase change, deferred as a follow-up item
@@ -170,3 +171,5 @@ Resume file: .planning/workstreams/sgproc-render/phases/13-re-validation-scope-b
 - [Phase 11-01]: ROADMAP.md Phase 11 phase-list summary bullet ('Mac + PC + a third') left untouched -- plan named only SC1 and the Phase Details Goal line as in-scope discretionary edits
 - [Phase 12]: [Phase 12-01] Consolidated the plan's two NaN-canonicalization behavior bullets into a single QuantizeFloatBufferCanonicalizesNaN test case (two internal assertions) to keep the suite at exactly the 7 named TEST_F cases the plan's Artifacts section lists
 - [Phase 12-02]: Render job JSON needs an explicit pipeline_state (topology: point_list) to guarantee visible fragment rasterization -- the default TRIANGLE_LIST topology with arbitrary vertex data can silently render zero fragments, making a fragment-shader-only counter-test vacuous
+- [Phase 13-02]: No new SECV-01 test logic written (D-07) -- Phase 12's constants are the final precision, this plan only re-runs the existing unmodified secv01_counter_test.cpp — Mirrors the phase's explicit no-new-code mandate
+- [Phase 13-02]: REQUIREMENTS.md VALD-01 / ROADMAP.md Phase 13 SC1 wording corrected to '2 distinct physical machines' and 'processor-level result/chunk hashes' via scoped Edit calls — Mirrors Phase 11's own D-03 wording-fix precedent; keeps roadmap/requirements consistent with the milestone's actual accepted scope and hash target
