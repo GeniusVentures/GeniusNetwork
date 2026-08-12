@@ -4,17 +4,17 @@ milestone: v2.1
 milestone_name: Cross-Hardware Hash Tolerance
 current_phase: 12
 current_phase_name: quantization-normalization-implementation
-status: executing
-stopped_at: Completed 12-01-PLAN.md
-last_updated: "2026-08-12T02:06:32.955Z"
+status: verifying
+stopped_at: Completed 12-02-PLAN.md
+last_updated: "2026-08-12T02:26:15.431Z"
 last_activity: 2026-08-12
 last_activity_desc: Completed 12-01-PLAN.md
 progress:
   total_phases: 4
-  completed_phases: 2
+  completed_phases: 3
   total_plans: 9
-  completed_plans: 8
-  percent: 50
+  completed_plans: 9
+  percent: 75
 ---
 
 # Project State
@@ -28,10 +28,10 @@ See: .planning/PROJECT.md (updated 2026-08-03), workstream section "Workstream: 
 
 ## Current Position
 
-Phase: 12 (quantization-normalization-implementation) — EXECUTING
-Plan: 2 of 2 (12-01 complete; 12-02 not yet started)
-Status: Executing Phase 12
-Last activity: 2026-08-12 — Completed 12-01-PLAN.md
+Phase: 12 (quantization-normalization-implementation) — COMPLETE
+Plan: 2 of 2 (12-01 complete; 12-02 complete)
+Status: Phase complete — ready for verification
+Last activity: 2026-08-12 — Completed 12-02-PLAN.md
 
 ## Performance Metrics
 
@@ -70,6 +70,7 @@ Last activity: 2026-08-12 — Completed 12-01-PLAN.md
 | Phase 10 P06 | 20min | 2 tasks | 5 files |
 | Phase 11 P01 | 4min | 3 tasks | 10 files |
 | Phase 12 P01 | 25min | 2 tasks | 6 files |
+| Phase 12 P02 | 35min | 2 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -135,8 +136,8 @@ Items acknowledged and deferred at milestone v2.0 close on 2026-08-07:
 
 ## Session Continuity
 
-Last session: 2026-08-12T02:05:14.733Z
-Stopped at: Completed 12-01-PLAN.md
+Last session: 2026-08-12T02:26:15.425Z
+Stopped at: Completed 12-02-PLAN.md
 Resume file: None
 
 - [Phase 09 P10]: combinedHash/manifest.manifestHash computed over a timing-zeroed ExecutionManifest copy rather than modifying SerializeManifest()/ComputeManifestHash() themselves — preserves byte-for-byte compatibility with Phase 08's artifact_serializer_test.cpp round-trip tests over real timestamps
@@ -168,3 +169,4 @@ Resume file: None
 - [Phase 11-01]: Dropped WSL/llvmpipe MNN-float capture deleted outright (not archived) per D-09 executor discretion
 - [Phase 11-01]: ROADMAP.md Phase 11 phase-list summary bullet ('Mac + PC + a third') left untouched -- plan named only SC1 and the Phase Details Goal line as in-scope discretionary edits
 - [Phase 12]: [Phase 12-01] Consolidated the plan's two NaN-canonicalization behavior bullets into a single QuantizeFloatBufferCanonicalizesNaN test case (two internal assertions) to keep the suite at exactly the 7 named TEST_F cases the plan's Artifacts section lists
+- [Phase 12-02]: Render job JSON needs an explicit pipeline_state (topology: point_list) to guarantee visible fragment rasterization -- the default TRIANGLE_LIST topology with arbitrary vertex data can silently render zero fragments, making a fragment-shader-only counter-test vacuous

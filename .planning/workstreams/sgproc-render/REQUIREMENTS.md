@@ -28,7 +28,7 @@ Requirements for milestone v2.1. Each maps to roadmap phases.
 
 ### Security Validation
 
-- [ ] **SECV-01**: A deliberately wrong/corrupted result still produces a post-normalization hash that differs from the correct result's hash — proving the chosen tolerance isn't loose enough to also accept wrong results
+- [x] **SECV-01**: A deliberately wrong/corrupted result still produces a post-normalization hash that differs from the correct result's hash — proving the chosen tolerance isn't loose enough to also accept wrong results
 
 ### Empirical Validation
 
@@ -72,7 +72,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | QUANT-02 | Phase 12 | Complete |
 | QUANT-03 | Phase 12 | Complete |
 | QUANT-04 | Phase 12 | Complete |
-| SECV-01 | Phase 12 | Pending |
+| SECV-01 | Phase 12 | Complete |
 | VALD-01 | Phase 13 | Pending |
 
 **Coverage:**
