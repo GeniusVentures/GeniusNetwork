@@ -21,9 +21,9 @@ Requirements for milestone v2.1. Each maps to roadmap phases.
 
 ### Quantization / Normalization
 
-- [ ] **QUANT-01**: Render (uint8 RGBA8/RGB8) and MNN (float32 tensor) output are each normalized to a fixed precision before hashing, using whichever technique (rounding, fixed-point conversion, bit-masking, or another canonicalization approach) is determined during design to best balance cross-hardware tolerance against result integrity
-- [ ] **QUANT-02**: The chosen normalization is applied identically before both the per-chunk hash and the combined hash, on both the render and MNN paths
-- [ ] **QUANT-03**: IEEE-754 special values (NaN, +Inf, -Inf, denormals, signed zero) are canonicalized to one fixed representative bit pattern before normalization
+- [x] **QUANT-01**: Render (uint8 RGBA8/RGB8) and MNN (float32 tensor) output are each normalized to a fixed precision before hashing, using whichever technique (rounding, fixed-point conversion, bit-masking, or another canonicalization approach) is determined during design to best balance cross-hardware tolerance against result integrity
+- [x] **QUANT-02**: The chosen normalization is applied identically before both the per-chunk hash and the combined hash, on both the render and MNN paths
+- [x] **QUANT-03**: IEEE-754 special values (NaN, +Inf, -Inf, denormals, signed zero) are canonicalized to one fixed representative bit pattern before normalization
 - [x] **QUANT-04**: Normalization parameters are fixed constants derived from CAPT/DIFF's empirical ≥2-machine data (Mac + Windows; a third machine's only available device was a software rasterizer, excluded per Phase 11's scope decision) — not guessed a priori, not schema-configurable this milestone
 
 ### Security Validation
@@ -68,9 +68,9 @@ Which phases cover which requirements. Updated during roadmap creation.
 | DIFF-01 | Phase 10 | Complete |
 | DIFF-02 | Phase 10 | Complete |
 | DIFF-03 | Phase 10 | Complete |
-| QUANT-01 | Phase 12 | Pending |
-| QUANT-02 | Phase 12 | Pending |
-| QUANT-03 | Phase 12 | Pending |
+| QUANT-01 | Phase 12 | Complete |
+| QUANT-02 | Phase 12 | Complete |
+| QUANT-03 | Phase 12 | Complete |
 | QUANT-04 | Phase 12 | Complete |
 | SECV-01 | Phase 12 | Pending |
 | VALD-01 | Phase 13 | Pending |

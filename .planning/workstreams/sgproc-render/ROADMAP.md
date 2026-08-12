@@ -110,7 +110,10 @@ Plans:
   4. The normalization's fixed constants are documented with direct reference to Phase 11's captured max-delta/ULP/mantissa-bit-difference statistics — not guessed a priori, not reused from the unrelated pre-existing `ProcessingDatatypesTest` (COV-01) tolerance, and not exposed as a schema-configurable parameter.
   5. A test run using a deliberately wrong/corrupted result (e.g. a corrupted model file, a wrong shader constant, or a truncated/lower-precision inference run) produces a post-normalization hash that differs from the correct run's hash — proving the chosen tolerance is not loose enough to also accept wrong results.
 
-**Plans**: TBD
+**Plans**: 1/2 plans executed
+
+- [x] 12-01-PLAN.md
+- [ ] 12-02-PLAN.md
 
 ### Phase 13: Re-Validation & Scope Boundary Documentation
 
@@ -142,5 +145,5 @@ Plans:
 | 09. Processor & Pass-Graph Conformance Suites | v2.0 | 15/15 | Complete, verified | 2026-08-07 |
 | 10. Capture Harness & Diff Tool (Quantization Stub) | v2.1 | 6/6 | Complete    | 2026-08-10 |
 | 11. Empirical Cross-Machine Capture Run | v2.1 | 1/1 | Complete    | 2026-08-12 |
-| 12. Quantization / Normalization Implementation | v2.1 | 0/TBD | Not started | - |
+| 12. Quantization / Normalization Implementation | v2.1 | 1/2 | In Progress|  |
 | 13. Re-Validation & Scope Boundary Documentation | v2.1 | 0/TBD | Not started | - |
