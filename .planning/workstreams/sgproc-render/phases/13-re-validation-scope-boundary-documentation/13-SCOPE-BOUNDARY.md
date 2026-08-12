@@ -170,15 +170,17 @@ Per ROADMAP SC3 and 13-CONTEXT.md D-09, quoting `REQUIREMENTS.md`'s own `## Out 
 
 ## SC4: Final Normalization Constants
 
-Quoting `quantization.hpp`'s actual final constants (unmodified this phase, read as source of truth):
+**Update (this phase's own gap-closure round, Plan 13-04): the constant below is no longer S=2^20.** The empirical derivation immediately following this note (S=2^20, D-05, ~10x margin over Phase 11's original `maxAbsDelta`) describes what was true at the time Plan 13-03 originally wrote this SC4 section — it remains historically accurate as a record of that original round's derivation and is preserved unedited below. But Plan 13-04, responding to this same document's "Open Gap Against SC1" finding (12/15 MNN chunks still diverging at S=2^20), subsequently changed the live constant to **S = 2^15 (32768.0f)** — chosen via a local binary search over power-of-two values after the plan's originally-proposed S=2^14 was found to regress `Secv01CounterTest.MnnCorruptedModelStillDiverges`. **S=2^15 is the actual current, final constant as of this phase's close**, not S=2^20. See the "SC1 Refit: Widened-Grid Re-Measurement" section above for the full S=2^15 derivation (grid step `3.0517578125e-05`, 32x the S=2^20 grid step, ~292x Phase 11's original `maxAbsDelta`, and the SECV-01-boundary discovery that motivated it), and `quantization.hpp`'s own doc comment (lines 32-63) for the permanent source-of-truth citation trail. The two sections do not disagree: SC1 Refit and this note both correctly state S=2^15 is current; only the empirical-derivation prose immediately below is a historical snapshot of the original S=2^20 round, not a claim about what is current today.
+
+Quoting `quantization.hpp`'s constants **as they stood after Plan 13-03's original re-validation round** (prior to Plan 13-04's subsequent S=2^15 gap-closure change noted above):
 
 - **MNN float32 path (`QuantizeFloatBuffer`):**
-  - Canonicalization (evaluated strictly before rounding, D-07): denormals (both signs) flush to `0x00000000`; NaN (any payload/sign/signaling bit) canonicalizes to the hardcoded quiet-NaN pattern `0x7FC00000` (D-09); `+Inf`/`-Inf` canonicalize to two **distinct** fixed patterns, `0x7F800000`/`0xFF800000` respectively (D-06, so a wrong-sign divergence stays visible to SECV-01); `-0.0`/`+0.0` both collapse to the single canonical zero bit pattern `0x00000000` (D-08).
-  - Rounding: `q = round(x * S) / S`, with scale factor `S = 2^20` = `1048576.0f` (D-05), a power-of-two chosen for exact float round-tripping. This gives a grid step of approximately `1e-6`.
-  - This is a single fixed absolute epsilon (D-04) — not magnitude-adaptive, not relative/ULP-based, not schema-configurable this milestone.
-- **Render uint8 path (`QuantizeByteBuffer`):** deliberate identity pass-through — byte-identity, no lossy tolerance band applied.
+  - Canonicalization (evaluated strictly before rounding, D-07): denormals (both signs) flush to `0x00000000`; NaN (any payload/sign/signaling bit) canonicalizes to the hardcoded quiet-NaN pattern `0x7FC00000` (D-09); `+Inf`/`-Inf` canonicalize to two **distinct** fixed patterns, `0x7F800000`/`0xFF800000` respectively (D-06, so a wrong-sign divergence stays visible to SECV-01); `-0.0`/`+0.0` both collapse to the single canonical zero bit pattern `0x00000000` (D-08). **This canonicalization logic is untouched by Plan 13-04's later change and remains accurate today.**
+  - Rounding (original Phase 12 value, superseded by Plan 13-04 — see the update note above): `q = round(x * S) / S`, with scale factor `S = 2^20` = `1048576.0f` (D-05), a power-of-two chosen for exact float round-tripping. This gave a grid step of approximately `1e-6`.
+  - This is a single fixed absolute epsilon (D-04) — not magnitude-adaptive, not relative/ULP-based, not schema-configurable this milestone. (This design property also still holds for the current S=2^15 constant — only the specific scale value changed.)
+- **Render uint8 path (`QuantizeByteBuffer`):** deliberate identity pass-through — byte-identity, no lossy tolerance band applied. **Unchanged by Plan 13-04, still current.**
 
-**Empirical derivation**, citing Phase 11's exact captured numbers verbatim (`11-CAPTURE-RESULTS.md`, MNN float32, 512 elements, Mac vs Windows, pre-quantization/no-op-stub era):
+**Empirical derivation of the original S=2^20 choice**, citing Phase 11's exact captured numbers verbatim (`11-CAPTURE-RESULTS.md`, MNN float32, 512 elements, Mac vs Windows, pre-quantization/no-op-stub era):
 
 - `maxAbsDelta`: exact `1.043081283569336e-07` (≈`1.043e-07`)
 - `maxRelDelta`: exact `7.269731577252969e-05` (≈`7.27e-05`)
