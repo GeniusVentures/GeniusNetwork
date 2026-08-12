@@ -3,16 +3,16 @@ gsd_state_version: 1.0
 milestone: v2.1
 milestone_name: Cross-Hardware Hash Tolerance
 current_phase: 11
-current_phase_name: Empirical Cross-Machine Capture Run
+current_phase_name: empirical-cross-machine-capture-run
 status: executing
 stopped_at: Phase 11 context gathered
-last_updated: "2026-08-11T23:56:35.370Z"
-last_activity: 2026-08-11
-last_activity_desc: Phase 10 complete, transitioned to Phase 11
+last_updated: "2026-08-12T00:00:02.751Z"
+last_activity: 2026-08-12
+last_activity_desc: Phase 11 execution started
 progress:
   total_phases: 4
   completed_phases: 1
-  total_plans: 6
+  total_plans: 7
   completed_plans: 6
   percent: 25
 ---
@@ -24,14 +24,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-08-03), workstream section "Workstream: sgproc-render"
 
 **Core value:** Elevate SGProcessingManager from a "parse-and-hope" pipeline to a contract-driven execution engine — jobs are validated before work starts, execution is cancellable and budget-aware, results are typed artifacts with provenance, and every processor is covered by a common test suite.
-**Current focus:** Phase 10 — capture-harness-diff-tool-quantization-stub
+**Current focus:** Phase 11 — empirical-cross-machine-capture-run
 
 ## Current Position
 
-Phase: 11 — Empirical Cross-Machine Capture Run
-Plan: Not started
-Status: Ready to execute
-Last activity: 2026-08-11 — Phase 10 complete, transitioned to Phase 11
+Phase: 11 (empirical-cross-machine-capture-run) — EXECUTING
+Plan: 1 of 1
+Status: Executing Phase 11
+Last activity: 2026-08-12 — Phase 11 execution started
 
 ## Performance Metrics
 
@@ -94,10 +94,10 @@ Last activity: 2026-08-11 — Phase 10 complete, transitioned to Phase 11
 
 ### Pending Todos
 
-- Phase 11 data gathering already started ahead of formal phase kickoff: `capture_harness` run on Mac (Fuu's-Mac-mini, macOS) and Windows (Mofu, Windows) for both the MNN-float and render-happy-path fixtures; 4 `.cap` files + 2 `capture_diff` JSON reports live in `caps/` at repo root (not yet moved into a phase-owned location).
+- Phase 11 data gathering already started ahead of formal phase kickoff: `capture_harness` run on Mac (Fuu's-Mac-mini, macOS) and Windows (Mofu, Windows) for both the MNN-float and render-happy-path fixtures; 4 `.cap` files + 2 `capture_diff` JSON reports (relocated into this phase's `captures/` directory per 11-01-PLAN.md Task 1).
 - **Decided 2026-08-11: accept 2/3 machines (Mac + Windows) for the render fixture.** WSL's only available Vulkan device is `llvmpipe` (Mesa software rasterizer, `type=CPU`) — not a real GPU, and exactly the "software Vulkan ICD" tier Phase 4's D-31 already excluded project-wide. Rather than loosen `RenderProcessor::IsAcceptable()` (which would affect `CanExecute()`/CI/production everywhere, not just this one box), render's cross-hardware dataset stays Mac+Windows only. A genuine third physical machine can still be added later if one becomes available.
 - **Caveat carried into Phase 11 for the MNN-float side:** the WSL `.cap` already gathered (`xhw-mnn-float_*.cap`) also ran on `llvmpipe`/CPU (MNN has no device-type filter, so it silently used the same software device) — it is a software-rasterizer-vs-real-GPU comparison, not hardware-vs-hardware. Should be kept as a separately-labeled curiosity, not folded into the same-footing 3-machine hardware dataset the milestone's precision decision depends on.
-- Next: formally kick off `/gsd-discuss-phase 11 --ws sgproc-render` (user is doing this next) to capture this 2/3-machines-plus-labeled-caveat scope as the phase's actual context.
+- Done: `/gsd-discuss-phase 11 --ws sgproc-render` captured the 2-machine scope as 11-CONTEXT.md's D-01 through D-09; see 11-01-PLAN.md for the execution plan that closes out Phase 11.
 
 ### Blockers/Concerns
 
@@ -152,8 +152,8 @@ Resume file: .planning/workstreams/sgproc-render/phases/11-empirical-cross-machi
 
 ## Operator Next Steps
 
-- Phase 10 complete. `/gsd-discuss-phase 11 --ws sgproc-render` when ready to formally scope Phase 11 (2 of 3 required machines already captured ad-hoc this session — see Pending Todos).
-- Get the third machine's `.cap` files (MNN-float + render, `--repeat 2` minimum) before Phase 11 can close out.
+- Phase 10 complete. Phase 11 discussed and scoped (see 11-CONTEXT.md) — 2-machine dataset (Mac + Windows) accepted per D-01; Phase 11 is not blocked on a third physical machine (D-02).
+- Run `/gsd-execute-phase 11 --ws sgproc-render` per 11-01-PLAN.md to relocate the captured evidence into captures/, write 11-CAPTURE-RESULTS.md, and reconcile ROADMAP.md/REQUIREMENTS.md wording.
 
 ## Decisions
 

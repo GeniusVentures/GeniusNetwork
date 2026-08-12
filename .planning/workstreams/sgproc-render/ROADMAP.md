@@ -82,12 +82,12 @@ Plans:
 
 ### Phase 11: Empirical Cross-Machine Capture Run
 
-**Goal**: Real cross-hardware divergence statistics exist across the user's own machines (Mac + PC + a third), gathered using Phase 10's tooling with quantization still a no-op — this is a hands-on data-gathering step the whole milestone's precision decision depends on, not a coding or research activity, and it is deliberately kept as its own phase rather than folded into Phase 10 or Phase 12 per the milestone's confirmed hard dependency order.
+**Goal**: Real cross-hardware divergence statistics exist across the user's own machines (Mac + PC) — a third machine's only available device was a software rasterizer, excluded per this phase's scope decision — gathered using Phase 10's tooling with quantization still a no-op — this is a hands-on data-gathering step the whole milestone's precision decision depends on, not a coding or research activity, and it is deliberately kept as its own phase rather than folded into Phase 10 or Phase 12 per the milestone's confirmed hard dependency order.
 **Depends on**: Phase 10
 **Requirements**: None of the 12 v2.1 requirements map directly to this phase — it is a data-gathering checkpoint that exercises Phase 10's CAPT/DIFF tooling and produces the empirical input Phase 12's QUANT-04 requirement depends on. No code is written in this phase.
 **Success Criteria** (what must be TRUE):
 
-  1. `capture_harness` has been run against Phase 09's render fixture and its MNN fixture on at least 3 distinct physical machines, including the user's Mac and PC, producing one capture file per machine per fixture.
+  1. `capture_harness` has been run against Phase 09's render fixture and its MNN fixture on at least 2 distinct physical machines, including the user's Mac and PC, producing one capture file per machine per fixture. (A third machine's only available Vulkan device was a software rasterizer — already excluded project-wide by `RenderProcessor::IsAcceptable()`'s device-type gate — so the dataset stays 2-machine; see `11-CAPTURE-RESULTS.md` for the full rationale.)
   2. Each machine's own same-node repeat-run stability has been confirmed (via Phase 10's N≥2 same-node check) before that machine's capture file is used in any cross-machine diff.
   3. `capture_diff` has been run pairwise across all captured machine combinations for both fixtures, producing real max-absolute-delta / max-relative-delta / max-ULP-distance / mantissa-bit-difference statistics, separately for the render (uint8) and MNN (float32) output types.
   4. The resulting divergence statistics are written down (not just observed ad hoc), so Phase 12's normalization design can cite specific captured numbers as its justification rather than a guessed constant.

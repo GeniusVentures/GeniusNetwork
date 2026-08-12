@@ -24,7 +24,7 @@ Requirements for milestone v2.1. Each maps to roadmap phases.
 - [ ] **QUANT-01**: Render (uint8 RGBA8/RGB8) and MNN (float32 tensor) output are each normalized to a fixed precision before hashing, using whichever technique (rounding, fixed-point conversion, bit-masking, or another canonicalization approach) is determined during design to best balance cross-hardware tolerance against result integrity
 - [ ] **QUANT-02**: The chosen normalization is applied identically before both the per-chunk hash and the combined hash, on both the render and MNN paths
 - [ ] **QUANT-03**: IEEE-754 special values (NaN, +Inf, -Inf, denormals, signed zero) are canonicalized to one fixed representative bit pattern before normalization
-- [ ] **QUANT-04**: Normalization parameters are fixed constants derived from CAPT/DIFF's empirical ≥3-machine data — not guessed a priori, not schema-configurable this milestone
+- [ ] **QUANT-04**: Normalization parameters are fixed constants derived from CAPT/DIFF's empirical ≥2-machine data (Mac + Windows; a third machine's only available device was a software rasterizer, excluded per Phase 11's scope decision) — not guessed a priori, not schema-configurable this milestone
 
 ### Security Validation
 
@@ -81,7 +81,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 - Mapped to phases: 12
 - Unmapped: 0 ✓
 
-**Note:** Phase 11 (Empirical Cross-Machine Capture Run) covers no requirement directly — it is a hands-on data-gathering checkpoint (run Phase 10's tooling on ≥3 real machines) that produces the empirical input Phase 12's QUANT-04 depends on. See ROADMAP.md Phase 11 for detail.
+**Note:** Phase 11 (Empirical Cross-Machine Capture Run) covers no requirement directly — it is a hands-on data-gathering checkpoint (run Phase 10's tooling on ≥2 real machines (Mac + Windows); a third machine's only available device was a software rasterizer, excluded per Phase 11's scope decision — see `11-CAPTURE-RESULTS.md`) that produces the empirical input Phase 12's QUANT-04 depends on. See ROADMAP.md Phase 11 for detail.
 
 ---
 *Requirements defined: 2026-08-07*
