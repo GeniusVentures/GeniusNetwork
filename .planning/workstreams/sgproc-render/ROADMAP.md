@@ -127,7 +127,17 @@ Plans:
   3. A written document records the milestone's scope boundary in plain terms: hash comparison is now cross-hardware tolerant; `ProcessingValidationCore::ValidateResults`'s comparison-mechanism bug remains unfixed; no cross-node consensus/redundant-execution plumbing was built. No downstream consumer should read this milestone's output as "verification" or "consensus-ready."
   4. The final chosen normalization constants and their empirical derivation (citing Phase 11's captured numbers) are documented alongside the re-validation result, closing the milestone's traceability loop.
 
-**Plans**: TBD
+**Plans**: 0/3 plans complete
+
+Plans:
+**Wave 1**
+
+- [ ] 13-01-PLAN.md — Hands-on re-capture on Mac + Windows with Phase 12's real quantization active (checkpoint)
+- [ ] 13-02-PLAN.md — Re-run SECV-01 CTest at final precision + reconcile REQUIREMENTS.md/ROADMAP.md wording (2-machine scope, processor-level hash)
+
+**Wave 2** *(blocked on 13-01 + 13-02 completion)*
+
+- [ ] 13-03-PLAN.md — capture_diff on fresh captures + write 13-SCOPE-BOUNDARY.md (combined re-validation results + scope boundary)
 
 ## Progress
 
