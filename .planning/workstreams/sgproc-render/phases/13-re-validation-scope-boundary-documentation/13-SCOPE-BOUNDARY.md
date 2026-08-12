@@ -1,7 +1,7 @@
 ---
 phase: 13-re-validation-scope-boundary-documentation
 captured: 2026-08-12
-status: real-quantization re-validation of Phase 11's 2-machine dataset — MNN fixture shows an OPEN GAP against SC1
+status: real-quantization re-validation of Phase 11's 2-machine dataset — MNN fixture shows an OPEN GAP against SC1 (narrowed by Plan 13-05's S=2^15 Refit round to 1/15 divergent chunks, still not unconditionally clean)
 ---
 
 # Phase 13: Re-Validation & Scope Boundary Documentation — Results + Scope Boundary
@@ -83,6 +83,58 @@ Full verbatim contents of `captures/diff-render.json` (Mac `Fuus-Mac-mini.local-
 **Interpretation:** `elementCount` is 256. `contentHashMatch` (the processor-level `Artifact.contentHash` comparison SC1 targets) is `true` — the render path's post-quantization result hash matches bit-for-bit across Mac and Windows. `chunkHashesMatch` is an empty array for this fixture (render has no chunking, consistent with Phase 11's own finding and Phase 10's capture format). All numeric deltas (`maxAbsDelta`, `maxRelDelta`, `maxUlpDistance`, `percentExceedingThreshold`) are `0` — the raw pixel bytes are identical across machines, matching `quantization.hpp`'s deliberate byte-identity design for this path (see SC4 below). `combinedHashMatch` is `false`, exactly as expected per D-03 (manifest-level hash, not the SC1 target — see the SC1 preamble above) and consistent with Phase 11's own identical finding (`contentHashMatch: true` / `combinedHashMatch: false` pairing).
 
 **SC1 is satisfied for the render uint8 fixture.**
+
+## SC1 Refit: Widened-Grid Re-Measurement
+
+Plan 13-04 widened `QuantizeFloatBuffer`'s fixed rounding grid in response to this document's own "Open Gap Against SC1" statement above. The **real, applied fix is S=2^15, not S=2^14** — the plan's original text proposed S=2^14 (grid step `6.103515625e-05`, 64x the old grid step), but Plan 13-04's Task 1 discovered a hard SECV-01 boundary during its local binary search: S=2^14 makes `Secv01CounterTest.MnnCorruptedModelStillDiverges` **fail deterministically** (the corrupted MNN model's post-quantization `artifactId` collides bit-for-bit with the correct model's — confirmed twice, not flaky). S=2^15 (grid step `3.0517578125e-05`) was chosen instead, keeping one full power-of-two step of margin above that confirmed failure boundary rather than sitting at its exact edge. S=2^15's grid step is **32x** the original S=2^20 grid step (`9.5367431640625e-07`) and **~292x** Phase 11's originally-measured `maxAbsDelta` (`1.043081283569336e-07`) — see `quantization.hpp`'s own doc comment (lines 32-63) for the full derivation trail, including the SECV-01 boundary discovery, cited here verbatim rather than re-derived.
+
+Full verbatim contents of `captures/diff-mnn-float-refit.json` (fresh Mac `Fuus-Mac-mini.local---macOS_20260812T232347.cap` vs fresh Windows `Mofu---Windows_20260812T232430.cap`, both captured with the S=2^15 fix compiled in and active):
+
+```json
+{
+  "chunkHashesMatch": [
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    false,
+    true,
+    true,
+    true,
+    true
+  ],
+  "combinedHashMatch": false,
+  "contentHashMatch": true,
+  "elementCount": 512,
+  "elementType": "float32",
+  "maxAbsDelta": 0.0,
+  "maxRelDelta": 0.0,
+  "maxUlpDistance": 0,
+  "percentExceedingThreshold": 0.0,
+  "sizeMismatch": false
+}
+```
+
+**Outcome: the gap persists, but it is dramatically narrowed, not merely relabeled.** `contentHashMatch` is `true` (up from `false` in the original round), and of the 15 `chunkHashesMatch` entries, only **1** is now `false` (`chunkHashesMatch[10]`) — down from **12** false entries in the original S=2^20 round. `maxAbsDelta`, `maxRelDelta`, and `maxUlpDistance` are all now exactly `0` (down from `9.5367431640625e-07` / `5.3748990467283875e-05` / `512` in the original round). This is **not** an unconditionally clean result per this plan's own must_haves bar (contentHashMatch true AND every chunkHashesMatch entry true) — `chunkHashesMatch[10]` remains `false` — so **SC1 is still not fully satisfied for the MNN float32 fixture**, exactly as honestly reported below rather than rounded into a pass. Do not read "still Partial" as "no progress was made": measured cross-hardware divergence for this fixture went from 12/15 divergent chunks with a non-zero measured delta to 1/15 divergent chunk with zero measured delta anywhere the numeric pass can see.
+
+**Investigation note — the chunkHashesMatch[10]-despite-zero-delta anomaly is not a contradiction; it is a real, distinct scope limitation in `capture_diff`'s diagnostic coverage, inherited unmodified from Phase 10.** Reading `capture_diff.cpp`'s actual per-element numeric-diff logic (not assumed from the JSON field names alone):
+
+- `capture_diff.cpp:295-296`'s own comment states the numeric pass runs "over the LAST CaptureRecord's quantizedBytes -- the same bytes that fed each run's contentHash" — a deliberate, documented restriction, not an oversight.
+- `capture_diff.cpp:308-319` confirms this in code: `lastRecordA`/`lastRecordB` are taken from `captureA.rawRecordsPerArtifact[0].back()` / `captureB.rawRecordsPerArtifact[0].back()` — the single **trailing** raw capture record — and only that one record's bytes feed `ComputeFloat32Diff` (and therefore `maxAbsDelta`/`maxRelDelta`/`maxUlpDistance`/`percentExceedingThreshold`/`elementCount`).
+- `capture_diff.cpp:283-291` computes `chunkHashesMatch[j]` completely independently, by comparing `artifactA.chunkHashes[j]` against `artifactB.chunkHashes[j]` — pre-computed `Artifact`-level SHA-256 fields, not derived from any raw byte buffer this tool itself re-diffs.
+- `capture_file_format.hpp:52-59`'s `CaptureRecord` doc comment states each record is "either a per-chunk capture (paired with one entry of `Artifact::chunkHashes`) or the trailing combined-hash capture (paired with `Artifact::contentHash`), in call order" — i.e. the trailing record and each per-chunk record are genuinely **different byte buffers**, not aliases of the same data.
+- `capture_file_format.hpp:73-78`'s `rawRecordsPerArtifact` doc confirms the index mapping: `records[0 .. chunkHashCount - 1]` correspond 1:1 to `chunkHashes[0 .. chunkHashCount - 1]`, and the optional trailing record (`records[chunkHashCount]`, i.e. `.back()` when present) corresponds to `contentHash` — exactly the record `capture_diff.cpp` numeric-diffs.
+- `capture_harness.cpp:276-315` (`SelfCheckCapturedBytes`) independently re-hashes `records[j]` for `j < chunkHashCount` against `artifact.chunkHashes[j]`, and separately re-hashes `records.back()` against `artifact.contentHash` only when `records.size() == chunkHashCount + 1` — confirming at capture time that these are distinct, individually self-checked buffers, not a single buffer serving double duty.
+
+**Conclusion:** `contentHashMatch: true` and `maxAbsDelta`/`maxRelDelta`/`maxUlpDistance: 0` all describe the *same* trailing combined-hash record, which is genuinely bit-identical Mac vs Windows under the S=2^15 fix. `chunkHashesMatch[10]: false` describes a *different* byte buffer — chunk 10's own individual raw capture — that `capture_diff`'s numeric pass never examines at all, by design, unchanged since Phase 10. There is no logical contradiction and no new defect introduced by this fix: `capture_diff` simply reports *that* chunk 10 still diverges (via the independent hash comparison) without ever reporting *by how much*, because its numeric per-element pass has never covered any per-chunk record, only the trailing one. Fully diagnosing chunk 10's remaining divergence (e.g. confirming whether one of its elements sits closer to a grid boundary than S=2^15's margin absorbs) would require extending `capture_diff` to also numeric-diff each `rawRecordsPerArtifact[0][j]` record individually — out of scope for this plan, and flagged here as a follow-up for whoever next picks up VALD-01's remaining chunk-10 gap.
+
+**Honest closing caveat (restating this phase's own core caveat, per `quantization.hpp`'s doc comment and this gap-closure round's objective):** a fixed rounding grid is a probabilistic engineering mitigation, not a mathematical guarantee, for arbitrary per-element cross-hardware deltas that happen to land close to a rounding boundary. S=2^15 substantially reduced (from 12/15 to 1/15 divergent chunks) but did not eliminate that probability for this fixture's actual values.
 
 ## SC2: SECV-01 Re-Confirmation
 

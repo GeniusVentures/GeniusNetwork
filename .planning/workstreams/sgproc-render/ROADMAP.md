@@ -43,7 +43,7 @@ Full detail archived at `.planning/milestones/sgproc-render-v2.0-ROADMAP.md`.
 - [x] **Phase 10: Capture Harness & Diff Tool (Quantization Stub)** - Build and validate the capture harness + diff tool plumbing (14 processor files + `ExecutionContext` capture field) against Phase 09's existing fixtures, with quantization wired in as a no-op/identity stub (completed 2026-08-10)
 - [x] **Phase 11: Empirical Cross-Machine Capture Run** - Hands-on data-gathering checkpoint: run Phase 10's tooling on the user's Mac + PC + a third machine to produce real cross-hardware divergence statistics (completed 2026-08-12)
 - [x] **Phase 12: Quantization / Normalization Implementation** - Implement the real normalization logic (technique chosen from Phase 11's data, not fixed in advance) on both render and MNN paths, plus the SECV-01 wrong-result-still-diverges counter-test (completed 2026-08-12)
-- [ ] **Phase 13: Re-Validation & Scope Boundary Documentation** - Re-run the ≥2-machine capture/diff cycle with real quantization active to confirm VALD-01, re-confirm SECV-01 at the final precision, and document the milestone's scope boundary (all 3 plans executed 2026-08-12, but goal verification found VALD-01 only partial — render fixture matches cross-hardware, MNN fixture does not; see 13-VERIFICATION.md)
+- [ ] **Phase 13: Re-Validation & Scope Boundary Documentation** - Re-run the ≥2-machine capture/diff cycle with real quantization active to confirm VALD-01, re-confirm SECV-01 at the final precision, and document the milestone's scope boundary (all 3 plans executed 2026-08-12, but goal verification found VALD-01 only partial — render fixture matches cross-hardware, MNN fixture does not; see 13-VERIFICATION.md). Gap-closure Plans 13-04/13-05 widened the quantization grid to S=2^15 and re-measured (2026-08-12): MNN gap narrowed from 12/15 to 1/15 divergent chunk hashes but still not unconditionally clean — see 13-SCOPE-BOUNDARY.md's SC1 Refit section.
 
 ## Phase Details
 
@@ -122,12 +122,12 @@ Plans:
 **Requirements**: VALD-01
 **Success Criteria** (what must be TRUE):
 
-  1. Re-running `capture_harness` + `capture_diff` with real quantization active across ≥2 distinct physical machines (including the user's Mac and PC; a third machine was attempted but excluded — see 13-SCOPE-BOUNDARY.md) confirms matching post-normalization processor-level result/chunk hashes for both the render fixture and the MNN fixture.
+  1. Re-running `capture_harness` + `capture_diff` with real quantization active across ≥2 distinct physical machines (including the user's Mac and PC; a third machine was attempted but excluded — see 13-SCOPE-BOUNDARY.md) confirms matching post-normalization processor-level result/chunk hashes for both the render fixture and the MNN fixture. **Status (2026-08-12, post-Refit):** render fixture fully satisfies this; MNN fixture's gap was narrowed by Plan 13-04's S=2^15 grid-widening fix from 12/15 to 1/15 divergent chunk hashes (contentHashMatch now true) but is not yet unconditionally clean — see 13-SCOPE-BOUNDARY.md's SC1 Refit section and captures/diff-mnn-float-refit.json.
   2. The wrong-result-still-diverges counter-test (SECV-01) is re-run at the final chosen precision and still passes, reported alongside the ≥3-machine match result — not assumed to still hold from Phase 12 alone.
   3. A written document records the milestone's scope boundary in plain terms: hash comparison is now cross-hardware tolerant; `ProcessingValidationCore::ValidateResults`'s comparison-mechanism bug remains unfixed; no cross-node consensus/redundant-execution plumbing was built. No downstream consumer should read this milestone's output as "verification" or "consensus-ready."
   4. The final chosen normalization constants and their empirical derivation (citing Phase 11's captured numbers) are documented alongside the re-validation result, closing the milestone's traceability loop.
 
-**Plans**: 3/5 plans complete (gap closure: 13-04, 13-05 added after verification found VALD-01 partial — see 13-VERIFICATION.md)
+**Plans**: 4/5 plans complete (gap closure: 13-04, 13-05 added after verification found VALD-01 partial — see 13-VERIFICATION.md; 13-05 complete, 13-04's checkpoint/summary still outstanding despite its widened-grid fix already being present in quantization.hpp)
 
 Plans:
 **Wave 1**
@@ -145,7 +145,7 @@ Plans:
 
 **Wave 4** *(blocked on 13-04 completion)*
 
-- [ ] 13-05-PLAN.md — capture_diff on widened-grid MNN captures + 13-SCOPE-BOUNDARY.md Refit section + conditional REQUIREMENTS.md/ROADMAP.md VALD-01 status update
+- [x] 13-05-PLAN.md — capture_diff on widened-grid MNN captures + 13-SCOPE-BOUNDARY.md Refit section + conditional REQUIREMENTS.md/ROADMAP.md VALD-01 status update
 
 ## Progress
 
@@ -164,4 +164,4 @@ Plans:
 | 10. Capture Harness & Diff Tool (Quantization Stub) | v2.1 | 6/6 | Complete    | 2026-08-10 |
 | 11. Empirical Cross-Machine Capture Run | v2.1 | 1/1 | Complete    | 2026-08-12 |
 | 12. Quantization / Normalization Implementation | v2.1 | 2/2 | Complete    | 2026-08-12 |
-| 13. Re-Validation & Scope Boundary Documentation | v2.1 | 3/3 | Gaps found (VALD-01 partial) | 2026-08-12 |
+| 13. Re-Validation & Scope Boundary Documentation | v2.1 | 4/5 | Gap narrowed, not closed (VALD-01 partial — 1/15 MNN chunks still diverge post-S=2^15-Refit) | 2026-08-12 |

@@ -32,7 +32,7 @@ Requirements for milestone v2.1. Each maps to roadmap phases.
 
 ### Empirical Validation
 
-- [ ] **VALD-01**: The same render fixture and the same MNN fixture, run on ≥2 distinct physical machines (including the user's Mac and PC; a third machine was attempted but excluded — see 13-SCOPE-BOUNDARY.md), produce matching post-normalization processor-level result/chunk hashes (not `ProcessOutput.combinedHash`/`ExecutionManifest.manifestHash`, which bake in machine-specific `executorIdentity`/`gpuMemoryUsedBytes` by design — see `SGProcessingManager/src/processingbase/ProcessingManager.cpp:1500-1510` and `12-CONTEXT.md` D-01/D-02). **Re-validated 2026-08-12 (Phase 13):** render fixture's processor-level hash matches cross-hardware; MNN float32 fixture's does not yet (12/15 chunk hashes still diverge post-quantization) — open gap, see `13-SCOPE-BOUNDARY.md`
+- [ ] **VALD-01**: The same render fixture and the same MNN fixture, run on ≥2 distinct physical machines (including the user's Mac and PC; a third machine was attempted but excluded — see 13-SCOPE-BOUNDARY.md), produce matching post-normalization processor-level result/chunk hashes (not `ProcessOutput.combinedHash`/`ExecutionManifest.manifestHash`, which bake in machine-specific `executorIdentity`/`gpuMemoryUsedBytes` by design — see `SGProcessingManager/src/processingbase/ProcessingManager.cpp:1500-1510` and `12-CONTEXT.md` D-01/D-02). **Re-validated 2026-08-12 (Phase 13):** render fixture's processor-level hash matches cross-hardware; MNN float32 fixture's does not yet (12/15 chunk hashes still diverge post-quantization) — open gap, see `13-SCOPE-BOUNDARY.md`. **Refit re-measurement 2026-08-12 (Plan 13-04/13-05, S=2^15 grid-widening fix):** gap narrowed but not closed — MNN fixture's `contentHashMatch` now `true` and only 1 of 15 chunk hashes still diverges (down from 12/15), see `13-SCOPE-BOUNDARY.md`'s "SC1 Refit" section and `captures/diff-mnn-float-refit.json`
 
 ## v2 Requirements
 
@@ -73,7 +73,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | QUANT-03 | Phase 12 | Complete |
 | QUANT-04 | Phase 12 | Complete |
 | SECV-01 | Phase 12 | Complete |
-| VALD-01 | Phase 13 | Partial — render OK, MNN open gap (see 13-SCOPE-BOUNDARY.md) |
+| VALD-01 | Phase 13 | Partial — render OK, MNN gap narrowed to 1/15 chunks by S=2^15 Refit but not closed (see 13-SCOPE-BOUNDARY.md SC1 Refit + captures/diff-mnn-float-refit.json) |
 
 **Coverage:**
 
@@ -85,4 +85,4 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 ---
 *Requirements defined: 2026-08-07*
-*Last updated: 2026-08-12 — Phase 13 re-validation: VALD-01 partially satisfied (render fixture matches cross-hardware; MNN fixture has an open gap, see 13-SCOPE-BOUNDARY.md)*
+*Last updated: 2026-08-12 — Phase 13 re-validation + Refit: VALD-01 partially satisfied (render fixture matches cross-hardware; MNN fixture's gap narrowed by the S=2^15 grid-widening fix from 12/15 to 1/15 divergent chunks but not fully closed, see 13-SCOPE-BOUNDARY.md's SC1 Refit section)*
