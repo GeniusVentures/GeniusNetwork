@@ -127,7 +127,7 @@ Plans:
   3. A written document records the milestone's scope boundary in plain terms: hash comparison is now cross-hardware tolerant; `ProcessingValidationCore::ValidateResults`'s comparison-mechanism bug remains unfixed; no cross-node consensus/redundant-execution plumbing was built. No downstream consumer should read this milestone's output as "verification" or "consensus-ready."
   4. The final chosen normalization constants and their empirical derivation (citing Phase 11's captured numbers) are documented alongside the re-validation result, closing the milestone's traceability loop.
 
-**Plans**: 4/5 plans complete (gap closure: 13-04, 13-05 added after verification found VALD-01 partial — see 13-VERIFICATION.md; 13-05 complete, 13-04's checkpoint/summary still outstanding despite its widened-grid fix already being present in quantization.hpp)
+**Plans**: 4/5 plans executed
 
 Plans:
 **Wave 1**

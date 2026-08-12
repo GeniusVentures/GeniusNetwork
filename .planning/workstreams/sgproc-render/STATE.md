@@ -5,15 +5,15 @@ milestone_name: Cross-Hardware Hash Tolerance
 current_phase: 13
 current_phase_name: re-validation-scope-boundary-documentation
 status: executing
-stopped_at: "13-04 Task 1 complete: binary-searched and committed S=2^15 (safe margin above confirmed S=2^14 SECV-01 failure boundary). Task 2 checkpoint (hands-on Mac+Windows re-capture) returned to user, numbers updated to reflect S=2^15."
-last_updated: "2026-08-12T23:16:34.131Z"
+stopped_at: "Completed 13-05-PLAN.md: VALD-01/SC1 gap narrowed (12/15 to 1/15 divergent MNN chunks) but correctly kept Partial per unconditional-clean bar"
+last_updated: "2026-08-12T23:44:49.418Z"
 last_activity: 2026-08-12
 last_activity_desc: Phase 13 execution started
 progress:
   total_phases: 4
   completed_phases: 3
   total_plans: 14
-  completed_plans: 12
+  completed_plans: 13
   percent: 75
 ---
 
@@ -29,8 +29,8 @@ See: .planning/PROJECT.md (updated 2026-08-03), workstream section "Workstream: 
 ## Current Position
 
 Phase: 13 (re-validation-scope-boundary-documentation) — EXECUTING
-Plan: 1 of 5
-Status: Executing Phase 13
+Plan: 2 of 5
+Status: Ready to execute
 Last activity: 2026-08-12 — Phase 13 execution started
 
 ## Performance Metrics
@@ -74,6 +74,7 @@ Last activity: 2026-08-12 — Phase 13 execution started
 | Phase 13 P02 | 18min | 2 tasks | 3 files |
 | Phase 13 P01 | 5min | 1 tasks | 5 files |
 | Phase 13 P03 | 15min | 2 tasks | 3 files |
+| Phase 13 P05 | 12min | 2 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -141,9 +142,9 @@ Items acknowledged and deferred at milestone v2.0 close on 2026-08-07:
 
 ## Session Continuity
 
-Last session: 2026-08-12T23:16:34.131Z
-Stopped at: 13-04 Task 1 complete (S=2^15 committed, binary search documented in Blockers/Decisions). Task 2 checkpoint (hands-on Mac+Windows re-capture with the widened S=2^15 grid) returned to user.
-Resume file: 13-04-PLAN.md
+Last session: 2026-08-12T23:44:49.412Z
+Stopped at: Completed 13-05-PLAN.md: VALD-01/SC1 gap narrowed (12/15 to 1/15 divergent MNN chunks) but correctly kept Partial per unconditional-clean bar
+Resume file: None
 
 - [Phase 09 P10]: combinedHash/manifest.manifestHash computed over a timing-zeroed ExecutionManifest copy rather than modifying SerializeManifest()/ComputeManifestHash() themselves — preserves byte-for-byte compatibility with Phase 08's artifact_serializer_test.cpp round-trip tests over real timestamps
 - [Phase 09 P11]: InferenceCanExecuteReflectsPassTypeRegistryGap documents (not fixes) that INFERENCE passes are schema-valid but not capability-registered — registering INFERENCE/RETRAIN into the capability registry is a separate, larger cross-phase change, deferred as a follow-up item
@@ -182,3 +183,5 @@ Resume file: 13-04-PLAN.md
 - [Phase 13-03]: Reported the MNN fixture's contentHashMatch:false / 12-of-15 chunkHashesMatch:false honestly as an open gap against SC1, rather than reinterpreting the smaller post-quantization maxAbsDelta as a passing result
 - [Phase 13-03]: Explicitly explained combinedHashMatch's expected-false status (manifest hash bakes in machine-specific executorIdentity/gpuMemoryUsedBytes by design, D-03) as distinct from the processor-level contentHashMatch/chunkHashesMatch SC1 actually requires
 - [Phase 13-04]: Task 1's originally-planned S=2^14 grid widening regressed SECV-01's MnnCorruptedModelStillDiverges; ran a local binary search over power-of-two S values (2^17, 2^16, 2^15 all pass; 2^14 confirmed to fail deterministically twice) and chose S=2^15 -- one full power-of-two step of margin above the confirmed failure boundary, 32x the old S=2^20 grid step, ~292x Phase 11's original maxAbsDelta -- rather than the plan's literal S=2^14/64x/585x citation
+- [Phase ?]: Plan 13-05: cited the real applied fix (S=2^15, chosen after S=2^14 regressed SECV-01) in 13-SCOPE-BOUNDARY.md's new SC1 Refit section, not the plan's stale S=2^14/64x/585x text
+- [Phase ?]: Plan 13-05: root-caused the chunkHashesMatch[10]-despite-zero-delta anomaly via capture_diff.cpp/capture_harness.cpp/capture_file_format.hpp source reading -- numeric per-element pass only diffs the trailing combined-hash record, never per-chunk records; a real Phase-10-era scope limitation, not a contradiction or new defect
