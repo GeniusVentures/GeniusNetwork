@@ -4,17 +4,17 @@ milestone: v2.1
 milestone_name: Cross-Hardware Hash Tolerance
 current_phase: 13
 current_phase_name: re-validation-scope-boundary-documentation
-status: verifying
-stopped_at: Completed 13-03-PLAN.md (Phase 13 fully executed, VALD-01 open gap noted)
-last_updated: "2026-08-12T21:39:23.329Z"
+status: executing
+stopped_at: "13-04 Task 1 halted: S=2^14 grid widening regresses SECV-01 MnnCorruptedModelStillDiverges (see Blockers). Awaiting user/planner decision on the constant before Task 2."
+last_updated: "2026-08-12T22:46:45.082Z"
 last_activity: 2026-08-12
 last_activity_desc: Phase 13 execution started
 progress:
   total_phases: 4
-  completed_phases: 4
-  total_plans: 12
+  completed_phases: 3
+  total_plans: 14
   completed_plans: 12
-  percent: 100
+  percent: 75
 ---
 
 # Project State
@@ -29,8 +29,8 @@ See: .planning/PROJECT.md (updated 2026-08-03), workstream section "Workstream: 
 ## Current Position
 
 Phase: 13 (re-validation-scope-boundary-documentation) — EXECUTING
-Plan: 3 of 3
-Status: Phase complete — ready for verification
+Plan: 1 of 5
+Status: Executing Phase 13
 Last activity: 2026-08-12 — Phase 13 execution started
 
 ## Performance Metrics
@@ -115,6 +115,7 @@ Last activity: 2026-08-12 — Phase 13 execution started
 - Validation layers: system-level layer availability varies by platform (Vulkan SDK, NDK, MoltenVK)
 - **Pre-existing bug found during Phase 10's regression gate (not caused by Phase 10 — confirmed via diff, of the implicated files were touched by any of Phase 10's 6 plans):** `ProcessingDatatypesTest`/`ProcessingDispatchTest`/`vulkan_init_concurrency_test` all deadlock/crash in `ProcessingManager::Create()`'s Vulkan capability-probe path (`VulkanInitMutex()` re-entered on the same thread) whenever a real Vulkan device is present. Tracked at `.planning/todos/pending/2026-08-10-fix-vulkan-capability-probe-deadlock-in-processingmanager-cr.md`. Does not block Phase 10 — `processing_conformance_hashing_test` (the most directly relevant regression check for Phase 10's changes) and `CaptureSmokeTest` both pass.
 - VALD-01 only partially satisfied: fresh re-validation (13-SCOPE-BOUNDARY.md) shows render fixture's processor-level hash matches cross-hardware, but MNN float32 fixture's does not (12/15 chunkHashesMatch still false post-quantization) -- open gap for future follow-up, not resolved by Phase 13
+- 13-04 Task 1: widening QuantizeFloatBuffer's kScale from 2^20 (1048576.0f) to 2^14 (16384.0f) makes Secv01CounterTest.MnnCorruptedModelStillDiverges (SECV-01) FAIL -- the corrupted-model artifactId now hashes identically to the correct model's post-quantization output at the wider grid. Confirmed as a genuine regression, not pre-existing or flaky: reverted quantization.cpp/hpp/quantization_test.cpp to the original S=2^20 baseline and both SECV-01 cases passed (100% tests passed); re-applied the S=2^14 change and MnnCorruptedModelStillDiverges failed deterministically (memcmp equal, 0 vs 0). QuantizationTest itself (7/7 cases) passes fine at S=2^14 -- only the security counter-test regresses. Per the plan's explicit stop condition ("if either suite fails... stop and reconsider the constant before writing any capture instructions in Task 2"), execution halted here: no Task 2 checkpoint issued, no commit made, no SUMMARY.md written. quantization.hpp/cpp/quantization_test.cpp are left at their original committed baseline (working tree clean, no diff). This surfaces a genuine tension this plan did not anticipate a resolution for: the VALD-01 MNN cross-hardware divergence fix (wider grid) and SECV-01's corrupted-model-must-still-diverge security guarantee (tighter grid) pull in opposite directions at this specific data point, meaning the corrupted-model fixture's actual perturbation magnitude is apparently smaller than the new 6.103515625e-05 grid step. Resolving this needs new empirical characterization (e.g. what magnitude of weight corruption the fixture actually applies, and whether a different fixed grid value exists that satisfies both constraints, or whether a fixed-grid approach must be abandoned in favor of something else) -- an architectural decision beyond this plan's scope, requiring user/planner input rather than an executor auto-fix.
 
 ## Deferred Items
 
@@ -140,9 +141,9 @@ Items acknowledged and deferred at milestone v2.0 close on 2026-08-07:
 
 ## Session Continuity
 
-Last session: 2026-08-12T21:39:23.323Z
-Stopped at: Completed 13-03-PLAN.md (Phase 13 fully executed, VALD-01 open gap noted)
-Resume file: None
+Last session: 2026-08-12T22:46:45.076Z
+Stopped at: 13-04 Task 1 halted: S=2^14 grid widening regresses SECV-01 MnnCorruptedModelStillDiverges (see Blockers). Awaiting user/planner decision on the constant before Task 2.
+Resume file: 13-04-PLAN.md
 
 - [Phase 09 P10]: combinedHash/manifest.manifestHash computed over a timing-zeroed ExecutionManifest copy rather than modifying SerializeManifest()/ComputeManifestHash() themselves — preserves byte-for-byte compatibility with Phase 08's artifact_serializer_test.cpp round-trip tests over real timestamps
 - [Phase 09 P11]: InferenceCanExecuteReflectsPassTypeRegistryGap documents (not fixes) that INFERENCE passes are schema-valid but not capability-registered — registering INFERENCE/RETRAIN into the capability registry is a separate, larger cross-phase change, deferred as a follow-up item
