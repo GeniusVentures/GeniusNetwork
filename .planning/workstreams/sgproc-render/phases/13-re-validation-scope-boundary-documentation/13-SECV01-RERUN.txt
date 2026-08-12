@@ -1,0 +1,77 @@
+Internal ctest changing into directory: W:/gnus/GeniusNetwork/SuperGenius/build/Windows/Debug
+UpdateCTestConfiguration  from :W:/gnus/GeniusNetwork/SuperGenius/build/Windows/Debug/DartConfiguration.tcl
+UpdateCTestConfiguration  from :W:/gnus/GeniusNetwork/SuperGenius/build/Windows/Debug/DartConfiguration.tcl
+Test project W:/gnus/GeniusNetwork/SuperGenius/build/Windows/Debug
+Constructing a list of tests
+Done constructing a list of tests
+Updating test list for fixtures
+Added 0 tests to meet fixture requirements
+Checking test dependency graph...
+Checking test dependency graph end
+test 92
+    Start 92: processing_conformance_security_test
+
+92: Test command: W:\gnus\GeniusNetwork\SuperGenius\build\Windows\Debug\test_bin\Debug\processing_conformance_security_test.exe "--gtest_output=xml:W:/gnus/GeniusNetwork/SuperGenius/build/Windows/Debug/xunit/xunit-processing_conformance_security_test.xml"
+92: Working Directory: W:/gnus/GeniusNetwork/SuperGenius/build/Windows/Debug/test/src/processing_conformance_security
+92: Test timeout computed to be: 10000000
+92: Running main() from W:\gnus\GeniusNetwork\thirdparty\GTest\googletest\src\gtest_main.cc
+92: [==========] Running 2 tests from 1 test suite.
+92: [----------] Global test environment set-up.
+92: [----------] 2 tests from Secv01CounterTest
+92: [ RUN      ] Secv01CounterTest.MnnCorruptedModelStillDiverges
+92: [2026-08-12 16:16:28][info][SGProcessor] RenderProcessor: enumerated device "NVIDIA GeForce RTX 4070 Ti SUPER" type=DISCRETE_GPU vendorID=0x10de deviceID=0x2705 apiVersion=1.4.325
+92: [2026-08-12 16:16:28][info][SGProcessingManager] Model Input URL: file://W:/gnus/GeniusNetwork/SuperGenius/build/Windows/Debug/test_bin/Debug/processing_datatypes/float_model.mnn
+92: [2026-08-12 16:16:28][info][SGProcessingManager] Data Input URL: file://W:/gnus/GeniusNetwork/SuperGenius/build/Windows/Debug/test_bin/Debug/processing_datatypes/float_input.bin
+92: [2026-08-12 16:16:28][info][MNNLoader] LOCAL File Finished
+92: [2026-08-12 16:16:28][info][MNNLoader] LOCAL File Finished
+92: [2026-08-12 16:16:28][info][SGProcessor] Processing float input length: 512 | patch: 64 | stride: 32
+92: [2026-08-12 16:16:28][info][SGProcessingManager] Progress: pass=inputFloat percent=25.0
+92: [2026-08-12 16:16:30][info][SGProcessingManager] Progress: pass=inputFloat percent=75.0
+92: [2026-08-12 16:16:30][info][SGProcessingManager] Progress: pass=inputFloat percent=100.0
+92: [2026-08-12 16:16:30][info][SGProcessor] Float processing complete
+92: [2026-08-12 16:16:30][info][SGProcessingManager] Model Input URL: file://W:/gnus/GeniusNetwork/SuperGenius/build/Windows/Debug/test_bin/Debug/processing_conformance_security/fixtures/secv01-corrupted-float_model.mnn
+92: [2026-08-12 16:16:30][info][SGProcessingManager] Data Input URL: file://W:/gnus/GeniusNetwork/SuperGenius/build/Windows/Debug/test_bin/Debug/processing_datatypes/float_input.bin
+92: [2026-08-12 16:16:30][info][MNNLoader] LOCAL File Finished
+92: [2026-08-12 16:16:30][info][MNNLoader] LOCAL File Finished
+92: [2026-08-12 16:16:30][info][SGProcessor] Processing float input length: 512 | patch: 64 | stride: 32
+92: [2026-08-12 16:16:30][info][SGProcessingManager] Progress: pass=inputFloat percent=25.0
+92: [2026-08-12 16:16:33][info][SGProcessingManager] Progress: pass=inputFloat percent=75.0
+92: [2026-08-12 16:16:33][info][SGProcessingManager] Progress: pass=inputFloat percent=100.0
+92: [2026-08-12 16:16:33][info][SGProcessor] Float processing complete
+92: The device supports: i8sdot:0, fp16:0, i8mm: 0, sve2: 0, sme2: 0
+92: MnnCorruptedModelStillDiverges: correct and corrupted-model artifactId hashes differ as required
+92: [       OK ] Secv01CounterTest.MnnCorruptedModelStillDiverges (5843 ms)
+92: [ RUN      ] Secv01CounterTest.RenderWrongShaderConstantStillDiverges
+92: [2026-08-12 16:16:33][warning][SGProcessingManager] Buffer input missing format; defaulting to INT8
+92: [2026-08-12 16:16:33][warning][SGProcessingManager] Buffer input missing format; defaulting to INT8
+92: [2026-08-12 16:16:33][info][MNNLoader] LOCAL File Finished
+92: [2026-08-12 16:16:33][info][MNNLoader] LOCAL File Finished
+92: [2026-08-12 16:16:33][info][MNNLoader] LOCAL File Finished
+92: [2026-08-12 16:16:33][info][SGProcessor] RenderProcessor: enumerated device "NVIDIA GeForce RTX 4070 Ti SUPER" type=DISCRETE_GPU vendorID=0x10de deviceID=0x2705 apiVersion=1.4.325
+92: [2026-08-12 16:16:33][info][SGProcessingManager] Progress: pass=vertexData percent=25.0
+92: [2026-08-12 16:16:33][info][SGProcessingManager] Progress: pass=vertexData percent=50.0
+92: [2026-08-12 16:16:33][info][SGProcessingManager] Progress: pass=vertexData percent=75.0
+92: [2026-08-12 16:16:33][info][SGProcessingManager] Progress: pass=vertexData percent=100.0
+92: [2026-08-12 16:16:33][info][MNNLoader] LOCAL File Finished
+92: [2026-08-12 16:16:33][info][MNNLoader] LOCAL File Finished
+92: [2026-08-12 16:16:33][info][MNNLoader] LOCAL File Finished
+92: [2026-08-12 16:16:34][info][SGProcessor] RenderProcessor: enumerated device "NVIDIA GeForce RTX 4070 Ti SUPER" type=DISCRETE_GPU vendorID=0x10de deviceID=0x2705 apiVersion=1.4.325
+92: [2026-08-12 16:16:34][info][SGProcessingManager] Progress: pass=vertexData percent=25.0
+92: [2026-08-12 16:16:34][info][SGProcessingManager] Progress: pass=vertexData percent=50.0
+92: [2026-08-12 16:16:34][info][SGProcessingManager] Progress: pass=vertexData percent=75.0
+92: [2026-08-12 16:16:34][info][SGProcessingManager] Progress: pass=vertexData percent=100.0
+92: RenderWrongShaderConstantStillDiverges: correct and wrong-color artifactId hashes differ as required
+92: [       OK ] Secv01CounterTest.RenderWrongShaderConstantStillDiverges (580 ms)
+92: [----------] 2 tests from Secv01CounterTest (6433 ms total)
+92: 
+92: [----------] Global test environment tear-down
+92: [==========] 2 tests from 1 test suite ran. (6433 ms total)
+92: [  PASSED  ] 2 tests.
+1/1 Test #92: processing_conformance_security_test ...   Passed    8.43 sec
+
+The following tests passed:
+	processing_conformance_security_test
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =   8.50 sec
