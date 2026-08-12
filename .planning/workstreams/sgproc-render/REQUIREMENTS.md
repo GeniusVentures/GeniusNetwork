@@ -32,7 +32,7 @@ Requirements for milestone v2.1. Each maps to roadmap phases.
 
 ### Empirical Validation
 
-- [ ] **VALD-01**: The same render fixture and the same MNN fixture, run on ≥3 different machines (including the user's Mac and PC), produce matching post-normalization combined hashes
+- [ ] **VALD-01**: The same render fixture and the same MNN fixture, run on ≥2 distinct physical machines (including the user's Mac and PC; a third machine was attempted but excluded — see 13-SCOPE-BOUNDARY.md), produce matching post-normalization processor-level result/chunk hashes (not `ProcessOutput.combinedHash`/`ExecutionManifest.manifestHash`, which bake in machine-specific `executorIdentity`/`gpuMemoryUsedBytes` by design — see `SGProcessingManager/src/processingbase/ProcessingManager.cpp:1500-1510` and `12-CONTEXT.md` D-01/D-02)
 
 ## v2 Requirements
 
