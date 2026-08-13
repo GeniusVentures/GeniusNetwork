@@ -5,6 +5,11 @@ status: gaps_found
 score: 7/8 must-haves verified
 behavior_unverified: 0
 overrides_applied: 0
+overrides:
+  - must_have: "SC1: capture_diff confirms matching processor-level hashes for both the render fixture and the MNN fixture"
+    reason: "Render fixture fully matches cross-hardware. The MNN fixture's residual gap (chunkHashesMatch[10], 1 of 15 chunks) has been exhaustively characterized across four independent verification passes and is accepted as this milestone's final stopping point: (1) the quantization grid is already at its safe maximum -- S=2^15 sits one power-of-two step above a confirmed SECV-01 security-test failure boundary at S=2^14, so no further widening is safe; (2) Plan 13-06's per-chunk diagnostic extension proved the divergence is exactly one grid step on 1/64 elements, consistent with a genuine rounding-boundary tie-break, not a scaling defect or broader problem; (3) a follow-up test forcing MNN's Precision_High produced a bit-for-bit identical result, ruling out FP16 backend opportunism as the cause and pointing to irreducible cross-vendor FP32 non-associativity (NVIDIA on Windows vs. Apple Silicon/MoltenVK on Mac) as the remaining source, which no precision or quantization-grid setting can address. A real fix requires per-workload configurable tolerance (QUANT-CFG-01) and/or a numeric-tolerance-fallback comparison mechanism in ProcessingValidationCore::ValidateResults (XNODE-01b) -- both deliberately scoped to a new v2.2 milestone rather than continuing to hold v2.1 open for architecture-level work outside this milestone's fixed-constant scope."
+    accepted_by: "itsafuu"
+    accepted_at: "2026-08-13T20:41:17.918Z"
 re_verification:
   previous_status: gaps_found
   previous_score: 3/4
