@@ -1,0 +1,265 @@
+{
+  "chunkDiffs": [
+    {
+      "chunkIndex": 0,
+      "elementCount": 1769472,
+      "maxAbsDelta": 0.002471923828125,
+      "maxRelDelta": 0.03433476388454437,
+      "maxUlpDistance": 524288,
+      "percentExceedingThreshold": 0.5834508825231481,
+      "sizeMismatch": false
+    },
+    {
+      "chunkIndex": 1,
+      "elementCount": 1769472,
+      "maxAbsDelta": 0.0030517578125,
+      "maxRelDelta": 0.5,
+      "maxUlpDistance": 8388608,
+      "percentExceedingThreshold": 2.181724265769676,
+      "sizeMismatch": false
+    },
+    {
+      "chunkIndex": 2,
+      "elementCount": 1769472,
+      "maxAbsDelta": 0.003662109375,
+      "maxRelDelta": 1.1666666269302368,
+      "maxUlpDistance": 3336568832,
+      "percentExceedingThreshold": 3.145458080150463,
+      "sizeMismatch": false
+    },
+    {
+      "chunkIndex": 3,
+      "elementCount": 1769472,
+      "maxAbsDelta": 0.0025634765625,
+      "maxRelDelta": 0.010695187374949455,
+      "maxUlpDistance": 131072,
+      "percentExceedingThreshold": 1.1552033600983795,
+      "sizeMismatch": false
+    },
+    {
+      "chunkIndex": 4,
+      "elementCount": 1769472,
+      "maxAbsDelta": 0.002655029296875,
+      "maxRelDelta": 0.008333333767950535,
+      "maxUlpDistance": 131072,
+      "percentExceedingThreshold": 0.6205806025752315,
+      "sizeMismatch": false
+    },
+    {
+      "chunkIndex": 5,
+      "elementCount": 1769472,
+      "maxAbsDelta": 0.00213623046875,
+      "maxRelDelta": 0.2929292917251587,
+      "maxUlpDistance": 3801088,
+      "percentExceedingThreshold": 1.012279369212963,
+      "sizeMismatch": false
+    },
+    {
+      "chunkIndex": 6,
+      "elementCount": 1769472,
+      "maxAbsDelta": 0.00299072265625,
+      "maxRelDelta": 1.4285714626312256,
+      "maxUlpDistance": 2380267520,
+      "percentExceedingThreshold": 4.01142261646412,
+      "sizeMismatch": false
+    },
+    {
+      "chunkIndex": 7,
+      "elementCount": 1769472,
+      "maxAbsDelta": 0.0035400390625,
+      "maxRelDelta": 1.875,
+      "maxUlpDistance": 2376073216,
+      "percentExceedingThreshold": 4.468225549768518,
+      "sizeMismatch": false
+    },
+    {
+      "chunkIndex": 8,
+      "elementCount": 1769472,
+      "maxAbsDelta": 0.003814697265625,
+      "maxRelDelta": 0.3333333432674408,
+      "maxUlpDistance": 4456448,
+      "percentExceedingThreshold": 3.173884639033565,
+      "sizeMismatch": false
+    },
+    {
+      "chunkIndex": 9,
+      "elementCount": 1769472,
+      "maxAbsDelta": 0.0032958984375,
+      "maxRelDelta": 0.20000000298023224,
+      "maxUlpDistance": 2097152,
+      "percentExceedingThreshold": 2.3121586552372686,
+      "sizeMismatch": false
+    },
+    {
+      "chunkIndex": 10,
+      "elementCount": 1769472,
+      "maxAbsDelta": 0.00189208984375,
+      "maxRelDelta": 0.0535714291036129,
+      "maxUlpDistance": 786432,
+      "percentExceedingThreshold": 0.5610148111979166,
+      "sizeMismatch": false
+    },
+    {
+      "chunkIndex": 11,
+      "elementCount": 1769472,
+      "maxAbsDelta": 0.003631591796875,
+      "maxRelDelta": 0.800000011920929,
+      "maxUlpDistance": 18874368,
+      "percentExceedingThreshold": 2.7564154730902777,
+      "sizeMismatch": false
+    },
+    {
+      "chunkIndex": 12,
+      "elementCount": 1769472,
+      "maxAbsDelta": 0.003692626953125,
+      "maxRelDelta": 1.0,
+      "maxUlpDistance": 956301312,
+      "percentExceedingThreshold": 4.362939905237268,
+      "sizeMismatch": false
+    },
+    {
+      "chunkIndex": 13,
+      "elementCount": 1769472,
+      "maxAbsDelta": 0.005126953125,
+      "maxRelDelta": 2.0,
+      "maxUlpDistance": 2415919104,
+      "percentExceedingThreshold": 4.493995949074074,
+      "sizeMismatch": false
+    },
+    {
+      "chunkIndex": 14,
+      "elementCount": 1769472,
+      "maxAbsDelta": 0.0032958984375,
+      "maxRelDelta": 0.7368420958518982,
+      "maxUlpDistance": 16252928,
+      "percentExceedingThreshold": 3.951122142650463,
+      "sizeMismatch": false
+    },
+    {
+      "chunkIndex": 15,
+      "elementCount": 1769472,
+      "maxAbsDelta": 0.00177001953125,
+      "maxRelDelta": 0.07189542800188065,
+      "maxUlpDistance": 720896,
+      "percentExceedingThreshold": 0.41458695023148145,
+      "sizeMismatch": false
+    },
+    {
+      "chunkIndex": 16,
+      "elementCount": 1769472,
+      "maxAbsDelta": 0.00439453125,
+      "maxRelDelta": 0.4615384638309479,
+      "maxUlpDistance": 7602176,
+      "percentExceedingThreshold": 1.961376048900463,
+      "sizeMismatch": false
+    },
+    {
+      "chunkIndex": 17,
+      "elementCount": 1769472,
+      "maxAbsDelta": 0.004058837890625,
+      "maxRelDelta": 1.0,
+      "maxUlpDistance": 939524096,
+      "percentExceedingThreshold": 3.485107421875,
+      "sizeMismatch": false
+    },
+    {
+      "chunkIndex": 18,
+      "elementCount": 1769472,
+      "maxAbsDelta": 0.004119873046875,
+      "maxRelDelta": 0.5,
+      "maxUlpDistance": 8388608,
+      "percentExceedingThreshold": 3.2249168113425926,
+      "sizeMismatch": false
+    },
+    {
+      "chunkIndex": 19,
+      "elementCount": 1769472,
+      "maxAbsDelta": 0.003082275390625,
+      "maxRelDelta": 1.0,
+      "maxUlpDistance": 3355443200,
+      "percentExceedingThreshold": 1.8407751012731481,
+      "sizeMismatch": false
+    },
+    {
+      "chunkIndex": 20,
+      "elementCount": 1769472,
+      "maxAbsDelta": 0.002227783203125,
+      "maxRelDelta": 0.0042553190141916275,
+      "maxUlpDistance": 65536,
+      "percentExceedingThreshold": 0.4457261827256944,
+      "sizeMismatch": false
+    },
+    {
+      "chunkIndex": 21,
+      "elementCount": 1769472,
+      "maxAbsDelta": 0.00396728515625,
+      "maxRelDelta": 0.27272728085517883,
+      "maxUlpDistance": 3145728,
+      "percentExceedingThreshold": 1.5397248444733795,
+      "sizeMismatch": false
+    },
+    {
+      "chunkIndex": 22,
+      "elementCount": 1769472,
+      "maxAbsDelta": 0.003326416015625,
+      "maxRelDelta": 0.5,
+      "maxUlpDistance": 4294967296,
+      "percentExceedingThreshold": 3.001347294560185,
+      "sizeMismatch": false
+    },
+    {
+      "chunkIndex": 23,
+      "elementCount": 1769472,
+      "maxAbsDelta": 0.002960205078125,
+      "maxRelDelta": 0.260869562625885,
+      "maxUlpDistance": 4194304,
+      "percentExceedingThreshold": 1.8144960756655093,
+      "sizeMismatch": false
+    },
+    {
+      "chunkIndex": 24,
+      "elementCount": 1769472,
+      "maxAbsDelta": 0.00238037109375,
+      "maxRelDelta": 0.1267605572938919,
+      "maxUlpDistance": 1441792,
+      "percentExceedingThreshold": 1.0162918655960649,
+      "sizeMismatch": false
+    }
+  ],
+  "chunkHashesMatch": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+  ],
+  "combinedHashMatch": false,
+  "contentHashMatch": false,
+  "elementCount": 1769472,
+  "elementType": "float32",
+  "maxAbsDelta": 0.00238037109375,
+  "maxRelDelta": 0.1267605572938919,
+  "maxUlpDistance": 1441792,
+  "percentExceedingThreshold": 1.0162918655960649,
+  "sizeMismatch": false
+}
