@@ -146,3 +146,15 @@ None - no external service configuration required.
 ---
 *Phase: 13-re-validation-scope-boundary-documentation*
 *Completed: 2026-08-12*
+
+## Self-Check: PASSED
+
+- FOUND: `13-06-SUMMARY.md`
+- FOUND: `13-SCOPE-BOUNDARY.md`
+- FOUND: `captures/diff-mnn-float-refit-chunkdiag.json`
+- FOUND: commit `5baae71` (chore, SuperGenius pointer bump)
+- FOUND: commit `2a2a5ed` (feat, diagnostic JSON outputs)
+- FOUND: commit `4c88c06` (feat, SGProcessingManager submodule -- verified separately inside the nested submodule's own git history)
+- FOUND: commit `db94c3ed` (chore, SuperGenius pointer bump -- verified separately inside the SuperGenius submodule's own git history)
+- FOUND: commit `3c5a9a0` (docs, Task 3)
+- FOUND: commit `ef140cd` (docs, this SUMMARY)
