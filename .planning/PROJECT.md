@@ -38,21 +38,20 @@ This project now runs parallel workstreams (see `.planning/workstreams/`). Each 
 
 **Goal:** Make SGProcessingManager's `render` PassType a real, executable graphics pipeline via hand-rolled Vulkan — headless/offscreen, own independent `VkInstance`/`VkDevice`, no new GPU backend/engine, no OpenGL or CPU/software fallback tier. Directly scoped to `GeniusVentures/SGProcessingManager#7`.
 
-**Target features (v2.1):**
-- Cross-hardware capture test harness (render + MNN jobs) — dumps raw output values, chunk hashes, and the combined hash per run, for cross-machine comparison
-- Diff tool comparing capture files across machines — per-element divergence stats (max delta, mantissa-bit differences, etc.)
-- Quantization/rounding step applied before hashing (render + MNN output paths), fixed precision — not schema-configurable this milestone
-- Empirically validated: the same job run on ≥3 different machines (including the user's Mac + PC) produces matching post-quantization hashes
-- Fulfills `XNODE-01` (explicitly deferred from v1.0: "cross-node tolerance/redundancy-based verification")
+**Target features (v2.2):**
+- QUANT-CFG-01: schema-configurable per-data-type normalization precision, replacing v2.1's fixed global quantization constant — directly motivated by post-v2.1 evidence that one global scale cannot serve models with materially different cross-hardware divergence magnitudes (the `tex3d`/`spleen_ct_seg` real workload showed all 25 chunk hashes diverging at ~2-3 orders of magnitude larger than the tiny float fixture v2.1 tuned against)
+- Fix `ProcessingValidationCore::ValidateResults`'s concatenation bug (`XNODE-01b`) so it actually diffs subtask hashes for the same chunk, instead of silently passing a genuine cross-node mismatch
+- Extend that fix with a numeric-tolerance fallback comparison: hash equality first (fast path), falling back to a bounded per-chunk numeric comparison (reusing `capture_diff`'s per-chunk diff capability, built in v2.1 Phase 13) on mismatch, rather than requiring bit-exact hashes — directly informed by v2.1's own finding that a lone boundary-tie-break chunk divergence can be a false mismatch, not a real defect
+- `XNODE-01c` (actual cross-node consensus/redundant-execution plumbing) remains explicitly out of scope for v2.2 — not requested for this milestone
 
-**Deferred candidates carried forward from v2.1 scoping:**
-- `ProcessingValidationCore::ValidateResults`'s concatenation bug — it never actually diffs two subtasks' hashes for the same chunk, so a genuine cross-node mismatch would silently pass today; this milestone makes the hash itself tolerant but does not fix the comparison mechanism around it
-- Schema-configurable quantization precision (per-data-type tuning) — fixed precision only this milestone
-- Actual cross-node consensus/redundant-execution comparison plumbing
+**Deferred candidates carried forward from v2.2 scoping:**
+- Actual cross-node consensus/redundant-execution comparison plumbing (`XNODE-01c`) — v2.2 makes the comparison mechanism itself correct and tolerant; wiring it into real multi-node job orchestration is future work
 
 **Shipped (v1.0 + v2.0):** v1.0 — all 5 phases, 24 plans complete (2026-07-31): headless Vulkan context + shared init-lock + dispatch plumbing; schema extension + shaderc/SPIRV-Tools + mandatory spirv-val gate; RenderProcessor (pipeline build, offscreen draw, readback, SHA-256 hash); cross-platform CI + E2E; Android/iOS platform compatibility. v2.0 — Phase 09 (issue #15, conformance test suites) complete (2026-08-07), 15/15 plans across three gap-closure rounds; this was the last roadmapped phase for v2.0. Full v2.0 milestone completion was never formally asserted via `/gsd-complete-milestone`: Phase 07's `EXEC-*` and Phase 08's `ARTF-*` requirement checkboxes in `.planning/workstreams/sgproc-render/REQUIREMENTS.md` remain unchecked, and STATE.md notes Phase 07 tests are "pending HW verification". See `.planning/workstreams/sgproc-render/STATE.md` for details.
 
-**v2.1 in progress:** Phase 10 (capture harness + quantization stub) and Phase 11 (empirical 2-machine capture) complete. Phase 12 (real quantization/normalization + SECV-01 counter-test) complete 2026-08-12, 2/2 plans: `quantization.hpp`/`.cpp` now implement real IEEE-754 canonicalization (fixed literal bit patterns for NaN/±Inf/denormals/±0.0) plus fixed-point scale-round-cast normalization (`S=2^20`, grid step ≈1e-6) on the MNN float32 path, byte-identity (documented, data-justified) on the render uint8 path; a new `processing_conformance_security_test` CTest target proves a corrupted MNN model or a wrong render shader constant still diverges post-quantization (SECV-01). Verified 10/10 must-haves, D-01/D-02 manifest-hash scope boundary confirmed untouched. Next: Phase 13 (re-validation & scope-boundary documentation).
+**v2.1 Cross-Hardware Hash Tolerance — SHIPPED 2026-08-13** (4 phases, 15 plans): capture/diff tooling (Phase 10), empirical 2-machine capture (Phase 11), real quantization/normalization + SECV-01 counter-test (Phase 12), re-validation + scope-boundary documentation (Phase 13). Closed via an accepted maintainer override on VALD-01: the render fixture fully matches cross-hardware; the MNN float32 fixture retains one residual, exhaustively-characterized gap (chunk 10, exactly one S=2^15 grid-step boundary tie-break, FP16 backend opportunism ruled out) accepted as this milestone's final stopping point rather than left open pending architecture-level work. Full archive: `.planning/milestones/sgproc-render-v2.1-ROADMAP.md`/`REQUIREMENTS.md`. See `13-VERIFICATION.md` for the override and `13-SCOPE-BOUNDARY.md` for the full diagnostic trail.
+
+**v2.2 Cross-Hardware Validation Tolerance — in progress:** kicked off 2026-08-13, directly motivated by v2.1's closing findings (the tex3d/spleen_ct_seg per-workload divergence evidence, and the recognition that a real `ValidateResults` fix needs tolerance for bounded/characterized divergence, not just bit-exact hash equality).
 
 **Context:** All v2.0 work on the SGProcessingManager branch consumed by `SuperGenius/develop`. Issues #12/#13/#14 support GCS/EIS integration. Issue #15 tracks issues #7–#14. No new GPU backend — continues the hand-rolled Vulkan approach from v1.0. Vulkan Validation Layers were explicitly deferred from v1.0 CTX-04.
 

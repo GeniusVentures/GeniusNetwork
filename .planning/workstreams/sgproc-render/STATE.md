@@ -1,20 +1,16 @@
 ---
 gsd_state_version: 1.0
-milestone: v2.1
-milestone_name: Cross-Hardware Hash Tolerance
-current_phase: 1
-status: Awaiting next milestone
-stopped_at: "Completed 13-05-PLAN.md: VALD-01/SC1 gap narrowed (12/15 to 1/15 divergent MNN chunks) but correctly kept Partial per unconditional-clean bar"
-last_updated: "2026-08-13T20:49:31.965Z"
+milestone: v2.2
+milestone_name: Cross-Hardware Validation Tolerance
+status: planning
+last_updated: "2026-08-13T21:09:19.764Z"
 last_activity: 2026-08-13
-last_activity_desc: Milestone v2.1 completed and archived
 progress:
-  total_phases: 4
-  completed_phases: 4
-  total_plans: 15
-  completed_plans: 15
-  percent: 100
-current_phase_name: re-validation-scope-boundary-documentation
+  total_phases: 0
+  completed_phases: 0
+  total_plans: 0
+  completed_plans: 0
+  percent: 0
 ---
 
 # Project State
@@ -28,10 +24,10 @@ See: .planning/PROJECT.md (updated 2026-08-03), workstream section "Workstream: 
 
 ## Current Position
 
-Phase: Milestone v2.1 complete
+Phase: Not started (defining requirements)
 Plan: —
-Status: Awaiting next milestone
-Last activity: 2026-08-13 — Milestone v2.1 completed and archived
+Status: Defining requirements
+Last activity: 2026-08-13 — Milestone v2.2 started
 
 ## Performance Metrics
 
