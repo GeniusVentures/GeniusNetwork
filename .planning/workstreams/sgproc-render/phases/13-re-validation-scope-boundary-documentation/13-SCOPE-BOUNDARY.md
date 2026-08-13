@@ -136,6 +136,36 @@ Full verbatim contents of `captures/diff-mnn-float-refit.json` (fresh Mac `Fuus-
 
 **Honest closing caveat (restating this phase's own core caveat, per `quantization.hpp`'s doc comment and this gap-closure round's objective):** a fixed rounding grid is a probabilistic engineering mitigation, not a mathematical guarantee, for arbitrary per-element cross-hardware deltas that happen to land close to a rounding boundary. S=2^15 substantially reduced (from 12/15 to 1/15 divergent chunks) but did not eliminate that probability for this fixture's actual values.
 
+## SC1 Diagnostic: Chunk 10 Per-Element Numeric Characterization
+
+Plan 13-06 closed the exact blind spot the "Investigation note" above flagged as a follow-up: `capture_diff` previously could report only *that* chunk 10 diverges (`chunkHashesMatch[10]: false`), never *by how much*, because its numeric per-element pass only ever examined the trailing combined-hash record, never any individual per-chunk raw record. Plan 13-06's Task 1 extended `capture_diff.cpp` with a new `chunkDiffs` JSON array that numeric-diffs every `rawRecordsPerArtifact[0][j]` record individually (the same `ComputeFloat32Diff` function already used for the trailing record, applied per-chunk), rebuilt the tool, and re-ran it against the already-existing S=2^15-era Mac vs Windows MNN capture pair from Plan 13-04's hands-on session (`xhw-mnn-float_Fuus-Mac-mini.local---macOS_20260812T232347.cap` vs `xhw-mnn-float_Mofu---Windows_20260812T232430.cap`) — the exact pair the SC1 Refit section above already diffed at the trailing-record level.
+
+**Diagnostic source and provenance (Task 2 checkpoint resolution):** the operator reviewed Task 1's diagnostic output and explicitly replied "confirmed" at Task 2's blocking checkpoint, choosing to treat this existing-capture re-run as authoritative rather than performing an optional fresh hands-on recapture. Per `capture_harness.cpp:495-501` (`captureFile.rawRecordsPerArtifact = { iterations[0].records }`), every already-committed `.cap` file from that session already stored all 15 per-chunk raw records plus the trailing one — only `capture_diff`'s own comparison logic lacked the ability to numeric-diff them individually, which Task 1 fixed. No new hardware capture was required or performed; the diagnostic below reflects a fresh *analysis* of the same bytes the SC1 Refit section's trailing-record result already cites, not a fresh *capture*. The authoritative diagnostic JSON is `captures/diff-mnn-float-refit-chunkdiag.json`.
+
+Verbatim `chunkDiffs[10]` from that JSON (the chunk `chunkHashesMatch[10]` reports as `false`; all other 14 `chunkDiffs` entries report `maxAbsDelta: 0.0`, `maxRelDelta: 0.0`, `maxUlpDistance: 0`, `percentExceedingThreshold: 0.0`, `sizeMismatch: false` — i.e. this diagnostic is entirely isolated to chunk 10):
+
+```json
+{
+  "chunkIndex": 10,
+  "elementCount": 64,
+  "maxAbsDelta": 3.0517578125e-05,
+  "maxRelDelta": 0.00015477479610126466,
+  "maxUlpDistance": 2048,
+  "percentExceedingThreshold": 1.5625,
+  "sizeMismatch": false
+}
+```
+
+**Grid-step ratio.** `quantization.hpp`'s current S=2^15 grid step is `3.0517578125e-05` (lines 32-63). Chunk 10's `maxAbsDelta` (`3.0517578125e-05`) divided by that grid step is:
+
+`3.0517578125e-05 / 3.0517578125e-05 = 1.0` (exactly)
+
+**Honest characterization.** Chunk 10's real, previously-invisible divergence is exactly **one** S=2^15 grid step — not a fraction of a step, and not multiple steps. `percentExceedingThreshold: 1.5625` corresponds to exactly `1` of the chunk's `64` elements (`1/64 = 1.5625%`); the other 63 elements in this chunk, and every element in the other 14 chunks, show zero measured delta anywhere this diagnostic pass can see. This pattern — a single element, in a single chunk, diverging by precisely one grid step, with everything else bit-identical — is consistent with a genuine rounding-boundary tie-break: that one element's true (pre-quantization) value sits close enough to a grid boundary that Mac's and Windows' independent floating-point evaluations round it into adjacent grid buckets, while every other element across both fixtures' 512 total elements lands unambiguously inside a single bucket on both machines. It is not consistent with a scaling error, a systematically miscalibrated grid, or a broader divergence than already understood: a scaling or calibration defect would be expected to produce errors proportional to element magnitude or spread across more than one element/chunk, and this data shows neither. The `maxUlpDistance` of `2048` looks large in raw ULP terms, but ULP spacing is magnitude-dependent for IEEE-754 floats — a single one-grid-step jump for a value in this element's magnitude range corresponds to exactly this ULP count; it is not independent evidence of a larger divergence than the `maxAbsDelta` ratio (exactly `1.0`) already shows.
+
+**This diagnostic does not, by itself, close VALD-01's residual gap.** Per this plan's hard constraint, no further grid-widening beyond the current S=2^15 scale is proposed as a fix — S=2^15 was already chosen via a confirmed local binary search with exactly one power-of-two step of margin above a confirmed SECV-01 failure boundary (the next-smaller power-of-two scale makes `Secv01CounterTest.MnnCorruptedModelStillDiverges` fail deterministically; see `quantization.hpp` lines 32-63 and 13-04-SUMMARY.md), and going any coarser than S=2^15 is not a safe option this plan's scope permits revisiting.
+
+**No further mitigation is recommended here.** This data does not surface a new, clearly-safe follow-on fix beyond what the SC1 Refit section's own closing caveat already states: a fixed rounding grid is a probabilistic engineering mitigation, not a mathematical guarantee, and this fixture's real values include exactly one element whose true cross-hardware delta happens to straddle a grid boundary at the current S=2^15 scale. Isolating and inspecting that single element's exact pre-quantization value (e.g. via targeted per-element logging) could in principle confirm the tie-break theory with certainty, but implementing that instrumentation is optional future diagnostic work, not a fix, and is left for whoever next picks up VALD-01's remaining 1/15-chunk gap.
+
 ## SC2: SECV-01 Re-Confirmation
 
 Per D-07, this section only cites the fresh CTest re-run's actual output (`13-SECV01-RERUN.txt`, Plan 13-02) — no new test logic was written; Phase 12's constants are the final precision and nothing changed on the SECV-01 side between Phase 12 and Phase 13.
