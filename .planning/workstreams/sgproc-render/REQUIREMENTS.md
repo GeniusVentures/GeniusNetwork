@@ -1,48 +1,33 @@
 # Requirements: sgproc-render
 
-**Defined:** 2026-08-07
+**Defined:** 2026-08-13
 **Core Value:** Elevate SGProcessingManager from a "parse-and-hope" pipeline to a contract-driven execution engine — jobs are validated before work starts, execution is cancellable and budget-aware, results are typed artifacts with provenance, and every processor is covered by a common test suite.
 
-## v2.1 Requirements — Cross-Hardware Hash Tolerance
+**Previously shipped:** v1.0 (Phases 01-05), v2.0 Execution Contracts & Quality Gates (Phases 06-09, closed with known gaps), v2.1 Cross-Hardware Hash Tolerance (Phases 10-13, closed with an accepted VALD-01 override). Full archives: `.planning/milestones/sgproc-render-v2.0-*.md`, `.planning/milestones/sgproc-render-v2.1-*.md`. See `.planning/MILESTONES.md` for shipped summaries.
 
-Requirements for milestone v2.1. Each maps to roadmap phases.
+## v2.2 Requirements — Cross-Hardware Validation Tolerance
 
-### Capture Harness
+Requirements for milestone v2.2. Each maps to roadmap phases. Directly motivated by v2.1's closing findings: (1) the `tex3d`/`spleen_ct_seg` real workload proved a single global quantization scale cannot serve models with materially different cross-hardware divergence magnitudes, and (2) v2.1's chunk-10 finding proved that even a well-tuned scale can produce a *false* hash mismatch on a genuinely correct result (a boundary tie-break) — so a real validation mechanism needs tolerance, not just a better constant.
 
-- [x] **CAPT-01**: Capture harness runs Phase 09's existing render + MNN fixtures and records, per run: raw per-element output values, per-chunk hashes, and the combined hash, tagged with the executing machine's identity
-- [x] **CAPT-02**: Capture harness reads the literal bytes passed into each existing hash call site (not a downstream copy), so captured data provably matches what production hashing actually saw
-- [x] **CAPT-03**: Capture harness confirms same-node hash stability (N≥2 repeat runs) on each machine before that machine's capture is used for cross-machine comparison
+### Configurable Normalization Precision
 
-### Diff Tool
+- [ ] **QUANT-CFG-01**: A processing job's schema can declare a per-data-type normalization precision parameter (e.g. a quantization scale for float32 outputs), read by `QuantizeFloatBuffer`/`QuantizeByteBuffer` instead of the single hardcoded `kScale` constant from v2.1
+- [ ] **QUANT-CFG-02**: When no precision is schema-declared, normalization falls back to v2.1's existing fixed constants (S=2^15 for float32, byte-identity for uint8) — additive, not a breaking change to existing jobs
+- [ ] **QUANT-CFG-03**: A workload with materially different divergence characteristics from v2.1's float fixture (e.g. `tex3d`/`spleen_ct_seg`) can be configured with its own empirically-derived precision, citing real captured cross-machine divergence data for that specific workload — not guessed a priori (mirrors QUANT-04's discipline)
 
-- [x] **DIFF-01**: Diff tool reports, per output element, absolute delta, relative delta, and ULP distance between two or more capture files
-- [x] **DIFF-02**: Diff tool reports whole-buffer summary stats: max absolute delta, max relative delta, max ULP distance, and percentage of elements exceeding a threshold
-- [x] **DIFF-03**: Diff tool reports whether the combined hash and each chunk hash match across compared captures
+### Validation Comparison Mechanism
 
-### Quantization / Normalization
-
-- [x] **QUANT-01**: Render (uint8 RGBA8/RGB8) and MNN (float32 tensor) output are each normalized to a fixed precision before hashing, using whichever technique (rounding, fixed-point conversion, bit-masking, or another canonicalization approach) is determined during design to best balance cross-hardware tolerance against result integrity
-- [x] **QUANT-02**: The chosen normalization is applied identically before both the per-chunk hash and the combined hash, on both the render and MNN paths
-- [x] **QUANT-03**: IEEE-754 special values (NaN, +Inf, -Inf, denormals, signed zero) are canonicalized to one fixed representative bit pattern before normalization
-- [x] **QUANT-04**: Normalization parameters are fixed constants derived from CAPT/DIFF's empirical ≥2-machine data (Mac + Windows; a third machine's only available device was a software rasterizer, excluded per Phase 11's scope decision) — not guessed a priori, not schema-configurable this milestone
-
-### Security Validation
-
-- [x] **SECV-01**: A deliberately wrong/corrupted result still produces a post-normalization hash that differs from the correct result's hash — proving the chosen tolerance isn't loose enough to also accept wrong results
-
-### Empirical Validation
-
-- [x] **VALD-01**: The same render fixture and the same MNN fixture, run on ≥2 distinct physical machines (including the user's Mac and PC; a third machine was attempted but excluded — see 13-SCOPE-BOUNDARY.md), produce matching post-normalization processor-level result/chunk hashes (not `ProcessOutput.combinedHash`/`ExecutionManifest.manifestHash`, which bake in machine-specific `executorIdentity`/`gpuMemoryUsedBytes` by design — see `SGProcessingManager/src/processingbase/ProcessingManager.cpp:1500-1510` and `12-CONTEXT.md` D-01/D-02). **Re-validated 2026-08-12 (Phase 13):** render fixture's processor-level hash matches cross-hardware; MNN float32 fixture's does not yet (12/15 chunk hashes still diverge post-quantization) — open gap, see `13-SCOPE-BOUNDARY.md`. **Refit re-measurement 2026-08-12 (Plan 13-04/13-05, S=2^15 grid-widening fix):** gap narrowed but not closed — MNN fixture's `contentHashMatch` now `true` and only 1 of 15 chunk hashes still diverges (down from 12/15), see `13-SCOPE-BOUNDARY.md`'s "SC1 Refit" section and `captures/diff-mnn-float-refit.json`. **Chunk-10 diagnostic 2026-08-12 (Plan 13-06):** chunk 10's real numeric divergence characterized for the first time (exactly one S=2^15 grid step, isolated to 1 of 64 elements) — no further grid-widening proposed, see `13-SCOPE-BOUNDARY.md`'s "SC1 Diagnostic: Chunk 10 Per-Element Numeric Characterization" section and `captures/diff-mnn-float-refit-chunkdiag.json`. **Update 2026-08-13: Complete via accepted override, not full technical closure.** The MNN fixture's 1/15-chunk residual divergence remains literally unresolved — a follow-up test forcing MNN `Precision_High` ruled out FP16 opportunism, pointing to irreducible cross-vendor FP32 non-associativity that no quantization-grid or precision setting can address, and the grid is already at its safe maximum (S=2^15, one step above a confirmed SECV-01 failure boundary). Accepted as this milestone's final stopping point via the maintainer override in `13-VERIFICATION.md` (`accepted_by: itsafuu`, 2026-08-13T20:41:17.918Z); a real fix requires QUANT-CFG-01/XNODE-01b-scale work scoped to a new v2.2 milestone.
+- [ ] **XNODE-01b**: `ProcessingValidationCore::ValidateResults` actually diffs two subtasks' per-chunk hashes for the same chunk (fixing the concatenation bug where a genuine mismatch silently passes today)
+- [ ] **XNODE-02**: On a chunk-hash mismatch, `ValidateResults` falls back to a bounded numeric comparison of the underlying chunk data (reusing `capture_diff`'s per-chunk diff logic from v2.1 Phase 13) before declaring a genuine divergence — a chunk within configured tolerance is not treated as a mismatch
+- [ ] **SECV-02**: A deliberately wrong/corrupted subtask result is still caught by `ValidateResults` post-fix — proving XNODE-01b/XNODE-02 together aren't loose enough to also mask a genuine defect (counter-test, mirrors v2.1's SECV-01 discipline for this new mechanism)
 
 ## v2 Requirements
 
 Deferred to future milestones. Tracked but not in current roadmap.
 
-### Verification & Backend (carried forward from v2.0)
+### Verification & Backend
 
-- **XNODE-01b**: `ProcessingValidationCore::ValidateResults`'s concatenation bug — it never actually diffs two subtasks' hashes for the same chunk, so a genuine cross-node mismatch would silently pass today. This milestone makes the hash itself tolerant but does not fix the comparison mechanism around it.
-- **XNODE-01c**: Actual cross-node consensus/redundant-execution comparison plumbing — this milestone only proves the hash *can* be tolerant, not that production consensus uses that tolerance correctly.
-- **QUANT-CFG-01**: Schema-configurable per-data-type normalization precision (per-job tuning exposed to job authors) — fixed constants only this milestone. Post-milestone evidence: `tex3d`/volume processor running the real `spleen_ct_seg` workload shows all 25 chunk hashes diverging cross-hardware (confirmed same-machine-stable, so genuinely cross-hardware) at a magnitude ~2-3 orders larger than the float fixture's — no single global `kScale` can be both safe for the small model's SECV-01 guarantee and adequate for this one. See STATE.md Blockers/Concerns for full detail, including the operator's separate visual validation in 3D Slicer suggesting hash equality may be the wrong bar for segmentation-style workloads.
+- **XNODE-01c**: Actual cross-node consensus/redundant-execution comparison plumbing — v2.2 makes the comparison mechanism itself correct and tolerant; wiring it into real multi-node job orchestration is future work.
 
 ## Out of Scope
 
@@ -50,39 +35,28 @@ Explicitly excluded. Documented to prevent scope creep.
 
 | Feature | Reason |
 |---------|--------|
-| Schema-configurable normalization precision | Deferred — see QUANT-CFG-01; fixed constants only this milestone |
-| Fixing `ProcessingValidationCore::ValidateResults`'s concatenation bug | Separate, already-tracked gap in the production comparison path — this milestone's scope is the hash itself, not the comparison mechanism around it |
-| Actual cross-node consensus/redundant-execution plumbing | This milestone proves the hash *can* be cross-hardware tolerant; wiring that into production multi-node job validation is future work |
-| Per-channel/per-region diff breakdown for structured render output | Nice-to-have debuggability, not needed to hit the ≥3-machine success bar |
-| Live/streaming telemetry capture pipeline | This milestone's workflow is offline capture files manually shared between the user's own machines, not production telemetry infrastructure |
+| Actual cross-node consensus/redundant-execution plumbing | Deferred — see XNODE-01c; v2.2's scope is the comparison mechanism itself, not multi-node orchestration |
+| Fixing every MNN processor's quantization precision individually (e.g. hand-tuning all 13 processor types) | QUANT-CFG-01 makes precision configurable; per-workload tuning happens as each workload is onboarded, not as a one-time bulk exercise this milestone |
+| Re-litigating v2.1's chunk-10 acceptance | That gap was formally accepted via override in `13-VERIFICATION.md`; v2.2 builds the tolerance mechanism that would have absorbed it, not a re-investigation of the same fixture |
 
 ## Traceability
 
-Which phases cover which requirements. Updated during roadmap creation.
+Which phases cover which requirements. Filled during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| CAPT-01 | Phase 10 | Complete |
-| CAPT-02 | Phase 10 | Complete |
-| CAPT-03 | Phase 10 | Complete |
-| DIFF-01 | Phase 10 | Complete |
-| DIFF-02 | Phase 10 | Complete |
-| DIFF-03 | Phase 10 | Complete |
-| QUANT-01 | Phase 12 | Complete |
-| QUANT-02 | Phase 12 | Complete |
-| QUANT-03 | Phase 12 | Complete |
-| QUANT-04 | Phase 12 | Complete |
-| SECV-01 | Phase 12 | Complete |
-| VALD-01 | Phase 13 | Complete (override) — render OK; MNN 1/15-chunk gap exhaustively characterized (exact one grid-step boundary tie-break, FP16-opportunism ruled out) and accepted as final stopping point per 13-VERIFICATION.md's maintainer override — not fully technically closed, see 13-SCOPE-BOUNDARY.md SC1 Diagnostic |
+| QUANT-CFG-01 | TBD | Not started |
+| QUANT-CFG-02 | TBD | Not started |
+| QUANT-CFG-03 | TBD | Not started |
+| XNODE-01b | TBD | Not started |
+| XNODE-02 | TBD | Not started |
+| SECV-02 | TBD | Not started |
 
 **Coverage:**
 
-- v2.1 requirements: 12 total
-- Mapped to phases: 12
-- Unmapped: 0 ✓
-
-**Note:** Phase 11 (Empirical Cross-Machine Capture Run) covers no requirement directly — it is a hands-on data-gathering checkpoint (run Phase 10's tooling on ≥2 real machines (Mac + Windows); a third machine's only available device was a software rasterizer, excluded per Phase 11's scope decision — see `11-CAPTURE-RESULTS.md`) that produces the empirical input Phase 12's QUANT-04 depends on. See ROADMAP.md Phase 11 for detail.
+- v2.2 requirements: 6 total
+- Mapped to phases: 0 (pending roadmap creation)
+- Unmapped: 6
 
 ---
-*Requirements defined: 2026-08-07*
-*Last updated: 2026-08-12 — Phase 13 re-validation + Refit: VALD-01 partially satisfied (render fixture matches cross-hardware; MNN fixture's gap narrowed by the S=2^15 grid-widening fix from 12/15 to 1/15 divergent chunks but not fully closed, see 13-SCOPE-BOUNDARY.md's SC1 Refit section)*
+*Requirements defined: 2026-08-13*
