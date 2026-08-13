@@ -3,18 +3,18 @@ gsd_state_version: 1.0
 milestone: v2.1
 milestone_name: Cross-Hardware Hash Tolerance
 current_phase: 13
-current_phase_name: re-validation-scope-boundary-documentation
-status: executing
-stopped_at: "Completed 13-06-PLAN.md (gap-closure, diagnostic-only): chunk 10's divergence characterized as exactly one S=2^15 grid step on 1/64 elements; VALD-01/SC1 correctly kept Partial — 4th verification pass (gaps_found) confirms no safe further mitigation is known, override acceptance is now the live decision"
-last_updated: "2026-08-13T01:22:51.600Z"
+status: Awaiting operator decision on residual VALD-01 gap (accept via override, or further mitigation)
+stopped_at: "Completed 13-05-PLAN.md: VALD-01/SC1 gap narrowed (12/15 to 1/15 divergent MNN chunks) but correctly kept Partial per unconditional-clean bar"
+last_updated: "2026-08-13T20:46:02.525Z"
 last_activity: 2026-08-13
-last_activity_desc: Phase 13 execution started
+last_activity_desc: Phase 13 complete
 progress:
   total_phases: 4
-  completed_phases: 3
+  completed_phases: 4
   total_plans: 15
   completed_plans: 15
   percent: 100
+current_phase_name: re-validation-scope-boundary-documentation
 ---
 
 # Project State
@@ -28,10 +28,10 @@ See: .planning/PROJECT.md (updated 2026-08-03), workstream section "Workstream: 
 
 ## Current Position
 
-Phase: 13 (re-validation-scope-boundary-documentation) — EXECUTED (gaps_found — VALD-01 partial, see 13-VERIFICATION.md)
-Plan: 6 of 6
-Status: Awaiting operator decision on residual VALD-01 gap (accept via override, or further mitigation)
-Last activity: 2026-08-13 — Phase 13 execution started
+Phase: 13
+Plan: Not started
+Status: v2.1 complete — VALD-01 closed via accepted override (see 13-VERIFICATION.md); ready for v2.2 milestone kickoff
+Last activity: 2026-08-13 — Phase 13 complete
 
 ## Performance Metrics
 
