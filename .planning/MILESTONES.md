@@ -1,5 +1,33 @@
 # Milestones
 
+## v2.1 Cross-Hardware Hash Tolerance — sgproc-render workstream (Shipped: 2026-08-13)
+
+**Phases completed:** 4 phases, 15 plans, 32 tasks
+
+**Closed with an accepted override:** VALD-01's MNN fixture retains a residual 1/15-chunk cross-hardware divergence (chunk 10, exactly one S=2^15 grid step, confirmed a rounding-boundary tie-break with FP16 backend opportunism ruled out) — accepted as this milestone's final stopping point via the maintainer override in `13-VERIFICATION.md` rather than left open pending an architecture-level fix. A real fix requires per-workload configurable tolerance (QUANT-CFG-01) and/or a numeric-tolerance-fallback comparison mechanism in `ProcessingValidationCore::ValidateResults` (XNODE-01b), both scoped to the new v2.2 milestone.
+
+Full archive: `.planning/milestones/sgproc-render-v2.1-ROADMAP.md`, `.planning/milestones/sgproc-render-v2.1-REQUIREMENTS.md` (filenames workstream-qualified to avoid colliding with the child-wallet workstream's own pre-existing v2.1 milestone archive).
+
+**Key accomplishments:**
+
+- Added the `sgprocmanagerquant` identity-stub library (mirrors `sgprocmanagersha`) and `ExecutionContext::rawOutputCapture`, the two foundation pieces every Wave 2/3 plan in this phase builds on.
+- Wired the quantize-then-capture-then-hash pattern into all 6 stitched-family MNN processors (Float, Int, Mat2, Mat3, Mat4, Tensor) at both their per-chunk and stitched-combined hash call sites, exercising Plan 10-01's `sgprocmanagerquant`/`rawOutputCapture` foundation for the first time at real call sites.
+- Wired the quantize-then-capture-then-hash pattern into all 7 chained-family MNN processors at their chunk-level hash call site(s) only (8 insertion points total: 6 single-branch files + TextureCube's 2 branches), explicitly leaving all 8 rolling combined-hash call sites untouched since they hash already-quantized-hash bytes, not re-quantizable float data.
+- Wired the quantize-then-capture-then-hash pattern into RenderProcessor's single (non-chunked) combined-hash call site, and created the new `sgns::sgproccapture` capture file binary format that reuses `SerializeArtifact`/`SerializeManifest` unmodified and appends a bounds-checked, length-prefixed raw-bytes section.
+- Built `capture_harness` (runs a fixture N times, self-checks CAPT-02/CAPT-03, writes a `.cap` file) and `capture_diff` (reports DIFF-01/02 numeric divergence plus DIFF-03 hash-match booleans to console+JSON), wired into a new non-CTest-gated `tools/` CMake tree -- Phase 10's literal deliverable.
+- Wired SGProcessingManager/test/ into the main SuperGenius build for the first time and added a CTest-registered `capture_smoke_test` proving `capture_harness` produces a well-formed, round-trippable `.cap` file -- plus a root-cause fix for a pre-existing `enable_testing()` ordering bug that had silently made every test under `SGProcessingManager/test/` undiscoverable by `ctest`.
+- Formalized this session's ad-hoc Mac+Windows capture run as Phase 11's deliverable: relocated 6 evidence files into a phase-owned `captures/` directory, wrote `11-CAPTURE-RESULTS.md` citing the exact diff-JSON numbers (maxAbsDelta ≈1.043e-07, maxRelDelta ≈7.27e-05, maxUlpDistance 768 for MNN-float; contentHashMatch true / combinedHashMatch false for render), and reconciled ROADMAP.md/REQUIREMENTS.md/STATE.md's stale "3-machine" wording to the accepted 2-machine scope.
+- Replaced Phase 10's no-op quantization stubs with real IEEE-754 canonicalization + fixed-point 2^20-grid rounding for MNN float output, kept the render byte path deliberately identity, and added a dedicated CTest suite plus an integration test proving the two independent hash layers agree.
+- New `processing_conformance_security_test` CTest target proves, for both the MNN inference path and the render path, that a deliberately corrupted/wrong result still produces a different post-quantization artifact hash than the correct result -- confirming Plan 12-01's real quantization tolerance is not loose enough to also mask a substituted model or shader constant.
+- 4 fresh xhw-mnn-float/xhw-render .cap files captured on Mac + Windows against Phase 12's real QuantizeFloatBuffer/QuantizeByteBuffer logic, verified distinct in content from Phase 11's stub-era captures.
+- Incremental rebuild + verbose ctest re-run proves SECV-01's existing counter-test still diverges correctly at Phase 12's final quantization precision (both sub-tests genuinely PASSED, not skipped, on this machine's real RTX 4070 Ti SUPER), and REQUIREMENTS.md/ROADMAP.md's stale "≥3 machines"/"combined hash" wording is corrected to the accepted 2-machine scope and processor-level hash target via scoped edits.
+- Fresh Mac-vs-Windows `capture_diff` re-run under Phase 12's real quantization shows the render fixture's processor-level hash now matches cross-hardware, but the MNN float32 fixture's still does not (12/15 chunk hashes diverge) — recorded honestly in `13-SCOPE-BOUNDARY.md` as an open gap against VALD-01/SC1, alongside the milestone's explicit scope-boundary statement and SC4's final normalization-constant derivation.
+- QuantizeFloatBuffer's MNN float32 rounding grid widened to S=2^15 (32768.0f) -- not the plan's originally-specified S=2^14 -- after S=2^14 was found to deterministically regress SECV-01's corrupted-model counter-test; a local binary search over power-of-two values found S=2^15 the widest value still safe, and 2 fresh cross-machine captures were taken with the fix active.
+- Fresh capture_diff on the correct (newest) Mac-vs-Windows MNN capture pair under the S=2^15 quantization fix: contentHashMatch flipped false→true and chunk divergence narrowed from 12/15 to 1/15, but VALD-01/SC1 correctly stays Partial since chunkHashesMatch[10] is still false.
+- Extended capture_diff to numeric-diff every per-chunk raw record, revealing chunk 10's cross-hardware divergence is exactly one S=2^15 grid step on 1 of 64 elements -- a rounding-boundary tie-break, not a scaling error, characterized honestly in 13-SCOPE-BOUNDARY.md without proposing further grid-widening.
+
+---
+
 ## v2.0 Execution Contracts & Quality Gates — sgproc-render workstream (Shipped: 2026-08-07)
 
 **Phases completed:** 4 phases, 27 plans, 39 tasks

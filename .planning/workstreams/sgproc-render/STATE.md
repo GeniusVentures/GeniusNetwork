@@ -2,12 +2,12 @@
 gsd_state_version: 1.0
 milestone: v2.1
 milestone_name: Cross-Hardware Hash Tolerance
-current_phase: 13
-status: Awaiting operator decision on residual VALD-01 gap (accept via override, or further mitigation)
+current_phase: 1
+status: Awaiting next milestone
 stopped_at: "Completed 13-05-PLAN.md: VALD-01/SC1 gap narrowed (12/15 to 1/15 divergent MNN chunks) but correctly kept Partial per unconditional-clean bar"
-last_updated: "2026-08-13T20:46:02.525Z"
+last_updated: "2026-08-13T20:49:31.965Z"
 last_activity: 2026-08-13
-last_activity_desc: Phase 13 complete
+last_activity_desc: Milestone v2.1 completed and archived
 progress:
   total_phases: 4
   completed_phases: 4
@@ -28,10 +28,10 @@ See: .planning/PROJECT.md (updated 2026-08-03), workstream section "Workstream: 
 
 ## Current Position
 
-Phase: 13
-Plan: Not started
-Status: v2.1 complete — VALD-01 closed via accepted override (see 13-VERIFICATION.md); ready for v2.2 milestone kickoff
-Last activity: 2026-08-13 — Phase 13 complete
+Phase: Milestone v2.1 complete
+Plan: —
+Status: Awaiting next milestone
+Last activity: 2026-08-13 — Milestone v2.1 completed and archived
 
 ## Performance Metrics
 
@@ -163,8 +163,7 @@ Resume file: None
 
 ## Operator Next Steps
 
-- Phase 10 complete. Phase 11 discussed and scoped (see 11-CONTEXT.md) — 2-machine dataset (Mac + Windows) accepted per D-01; Phase 11 is not blocked on a third physical machine (D-02).
-- Run `/gsd-execute-phase 11 --ws sgproc-render` per 11-01-PLAN.md to relocate the captured evidence into captures/, write 11-CAPTURE-RESULTS.md, and reconcile ROADMAP.md/REQUIREMENTS.md wording.
+- Start the next milestone with /gsd-new-milestone
 
 ## Decisions
 
