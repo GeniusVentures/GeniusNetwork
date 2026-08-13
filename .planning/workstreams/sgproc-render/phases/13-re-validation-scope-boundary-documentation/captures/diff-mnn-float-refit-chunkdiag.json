@@ -1,0 +1,165 @@
+{
+  "chunkDiffs": [
+    {
+      "chunkIndex": 0,
+      "elementCount": 64,
+      "maxAbsDelta": 0.0,
+      "maxRelDelta": 0.0,
+      "maxUlpDistance": 0,
+      "percentExceedingThreshold": 0.0,
+      "sizeMismatch": false
+    },
+    {
+      "chunkIndex": 1,
+      "elementCount": 64,
+      "maxAbsDelta": 0.0,
+      "maxRelDelta": 0.0,
+      "maxUlpDistance": 0,
+      "percentExceedingThreshold": 0.0,
+      "sizeMismatch": false
+    },
+    {
+      "chunkIndex": 2,
+      "elementCount": 64,
+      "maxAbsDelta": 0.0,
+      "maxRelDelta": 0.0,
+      "maxUlpDistance": 0,
+      "percentExceedingThreshold": 0.0,
+      "sizeMismatch": false
+    },
+    {
+      "chunkIndex": 3,
+      "elementCount": 64,
+      "maxAbsDelta": 0.0,
+      "maxRelDelta": 0.0,
+      "maxUlpDistance": 0,
+      "percentExceedingThreshold": 0.0,
+      "sizeMismatch": false
+    },
+    {
+      "chunkIndex": 4,
+      "elementCount": 64,
+      "maxAbsDelta": 0.0,
+      "maxRelDelta": 0.0,
+      "maxUlpDistance": 0,
+      "percentExceedingThreshold": 0.0,
+      "sizeMismatch": false
+    },
+    {
+      "chunkIndex": 5,
+      "elementCount": 64,
+      "maxAbsDelta": 0.0,
+      "maxRelDelta": 0.0,
+      "maxUlpDistance": 0,
+      "percentExceedingThreshold": 0.0,
+      "sizeMismatch": false
+    },
+    {
+      "chunkIndex": 6,
+      "elementCount": 64,
+      "maxAbsDelta": 0.0,
+      "maxRelDelta": 0.0,
+      "maxUlpDistance": 0,
+      "percentExceedingThreshold": 0.0,
+      "sizeMismatch": false
+    },
+    {
+      "chunkIndex": 7,
+      "elementCount": 64,
+      "maxAbsDelta": 0.0,
+      "maxRelDelta": 0.0,
+      "maxUlpDistance": 0,
+      "percentExceedingThreshold": 0.0,
+      "sizeMismatch": false
+    },
+    {
+      "chunkIndex": 8,
+      "elementCount": 64,
+      "maxAbsDelta": 0.0,
+      "maxRelDelta": 0.0,
+      "maxUlpDistance": 0,
+      "percentExceedingThreshold": 0.0,
+      "sizeMismatch": false
+    },
+    {
+      "chunkIndex": 9,
+      "elementCount": 64,
+      "maxAbsDelta": 0.0,
+      "maxRelDelta": 0.0,
+      "maxUlpDistance": 0,
+      "percentExceedingThreshold": 0.0,
+      "sizeMismatch": false
+    },
+    {
+      "chunkIndex": 10,
+      "elementCount": 64,
+      "maxAbsDelta": 3.0517578125e-05,
+      "maxRelDelta": 0.00015477479610126466,
+      "maxUlpDistance": 2048,
+      "percentExceedingThreshold": 1.5625,
+      "sizeMismatch": false
+    },
+    {
+      "chunkIndex": 11,
+      "elementCount": 64,
+      "maxAbsDelta": 0.0,
+      "maxRelDelta": 0.0,
+      "maxUlpDistance": 0,
+      "percentExceedingThreshold": 0.0,
+      "sizeMismatch": false
+    },
+    {
+      "chunkIndex": 12,
+      "elementCount": 64,
+      "maxAbsDelta": 0.0,
+      "maxRelDelta": 0.0,
+      "maxUlpDistance": 0,
+      "percentExceedingThreshold": 0.0,
+      "sizeMismatch": false
+    },
+    {
+      "chunkIndex": 13,
+      "elementCount": 64,
+      "maxAbsDelta": 0.0,
+      "maxRelDelta": 0.0,
+      "maxUlpDistance": 0,
+      "percentExceedingThreshold": 0.0,
+      "sizeMismatch": false
+    },
+    {
+      "chunkIndex": 14,
+      "elementCount": 64,
+      "maxAbsDelta": 0.0,
+      "maxRelDelta": 0.0,
+      "maxUlpDistance": 0,
+      "percentExceedingThreshold": 0.0,
+      "sizeMismatch": false
+    }
+  ],
+  "chunkHashesMatch": [
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    false,
+    true,
+    true,
+    true,
+    true
+  ],
+  "combinedHashMatch": false,
+  "contentHashMatch": true,
+  "elementCount": 512,
+  "elementType": "float32",
+  "maxAbsDelta": 0.0,
+  "maxRelDelta": 0.0,
+  "maxUlpDistance": 0,
+  "percentExceedingThreshold": 0.0,
+  "sizeMismatch": false
+}
