@@ -42,7 +42,7 @@ Deferred to future milestones. Tracked but not in current roadmap.
 
 - **XNODE-01b**: `ProcessingValidationCore::ValidateResults`'s concatenation bug — it never actually diffs two subtasks' hashes for the same chunk, so a genuine cross-node mismatch would silently pass today. This milestone makes the hash itself tolerant but does not fix the comparison mechanism around it.
 - **XNODE-01c**: Actual cross-node consensus/redundant-execution comparison plumbing — this milestone only proves the hash *can* be tolerant, not that production consensus uses that tolerance correctly.
-- **QUANT-CFG-01**: Schema-configurable per-data-type normalization precision (per-job tuning exposed to job authors) — fixed constants only this milestone.
+- **QUANT-CFG-01**: Schema-configurable per-data-type normalization precision (per-job tuning exposed to job authors) — fixed constants only this milestone. Post-milestone evidence: `tex3d`/volume processor running the real `spleen_ct_seg` workload shows all 25 chunk hashes diverging cross-hardware (confirmed same-machine-stable, so genuinely cross-hardware) at a magnitude ~2-3 orders larger than the float fixture's — no single global `kScale` can be both safe for the small model's SECV-01 guarantee and adequate for this one. See STATE.md Blockers/Concerns for full detail, including the operator's separate visual validation in 3D Slicer suggesting hash equality may be the wrong bar for segmentation-style workloads.
 
 ## Out of Scope
 
