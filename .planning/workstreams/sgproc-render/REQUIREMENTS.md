@@ -45,18 +45,18 @@ Which phases cover which requirements. Filled during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| QUANT-CFG-01 | TBD | Not started |
-| QUANT-CFG-02 | TBD | Not started |
-| QUANT-CFG-03 | TBD | Not started |
-| XNODE-01b | TBD | Not started |
-| XNODE-02 | TBD | Not started |
-| SECV-02 | TBD | Not started |
+| QUANT-CFG-01 | Phase 14 | Not started |
+| QUANT-CFG-02 | Phase 14 | Not started |
+| QUANT-CFG-03 | Phase 14 | Not started |
+| XNODE-01b | Phase 15 | Not started |
+| XNODE-02 | Phase 15 | Not started |
+| SECV-02 | Phase 15 | Not started |
 
 **Coverage:**
 
 - v2.2 requirements: 6 total
-- Mapped to phases: 0 (pending roadmap creation)
-- Unmapped: 6
+- Mapped to phases: 6 (Phase 14: QUANT-CFG-01/02/03; Phase 15: XNODE-01b, XNODE-02, SECV-02)
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-08-13*

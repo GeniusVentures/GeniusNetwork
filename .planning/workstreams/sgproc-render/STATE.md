@@ -6,7 +6,7 @@ status: planning
 last_updated: "2026-08-13T21:09:19.764Z"
 last_activity: 2026-08-13
 progress:
-  total_phases: 0
+  total_phases: 2
   completed_phases: 0
   total_plans: 0
   completed_plans: 0
@@ -20,22 +20,22 @@ progress:
 See: .planning/PROJECT.md (updated 2026-08-03), workstream section "Workstream: sgproc-render"
 
 **Core value:** Elevate SGProcessingManager from a "parse-and-hope" pipeline to a contract-driven execution engine — jobs are validated before work starts, execution is cancellable and budget-aware, results are typed artifacts with provenance, and every processor is covered by a common test suite.
-**Current focus:** Phase 13 — re-validation-scope-boundary-documentation
+**Current focus:** Phase 14 — configurable-normalization-precision
 
 ## Current Position
 
-Phase: Not started (defining requirements)
-Plan: —
-Status: Defining requirements
-Last activity: 2026-08-13 — Milestone v2.2 started
+Phase: 14 — Configurable Normalization Precision (not started)
+Plan: — (roadmap complete, no plans created yet)
+Status: Roadmap created, ready for /gsd-plan-phase 14
+Last activity: 2026-08-13 — Milestone v2.2 roadmap created (Phase 14: Configurable Normalization Precision, Phase 15: Validation Comparison Mechanism)
 
 ## Performance Metrics
 
 **Velocity:**
 
-- Total plans completed: 8 (v2.0 milestone, this workstream)
-- Previous milestone (v1.0): 24 plans across 5 phases
-- v2.1 (current milestone): 0 plans so far — roadmap just created, no phase planned yet
+- Total plans completed: 15 (v2.1 milestone, this workstream)
+- Previous milestones: v1.0 24 plans across 5 phases; v2.0 27 plans across 4 phases; v2.1 15 plans across 4 phases
+- v2.2 (current milestone): 0 plans so far — roadmap just created (Phase 14, Phase 15), no phase planned yet
 
 **By Phase:**
 | Phase | Plans | Status |
@@ -44,10 +44,12 @@ Last activity: 2026-08-13 — Milestone v2.2 started
 | 07 — Cancellable Execution Context | 5/5 | ✓ Complete (tests pending HW verification) |
 | 08 — Structured Artifacts & Manifests | 3/3 | ✓ Complete |
 | 09 — Processor & Pass-Graph Conformance Suites | 15/15 | ✓ Complete (gap-closure round 3 done: 09-13, 09-14, 09-15) |
-| 10 — Capture Harness & Diff Tool (Quantization Stub) | 0/6 | Planned |
-| 11 — Empirical Cross-Machine Capture Run | 0/TBD | Not started |
-| 12 — Quantization / Normalization Implementation | 0/TBD | Not started |
-| 13 — Re-Validation & Scope Boundary Documentation | 0/TBD | Not started |
+| 10 — Capture Harness & Diff Tool (Quantization Stub) | 6/6 | ✓ Complete |
+| 11 — Empirical Cross-Machine Capture Run | 1/1 | ✓ Complete |
+| 12 — Quantization / Normalization Implementation | 2/2 | ✓ Complete |
+| 13 — Re-Validation & Scope Boundary Documentation | 6/6 | ✓ Complete (override — VALD-01 MNN 1/15-chunk gap accepted) |
+| 14 — Configurable Normalization Precision | 0/TBD | Not started |
+| 15 — Validation Comparison Mechanism | 0/TBD | Not started |
 
 *Updated after each plan completion*
 | Phase 09 P08 | 25min | 2 tasks | 4 files |
@@ -94,6 +96,13 @@ Last activity: 2026-08-13 — Milestone v2.2 started
 - QUANT-01's normalization technique (rounding, fixed-point conversion, bit-masking, or another approach) is deliberately left open in both REQUIREMENTS.md and ROADMAP.md — it is a design decision for Phase 12's planning to resolve using Phase 11's empirical data, not fixed in advance.
 - SECV-01 (wrong-result-still-diverges counter-test) is scoped into Phase 12 alongside the real quantization logic, not deferred to Phase 13 — research flags this as the milestone's central, non-optional risk.
 - ProcessingValidationCore::ValidateResults's concatenation bug and cross-node consensus/redundant-execution plumbing remain explicitly out of scope for all 4 phases (XNODE-01b/c, tracked in REQUIREMENTS.md v2 Requirements + Out of Scope table); Phase 13 documents this boundary rather than closing it.
+
+### Key Decisions (v2.2 Roadmap)
+
+- Phase structure is 2 phases (14, 15), not 6 (one per requirement) — coarse granularity per config.json, and the two categories already named in REQUIREMENTS.md (Configurable Normalization Precision; Validation Comparison Mechanism) mapped cleanly onto two coherent, independently-verifiable delivery boundaries.
+- Phase 14 (QUANT-CFG-01/02/03) hard-ordered before Phase 15 (XNODE-01b/XNODE-02/SECV-02): the numeric-tolerance fallback in ValidateResults conceptually needs configured tolerance values to exist first, and SECV-02's counter-test needs both XNODE-01b's concatenation-bug fix and XNODE-02's tolerance fallback in place before it can prove the two aren't jointly too loose. Roadmap encodes this as a phase dependency, not an internal wave split.
+- XNODE-01c (actual cross-node consensus/redundant-execution plumbing) stays out of both phases per REQUIREMENTS.md's v2 Requirements/Out of Scope sections — v2.2 makes the comparison mechanism itself correct and tolerant; wiring it into real multi-node orchestration remains future work.
+- Framing carried into both phase goals: this milestone is not two isolated bug fixes, it is the follow-through on v2.1's own closing findings (tex3d/spleen_ct_seg's per-workload divergence evidence, and the chunk-10 false-mismatch diagnostic) — a real fix needed configurable precision plus a tolerant comparison mechanism, not a better constant.
 
 ### Pending Todos
 
