@@ -43,7 +43,7 @@ Full detail archived at `.planning/milestones/sgproc-render-v2.0-ROADMAP.md`.
 - [x] **Phase 10: Capture Harness & Diff Tool (Quantization Stub)** - Build and validate the capture harness + diff tool plumbing (14 processor files + `ExecutionContext` capture field) against Phase 09's existing fixtures, with quantization wired in as a no-op/identity stub (completed 2026-08-10)
 - [x] **Phase 11: Empirical Cross-Machine Capture Run** - Hands-on data-gathering checkpoint: run Phase 10's tooling on the user's Mac + PC + a third machine to produce real cross-hardware divergence statistics (completed 2026-08-12)
 - [x] **Phase 12: Quantization / Normalization Implementation** - Implement the real normalization logic (technique chosen from Phase 11's data, not fixed in advance) on both render and MNN paths, plus the SECV-01 wrong-result-still-diverges counter-test (completed 2026-08-12)
-- [ ] **Phase 13: Re-Validation & Scope Boundary Documentation** - Re-run the ≥2-machine capture/diff cycle with real quantization active to confirm VALD-01, re-confirm SECV-01 at the final precision, and document the milestone's scope boundary (all 3 plans executed 2026-08-12, but goal verification found VALD-01 only partial — render fixture matches cross-hardware, MNN fixture does not; see 13-VERIFICATION.md). Gap-closure Plans 13-04/13-05 widened the quantization grid to S=2^15 and re-measured (2026-08-12): MNN gap narrowed from 12/15 to 1/15 divergent chunk hashes but still not unconditionally clean — see 13-SCOPE-BOUNDARY.md's SC1 Refit section.
+- [x] **Phase 13: Re-Validation & Scope Boundary Documentation** - Re-run the ≥2-machine capture/diff cycle with real quantization active to confirm VALD-01, re-confirm SECV-01 at the final precision, and document the milestone's scope boundary (all 3 plans executed 2026-08-12, but goal verification found VALD-01 only partial — render fixture matches cross-hardware, MNN fixture does not; see 13-VERIFICATION.md). Gap-closure Plans 13-04/13-05 widened the quantization grid to S=2^15 and re-measured (2026-08-12): MNN gap narrowed from 12/15 to 1/15 divergent chunk hashes but still not unconditionally clean — see 13-SCOPE-BOUNDARY.md's SC1 Refit section. (completed 2026-08-13)
 
 ## Phase Details
 
@@ -127,7 +127,7 @@ Plans:
   3. A written document records the milestone's scope boundary in plain terms: hash comparison is now cross-hardware tolerant; `ProcessingValidationCore::ValidateResults`'s comparison-mechanism bug remains unfixed; no cross-node consensus/redundant-execution plumbing was built. No downstream consumer should read this milestone's output as "verification" or "consensus-ready."
   4. The final chosen normalization constants and their empirical derivation (citing Phase 11's captured numbers) are documented alongside the re-validation result, closing the milestone's traceability loop.
 
-**Plans**: 5/6 plans (13-06 is a gap-closure plan from 13-VERIFICATION.md's 3rd-pass, not yet executed)
+**Plans**: 6/6 plans complete
 
 Plans:
 **Wave 1**
@@ -149,7 +149,7 @@ Plans:
 
 **Wave 5** *(blocked on 13-05 completion; gap closure for the residual chunkHashesMatch[10] diagnostic-blind-spot gap from 13-VERIFICATION.md's 3rd pass)*
 
-- [ ] 13-06-PLAN.md — Extend capture_diff to numeric-diff per-chunk raw records (not just the trailing combined-hash record), obtain chunk 10's real numeric divergence, and honestly characterize it in 13-SCOPE-BOUNDARY.md — diagnostic only, no further grid-widening proposed
+- [x] 13-06-PLAN.md — Extend capture_diff to numeric-diff per-chunk raw records (not just the trailing combined-hash record), obtain chunk 10's real numeric divergence, and honestly characterize it in 13-SCOPE-BOUNDARY.md — diagnostic only, no further grid-widening proposed
 
 ## Progress
 
@@ -168,4 +168,4 @@ Plans:
 | 10. Capture Harness & Diff Tool (Quantization Stub) | v2.1 | 6/6 | Complete    | 2026-08-10 |
 | 11. Empirical Cross-Machine Capture Run | v2.1 | 1/1 | Complete    | 2026-08-12 |
 | 12. Quantization / Normalization Implementation | v2.1 | 2/2 | Complete    | 2026-08-12 |
-| 13. Re-Validation & Scope Boundary Documentation | v2.1 | 4/5 | Gap narrowed, not closed (VALD-01 partial — 1/15 MNN chunks still diverge post-S=2^15-Refit) | 2026-08-12 |
+| 13. Re-Validation & Scope Boundary Documentation | v2.1 | 6/6 | Gap diagnosed, not closed (VALD-01 partial — chunk 10 divergence characterized as exactly 1 S=2^15 grid step, 1/15 MNN chunks still diverge) | 2026-08-12 |
