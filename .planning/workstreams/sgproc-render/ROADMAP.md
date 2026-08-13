@@ -127,7 +127,7 @@ Plans:
   3. A written document records the milestone's scope boundary in plain terms: hash comparison is now cross-hardware tolerant; `ProcessingValidationCore::ValidateResults`'s comparison-mechanism bug remains unfixed; no cross-node consensus/redundant-execution plumbing was built. No downstream consumer should read this milestone's output as "verification" or "consensus-ready."
   4. The final chosen normalization constants and their empirical derivation (citing Phase 11's captured numbers) are documented alongside the re-validation result, closing the milestone's traceability loop.
 
-**Plans**: 5/5 plans executed
+**Plans**: 5/6 plans (13-06 is a gap-closure plan from 13-VERIFICATION.md's 3rd-pass, not yet executed)
 
 Plans:
 **Wave 1**
@@ -146,6 +146,10 @@ Plans:
 **Wave 4** *(blocked on 13-04 completion)*
 
 - [x] 13-05-PLAN.md — capture_diff on widened-grid MNN captures + 13-SCOPE-BOUNDARY.md Refit section + conditional REQUIREMENTS.md/ROADMAP.md VALD-01 status update
+
+**Wave 5** *(blocked on 13-05 completion; gap closure for the residual chunkHashesMatch[10] diagnostic-blind-spot gap from 13-VERIFICATION.md's 3rd pass)*
+
+- [ ] 13-06-PLAN.md — Extend capture_diff to numeric-diff per-chunk raw records (not just the trailing combined-hash record), obtain chunk 10's real numeric divergence, and honestly characterize it in 13-SCOPE-BOUNDARY.md — diagnostic only, no further grid-widening proposed
 
 ## Progress
 
