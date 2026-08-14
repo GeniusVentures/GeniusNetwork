@@ -4,7 +4,7 @@ milestone: v2.2
 milestone_name: Cross-Hardware Validation Tolerance
 current_phase: 14
 status: planning
-stopped_at: Phase 14 context gathered
+stopped_at: Phase 14 planned (3 plans ready)
 last_updated: "2026-08-14T00:43:52.612Z"
 last_activity: 2026-08-13
 last_activity_desc: "Milestone v2.2 roadmap created (Phase 14: Configurable Normalization Precision, Phase 15: Validation Comparison Mechanism)"
@@ -27,10 +27,10 @@ See: .planning/PROJECT.md (updated 2026-08-03), workstream section "Workstream: 
 
 ## Current Position
 
-Phase: 14 — Configurable Normalization Precision (not started)
-Plan: — (roadmap complete, no plans created yet)
-Status: Roadmap created, ready for /gsd-plan-phase 14
-Last activity: 2026-08-13 — Milestone v2.2 roadmap created (Phase 14: Configurable Normalization Precision, Phase 15: Validation Comparison Mechanism)
+Phase: 14 — Configurable Normalization Precision (planned, not started)
+Plan: 3 plans created (14-01 resolver infra, 14-02 call-site wiring, 14-03 tex3d empirical precision) — wave 1 ready to execute
+Status: Ready to execute
+Last activity: 2026-08-13 — Phase 14 planned: research + pattern-map + 3 plans created and verified (plan-checker passed, 10/10 CONTEXT.md decisions covered, all 21 call sites accounted for)
 
 ## Performance Metrics
 
@@ -51,7 +51,7 @@ Last activity: 2026-08-13 — Milestone v2.2 roadmap created (Phase 14: Configur
 | 11 — Empirical Cross-Machine Capture Run | 1/1 | ✓ Complete |
 | 12 — Quantization / Normalization Implementation | 2/2 | ✓ Complete |
 | 13 — Re-Validation & Scope Boundary Documentation | 6/6 | ✓ Complete (override — VALD-01 MNN 1/15-chunk gap accepted) |
-| 14 — Configurable Normalization Precision | 0/TBD | Not started |
+| 14 — Configurable Normalization Precision | 0/3 | Planned, ready to execute |
 | 15 — Validation Comparison Mechanism | 0/TBD | Not started |
 
 *Updated after each plan completion*
@@ -153,8 +153,8 @@ Items acknowledged and deferred at milestone v2.0 close on 2026-08-07:
 ## Session Continuity
 
 Last session: 2026-08-14T00:43:52.606Z
-Stopped at: Phase 14 context gathered
-Resume file: .planning/workstreams/sgproc-render/phases/14-configurable-normalization-precision/14-CONTEXT.md
+Stopped at: Phase 14 planned (3 plans ready)
+Resume file: .planning/workstreams/sgproc-render/phases/14-configurable-normalization-precision/14-01-PLAN.md
 
 - [Phase 09 P10]: combinedHash/manifest.manifestHash computed over a timing-zeroed ExecutionManifest copy rather than modifying SerializeManifest()/ComputeManifestHash() themselves — preserves byte-for-byte compatibility with Phase 08's artifact_serializer_test.cpp round-trip tests over real timestamps
 - [Phase 09 P11]: InferenceCanExecuteReflectsPassTypeRegistryGap documents (not fixes) that INFERENCE passes are schema-valid but not capability-registered — registering INFERENCE/RETRAIN into the capability registry is a separate, larger cross-phase change, deferred as a follow-up item

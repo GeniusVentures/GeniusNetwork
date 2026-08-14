@@ -79,8 +79,16 @@ Full detail archived at `.planning/milestones/sgproc-render-v2.1-ROADMAP.md`.
 **Plans**: 3 plans
 
 Plans:
+**Wave 1**
+
 - [ ] 14-01-PLAN.md — Core resolver infrastructure: `ResolveQuantScale`/`ResolveByteQuantMode` + 3-arg `QuantizeFloatBuffer`/`QuantizeByteBuffer` (Wave 1)
+
+**Wave 2** *(blocked on Wave 1 completion)*
+
 - [ ] 14-02-PLAN.md — Wire all 21 call sites across 14 processor files to the new resolvers (Wave 2, depends on 14-01)
+
+**Wave 3** *(blocked on Wave 2 completion)*
+
 - [ ] 14-03-PLAN.md — tex3d/spleen_ct_seg SECV-01-style counter-test + binary-searched empirical `quantScale` (Wave 3, depends on 14-02)
 
 ### Phase 15: Validation Comparison Mechanism
