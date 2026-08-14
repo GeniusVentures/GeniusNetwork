@@ -2,9 +2,12 @@
 gsd_state_version: 1.0
 milestone: v2.2
 milestone_name: Cross-Hardware Validation Tolerance
+current_phase: 14
 status: planning
-last_updated: "2026-08-13T21:09:19.764Z"
+stopped_at: Phase 14 context gathered
+last_updated: "2026-08-14T00:43:52.612Z"
 last_activity: 2026-08-13
+last_activity_desc: "Milestone v2.2 roadmap created (Phase 14: Configurable Normalization Precision, Phase 15: Validation Comparison Mechanism)"
 progress:
   total_phases: 2
   completed_phases: 0
@@ -149,9 +152,9 @@ Items acknowledged and deferred at milestone v2.0 close on 2026-08-07:
 
 ## Session Continuity
 
-Last session: 2026-08-12T23:44:49.412Z
-Stopped at: Completed 13-05-PLAN.md: VALD-01/SC1 gap narrowed (12/15 to 1/15 divergent MNN chunks) but correctly kept Partial per unconditional-clean bar
-Resume file: None
+Last session: 2026-08-14T00:43:52.606Z
+Stopped at: Phase 14 context gathered
+Resume file: .planning/workstreams/sgproc-render/phases/14-configurable-normalization-precision/14-CONTEXT.md
 
 - [Phase 09 P10]: combinedHash/manifest.manifestHash computed over a timing-zeroed ExecutionManifest copy rather than modifying SerializeManifest()/ComputeManifestHash() themselves — preserves byte-for-byte compatibility with Phase 08's artifact_serializer_test.cpp round-trip tests over real timestamps
 - [Phase 09 P11]: InferenceCanExecuteReflectsPassTypeRegistryGap documents (not fixes) that INFERENCE passes are schema-valid but not capability-registered — registering INFERENCE/RETRAIN into the capability registry is a separate, larger cross-phase change, deferred as a follow-up item
