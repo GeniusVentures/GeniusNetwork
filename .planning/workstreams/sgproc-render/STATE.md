@@ -5,15 +5,15 @@ milestone_name: Cross-Hardware Validation Tolerance
 current_phase: 15
 current_phase_name: Validation Comparison Mechanism
 status: executing
-stopped_at: Completed 15-01-PLAN.md
-last_updated: "2026-08-14T20:49:24.609Z"
+stopped_at: Completed 15-03-PLAN.md
+last_updated: "2026-08-14T21:14:00.107Z"
 last_activity: 2026-08-14
 last_activity_desc: Phase 15 execution started
 progress:
   total_phases: 2
   completed_phases: 1
   total_plans: 7
-  completed_plans: 5
+  completed_plans: 6
   percent: 50
 ---
 
@@ -29,7 +29,7 @@ See: .planning/PROJECT.md (updated 2026-08-03), workstream section "Workstream: 
 ## Current Position
 
 Phase: 15 (Validation Comparison Mechanism) — EXECUTING
-Plan: 3 of 4
+Plan: 4 of 4
 Status: Ready to execute
 Last activity: 2026-08-14 — Phase 15 execution started
 
@@ -82,6 +82,7 @@ Last activity: 2026-08-14 — Phase 15 execution started
 | Phase 14 P03 | 35min | 2 tasks | 4 files |
 | Phase 15 P01 | 30min | 2 tasks | 8 files |
 | Phase 15 P02 | 35min | 2 tasks | 4 files |
+| Phase 15 P03 | 40min | 2 tasks | 6 files |
 
 ## Accumulated Context
 
@@ -158,8 +159,8 @@ Items acknowledged and deferred at milestone v2.0 close on 2026-08-07:
 
 ## Session Continuity
 
-Last session: 2026-08-14T20:46:42.592Z
-Stopped at: Completed 15-01-PLAN.md
+Last session: 2026-08-14T21:14:00.099Z
+Stopped at: Completed 15-03-PLAN.md
 Resume file: None
 
 - [Phase 09 P10]: combinedHash/manifest.manifestHash computed over a timing-zeroed ExecutionManifest copy rather than modifying SerializeManifest()/ComputeManifestHash() themselves — preserves byte-for-byte compatibility with Phase 08's artifact_serializer_test.cpp round-trip tests over real timestamps
@@ -208,3 +209,4 @@ Resume file: None
 - [Phase ?]: capture_diff.cpp uses explicit sgns::sgprocmanagerdiff:: qualification at call sites rather than a using-namespace directive
 - [Phase ?]: [Phase 15-02]: Reformatted TEST(ProcessingValidationCoreTest, ...) macro invocations with no space after TEST( so the plan's literal grep acceptance check passes; used std::make_error_code(std::errc::io_error) instead of boost::system::error_code{} for the test's simulated fetch failure, matching this codebase's outcome::result convention
 - [Phase ?]: [Phase 15-02]: AttemptToleranceFallback's uniform-division slicing is only exact for single-channel outputs per RESEARCH.md Pitfall 3; multi-channel blobs that happen to divide evenly would still be silently mis-sliced -- a documented, carried-forward scope limit, not expanded
+- [Phase 15-03]: SgnsProcessing::get_parameters() returns boost::optional<vector<Parameter>> by value, not a pointer -- stored into a local jobParametersStorage vector declared alongside parsedProcessing before the ValidateResults call so the pointer's lifetime spans the call
