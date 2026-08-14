@@ -5,8 +5,8 @@ milestone_name: Cross-Hardware Validation Tolerance
 current_phase: 15
 current_phase_name: Validation Comparison Mechanism
 status: verifying
-stopped_at: Completed 14-02-PLAN.md
-last_updated: "2026-08-14T02:20:52.153Z"
+stopped_at: Phase 15 context gathered
+last_updated: "2026-08-14T07:37:45.925Z"
 last_activity: 2026-08-14
 last_activity_desc: Phase 14 complete, transitioned to Phase 15
 progress:
@@ -156,9 +156,9 @@ Items acknowledged and deferred at milestone v2.0 close on 2026-08-07:
 
 ## Session Continuity
 
-Last session: 2026-08-14T02:06:04.082Z
-Stopped at: Completed 14-02-PLAN.md
-Resume file: None
+Last session: 2026-08-14T07:37:45.919Z
+Stopped at: Phase 15 context gathered
+Resume file: .planning/workstreams/sgproc-render/phases/15-validation-comparison-mechanism/15-CONTEXT.md
 
 - [Phase 09 P10]: combinedHash/manifest.manifestHash computed over a timing-zeroed ExecutionManifest copy rather than modifying SerializeManifest()/ComputeManifestHash() themselves — preserves byte-for-byte compatibility with Phase 08's artifact_serializer_test.cpp round-trip tests over real timestamps
 - [Phase 09 P11]: InferenceCanExecuteReflectsPassTypeRegistryGap documents (not fixes) that INFERENCE passes are schema-valid but not capability-registered — registering INFERENCE/RETRAIN into the capability registry is a separate, larger cross-phase change, deferred as a follow-up item
