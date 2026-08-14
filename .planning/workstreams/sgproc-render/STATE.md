@@ -3,16 +3,17 @@ gsd_state_version: 1.0
 milestone: v2.2
 milestone_name: Cross-Hardware Validation Tolerance
 current_phase: 14
-status: planning
-stopped_at: Phase 14 planned (3 plans ready)
-last_updated: "2026-08-14T00:43:52.612Z"
-last_activity: 2026-08-13
-last_activity_desc: "Milestone v2.2 roadmap created (Phase 14: Configurable Normalization Precision, Phase 15: Validation Comparison Mechanism)"
+current_phase_name: Configurable Normalization Precision
+status: executing
+stopped_at: Completed 14-01-PLAN.md
+last_updated: "2026-08-14T01:30:29.166Z"
+last_activity: 2026-08-14
+last_activity_desc: Phase 14 execution started
 progress:
   total_phases: 2
   completed_phases: 0
-  total_plans: 0
-  completed_plans: 0
+  total_plans: 3
+  completed_plans: 1
   percent: 0
 ---
 
@@ -23,14 +24,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-08-03), workstream section "Workstream: sgproc-render"
 
 **Core value:** Elevate SGProcessingManager from a "parse-and-hope" pipeline to a contract-driven execution engine — jobs are validated before work starts, execution is cancellable and budget-aware, results are typed artifacts with provenance, and every processor is covered by a common test suite.
-**Current focus:** Phase 14 — configurable-normalization-precision
+**Current focus:** Phase 14 — Configurable Normalization Precision
 
 ## Current Position
 
-Phase: 14 — Configurable Normalization Precision (planned, not started)
-Plan: 3 plans created (14-01 resolver infra, 14-02 call-site wiring, 14-03 tex3d empirical precision) — wave 1 ready to execute
+Phase: 14 (Configurable Normalization Precision) — EXECUTING
+Plan: 2 of 3
 Status: Ready to execute
-Last activity: 2026-08-13 — Phase 14 planned: research + pattern-map + 3 plans created and verified (plan-checker passed, 10/10 CONTEXT.md decisions covered, all 21 call sites accounted for)
+Last activity: 2026-08-14 — Phase 14 execution started
 
 ## Performance Metrics
 
@@ -76,6 +77,7 @@ Last activity: 2026-08-13 — Phase 14 planned: research + pattern-map + 3 plans
 | Phase 13 P01 | 5min | 1 tasks | 5 files |
 | Phase 13 P03 | 15min | 2 tasks | 3 files |
 | Phase 13 P05 | 12min | 2 tasks | 4 files |
+| Phase 14 P01 | 28min | 2 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -152,9 +154,9 @@ Items acknowledged and deferred at milestone v2.0 close on 2026-08-07:
 
 ## Session Continuity
 
-Last session: 2026-08-14T00:43:52.606Z
-Stopped at: Phase 14 planned (3 plans ready)
-Resume file: .planning/workstreams/sgproc-render/phases/14-configurable-normalization-precision/14-01-PLAN.md
+Last session: 2026-08-14T01:30:29.160Z
+Stopped at: Completed 14-01-PLAN.md
+Resume file: None
 
 - [Phase 09 P10]: combinedHash/manifest.manifestHash computed over a timing-zeroed ExecutionManifest copy rather than modifying SerializeManifest()/ComputeManifestHash() themselves — preserves byte-for-byte compatibility with Phase 08's artifact_serializer_test.cpp round-trip tests over real timestamps
 - [Phase 09 P11]: InferenceCanExecuteReflectsPassTypeRegistryGap documents (not fixes) that INFERENCE passes are schema-valid but not capability-registered — registering INFERENCE/RETRAIN into the capability registry is a separate, larger cross-phase change, deferred as a follow-up item
@@ -194,3 +196,4 @@ Resume file: .planning/workstreams/sgproc-render/phases/14-configurable-normaliz
 - [Phase 13-04]: Task 1's originally-planned S=2^14 grid widening regressed SECV-01's MnnCorruptedModelStillDiverges; ran a local binary search over power-of-two S values (2^17, 2^16, 2^15 all pass; 2^14 confirmed to fail deterministically twice) and chose S=2^15 -- one full power-of-two step of margin above the confirmed failure boundary, 32x the old S=2^20 grid step, ~292x Phase 11's original maxAbsDelta -- rather than the plan's literal S=2^14/64x/585x citation
 - [Phase ?]: Plan 13-05: cited the real applied fix (S=2^15, chosen after S=2^14 regressed SECV-01) in 13-SCOPE-BOUNDARY.md's new SC1 Refit section, not the plan's stale S=2^14/64x/585x text
 - [Phase ?]: Plan 13-05: root-caused the chunkHashesMatch[10]-despite-zero-delta anomaly via capture_diff.cpp/capture_harness.cpp/capture_file_format.hpp source reading -- numeric per-element pass only diffs the trailing combined-hash record, never per-chunk records; a real Phase-10-era scope limitation, not a contradiction or new defect
+- [Phase 14-01]: Used bare Parameter.hpp/ParameterType.hpp includes (not generated/Parameter.hpp) to match the codebase's established include-path convention for the generated/ CMake include-directory entry — The generated/ CMakeLists.txt entry points directly at the generated/ directory itself (mirroring sgprocmanagertypes), so a generated/-prefixed include statement would not resolve

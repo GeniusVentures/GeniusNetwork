@@ -11,8 +11,8 @@ Requirements for milestone v2.2. Each maps to roadmap phases. Directly motivated
 
 ### Configurable Normalization Precision
 
-- [ ] **QUANT-CFG-01**: A processing job's schema can declare a per-data-type normalization precision parameter (e.g. a quantization scale for float32 outputs), read by `QuantizeFloatBuffer`/`QuantizeByteBuffer` instead of the single hardcoded `kScale` constant from v2.1
-- [ ] **QUANT-CFG-02**: When no precision is schema-declared, normalization falls back to v2.1's existing fixed constants (S=2^15 for float32, byte-identity for uint8) — additive, not a breaking change to existing jobs
+- [x] **QUANT-CFG-01**: A processing job's schema can declare a per-data-type normalization precision parameter (e.g. a quantization scale for float32 outputs), read by `QuantizeFloatBuffer`/`QuantizeByteBuffer` instead of the single hardcoded `kScale` constant from v2.1
+- [x] **QUANT-CFG-02**: When no precision is schema-declared, normalization falls back to v2.1's existing fixed constants (S=2^15 for float32, byte-identity for uint8) — additive, not a breaking change to existing jobs
 - [ ] **QUANT-CFG-03**: A workload with materially different divergence characteristics from v2.1's float fixture (e.g. `tex3d`/`spleen_ct_seg`) can be configured with its own empirically-derived precision, citing real captured cross-machine divergence data for that specific workload — not guessed a priori (mirrors QUANT-04's discipline)
 
 ### Validation Comparison Mechanism

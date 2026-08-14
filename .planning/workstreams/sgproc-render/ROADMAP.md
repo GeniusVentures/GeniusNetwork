@@ -76,12 +76,12 @@ Full detail archived at `.planning/milestones/sgproc-render-v2.1-ROADMAP.md`.
   3. A job schema that declares no precision parameter at all still normalizes using v2.1's existing fixed constants (S=2^15 for float32, byte-identity for uint8) — proving the schema extension is additive, not a breaking change to any existing job.
   4. The `tex3d`/`spleen_ct_seg` MNN volume workload is configured with its own precision value, and that value is documented with direct citation to real captured cross-machine divergence numbers for that specific workload (not guessed a priori) — mirroring QUANT-04's empirical-derivation discipline from v2.1.
 
-**Plans**: 3 plans
+**Plans**: 1/3 plans executed
 
 Plans:
 **Wave 1**
 
-- [ ] 14-01-PLAN.md — Core resolver infrastructure: `ResolveQuantScale`/`ResolveByteQuantMode` + 3-arg `QuantizeFloatBuffer`/`QuantizeByteBuffer` (Wave 1)
+- [x] 14-01-PLAN.md — Core resolver infrastructure: `ResolveQuantScale`/`ResolveByteQuantMode` + 3-arg `QuantizeFloatBuffer`/`QuantizeByteBuffer` (Wave 1)
 
 **Wave 2** *(blocked on Wave 1 completion)*
 
@@ -124,5 +124,5 @@ Plans:
 | 11. Empirical Cross-Machine Capture Run | v2.1 | 1/1 | Complete | 2026-08-12 |
 | 12. Quantization / Normalization Implementation | v2.1 | 2/2 | Complete | 2026-08-12 |
 | 13. Re-Validation & Scope Boundary Documentation | v2.1 | 6/6 | Complete (override — VALD-01 MNN 1/15-chunk gap accepted, see 13-VERIFICATION.md) | 2026-08-13 |
-| 14. Configurable Normalization Precision | v2.2 | 0/TBD | Not started | - |
+| 14. Configurable Normalization Precision | v2.2 | 1/3 | In Progress|  |
 | 15. Validation Comparison Mechanism | v2.2 | 0/TBD | Not started | - |
