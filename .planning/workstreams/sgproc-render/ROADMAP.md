@@ -104,7 +104,24 @@ Plans:
   4. Given two subtasks whose chunk hashes differ and whose underlying data exceeds configured tolerance, `ValidateResults` still reports a genuine mismatch — proving the fallback doesn't mask every divergence, only bounded ones.
   5. A deliberately wrong/corrupted subtask result (mirroring v2.1's SECV-01 methodology) is still caught as a mismatch by the fixed `ValidateResults` plus numeric-tolerance fallback acting together — proving XNODE-01b and XNODE-02 aren't jointly loose enough to also mask a genuine defect.
 
-**Plans**: TBD
+**Plans**: 4 plans
+
+Plans:
+**Wave 1**
+
+- [ ] 15-01-PLAN.md — Extract capture_diff's numeric-diff primitives into a shared sgprocmanagerdiff library + new D-03/D-04 tolerance-derivation functions (Wave 1)
+
+**Wave 2** *(blocked on Wave 1 completion)*
+
+- [ ] 15-02-PLAN.md — Fix ValidateResults's concatenation bug + numeric-tolerance fallback, proven by a new live test covering SC1-SC4 (Wave 2, depends on 15-01)
+
+**Wave 3** *(blocked on Wave 2 completion)*
+
+- [ ] 15-03-PLAN.md — Wire real job-schema resolution (ProcessingCore::GetTaskQueue) and real FileManager-backed fetch into FinalizeQueueProcessing (Wave 3, depends on 15-02)
+
+**Wave 4** *(blocked on Wave 3 completion)*
+
+- [ ] 15-04-PLAN.md — SECV-02 full-pipeline counter-test proving the combined mechanism still catches a genuinely corrupted result (Wave 4, depends on 15-03)
 
 ## Progress
 
@@ -125,4 +142,4 @@ Plans:
 | 12. Quantization / Normalization Implementation | v2.1 | 2/2 | Complete | 2026-08-12 |
 | 13. Re-Validation & Scope Boundary Documentation | v2.1 | 6/6 | Complete (override — VALD-01 MNN 1/15-chunk gap accepted, see 13-VERIFICATION.md) | 2026-08-13 |
 | 14. Configurable Normalization Precision | v2.2 | 3/3 | Complete    | 2026-08-14 |
-| 15. Validation Comparison Mechanism | v2.2 | 0/TBD | Not started | - |
+| 15. Validation Comparison Mechanism | v2.2 | 0/4 | Planned, ready to execute | - |
