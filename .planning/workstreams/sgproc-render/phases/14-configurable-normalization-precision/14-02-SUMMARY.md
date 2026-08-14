@@ -156,3 +156,14 @@ None — no external service configuration, no package-manager installs. All wor
 ---
 *Phase: 14-configurable-normalization-precision*
 *Completed: 2026-08-14*
+
+## Self-Check: PASSED
+
+- FOUND: all 14 modified processor files (SuperGenius/SGProcessingManager/src/processors/processing_processor_mnn_{float,buffer,bool,image,string,mat4,mat3,mat2,int,tensor,texture1d,texturecube,volume}.cpp, processing_processor_render.cpp)
+- FOUND: 14-02-SUMMARY.md
+- FOUND commit d5caaba (SGProcessingManager, Task 1)
+- FOUND commit a9ae333 (SGProcessingManager, Task 2)
+- FOUND commit af6e324 (SGProcessingManager, Task 3)
+- FOUND commit eb2ee936 (SuperGenius, pointer bump)
+- FOUND commit 617f24e (outer repo, pointer bump)
+- FOUND commit ba29fb2 (outer repo, SUMMARY.md)
