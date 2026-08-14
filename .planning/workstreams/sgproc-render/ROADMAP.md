@@ -142,4 +142,4 @@ Plans:
 | 12. Quantization / Normalization Implementation | v2.1 | 2/2 | Complete | 2026-08-12 |
 | 13. Re-Validation & Scope Boundary Documentation | v2.1 | 6/6 | Complete (override — VALD-01 MNN 1/15-chunk gap accepted, see 13-VERIFICATION.md) | 2026-08-13 |
 | 14. Configurable Normalization Precision | v2.2 | 3/3 | Complete    | 2026-08-14 |
-| 15. Validation Comparison Mechanism | v2.2 | 4/4 | Complete   | 2026-08-14 |
+| 15. Validation Comparison Mechanism | v2.2 | 4/4 | Complete    | 2026-08-14 |
