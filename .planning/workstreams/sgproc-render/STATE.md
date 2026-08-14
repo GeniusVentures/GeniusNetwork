@@ -5,15 +5,15 @@ milestone_name: Cross-Hardware Validation Tolerance
 current_phase: 15
 current_phase_name: Validation Comparison Mechanism
 status: executing
-stopped_at: Phase 15 context gathered
-last_updated: "2026-08-14T18:46:02.001Z"
+stopped_at: Completed 15-01-PLAN.md
+last_updated: "2026-08-14T19:02:52.706Z"
 last_activity: 2026-08-14
-last_activity_desc: Phase 14 complete, transitioned to Phase 15
+last_activity_desc: Phase 15 execution started
 progress:
   total_phases: 2
   completed_phases: 1
-  total_plans: 3
-  completed_plans: 3
+  total_plans: 7
+  completed_plans: 4
   percent: 50
 ---
 
@@ -24,14 +24,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-08-03), workstream section "Workstream: sgproc-render"
 
 **Core value:** Elevate SGProcessingManager from a "parse-and-hope" pipeline to a contract-driven execution engine — jobs are validated before work starts, execution is cancellable and budget-aware, results are typed artifacts with provenance, and every processor is covered by a common test suite.
-**Current focus:** Phase 14 — Configurable Normalization Precision
+**Current focus:** Phase 15 — Validation Comparison Mechanism
 
 ## Current Position
 
-Phase: 15 — Validation Comparison Mechanism
-Plan: Not started
+Phase: 15 (Validation Comparison Mechanism) — EXECUTING
+Plan: 2 of 4
 Status: Ready to execute
-Last activity: 2026-08-14 — Phase 14 complete, transitioned to Phase 15
+Last activity: 2026-08-14 — Phase 15 execution started
 
 ## Performance Metrics
 
@@ -80,6 +80,7 @@ Last activity: 2026-08-14 — Phase 14 complete, transitioned to Phase 15
 | Phase 14 P01 | 28min | 2 tasks | 4 files |
 | Phase 14 P02 | 10min | 3 tasks | 14 files |
 | Phase 14 P03 | 35min | 2 tasks | 4 files |
+| Phase 15 P01 | 30min | 2 tasks | 8 files |
 
 ## Accumulated Context
 
@@ -156,9 +157,9 @@ Items acknowledged and deferred at milestone v2.0 close on 2026-08-07:
 
 ## Session Continuity
 
-Last session: 2026-08-14T07:37:45.919Z
-Stopped at: Phase 15 context gathered
-Resume file: .planning/workstreams/sgproc-render/phases/15-validation-comparison-mechanism/15-CONTEXT.md
+Last session: 2026-08-14T19:02:52.698Z
+Stopped at: Completed 15-01-PLAN.md
+Resume file: None
 
 - [Phase 09 P10]: combinedHash/manifest.manifestHash computed over a timing-zeroed ExecutionManifest copy rather than modifying SerializeManifest()/ComputeManifestHash() themselves — preserves byte-for-byte compatibility with Phase 08's artifact_serializer_test.cpp round-trip tests over real timestamps
 - [Phase 09 P11]: InferenceCanExecuteReflectsPassTypeRegistryGap documents (not fixes) that INFERENCE passes are schema-valid but not capability-registered — registering INFERENCE/RETRAIN into the capability registry is a separate, larger cross-phase change, deferred as a follow-up item
@@ -201,3 +202,6 @@ Resume file: .planning/workstreams/sgproc-render/phases/15-validation-comparison
 - [Phase 14-01]: Used bare Parameter.hpp/ParameterType.hpp includes (not generated/Parameter.hpp) to match the codebase's established include-path convention for the generated/ CMake include-directory entry — The generated/ CMakeLists.txt entry points directly at the generated/ directory itself (mirroring sgprocmanagertypes), so a generated/-prefixed include statement would not resolve
 - [Phase ?]: Phase 14 Plan 2: No deviations from plan needed -- every file matched RESEARCH.md/PATTERNS.md's grep-confirmed enumeration exactly, all 21 call sites wired verbatim
 - [Phase ?]: [Phase 14-03]: No SECV-01 failure boundary found for the spleen_ct_seg corruption within the valid quantScale domain (tested 256/128/64/2/1, all pass); final quantScale=128.0 chosen instead via the divergence-absorption constraint (grid step must exceed the measured 0.005126953125 real cross-hardware delta), not a margin above a failure boundary
+- [Phase ?]: ResolveChunkElementTypeHint gates on byteQuantMode > 0 (not merely declared), matching the plan's explicit action-text instruction
+- [Phase ?]: IsByteChunkWithinTolerance's D-03 branch fires on any validly-declared byteQuantMode including 0, un-gated by >0, since the two functions answer different questions
+- [Phase ?]: capture_diff.cpp uses explicit sgns::sgprocmanagerdiff:: qualification at call sites rather than a using-namespace directive

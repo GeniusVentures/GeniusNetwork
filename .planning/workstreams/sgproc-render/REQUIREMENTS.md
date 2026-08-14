@@ -18,7 +18,7 @@ Requirements for milestone v2.2. Each maps to roadmap phases. Directly motivated
 ### Validation Comparison Mechanism
 
 - [ ] **XNODE-01b**: `ProcessingValidationCore::ValidateResults` actually diffs two subtasks' per-chunk hashes for the same chunk (fixing the concatenation bug where a genuine mismatch silently passes today)
-- [ ] **XNODE-02**: On a chunk-hash mismatch, `ValidateResults` falls back to a bounded numeric comparison of the underlying chunk data (reusing `capture_diff`'s per-chunk diff logic from v2.1 Phase 13) before declaring a genuine divergence — a chunk within configured tolerance is not treated as a mismatch
+- [x] **XNODE-02**: On a chunk-hash mismatch, `ValidateResults` falls back to a bounded numeric comparison of the underlying chunk data (reusing `capture_diff`'s per-chunk diff logic from v2.1 Phase 13) before declaring a genuine divergence — a chunk within configured tolerance is not treated as a mismatch
 - [ ] **SECV-02**: A deliberately wrong/corrupted subtask result is still caught by `ValidateResults` post-fix — proving XNODE-01b/XNODE-02 together aren't loose enough to also mask a genuine defect (counter-test, mirrors v2.1's SECV-01 discipline for this new mechanism)
 
 ## v2 Requirements
