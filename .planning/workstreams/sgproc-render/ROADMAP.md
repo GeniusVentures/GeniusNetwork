@@ -60,7 +60,7 @@ Full detail archived at `.planning/milestones/sgproc-render-v2.1-ROADMAP.md`.
 **Dependency order note:** Phase 15's validation-comparison mechanism (XNODE-01b/XNODE-02) and its SECV-02 counter-test depend on Phase 14's configurable-precision groundwork existing first — the numeric-tolerance fallback needs configured tolerance values to compare against, and SECV-02 needs both the concatenation-bug fix and the tolerance fallback in place before it can meaningfully prove they aren't jointly too loose. Phase 14 completes before Phase 15 begins.
 
 - [x] **Phase 14: Configurable Normalization Precision** - Job schemas can declare per-data-type precision, replacing v2.1's single hardcoded scale, with backward-compatible fallback and a real empirically-derived precision for the `tex3d`/`spleen_ct_seg` workload (completed 2026-08-14)
-- [ ] **Phase 15: Validation Comparison Mechanism** - `ValidateResults` actually diffs same-chunk hashes across subtasks and falls back to a bounded numeric comparison on mismatch, proven still strict enough by a wrong-result counter-test
+- [x] **Phase 15: Validation Comparison Mechanism** - `ValidateResults` actually diffs same-chunk hashes across subtasks and falls back to a bounded numeric comparison on mismatch, proven still strict enough by a wrong-result counter-test (completed 2026-08-14)
 
 ## Phase Details
 
@@ -104,7 +104,7 @@ Plans:
   4. Given two subtasks whose chunk hashes differ and whose underlying data exceeds configured tolerance, `ValidateResults` still reports a genuine mismatch — proving the fallback doesn't mask every divergence, only bounded ones.
   5. A deliberately wrong/corrupted subtask result (mirroring v2.1's SECV-01 methodology) is still caught as a mismatch by the fixed `ValidateResults` plus numeric-tolerance fallback acting together — proving XNODE-01b and XNODE-02 aren't jointly loose enough to also mask a genuine defect.
 
-**Plans**: 3/4 plans executed
+**Plans**: 4/4 plans complete
 
 Plans:
 **Wave 1**
@@ -121,7 +121,7 @@ Plans:
 
 **Wave 4** *(blocked on Wave 3 completion)*
 
-- [ ] 15-04-PLAN.md — SECV-02 full-pipeline counter-test proving the combined mechanism still catches a genuinely corrupted result (Wave 4, depends on 15-03)
+- [x] 15-04-PLAN.md — SECV-02 full-pipeline counter-test proving the combined mechanism still catches a genuinely corrupted result (Wave 4, depends on 15-03)
 
 ## Progress
 
@@ -142,4 +142,4 @@ Plans:
 | 12. Quantization / Normalization Implementation | v2.1 | 2/2 | Complete | 2026-08-12 |
 | 13. Re-Validation & Scope Boundary Documentation | v2.1 | 6/6 | Complete (override — VALD-01 MNN 1/15-chunk gap accepted, see 13-VERIFICATION.md) | 2026-08-13 |
 | 14. Configurable Normalization Precision | v2.2 | 3/3 | Complete    | 2026-08-14 |
-| 15. Validation Comparison Mechanism | v2.2 | 3/4 | In Progress|  |
+| 15. Validation Comparison Mechanism | v2.2 | 4/4 | Complete   | 2026-08-14 |

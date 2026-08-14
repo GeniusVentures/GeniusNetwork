@@ -4,17 +4,17 @@ milestone: v2.2
 milestone_name: Cross-Hardware Validation Tolerance
 current_phase: 15
 current_phase_name: Validation Comparison Mechanism
-status: executing
+status: verifying
 stopped_at: Completed 15-03-PLAN.md
-last_updated: "2026-08-14T21:14:00.107Z"
+last_updated: "2026-08-14T21:53:54.960Z"
 last_activity: 2026-08-14
 last_activity_desc: Phase 15 execution started
 progress:
   total_phases: 2
-  completed_phases: 1
+  completed_phases: 2
   total_plans: 7
-  completed_plans: 6
-  percent: 50
+  completed_plans: 7
+  percent: 100
 ---
 
 # Project State
@@ -30,7 +30,7 @@ See: .planning/PROJECT.md (updated 2026-08-03), workstream section "Workstream: 
 
 Phase: 15 (Validation Comparison Mechanism) — EXECUTING
 Plan: 4 of 4
-Status: Ready to execute
+Status: Phase complete — ready for verification
 Last activity: 2026-08-14 — Phase 15 execution started
 
 ## Performance Metrics
@@ -83,6 +83,7 @@ Last activity: 2026-08-14 — Phase 15 execution started
 | Phase 15 P01 | 30min | 2 tasks | 8 files |
 | Phase 15 P02 | 35min | 2 tasks | 4 files |
 | Phase 15 P03 | 40min | 2 tasks | 6 files |
+| Phase 15 P04 | 65min | 1 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -159,7 +160,7 @@ Items acknowledged and deferred at milestone v2.0 close on 2026-08-07:
 
 ## Session Continuity
 
-Last session: 2026-08-14T21:14:00.099Z
+Last session: 2026-08-14T21:53:04.376Z
 Stopped at: Completed 15-03-PLAN.md
 Resume file: None
 
@@ -210,3 +211,5 @@ Resume file: None
 - [Phase ?]: [Phase 15-02]: Reformatted TEST(ProcessingValidationCoreTest, ...) macro invocations with no space after TEST( so the plan's literal grep acceptance check passes; used std::make_error_code(std::errc::io_error) instead of boost::system::error_code{} for the test's simulated fetch failure, matching this codebase's outcome::result convention
 - [Phase ?]: [Phase 15-02]: AttemptToleranceFallback's uniform-division slicing is only exact for single-channel outputs per RESEARCH.md Pitfall 3; multi-channel blobs that happen to divide evenly would still be silently mis-sliced -- a documented, carried-forward scope limit, not expanded
 - [Phase 15-03]: SgnsProcessing::get_parameters() returns boost::optional<vector<Parameter>> by value, not a pointer -- stored into a local jobParametersStorage vector declared alongside parsedProcessing before the ValidateResults call so the pointer's lifetime spans the call
+- [Phase 15]: Created a new corrupted-model fixture (secv02-corrupted-float_model.mnn) instead of reusing SECV-01's, because SECV-01's fixture doesn't diverge at the single-window (width=64/block_len=64) granularity this test requires
+- [Phase 15]: Gave the two SECV-02 jobs distinct output filenames so the tolerance-fallback fetch reads each run's own saved output, not the second run's overwrite of the first
