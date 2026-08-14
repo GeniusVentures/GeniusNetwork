@@ -76,7 +76,12 @@ Full detail archived at `.planning/milestones/sgproc-render-v2.1-ROADMAP.md`.
   3. A job schema that declares no precision parameter at all still normalizes using v2.1's existing fixed constants (S=2^15 for float32, byte-identity for uint8) — proving the schema extension is additive, not a breaking change to any existing job.
   4. The `tex3d`/`spleen_ct_seg` MNN volume workload is configured with its own precision value, and that value is documented with direct citation to real captured cross-machine divergence numbers for that specific workload (not guessed a priori) — mirroring QUANT-04's empirical-derivation discipline from v2.1.
 
-**Plans**: TBD
+**Plans**: 3 plans
+
+Plans:
+- [ ] 14-01-PLAN.md — Core resolver infrastructure: `ResolveQuantScale`/`ResolveByteQuantMode` + 3-arg `QuantizeFloatBuffer`/`QuantizeByteBuffer` (Wave 1)
+- [ ] 14-02-PLAN.md — Wire all 21 call sites across 14 processor files to the new resolvers (Wave 2, depends on 14-01)
+- [ ] 14-03-PLAN.md — tex3d/spleen_ct_seg SECV-01-style counter-test + binary-searched empirical `quantScale` (Wave 3, depends on 14-02)
 
 ### Phase 15: Validation Comparison Mechanism
 
