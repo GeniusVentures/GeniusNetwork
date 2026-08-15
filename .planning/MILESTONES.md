@@ -1,5 +1,28 @@
 # Milestones
 
+## v2.2 Cross-Hardware Validation Tolerance — sgproc-render workstream (Shipped: 2026-08-14)
+
+**Phases completed:** 2 phases, 7 plans, 14 tasks
+
+Full archive: `.planning/milestones/sgproc-render-v2.2-ROADMAP.md`, `.planning/milestones/sgproc-render-v2.2-REQUIREMENTS.md` (filenames workstream-qualified — the child-wallet workstream already owns bare `v2.2-ROADMAP.md`/`v2.2-REQUIREMENTS.md`/git tag `v2.2` for its own "GeniusSDK Child Wallet Interfaces" milestone; same collision class as v2.0/v2.1, this time checked for and avoided proactively before writing anything).
+
+**Key accomplishments:**
+
+- `ResolveQuantScale`/`ResolveByteQuantMode` free functions centralize schema-declared `quantScale`/`byteQuantMode` lookup with an exact silent-fallback contract (32768.0f / 0, matching v2.1's constants byte-for-byte when unconfigured); `QuantizeFloatBuffer`/`QuantizeByteBuffer` gain a new required (non-defaulted) parameter so a missed call site fails to compile rather than silently using stale behavior.
+- All 21 existing `QuantizeFloatBuffer`/`QuantizeByteBuffer` call sites across 14 MNN/render processor files wired to the new resolvers with zero deviations — every file matched the research's grep-confirmed enumeration exactly (line numbers, suppression-statement text, call-site text).
+- `tex3d`/`spleen_ct_seg` (a real ~19.3MB medical CT segmentation model) configured with its own empirically-derived `quantScale=128.0` (2^7): a binary search over power-of-two candidates against a new dedicated SECV-01-style counter-test found **no failure boundary** anywhere in the valid domain (256 down to 1 all passed) — a notable finding, unlike Phase 13's small-model search which found a genuine boundary — so the final value was instead chosen via the divergence-absorption constraint (grid step must exceed the real measured `0.005126953125` cross-hardware delta).
+- `ProcessingValidationCore::ValidateResults`'s `chunks` map restructured from a single shared-buffer concatenation to `chunkKey -> {subtaskId -> hashBytes}`, fixing a real bug where same-chunk hashes across subtasks were being appended instead of compared — a genuine cross-node mismatch would have silently passed before this fix.
+- New bounded numeric-tolerance fallback for chunk-hash mismatches, via a new shared `sgprocmanagerdiff` static library extracted from `capture_diff`'s comparison primitives (colocated with Phase 14's `sgprocmanagerquant`) — quantScale-derived threshold when configured, fixed-constant fallback otherwise.
+- Wired real production capabilities in place of stubs: a new `ProcessingCore::GetTaskQueue()` interface method for job-schema lookup, and a real `FileManager::LoadASync`-based IPFS fetch on hash-mismatch only (no new I/O on the trivial matching-hash path).
+- SECV-02 full-pipeline counter-test proved the combined fix (concatenation-bug fix + tolerance fallback) still catches a genuinely corrupted subtask result via `SubTaskQueueAccessorImpl`'s real public API — required a new dedicated corrupted-model fixture (`secv02-corrupted-float_model.mnn`) since SECV-01's existing fixture wasn't divergent enough at the required single-window granularity, plus a fix for an output-path collision between the two test jobs (both test-design issues found while building the harness, not production bugs).
+
+### Known Gaps
+
+- **Phase 04 (v1.0 carryover) re-surfaced, unresolved**: the pre-close artifact audit found the same `04-UAT.md` (1 pending scenario) and `04-VERIFICATION.md` (`human_needed`) gaps already acknowledged at v2.0 close (2026-08-07) — still open, unrelated to and unchanged by this milestone's own work (both v2.2 phases are fully complete and verified with no gaps of their own).
+- Milestone closed via acknowledged carryover (`closeout_type=override_closeout`) on the Phase 04 item only — same pattern as this workstream's v2.0/v2.1 closeouts. See STATE.md Deferred Items for the full acknowledgment record.
+
+---
+
 ## v2.1 Cross-Hardware Hash Tolerance — sgproc-render workstream (Shipped: 2026-08-13)
 
 **Phases completed:** 4 phases, 15 plans, 32 tasks

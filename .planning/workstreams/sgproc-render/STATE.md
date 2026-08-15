@@ -3,11 +3,11 @@ gsd_state_version: 1.0
 milestone: v2.2
 milestone_name: Cross-Hardware Validation Tolerance
 current_phase: 15
-status: verifying
-stopped_at: Completed 15-03-PLAN.md
+status: shipped
+stopped_at: Milestone v2.2 closed via /gsd-complete-milestone
 last_updated: "2026-08-14T22:13:05.956Z"
 last_activity: 2026-08-14
-last_activity_desc: Phase 15 complete
+last_activity_desc: v2.2 milestone closed (archived to sgproc-render-v2.2-*)
 progress:
   total_phases: 2
   completed_phases: 2
@@ -24,22 +24,21 @@ current_phase_name: Validation Comparison Mechanism
 See: .planning/PROJECT.md (updated 2026-08-03), workstream section "Workstream: sgproc-render"
 
 **Core value:** Elevate SGProcessingManager from a "parse-and-hope" pipeline to a contract-driven execution engine — jobs are validated before work starts, execution is cancellable and budget-aware, results are typed artifacts with provenance, and every processor is covered by a common test suite.
-**Current focus:** Phase 15 — Validation Comparison Mechanism
+**Current focus:** Planning next milestone (v2.2 shipped 2026-08-14)
 
 ## Current Position
 
-Phase: 15
-Plan: Not started
-Status: Phase complete — ready for verification
-Last activity: 2026-08-14 — Phase 15 complete
+Phase: 15 (last of v2.2)
+Plan: None — milestone closed
+Status: v2.2 shipped, archived to `.planning/milestones/sgproc-render-v2.2-*.md`
+Last activity: 2026-08-14 — v2.2 milestone closed
 
 ## Performance Metrics
 
 **Velocity:**
 
-- Total plans completed: 15 (v2.1 milestone, this workstream)
-- Previous milestones: v1.0 24 plans across 5 phases; v2.0 27 plans across 4 phases; v2.1 15 plans across 4 phases
-- v2.2 (current milestone): 0 plans so far — roadmap just created (Phase 14, Phase 15), no phase planned yet
+- Total plans completed: 7 (v2.2 milestone, this workstream)
+- Previous milestones: v1.0 24 plans across 5 phases; v2.0 27 plans across 4 phases; v2.1 15 plans across 4 phases; v2.2 7 plans across 2 phases (shipped 2026-08-14)
 
 **By Phase:**
 | Phase | Plans | Status |
@@ -52,8 +51,8 @@ Last activity: 2026-08-14 — Phase 15 complete
 | 11 — Empirical Cross-Machine Capture Run | 1/1 | ✓ Complete |
 | 12 — Quantization / Normalization Implementation | 2/2 | ✓ Complete |
 | 13 — Re-Validation & Scope Boundary Documentation | 6/6 | ✓ Complete (override — VALD-01 MNN 1/15-chunk gap accepted) |
-| 14 — Configurable Normalization Precision | 0/3 | Planned, ready to execute |
-| 15 — Validation Comparison Mechanism | 0/TBD | Not started |
+| 14 — Configurable Normalization Precision | 3/3 | ✓ Complete, verified |
+| 15 — Validation Comparison Mechanism | 4/4 | ✓ Complete, verified (8/8 must-haves) |
 
 *Updated after each plan completion*
 | Phase 09 P08 | 25min | 2 tasks | 4 files |
@@ -158,10 +157,17 @@ Items acknowledged and deferred at milestone v2.0 close on 2026-08-07:
 | verification | Phase 07 (Cancellable Execution Context) — `phase_complete=false` per init.manager; tests pending HW verification | override_closeout |
 | verification | Phase 08 (Structured Artifacts & Manifests) — `phase_complete=false` per init.manager | override_closeout |
 
+Items acknowledged and deferred at milestone v2.2 close on 2026-08-14 (same Phase 04 carryover re-surfaced by the pre-close artifact audit, already acknowledged at v2.0 and effectively unchanged since — Phases 14-15 themselves have no open gaps, both fully complete/verified):
+
+| Category | Item | Status |
+|----------|------|--------|
+| uat | Phase 04: 04-UAT.md — 1 pending scenario | testing |
+| verification | Phase 04: 04-VERIFICATION.md | human_needed |
+
 ## Session Continuity
 
-Last session: 2026-08-14T21:53:04.376Z
-Stopped at: Completed 15-03-PLAN.md
+Last session: 2026-08-14T22:13:05.956Z
+Stopped at: v2.2 milestone closed via /gsd-complete-milestone
 Resume file: None
 
 - [Phase 09 P10]: combinedHash/manifest.manifestHash computed over a timing-zeroed ExecutionManifest copy rather than modifying SerializeManifest()/ComputeManifestHash() themselves — preserves byte-for-byte compatibility with Phase 08's artifact_serializer_test.cpp round-trip tests over real timestamps
@@ -179,7 +185,7 @@ Resume file: None
 
 ## Operator Next Steps
 
-- Start the next milestone with /gsd-new-milestone
+- v2.2 shipped 2026-08-14. Start the next milestone with `/gsd-new-milestone` (this workstream has no Active requirements queued — v2.2 closed out the last known gap-driven follow-up from v2.1).
 
 ## Decisions
 

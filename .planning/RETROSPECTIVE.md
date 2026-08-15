@@ -264,6 +264,42 @@ Capability-validation contract (CAP-*, pre-execution `CanExecute` gate), cancell
 - Sessions: spans 2026-08-04 through 2026-08-07
 - Notable: Phase 09's three gap-closure rounds (15 plans total) dwarfed the other three phases' combined plan count (12) — conformance testing surfaced more real work than the phases it was testing
 
+## Milestone: sgproc-render v2.2 — Cross-Hardware Validation Tolerance
+
+**Shipped:** 2026-08-14 (closed with an acknowledged carryover — Phase 04 gap, unrelated to this milestone's own phases)
+**Phases:** 2 (14-15) | **Plans:** 7 | **Tasks:** 14
+
+### What Was Built
+
+Schema-configurable per-data-type normalization precision (QUANT-CFG-01/02/03) replacing v2.1's single hardcoded quantization scale, with silent fallback to v2.1's exact constants when unconfigured, plus an empirically-derived `quantScale=128.0` for the `tex3d`/`spleen_ct_seg` real workload. And a fixed, tolerant `ProcessingValidationCore::ValidateResults` (XNODE-01b/XNODE-02): the concatenation bug that let genuine cross-node mismatches silently pass is fixed, and a bounded numeric-tolerance fallback (new `sgprocmanagerdiff` library) absorbs boundary-tie-break-style false mismatches without masking real corruption (SECV-02).
+
+### What Worked
+
+- The Phase 14 → Phase 15 dependency ordering (configurable precision before the tolerance-fallback mechanism that consumes it) was encoded directly as a roadmap phase dependency rather than an internal wave split, and held cleanly — no rework needed when Phase 15 began.
+- Required (non-defaulted) function parameters in `QuantizeFloatBuffer`/`QuantizeByteBuffer` (Plan 14-01) turned "did we miss a call site" into a compiler-enforced question — Plan 14-02's 21-call-site wiring across 14 files needed zero follow-up fixes because a missed site simply wouldn't compile.
+- SECV-02's full-pipeline counter-test caught two genuine test-design bugs (an insufficiently-divergent reused fixture, an output-path collision between two test jobs) before they could mask the very defect the test existed to catch — worth the extra fixture-creation effort.
+
+### What Was Inefficient
+
+- Phase 14 Plan 3's binary search for `tex3d`/`spleen_ct_seg`'s SECV-01 boundary found no failure boundary at all in the valid domain (256 down to 1 all passed) — the search itself cost real wall-clock time (~2.5 min/iteration against a real ~19MB model) for a negative result, though the divergence-absorption fallback constraint was already anticipated by the plan.
+- The pre-close artifact audit re-surfaced the same Phase 04 (v1.0) carryover gap for the third milestone running (v2.0, v2.1 implicitly, now v2.2) — it has never been resolved, only re-acknowledged, and will keep resurfacing at every future close until someone actually runs a phase to close it.
+
+### Patterns Established
+
+- When a security counter-test's binary search finds no failure boundary within the valid parameter domain, fall back to a divergence-absorption constraint (grid step must exceed the real measured cross-hardware delta) to choose the final value, rather than guessing or leaving the parameter unset — document both the absent boundary and the absorption calculation in the fixture's citation trail for future auditability.
+- Milestone-archive filename collisions in this multi-workstream project are now checked for *before* writing archive files (via `.planning/milestones/` listing + `git tag -l`), not discovered after the fact via `git status` — this is the first sgproc-render close where the collision was caught proactively rather than after an accidental overwrite.
+
+### Key Lessons
+
+- A `phase_complete`-verified, requirements-fully-checked milestone can still surface pre-close audit gaps that have nothing to do with the milestone itself — always distinguish "gaps this milestone introduced" from "carryover gaps this milestone's audit happened to re-surface" before deciding how to close.
+- Required-parameter API changes (no defaulted overload) are a cheap, durable way to make "every call site was updated" a compile-time guarantee instead of a manual audit — worth reaching for whenever a schema/config threading change must hit every existing call site.
+
+### Cost Observations
+
+- Model mix: not tracked separately for this milestone
+- Sessions: single session, 2026-08-13 evening through 2026-08-14
+- Notable: Phase 14 Plan 3's empirical binary search (5 rebuild+run iterations against a real ~19MB model) was the single most wall-clock-expensive step in either phase, despite yielding a negative result
+
 ## Cross-Milestone Trends
 
 | Milestone | Phases | Plans | Duration | Notes |
@@ -275,3 +311,5 @@ Capability-validation contract (CAP-*, pre-execution `CanExecute` gate), cancell
 | v2.3 Child Wallet Transfers | 2 | 5 | 1 day | CheckParentChildAuthority consensus gate; found/fixed missing registration-tx dispatch entry |
 | v2.4 Merge origin/develop into dev_childwallet | 2 | 5 | 2 days | Phase 7 completed outside GSD workflow; verification override on milestone close (--force) |
 | sgproc-render v2.0 Execution Contracts & Quality Gates | 4 | 27 | 4 days (2026-08-04 to 08-07) | Verification override: Phases 06-08 not phase_complete/verified, Phase 04 carryover gap; milestone-archive filename collision with child-wallet's own v2.0 caught and fixed before commit |
+| sgproc-render v2.1 Cross-Hardware Hash Tolerance | 4 | 15 | ~4 days (2026-08-10 to 08-13) | Accepted override: VALD-01 MNN fixture retains 1/15-chunk boundary tie-break (chunk 10, S=2^15 grid step); render fixture fully matched cross-hardware |
+| sgproc-render v2.2 Cross-Hardware Validation Tolerance | 2 | 7 | 2 days (2026-08-13 to 08-14) | QUANT-CFG-* configurable precision + XNODE-01b/02 ValidateResults fix, both requirements 6/6 shipped clean; only gap was the recurring Phase 04 (v1.0) carryover, unrelated to this milestone; filename collision with child-wallet's own v2.2 checked and avoided proactively |
