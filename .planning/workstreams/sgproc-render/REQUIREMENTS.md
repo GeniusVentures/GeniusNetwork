@@ -1,0 +1,70 @@
+# Requirements: sgproc-render v2.3 — Deferred Gap Closure
+
+**Defined:** 2026-08-17
+**Core Value:** Elevate SGProcessingManager from a "parse-and-hope" pipeline to a contract-driven execution engine — jobs are validated before work starts, execution is cancellable and budget-aware, results are typed artifacts with provenance, and every processor is covered by a common test suite.
+
+**Previously shipped:** v1.0 (Phases 01-05), v2.0 Execution Contracts & Quality Gates (Phases 06-09, closed with known gaps), v2.1 Cross-Hardware Hash Tolerance (Phases 10-13, closed with an accepted VALD-01 override), v2.2 Cross-Hardware Validation Tolerance (Phases 14-15, shipped clean). Full archives: `.planning/milestones/sgproc-render-v2.0-*.md` through `sgproc-render-v2.2-*.md`.
+
+## v2.3 Requirements — Deferred Gap Closure
+
+This milestone is not new feature work — it closes four real, previously-surfaced gaps that no prior milestone picked up: Phase 08's deferred manifest-evolution scope (2026-08-05), an untested cross-hardware risk on the render path flagged in v2.2's STATE.md, a pre-existing build-stability bug (2026-08-10), and an unverified assumption about whether v2.2's Phase 15 fix actually closes v2.1's VALD-01 finding.
+
+### Manifest Evolution (Phase 08 deferred scope)
+
+- [ ] **ARTF-07**: Chunk integrity is verifiable via a Merkle tree over chunk hashes, not just the existing flat content hash
+- [ ] **ARTF-08**: Chunking uses content-defined boundaries instead of fixed-size, so a small edit doesn't invalidate every downstream chunk hash
+- [ ] **ARTF-09**: The execution manifest's error details carry a human-readable message string alongside the existing structured error code
+- [ ] **ARTF-10**: The manifest's binary format supports schema evolution (new optional fields) without breaking older readers
+
+### Render-Path Cross-Hardware Tolerance
+
+- [ ] **RENDTOL-01**: A non-trivial render fixture exists (texturing, blending, or MSAA/lighting) exercising real floating-point-heavy render computation — not just the existing trivial 8x8 solid-color fixture (`render-pass-happy-path-definition.json`)
+- [ ] **RENDTOL-02**: The render output path has a real schema-configurable tolerance mechanism (mirroring Phase 14's `ResolveQuantScale`/`ResolveByteQuantMode` pattern for MNN), replacing `QuantizeByteBuffer`'s current byte-identity no-op — proven against real cross-hardware capture data from RENDTOL-01's fixture
+
+### Build Stability
+
+- [ ] **BUILD-01**: `ProcessingManager::Create()`'s Vulkan capability-probe no longer deadlocks `ProcessingDatatypesTest`/`ProcessingDispatchTest`/`vulkan_init_concurrency_test` when a real Vulkan device is present (fix the `VulkanInitMutex` re-entrancy bug tracked in `.planning/todos/pending/2026-08-10-fix-vulkan-capability-probe-deadlock-in-processingmanager-cr.md`)
+
+### Validation Re-Verification
+
+- [ ] **VALD-02**: The original VALD-01 MNN float32 fixture (Phase 13's 12/15 chunk-hash mismatch finding) is re-run through Phase 15's `ValidateResults` tolerance-fallback mechanism, with the outcome (closed vs. still-open) documented with evidence — not assumed
+
+## v2 Requirements
+
+Deferred to future milestones. Not addressed this milestone.
+
+### Cross-Node Orchestration
+
+- **XNODE-01c**: Actual cross-node consensus/redundant-execution comparison plumbing — the comparison mechanism itself (XNODE-01b/XNODE-02) is correct and tolerant as of v2.2; wiring it into real multi-node job orchestration remains future work. User considers this CI-verification scope, not application-level work for this workstream.
+
+## Out of Scope
+
+| Feature | Reason |
+|---------|--------|
+| Phase 04 (v1.0) pending UAT scenario + `human_needed` verification | Pre-existing carryover, re-acknowledged unchanged at both v2.0 and v2.2 close; unrelated to this milestone's gap set |
+| Semantic/output-level comparison (e.g. Dice/overlap score) for segmentation-style workloads | Raised as a design note in v2.2's STATE.md (bit-exact hash may be the wrong correctness bar for `spleen_ct_seg`-style outputs) but is a larger architectural question than a single-milestone fix |
+| STATE.md/REQUIREMENTS.md stale-bookkeeping cleanup (QUANT-CFG-01/XNODE-01b rows, traceability table wording) | Corrected directly as part of this milestone's kickoff, not tracked as a requirement |
+
+## Traceability
+
+Which phases cover which requirements. Updated during roadmap creation.
+
+| Requirement | Phase | Status |
+|-------------|-------|--------|
+| ARTF-07 | TBD | Pending |
+| ARTF-08 | TBD | Pending |
+| ARTF-09 | TBD | Pending |
+| ARTF-10 | TBD | Pending |
+| RENDTOL-01 | TBD | Pending |
+| RENDTOL-02 | TBD | Pending |
+| BUILD-01 | TBD | Pending |
+| VALD-02 | TBD | Pending |
+
+**Coverage:**
+- v2.3 requirements: 8 total
+- Mapped to phases: 0 (roadmap not yet created)
+- Unmapped: 8 ⚠️ (pending roadmapper)
+
+---
+*Requirements defined: 2026-08-17*
+*Last updated: 2026-08-17 after initial definition*
