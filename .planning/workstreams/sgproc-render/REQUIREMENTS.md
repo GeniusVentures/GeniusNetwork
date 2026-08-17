@@ -51,20 +51,20 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| ARTF-07 | TBD | Pending |
-| ARTF-08 | TBD | Pending |
-| ARTF-09 | TBD | Pending |
-| ARTF-10 | TBD | Pending |
-| RENDTOL-01 | TBD | Pending |
-| RENDTOL-02 | TBD | Pending |
-| BUILD-01 | TBD | Pending |
-| VALD-02 | TBD | Pending |
+| ARTF-07 | Phase 16 | Pending |
+| ARTF-08 | Phase 16 | Pending |
+| ARTF-09 | Phase 16 | Pending |
+| ARTF-10 | Phase 16 | Pending |
+| RENDTOL-01 | Phase 17 | Pending |
+| RENDTOL-02 | Phase 17 | Pending |
+| BUILD-01 | Phase 18 | Pending |
+| VALD-02 | Phase 19 | Pending |
 
 **Coverage:**
 - v2.3 requirements: 8 total
-- Mapped to phases: 0 (roadmap not yet created)
-- Unmapped: 8 ⚠️ (pending roadmapper)
+- Mapped to phases: 8 ✓
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-08-17*
-*Last updated: 2026-08-17 after initial definition*
+*Last updated: 2026-08-17 — roadmap created (Phases 16-19), all 8 requirements mapped*

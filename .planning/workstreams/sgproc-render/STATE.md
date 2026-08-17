@@ -3,10 +3,10 @@ gsd_state_version: 1.0
 milestone: v2.3
 milestone_name: Deferred Gap Closure
 status: planning
-last_updated: "2026-08-17T22:36:07.303Z"
+last_updated: "2026-08-17T23:10:00.000Z"
 last_activity: 2026-08-17
 progress:
-  total_phases: 0
+  total_phases: 4
   completed_phases: 0
   total_plans: 0
   completed_plans: 0
@@ -20,14 +20,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-08-03), workstream section "Workstream: sgproc-render"
 
 **Core value:** Elevate SGProcessingManager from a "parse-and-hope" pipeline to a contract-driven execution engine — jobs are validated before work starts, execution is cancellable and budget-aware, results are typed artifacts with provenance, and every processor is covered by a common test suite.
-**Current focus:** Defining v2.3 (Deferred Gap Closure) requirements/roadmap — v2.2 shipped 2026-08-14
+**Current focus:** Phase 16 — manifest-evolution
 
 ## Current Position
 
-Phase: Not started (defining requirements)
-Plan: —
-Status: Defining requirements
-Last activity: 2026-08-17 — Milestone v2.3 started
+Phase: 16 — Manifest Evolution (not started)
+Plan: — (roadmap complete, no plans created yet)
+Status: Roadmap created, ready for /gsd-plan-phase 16
+Last activity: 2026-08-17 — Milestone v2.3 roadmap created (Phase 16: Manifest Evolution, Phase 17: Render-Path Cross-Hardware Tolerance, Phase 18: Build Stability, Phase 19: Validation Re-Verification)
 
 ## Performance Metrics
 
@@ -35,6 +35,7 @@ Last activity: 2026-08-17 — Milestone v2.3 started
 
 - Total plans completed: 7 (v2.2 milestone, this workstream)
 - Previous milestones: v1.0 24 plans across 5 phases; v2.0 27 plans across 4 phases; v2.1 15 plans across 4 phases; v2.2 7 plans across 2 phases (shipped 2026-08-14)
+- v2.3 (current milestone): 0 plans so far — roadmap just created (Phases 16-19), no phase planned yet
 
 **By Phase:**
 | Phase | Plans | Status |
@@ -49,6 +50,10 @@ Last activity: 2026-08-17 — Milestone v2.3 started
 | 13 — Re-Validation & Scope Boundary Documentation | 6/6 | ✓ Complete (override — VALD-01 MNN 1/15-chunk gap accepted) |
 | 14 — Configurable Normalization Precision | 3/3 | ✓ Complete, verified |
 | 15 — Validation Comparison Mechanism | 4/4 | ✓ Complete, verified (8/8 must-haves) |
+| 16 — Manifest Evolution | 0/TBD | Not started |
+| 17 — Render-Path Cross-Hardware Tolerance | 0/TBD | Not started |
+| 18 — Build Stability | 0/TBD | Not started |
+| 19 — Validation Re-Verification | 0/TBD | Not started |
 
 *Updated after each plan completion*
 | Phase 09 P08 | 25min | 2 tasks | 4 files |
@@ -110,6 +115,12 @@ Last activity: 2026-08-17 — Milestone v2.3 started
 - XNODE-01c (actual cross-node consensus/redundant-execution plumbing) stays out of both phases per REQUIREMENTS.md's v2 Requirements/Out of Scope sections — v2.2 makes the comparison mechanism itself correct and tolerant; wiring it into real multi-node orchestration remains future work.
 - Framing carried into both phase goals: this milestone is not two isolated bug fixes, it is the follow-through on v2.1's own closing findings (tex3d/spleen_ct_seg's per-workload divergence evidence, and the chunk-10 false-mismatch diagnostic) — a real fix needed configurable precision plus a tolerant comparison mechanism, not a better constant.
 
+### Key Decisions (v2.3 Roadmap)
+
+- Phase structure is 4 phases (16-19), one per REQUIREMENTS.md category (Manifest Evolution; Render-Path Cross-Hardware Tolerance; Build Stability; Validation Re-Verification) — coarse granularity per config.json, at the upper end of the preferred 3-4 phase range because all four categories are genuinely independent delivery units, not because any single one warranted a further split.
+- Unlike v2.1's hard-chained Phases 10-13 or v2.2's Phase 14→15 chain, all four v2.3 phases are independent of one another: BUILD-01 (Phase 18) is an unrelated pre-existing build-stability bug; VALD-02 (Phase 19) is a low-effort re-verification of Phase 15's already-shipped mechanism against existing fixture data; ARTF-07..10 (Phase 16) and RENDTOL-01/02 (Phase 17) are each internally cohesive but independent of the other three groups and of each other. No phase blocks or is blocked by another within this milestone — phase numbering (16-19) follows REQUIREMENTS.md's listed order, not an execution dependency.
+- Kept BUILD-01 and VALD-02 as their own single-requirement phases rather than folding either into a neighbor: both were explicitly scoped as independent gap-closure units at requirements time (distinct deferred-items entries, distinct trigger dates — 2026-08-10 and 2026-08-13 respectively), and each has its own clear, testable success bar (three previously-deadlocking test suites passing; one fixture's re-verification outcome documented with evidence) rather than being a sub-task of manifest or render work.
+
 ### Pending Todos
 
 - Phase 11 data gathering already started ahead of formal phase kickoff: `capture_harness` run on Mac (Fuu's-Mac-mini, macOS) and Windows (Mofu, Windows) for both the MNN-float and render-happy-path fixtures; 4 `.cap` files + 2 `capture_diff` JSON reports (relocated into this phase's `captures/` directory per 11-01-PLAN.md Task 1).
@@ -125,26 +136,26 @@ Last activity: 2026-08-17 — Milestone v2.3 started
   - `48b4dbe "Log out device"` — added diagnostic logging in `RenderProcessor::InitializeContext()` that logs every enumerated Vulkan device's name/type/vendorID/deviceID/apiVersion before the acceptability filter runs, so future "why did this reject my device" questions are answerable from a plain run instead of a debugger.
 - Build verification pending on prior phases — C++ compilation not retested in this session
 - Validation layers: system-level layer availability varies by platform (Vulkan SDK, NDK, MoltenVK)
-- **Pre-existing bug found during Phase 10's regression gate (not caused by Phase 10 — confirmed via diff, of the implicated files were touched by any of Phase 10's 6 plans):** `ProcessingDatatypesTest`/`ProcessingDispatchTest`/`vulkan_init_concurrency_test` all deadlock/crash in `ProcessingManager::Create()`'s Vulkan capability-probe path (`VulkanInitMutex()` re-entered on the same thread) whenever a real Vulkan device is present. Tracked at `.planning/todos/pending/2026-08-10-fix-vulkan-capability-probe-deadlock-in-processingmanager-cr.md`. Does not block Phase 10 — `processing_conformance_hashing_test` (the most directly relevant regression check for Phase 10's changes) and `CaptureSmokeTest` both pass.
-- VALD-01 only partially satisfied: fresh re-validation (13-SCOPE-BOUNDARY.md) shows render fixture's processor-level hash matches cross-hardware, but MNN float32 fixture's does not (12/15 chunkHashesMatch still false post-quantization) -- open gap for future follow-up, not resolved by Phase 13
+- **Pre-existing bug found during Phase 10's regression gate (not caused by Phase 10 — confirmed via diff, of the implicated files were touched by any of Phase 10's 6 plans):** `ProcessingDatatypesTest`/`ProcessingDispatchTest`/`vulkan_init_concurrency_test` all deadlock/crash in `ProcessingManager::Create()`'s Vulkan capability-probe path (`VulkanInitMutex()` re-entered on the same thread) whenever a real Vulkan device is present. Tracked at `.planning/todos/pending/2026-08-10-fix-vulkan-capability-probe-deadlock-in-processingmanager-cr.md`. Does not block Phase 10 — `processing_conformance_hashing_test` (the most directly relevant regression check for Phase 10's changes) and `CaptureSmokeTest` both pass. **Queued for v2.3 Phase 18 (BUILD-01).**
+- VALD-01 only partially satisfied: fresh re-validation (13-SCOPE-BOUNDARY.md) shows render fixture's processor-level hash matches cross-hardware, but MNN float32 fixture's does not (12/15 chunkHashesMatch still false post-quantization) -- open gap for future follow-up, not resolved by Phase 13. **Queued for v2.3 Phase 19 (VALD-02) re-verification against Phase 15's tolerance-fallback mechanism.**
 - ~~13-04 Task 1: S=2^14 grid widening regressed SECV-01~~ — resolved 2026-08-12 (this session): widening `QuantizeFloatBuffer`'s `kScale` from 2^20 (1048576.0f) to the plan's originally-proposed 2^14 (16384.0f) made `Secv01CounterTest.MnnCorruptedModelStillDiverges` FAIL (memcmp equal, 0 vs 0, confirmed deterministic by re-running twice — not flaky). Rather than abandoning the fix or accepting the MNN gap, ran a local binary search over power-of-two `S` values against the same SECV-01 test: S=2^20/2^17/2^16/2^15 all pass, S=2^14 fails deterministically. Chose **S=2^15 (32768.0f)** — one full power-of-two step of margin above the confirmed S=2^14 failure boundary, 32x the old S=2^20 grid step (~292x Phase 11's original maxAbsDelta) — and committed it (`quantization.cpp`/`.hpp`/`quantization_test.cpp` in the `SGProcessingManager` nested submodule, plus pointer bumps through `SuperGenius` and the outer repo). `QuantizationTest` (7/7) and both SECV-01 cases pass locally at S=2^15. Task 2's hands-on cross-machine re-capture checkpoint has been returned to the user with numbers updated to reflect S=2^15 (not the plan's original S=2^14/64x/585x citation). Whether S=2^15 actually closes VALD-01's MNN cross-hardware gap remains unverified until Task 2's fresh capture is diffed by Plan 13-05 — this remains an empirically-validated mitigation, not a guaranteed fix.
 - **New evidence for `QUANT-CFG-01` (schema-configurable normalization precision, already deferred out of v2.1 on 2026-08-07): a single global quantization scale cannot serve models with materially different cross-hardware divergence magnitudes.** Post-Phase-13, ad hoc cross-machine testing (outside v2.1's tested fixture set — this processor was never part of the render/float fixtures REQUIREMENTS.md/ROADMAP.md scoped this milestone to) captured the `tex3d`/volume MNN processor (`processing_processor_mnn_volume.cpp`) running **`spleen_ct_seg`, a real workload** (3D medical CT spleen segmentation), not a toy fixture — this is what makes the finding notable rather than a corner case. Result: **all 25 chunk hashes mismatch** Mac vs Windows, plus `contentHashMatch`/`combinedHashMatch` both `false` too (unlike the float fixture, nothing agrees) — confirmed genuinely cross-hardware-only, not same-machine flakiness (`capture_harness` reported 3/3 stable, self-checked runs on *each* machine independently). Deltas are real quantized-grid multiples (e.g. `0.005126953125` = exactly 168× the current S=2^15 grid step), i.e. quantization is running correctly — the raw pre-quantization divergence for this heavier workload (~44M elements total) is simply ~2-3 orders of magnitude larger than what S=2^15 was empirically derived to absorb (the tiny float fixture's ~1e-7 delta). A grid coarse enough to absorb `tex3d`'s divergence (~S=2^7-2^8) would be far below the already-confirmed S=2^14 SECV-01 failure boundary for the small model — there is no single `kScale` that is simultaneously safe for the small model and adequate for this one. **Important nuance from the operator's own prior, separate validation:** despite this large raw/hash-level divergence, the operator has previously run this same `spleen_ct_seg` workload across multiple real machines and visually inspected the outputs in 3D Slicer — both machines produced visually correct spleen isolation in 3D (small visible differences, but correct on the whole). This suggests bit-exact hash equality may be the wrong correctness bar entirely for segmentation-style workloads — a semantic/output-level comparison (e.g. Dice/overlap score) could plausibly show near-total agreement even where every chunk hash fails. Whatever design `QUANT-CFG-01` eventually adopts should account for this: per-workload tolerance tuning alone may not be sufficient if the comparison primitive itself (hash equality) is a poor fit for high-dimensional real-world model outputs.
-- **Untested risk (not yet observed, inferred from architecture): the render path's byte-identity claim is only validated against a near-zero-computation fixture and has no tolerance mechanism at all if it doesn't generalize.** `render-pass-happy-path-definition.json` — the only fixture this milestone's render-path cross-hardware match was ever measured against — is an 8x8 pixel target, `point_list` topology, and `solid_red_fragment_shader.glsl` (a constant-color output): about the least floating-point-computation a render job can do. `QuantizeByteBuffer` (`quantization.cpp`) is a **literal no-op** (`(void)data; (void)count;`), a deliberate byte-identity pass-through justified entirely by this one fixture's zero measured delta — unlike the MNN float path, there is no tolerance/quantization mechanism to fall back on at all. Realistic render jobs (texture sampling/filtering, blending, lighting math, MSAA) are exactly the kind of floating-point-heavy operations that produced `tex3d`'s much larger divergence above, and nothing currently exists to absorb that if it occurs on the render path. No more-complex render fixture exists in this project yet to actually test this (unlike `tex3d`, which was tested with real data) — flagging as a documented, plausible-but-unverified risk for whoever next builds a non-trivial render fixture, rather than a confirmed finding.
+- **Untested risk (not yet observed, inferred from architecture): the render path's byte-identity claim is only validated against a near-zero-computation fixture and has no tolerance mechanism at all if it doesn't generalize.** `render-pass-happy-path-definition.json` — the only fixture this milestone's render-path cross-hardware match was ever measured against — is an 8x8 pixel target, `point_list` topology, and `solid_red_fragment_shader.glsl` (a constant-color output): about the least floating-point-computation a render job can do. `QuantizeByteBuffer` (`quantization.cpp`) is a **literal no-op** (`(void)data; (void)count;`), a deliberate byte-identity pass-through justified entirely by this one fixture's zero measured delta — unlike the MNN float path, there is no tolerance/quantization mechanism to fall back on at all. Realistic render jobs (texture sampling/filtering, blending, lighting math, MSAA) are exactly the kind of floating-point-heavy operations that produced `tex3d`'s much larger divergence above, and nothing currently exists to absorb that if it occurs on the render path. No more-complex render fixture exists in this project yet to actually test this (unlike `tex3d`, which was tested with real data) — flagging as a documented, plausible-but-unverified risk for whoever next builds a non-trivial render fixture, rather than a confirmed finding. **Queued for v2.3 Phase 17 (RENDTOL-01/02).**
 
 ## Deferred Items
 
 | Category | Item | Status | Deferred At |
 |----------|------|--------|-------------|
-| Phase 08 | Merkle tree over chunks | Queued for v2.3 (ARTF-07) | 2026-08-05 |
-| Phase 08 | Content-defined chunking | Queued for v2.3 (ARTF-08) | 2026-08-05 |
-| Phase 08 | Error message strings in manifest | Queued for v2.3 (ARTF-09) | 2026-08-05 |
-| Phase 08 | Schema evolution for binary format | Queued for v2.3 (ARTF-10) | 2026-08-05 |
+| Phase 08 | Merkle tree over chunks | Queued for v2.3 Phase 16 (ARTF-07) | 2026-08-05 |
+| Phase 08 | Content-defined chunking | Queued for v2.3 Phase 16 (ARTF-08) | 2026-08-05 |
+| Phase 08 | Error message strings in manifest | Queued for v2.3 Phase 16 (ARTF-09) | 2026-08-05 |
+| Phase 08 | Schema evolution for binary format | Queued for v2.3 Phase 16 (ARTF-10) | 2026-08-05 |
 | v2.1 | Schema-configurable normalization precision (QUANT-CFG-01) | Resolved — v2.2 Phase 14, verified 8/8 | 2026-08-07 |
 | v2.1 | ProcessingValidationCore::ValidateResults concatenation bug fix (XNODE-01b) | Resolved — v2.2 Phase 15, verified 8/8 | 2026-08-07 |
 | v2.1 | Cross-node consensus/redundant-execution plumbing (XNODE-01c) | Still deferred — considered CI verification scope, not a v2.3 requirement | 2026-08-07 |
-| v2.2 (new) | Render-path cross-hardware tolerance untested risk (no fixture/mechanism beyond trivial 8x8 case) | Queued for v2.3 (RENDTOL-01/02) | 2026-08-14 |
-| v2.1 | Pre-existing Vulkan capability-probe deadlock (ProcessingManager::Create()) | Queued for v2.3 (BUILD-01) | 2026-08-10 |
-| v2.1 | VALD-01 MNN float32 fixture 12/15 chunk-hash gap — never re-checked against Phase 15's tolerance fallback | Queued for v2.3 (VALD-02) | 2026-08-13 |
+| v2.2 (new) | Render-path cross-hardware tolerance untested risk (no fixture/mechanism beyond trivial 8x8 case) | Queued for v2.3 Phase 17 (RENDTOL-01/02) | 2026-08-14 |
+| v2.1 | Pre-existing Vulkan capability-probe deadlock (ProcessingManager::Create()) | Queued for v2.3 Phase 18 (BUILD-01) | 2026-08-10 |
+| v2.1 | VALD-01 MNN float32 fixture 12/15 chunk-hash gap — never re-checked against Phase 15's tolerance fallback | Queued for v2.3 Phase 19 (VALD-02) | 2026-08-13 |
 
 Items acknowledged and deferred at milestone v2.0 close on 2026-08-07:
 
@@ -184,7 +195,7 @@ Resume file: None
 
 ## Operator Next Steps
 
-- v2.3 (Deferred Gap Closure) requirements approved 2026-08-17: ARTF-07..10 (manifest evolution), RENDTOL-01/02 (render-path tolerance), BUILD-01 (Vulkan capability-probe deadlock), VALD-02 (VALD-01 re-verification against Phase 15's tolerance fallback). Roadmap creation next.
+- v2.3 (Deferred Gap Closure) roadmap created 2026-08-17: Phase 16 (Manifest Evolution: ARTF-07..10), Phase 17 (Render-Path Cross-Hardware Tolerance: RENDTOL-01/02), Phase 18 (Build Stability: BUILD-01), Phase 19 (Validation Re-Verification: VALD-02) — all 8 v2.3 requirements mapped, no dependency ordering between the four phases. Ready for `/gsd-plan-phase 16` (or any of 17/18/19, since none block each other).
 
 ## Decisions
 
