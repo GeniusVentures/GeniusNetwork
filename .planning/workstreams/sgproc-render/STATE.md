@@ -2,9 +2,12 @@
 gsd_state_version: 1.0
 milestone: v2.3
 milestone_name: Deferred Gap Closure
+current_phase: 16
 status: planning
-last_updated: "2026-08-17T23:10:00.000Z"
+stopped_at: Phase 16 context gathered
+last_updated: "2026-08-17T23:47:48.102Z"
 last_activity: 2026-08-17
+last_activity_desc: "Milestone v2.3 roadmap created (Phase 16: Manifest Evolution, Phase 17: Render-Path Cross-Hardware Tolerance, Phase 18: Build Stability, Phase 19: Validation Re-Verification)"
 progress:
   total_phases: 4
   completed_phases: 0
@@ -176,9 +179,9 @@ Items acknowledged and deferred at milestone v2.2 close on 2026-08-14 (same Phas
 
 ## Session Continuity
 
-Last session: 2026-08-14T22:13:05.956Z
-Stopped at: v2.2 milestone closed via /gsd-complete-milestone
-Resume file: None
+Last session: 2026-08-17T23:47:48.095Z
+Stopped at: Phase 16 context gathered
+Resume file: .planning/workstreams/sgproc-render/phases/16-manifest-evolution/16-CONTEXT.md
 
 - [Phase 09 P10]: combinedHash/manifest.manifestHash computed over a timing-zeroed ExecutionManifest copy rather than modifying SerializeManifest()/ComputeManifestHash() themselves — preserves byte-for-byte compatibility with Phase 08's artifact_serializer_test.cpp round-trip tests over real timestamps
 - [Phase 09 P11]: InferenceCanExecuteReflectsPassTypeRegistryGap documents (not fixes) that INFERENCE passes are schema-valid but not capability-registered — registering INFERENCE/RETRAIN into the capability registry is a separate, larger cross-phase change, deferred as a follow-up item
