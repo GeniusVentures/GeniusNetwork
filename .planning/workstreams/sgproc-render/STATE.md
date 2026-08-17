@@ -1,20 +1,16 @@
 ---
 gsd_state_version: 1.0
-milestone: v2.2
-milestone_name: Cross-Hardware Validation Tolerance
-current_phase: 15
-status: shipped
-stopped_at: Milestone v2.2 closed via /gsd-complete-milestone
-last_updated: "2026-08-14T22:13:05.956Z"
-last_activity: 2026-08-14
-last_activity_desc: v2.2 milestone closed (archived to sgproc-render-v2.2-*)
+milestone: v2.3
+milestone_name: Deferred Gap Closure
+status: planning
+last_updated: "2026-08-17T22:36:07.303Z"
+last_activity: 2026-08-17
 progress:
-  total_phases: 2
-  completed_phases: 2
-  total_plans: 7
-  completed_plans: 7
-  percent: 100
-current_phase_name: Validation Comparison Mechanism
+  total_phases: 0
+  completed_phases: 0
+  total_plans: 0
+  completed_plans: 0
+  percent: 0
 ---
 
 # Project State
@@ -24,14 +20,14 @@ current_phase_name: Validation Comparison Mechanism
 See: .planning/PROJECT.md (updated 2026-08-03), workstream section "Workstream: sgproc-render"
 
 **Core value:** Elevate SGProcessingManager from a "parse-and-hope" pipeline to a contract-driven execution engine — jobs are validated before work starts, execution is cancellable and budget-aware, results are typed artifacts with provenance, and every processor is covered by a common test suite.
-**Current focus:** Planning next milestone (v2.2 shipped 2026-08-14)
+**Current focus:** Defining v2.3 (Deferred Gap Closure) requirements/roadmap — v2.2 shipped 2026-08-14
 
 ## Current Position
 
-Phase: 15 (last of v2.2)
-Plan: None — milestone closed
-Status: v2.2 shipped, archived to `.planning/milestones/sgproc-render-v2.2-*.md`
-Last activity: 2026-08-14 — v2.2 milestone closed
+Phase: Not started (defining requirements)
+Plan: —
+Status: Defining requirements
+Last activity: 2026-08-17 — Milestone v2.3 started
 
 ## Performance Metrics
 
@@ -139,13 +135,16 @@ Last activity: 2026-08-14 — v2.2 milestone closed
 
 | Category | Item | Status | Deferred At |
 |----------|------|--------|-------------|
-| Phase 08 | Merkle tree over chunks | Deferred | 2026-08-05 |
-| Phase 08 | Content-defined chunking | Deferred | 2026-08-05 |
-| Phase 08 | Error message strings in manifest | Deferred | 2026-08-05 |
-| Phase 08 | Schema evolution for binary format | Deferred | 2026-08-05 |
-| v2.1 | Schema-configurable normalization precision (QUANT-CFG-01) | Deferred to future milestone | 2026-08-07 |
-| v2.1 | ProcessingValidationCore::ValidateResults concatenation bug fix (XNODE-01b) | Deferred to future milestone | 2026-08-07 |
-| v2.1 | Cross-node consensus/redundant-execution plumbing (XNODE-01c) | Deferred to future milestone | 2026-08-07 |
+| Phase 08 | Merkle tree over chunks | Queued for v2.3 (ARTF-07) | 2026-08-05 |
+| Phase 08 | Content-defined chunking | Queued for v2.3 (ARTF-08) | 2026-08-05 |
+| Phase 08 | Error message strings in manifest | Queued for v2.3 (ARTF-09) | 2026-08-05 |
+| Phase 08 | Schema evolution for binary format | Queued for v2.3 (ARTF-10) | 2026-08-05 |
+| v2.1 | Schema-configurable normalization precision (QUANT-CFG-01) | Resolved — v2.2 Phase 14, verified 8/8 | 2026-08-07 |
+| v2.1 | ProcessingValidationCore::ValidateResults concatenation bug fix (XNODE-01b) | Resolved — v2.2 Phase 15, verified 8/8 | 2026-08-07 |
+| v2.1 | Cross-node consensus/redundant-execution plumbing (XNODE-01c) | Still deferred — considered CI verification scope, not a v2.3 requirement | 2026-08-07 |
+| v2.2 (new) | Render-path cross-hardware tolerance untested risk (no fixture/mechanism beyond trivial 8x8 case) | Queued for v2.3 (RENDTOL-01/02) | 2026-08-14 |
+| v2.1 | Pre-existing Vulkan capability-probe deadlock (ProcessingManager::Create()) | Queued for v2.3 (BUILD-01) | 2026-08-10 |
+| v2.1 | VALD-01 MNN float32 fixture 12/15 chunk-hash gap — never re-checked against Phase 15's tolerance fallback | Queued for v2.3 (VALD-02) | 2026-08-13 |
 
 Items acknowledged and deferred at milestone v2.0 close on 2026-08-07:
 
@@ -185,7 +184,7 @@ Resume file: None
 
 ## Operator Next Steps
 
-- v2.2 shipped 2026-08-14. Start the next milestone with `/gsd-new-milestone` (this workstream has no Active requirements queued — v2.2 closed out the last known gap-driven follow-up from v2.1).
+- v2.3 (Deferred Gap Closure) requirements approved 2026-08-17: ARTF-07..10 (manifest evolution), RENDTOL-01/02 (render-path tolerance), BUILD-01 (Vulkan capability-probe deadlock), VALD-02 (VALD-01 re-verification against Phase 15's tolerance fallback). Roadmap creation next.
 
 ## Decisions
 

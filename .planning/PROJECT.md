@@ -38,10 +38,15 @@ This project now runs parallel workstreams (see `.planning/workstreams/`). Each 
 
 **Goal:** Make SGProcessingManager's `render` PassType a real, executable graphics pipeline via hand-rolled Vulkan — headless/offscreen, own independent `VkInstance`/`VkDevice`, no new GPU backend/engine, no OpenGL or CPU/software fallback tier. Directly scoped to `GeniusVentures/SGProcessingManager#7`.
 
-**Target features:** (None yet — define next milestone's requirements via `/gsd-new-milestone`, this workstream side)
+**Target features (v2.3):**
+- Manifest evolution (Phase 08 deferred scope, never picked up since 2026-08-05): Merkle tree over chunk hashes (ARTF-07), content-defined chunking (ARTF-08), human-readable error message strings in the execution manifest (ARTF-09), schema evolution support for the binary manifest format (ARTF-10)
+- Render-path cross-hardware tolerance (RENDTOL-01/02): a non-trivial render fixture (texturing/blending/MSAA) plus a real schema-configurable tolerance mechanism, replacing `QuantizeByteBuffer`'s current byte-identity no-op — closes the untested risk flagged in v2.2's STATE.md
+- Build stability (BUILD-01): fix the `ProcessingManager::Create()` Vulkan capability-probe deadlock (`VulkanInitMutex` re-entrancy) affecting `ProcessingDatatypesTest`/`ProcessingDispatchTest`/`vulkan_init_concurrency_test`
+- Validation re-verification (VALD-02): re-run the original VALD-01 MNN float32 fixture through Phase 15's `ValidateResults` tolerance-fallback mechanism and document whether it actually closes the gap
 
 **Deferred candidates carried forward:**
 - Actual cross-node consensus/redundant-execution comparison plumbing (`XNODE-01c`) — v2.2 made the comparison mechanism itself correct and tolerant; wiring it into real multi-node job orchestration remains future work
+- Phase 04 (v1.0) carryover: 1 pending UAT scenario + a `human_needed` verification gap — re-acknowledged at both v2.0 and v2.2 close, still not this milestone's scope
 
 **Shipped (v1.0 + v2.0):** v1.0 — all 5 phases, 24 plans complete (2026-07-31): headless Vulkan context + shared init-lock + dispatch plumbing; schema extension + shaderc/SPIRV-Tools + mandatory spirv-val gate; RenderProcessor (pipeline build, offscreen draw, readback, SHA-256 hash); cross-platform CI + E2E; Android/iOS platform compatibility. v2.0 — Phase 09 (issue #15, conformance test suites) complete (2026-08-07), 15/15 plans across three gap-closure rounds; this was the last roadmapped phase for v2.0. Full v2.0 milestone completion was never formally asserted via `/gsd-complete-milestone`: Phase 07's `EXEC-*` and Phase 08's `ARTF-*` requirement checkboxes in `.planning/milestones/sgproc-render-v2.0-REQUIREMENTS.md` remain unchecked, and STATE.md notes Phase 07 tests are "pending HW verification". See `.planning/workstreams/sgproc-render/STATE.md` for details.
 
