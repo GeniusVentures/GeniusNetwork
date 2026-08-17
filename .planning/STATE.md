@@ -30,3 +30,9 @@ Last activity: 2026-08-04 — Phase 06 executed
 **Last session:** 2026-08-04T00:00:00.000Z
 **Stopped at:** Phase 07 context gathered — 5 areas discussed, 21 decisions captured
 **Resume file:** .planning/workstreams/sgproc-render/phases/07-cancellable-execution-context/07-CONTEXT.md
+
+### Quick Tasks Completed
+
+| # | Description | Date | Commit | Directory |
+|---|-------------|------|--------|-----------|
+| 260817-m23 | Update GeniusSDK CommonBuildParameters.cmake for new Vulkan discovery, using SuperGenius/build/CommonBuildParameters.cmake as reference, then build GeniusSDK (CMake configure + build Release x64) | 2026-08-17 | 181d1e2 | [260817-m23-update-geniussdk-commonbuildparameters-c](./quick/260817-m23-update-geniussdk-commonbuildparameters-c/) |
