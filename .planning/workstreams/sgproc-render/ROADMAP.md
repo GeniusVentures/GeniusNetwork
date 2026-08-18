@@ -96,8 +96,13 @@ Full detail archived at `.planning/milestones/sgproc-render-v2.2-ROADMAP.md`.
 **Plans**: 3 plans
 
 Plans:
+**Wave 1**
+
 - [ ] 16-01-PLAN.md — Correct REQUIREMENTS.md/ROADMAP.md wording for ARTF-07/ARTF-08 ("Won't implement — not applicable")
 - [ ] 16-02-PLAN.md — Add ExecutionManifest::errorMessage field + append-only schema-evolution trailer in SerializeManifest/DeserializeManifest (ARTF-09/ARTF-10)
+
+**Wave 2** *(blocked on Wave 1 completion)*
+
 - [ ] 16-03-PLAN.md — Build a manifest on every terminal path in ProcessInternal(); prove GetLastManifest() reachability against real CANCELLED/BUDGET_EXCEEDED fixtures (ARTF-09)
 
 ### Phase 17: Render-Path Cross-Hardware Tolerance
