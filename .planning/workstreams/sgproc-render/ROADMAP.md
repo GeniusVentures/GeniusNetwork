@@ -93,7 +93,12 @@ Full detail archived at `.planning/milestones/sgproc-render-v2.2-ROADMAP.md`.
   3. A processing error captured in the execution manifest exposes a human-readable message string alongside its existing structured error code, retrievable from the manifest artifact by a caller that only has the manifest (not the original error site).
   4. A manifest written by the updated (schema-evolved) writer, containing new optional fields, is still successfully parsed by an unmodified older reader (new fields ignored, no parse failure); and a manifest written before the new fields existed is still successfully parsed by the updated reader (fields default/absent) — both directions proven, not just one.
 
-**Plans**: TBD
+**Plans**: 3 plans
+
+Plans:
+- [ ] 16-01-PLAN.md — Correct REQUIREMENTS.md/ROADMAP.md wording for ARTF-07/ARTF-08 ("Won't implement — not applicable")
+- [ ] 16-02-PLAN.md — Add ExecutionManifest::errorMessage field + append-only schema-evolution trailer in SerializeManifest/DeserializeManifest (ARTF-09/ARTF-10)
+- [ ] 16-03-PLAN.md — Build a manifest on every terminal path in ProcessInternal(); prove GetLastManifest() reachability against real CANCELLED/BUDGET_EXCEEDED fixtures (ARTF-09)
 
 ### Phase 17: Render-Path Cross-Hardware Tolerance
 
@@ -157,7 +162,7 @@ Full detail archived at `.planning/milestones/sgproc-render-v2.2-ROADMAP.md`.
 | 13. Re-Validation & Scope Boundary Documentation | v2.1 | 6/6 | Complete (override — VALD-01 MNN 1/15-chunk gap accepted, see 13-VERIFICATION.md) | 2026-08-13 |
 | 14. Configurable Normalization Precision | v2.2 | 3/3 | Complete    | 2026-08-14 |
 | 15. Validation Comparison Mechanism | v2.2 | 4/4 | Complete    | 2026-08-14 |
-| 16. Manifest Evolution | v2.3 | 0/TBD | Not started | - |
+| 16. Manifest Evolution | v2.3 | 0/3 | Planned | - |
 | 17. Render-Path Cross-Hardware Tolerance | v2.3 | 0/TBD | Not started | - |
 | 18. Build Stability | v2.3 | 0/TBD | Not started | - |
 | 19. Validation Re-Verification | v2.3 | 0/TBD | Not started | - |
