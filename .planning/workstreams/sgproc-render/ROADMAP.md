@@ -74,7 +74,7 @@ Full detail archived at `.planning/milestones/sgproc-render-v2.2-ROADMAP.md`.
 
 **Dependency order note:** Unlike v2.1's hard-chained Phases 10-13 or v2.2's Phase 14→15 chain, all four v2.3 phases are independent of one another — each closes a distinct, previously-deferred gap with no shared prerequisite beyond already-shipped milestones (Phase 15/v2.2 for Phases 16 and 19; Phase 10/Phase 14's patterns for Phase 17; nothing project-specific for Phase 18). The order below follows REQUIREMENTS.md's category order, not an execution dependency — phases may be planned/executed in any order.
 
-- [ ] **Phase 16: Manifest Evolution** - Merkle-tree chunk integrity, content-defined chunking, human-readable error messages, and a schema-evolvable binary manifest format — closing Phase 08's deferred scope
+- [ ] **Phase 16: Manifest Evolution** - Human-readable error messages retrievable from the manifest, and a schema-evolvable binary manifest format — closing Phase 08's deferred scope (Merkle-tree chunk integrity and content-defined chunking concluded 'Won't implement — not applicable' during phase discussion; see 16-CONTEXT.md D-01..D-08)
 - [ ] **Phase 17: Render-Path Cross-Hardware Tolerance** - A non-trivial render fixture plus a real schema-configurable tolerance mechanism, replacing `QuantizeByteBuffer`'s byte-identity no-op
 - [ ] **Phase 18: Build Stability** - Fixes the `VulkanInitMutex` re-entrancy deadlock in `ProcessingManager::Create()`'s capability probe
 - [ ] **Phase 19: Validation Re-Verification** - Re-runs VALD-01's MNN fixture through Phase 15's tolerance-fallback mechanism and documents whether the gap is actually closed
@@ -83,15 +83,18 @@ Full detail archived at `.planning/milestones/sgproc-render-v2.2-ROADMAP.md`.
 
 ### Phase 16: Manifest Evolution
 
-**Goal**: The execution manifest evolves from Phase 08's baseline shape to close its explicitly deferred gaps — chunk integrity is verifiable via a Merkle tree over chunk hashes (not just the flat content hash), chunking uses content-defined boundaries so a small edit doesn't invalidate every downstream chunk hash, structured errors carry a human-readable message string, and the binary format supports additive schema evolution without breaking older readers.
+**Goal**: The execution manifest evolves from Phase 08's baseline shape to close two of its explicitly deferred gaps — structured errors carry a human-readable message string retrievable from the manifest artifact by a caller that only has the manifest, and the binary format supports additive schema evolution proven in both compatibility directions (new-writer-old-reader and old-writer-new-reader). ARTF-07 (Merkle tree over chunk hashes) and ARTF-08 (content-defined chunking) were concluded "Won't implement — not applicable" during phase discussion: graphsync/protobuf already deliver the complete per-chunk hash list to every real verifier, and `block_len` is a job-poster-owned schema parameter, not SGProcessingManager's to renegotiate (16-CONTEXT.md D-01..D-08).
 **Depends on**: Phase 15 (v2.2, shipped) — first phase of v2.3; independent of Phases 17-19 in this milestone
 **Requirements**: ARTF-07, ARTF-08, ARTF-09, ARTF-10
 **Success Criteria** (what must be TRUE):
 
-  1. A Merkle tree built over chunk hashes detects a corrupted/perturbed chunk even in a scenario deliberately constructed so the existing flat content hash alone would be insufficient to localize (or, if crafted to coincide, mask) the corruption — proving the Merkle layer is a real additional integrity check, not a redundant one.
-  2. Content-defined chunking (not fixed-size) is used for chunk boundary derivation; re-chunking an input after a small localized edit produces the same chunk hashes for every chunk outside the edited region, and only the chunk(s) actually covering the edit differ — proven against a real fixture diffing an edited vs. unedited chunk-hash set.
-  3. A processing error captured in the execution manifest exposes a human-readable message string alongside its existing structured error code, retrievable from the manifest artifact by a caller that only has the manifest (not the original error site).
-  4. A manifest written by the updated (schema-evolved) writer, containing new optional fields, is still successfully parsed by an unmodified older reader (new fields ignored, no parse failure); and a manifest written before the new fields existed is still successfully parsed by the updated reader (fields default/absent) — both directions proven, not just one.
+  1. A processing error captured in the execution manifest exposes a human-readable message string alongside its existing structured error code, retrievable from the manifest artifact by a caller that only has the manifest (not the original error site).
+  2. A manifest written by the updated (schema-evolved) writer, containing new optional fields, is still successfully parsed by an unmodified older reader (new fields ignored, no parse failure); and a manifest written before the new fields existed is still successfully parsed by the updated reader (fields default/absent) — both directions proven, not just one.
+
+**Won't implement (this phase's own conclusion, not a deferral):**
+
+- **ARTF-07** (Merkle tree over chunk hashes) — **Won't implement, not applicable** (16-CONTEXT.md D-01..D-04: Artifact::chunkHashes already gives full per-chunk localization; graphsync/protobuf already deliver the complete chunk-hash list to every real verifier, so a root-only Merkle proof serves no scenario this system's actual verification flow has)
+- **ARTF-08** (content-defined chunking) — **Won't implement, not applicable** (16-CONTEXT.md D-05..D-08: block_len is a job-poster-owned schema parameter (Dimensions.hpp); a source-data/block_len mismatch is a bad-job failure to surface, not a chunking gap for SGProcessingManager to reconcile)
 
 **Plans**: 3 plans
 
