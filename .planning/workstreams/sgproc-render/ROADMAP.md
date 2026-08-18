@@ -74,7 +74,7 @@ Full detail archived at `.planning/milestones/sgproc-render-v2.2-ROADMAP.md`.
 
 **Dependency order note:** Unlike v2.1's hard-chained Phases 10-13 or v2.2's Phase 14→15 chain, all four v2.3 phases are independent of one another — each closes a distinct, previously-deferred gap with no shared prerequisite beyond already-shipped milestones (Phase 15/v2.2 for Phases 16 and 19; Phase 10/Phase 14's patterns for Phase 17; nothing project-specific for Phase 18). The order below follows REQUIREMENTS.md's category order, not an execution dependency — phases may be planned/executed in any order.
 
-- [ ] **Phase 16: Manifest Evolution** - Human-readable error messages retrievable from the manifest, and a schema-evolvable binary manifest format — closing Phase 08's deferred scope (Merkle-tree chunk integrity and content-defined chunking concluded 'Won't implement — not applicable' during phase discussion; see 16-CONTEXT.md D-01..D-08)
+- [x] **Phase 16: Manifest Evolution** - Human-readable error messages retrievable from the manifest, and a schema-evolvable binary manifest format — closing Phase 08's deferred scope (Merkle-tree chunk integrity and content-defined chunking concluded 'Won't implement — not applicable' during phase discussion; see 16-CONTEXT.md D-01..D-08) (completed 2026-08-18)
 - [ ] **Phase 17: Render-Path Cross-Hardware Tolerance** - A non-trivial render fixture plus a real schema-configurable tolerance mechanism, replacing `QuantizeByteBuffer`'s byte-identity no-op
 - [ ] **Phase 18: Build Stability** - Fixes the `VulkanInitMutex` re-entrancy deadlock in `ProcessingManager::Create()`'s capability probe
 - [ ] **Phase 19: Validation Re-Verification** - Re-runs VALD-01's MNN fixture through Phase 15's tolerance-fallback mechanism and documents whether the gap is actually closed
@@ -96,7 +96,7 @@ Full detail archived at `.planning/milestones/sgproc-render-v2.2-ROADMAP.md`.
 - **ARTF-07** (Merkle tree over chunk hashes) — **Won't implement, not applicable** (16-CONTEXT.md D-01..D-04: Artifact::chunkHashes already gives full per-chunk localization; graphsync/protobuf already deliver the complete chunk-hash list to every real verifier, so a root-only Merkle proof serves no scenario this system's actual verification flow has)
 - **ARTF-08** (content-defined chunking) — **Won't implement, not applicable** (16-CONTEXT.md D-05..D-08: block_len is a job-poster-owned schema parameter (Dimensions.hpp); a source-data/block_len mismatch is a bad-job failure to surface, not a chunking gap for SGProcessingManager to reconcile)
 
-**Plans**: 2/3 plans executed
+**Plans**: 3/3 plans complete
 
 Plans:
 **Wave 1**
@@ -106,7 +106,7 @@ Plans:
 
 **Wave 2** *(blocked on Wave 1 completion)*
 
-- [ ] 16-03-PLAN.md — Build a manifest on every terminal path in ProcessInternal(); prove GetLastManifest() reachability against real CANCELLED/BUDGET_EXCEEDED fixtures (ARTF-09)
+- [x] 16-03-PLAN.md — Build a manifest on every terminal path in ProcessInternal(); prove GetLastManifest() reachability against real CANCELLED/BUDGET_EXCEEDED fixtures (ARTF-09)
 
 ### Phase 17: Render-Path Cross-Hardware Tolerance
 
@@ -170,7 +170,7 @@ Plans:
 | 13. Re-Validation & Scope Boundary Documentation | v2.1 | 6/6 | Complete (override — VALD-01 MNN 1/15-chunk gap accepted, see 13-VERIFICATION.md) | 2026-08-13 |
 | 14. Configurable Normalization Precision | v2.2 | 3/3 | Complete    | 2026-08-14 |
 | 15. Validation Comparison Mechanism | v2.2 | 4/4 | Complete    | 2026-08-14 |
-| 16. Manifest Evolution | v2.3 | 2/3 | In Progress|  |
+| 16. Manifest Evolution | v2.3 | 3/3 | Complete   | 2026-08-18 |
 | 17. Render-Path Cross-Hardware Tolerance | v2.3 | 0/TBD | Not started | - |
 | 18. Build Stability | v2.3 | 0/TBD | Not started | - |
 | 19. Validation Re-Verification | v2.3 | 0/TBD | Not started | - |
