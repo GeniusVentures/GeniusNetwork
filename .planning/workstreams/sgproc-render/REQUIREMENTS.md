@@ -13,8 +13,8 @@ This milestone is not new feature work — it closes four real, previously-surfa
 
 - [x] **ARTF-07**: Chunk integrity is verifiable via a Merkle tree over chunk hashes, not just the existing flat content hash — **Won't implement, not applicable** (16-CONTEXT.md D-01..D-04: Artifact::chunkHashes already gives full per-chunk localization; graphsync/protobuf already deliver the complete chunk-hash list to every real verifier, so a root-only Merkle proof serves no scenario this system's actual verification flow has)
 - [x] **ARTF-08**: Chunking uses content-defined boundaries instead of fixed-size, so a small edit doesn't invalidate every downstream chunk hash — **Won't implement, not applicable** (16-CONTEXT.md D-05..D-08: block_len is a job-poster-owned schema parameter (Dimensions.hpp); a source-data/block_len mismatch is a bad-job failure to surface, not a chunking gap for SGProcessingManager to reconcile)
-- [ ] **ARTF-09**: The execution manifest's error details carry a human-readable message string alongside the existing structured error code
-- [ ] **ARTF-10**: The manifest's binary format supports schema evolution (new optional fields) without breaking older readers
+- [x] **ARTF-09**: The execution manifest's error details carry a human-readable message string alongside the existing structured error code
+- [x] **ARTF-10**: The manifest's binary format supports schema evolution (new optional fields) without breaking older readers
 
 ### Render-Path Cross-Hardware Tolerance
 
@@ -53,14 +53,15 @@ Which phases cover which requirements. Updated during roadmap creation.
 |-------------|-------|--------|
 | ARTF-07 | Phase 16 | Won't implement — not applicable (D-01..D-04) |
 | ARTF-08 | Phase 16 | Won't implement — not applicable (D-05..D-08) |
-| ARTF-09 | Phase 16 | Pending |
-| ARTF-10 | Phase 16 | Pending |
+| ARTF-09 | Phase 16 | Complete |
+| ARTF-10 | Phase 16 | Complete |
 | RENDTOL-01 | Phase 17 | Pending |
 | RENDTOL-02 | Phase 17 | Pending |
 | BUILD-01 | Phase 18 | Pending |
 | VALD-02 | Phase 19 | Pending |
 
 **Coverage:**
+
 - v2.3 requirements: 8 total
 - Mapped to phases: 8 ✓
 - Unmapped: 0

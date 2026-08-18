@@ -5,15 +5,15 @@ milestone_name: Deferred Gap Closure
 current_phase: 16
 current_phase_name: Manifest Evolution
 status: executing
-stopped_at: Completed 16-01-PLAN.md
-last_updated: "2026-08-18T00:31:06.391Z"
+stopped_at: Completed 16-02-PLAN.md
+last_updated: "2026-08-18T00:39:19.553Z"
 last_activity: 2026-08-18
 last_activity_desc: Phase 16 execution started
 progress:
   total_phases: 4
   completed_phases: 0
   total_plans: 3
-  completed_plans: 1
+  completed_plans: 2
   percent: 0
 ---
 
@@ -29,7 +29,7 @@ See: .planning/PROJECT.md (updated 2026-08-03), workstream section "Workstream: 
 ## Current Position
 
 Phase: 16 (Manifest Evolution) — EXECUTING
-Plan: 2 of 3
+Plan: 3 of 3
 Status: Ready to execute
 Last activity: 2026-08-18 — Phase 16 execution started
 
@@ -89,6 +89,7 @@ Last activity: 2026-08-18 — Phase 16 execution started
 | Phase 15 P03 | 40min | 2 tasks | 6 files |
 | Phase 15 P04 | 65min | 1 tasks | 3 files |
 | Phase 16 P01 | 10min | 2 tasks | 2 files |
+| Phase 16 P02 | 35min | 3 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -181,8 +182,8 @@ Items acknowledged and deferred at milestone v2.2 close on 2026-08-14 (same Phas
 
 ## Session Continuity
 
-Last session: 2026-08-18T00:31:06.385Z
-Stopped at: Completed 16-01-PLAN.md
+Last session: 2026-08-18T00:39:19.547Z
+Stopped at: Completed 16-02-PLAN.md
 Resume file: None
 
 - [Phase 09 P10]: combinedHash/manifest.manifestHash computed over a timing-zeroed ExecutionManifest copy rather than modifying SerializeManifest()/ComputeManifestHash() themselves — preserves byte-for-byte compatibility with Phase 08's artifact_serializer_test.cpp round-trip tests over real timestamps
@@ -236,3 +237,6 @@ Resume file: None
 - [Phase 15]: Gave the two SECV-02 jobs distinct output filenames so the tolerance-fallback fetch reads each run's own saved output, not the second run's overwrite of the first
 - [Phase 16-01]: ARTF-07/ARTF-08 marked 'Won't implement — not applicable' (not 'deferred') in REQUIREMENTS.md and ROADMAP.md, citing 16-CONTEXT.md D-01..D-08
 - [Phase 16-01]: ROADMAP.md Phase 16 Success Criteria renumbered from 4 to 2 items (former SC3/SC4 only); SC1 (Merkle)/SC2 (CDC) removed and replaced by a dedicated Won't implement subsection; Requirements/Depends on/Plans lines left unchanged
+- [Phase ?]: [Phase 16-02]: errorMessage appended as ExecutionManifest's last member, reusing MAX_IDENTIFIER; MANIFEST_V2_SERIALIZED_SIZE expressed as an arithmetic expression anchored to MANIFEST_SERIALIZED_SIZE, never a hardcoded literal
+- [Phase ?]: [Phase 16-02]: DeserializeManifest's two trailer bounds checks (schemaVersion presence, then errorMessage presence) kept strictly sequential and independent, never combined into one compound condition, per ASVS V5
+- [Phase ?]: [Phase 16-02]: SC4 Direction 1 (new-writer bytes read by an old reader) proven via a test-local DeserializeManifestBaseFieldsOnly proxy helper, honestly documented as a same-mechanism proof rather than a claim that a literal pre-Phase-16 binary was tested
