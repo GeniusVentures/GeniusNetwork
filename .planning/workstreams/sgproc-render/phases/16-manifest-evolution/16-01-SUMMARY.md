@@ -110,3 +110,10 @@ None - no external service configuration required.
 ---
 *Phase: 16-manifest-evolution*
 *Completed: 2026-08-18*
+
+## Self-Check: PASSED
+
+- FOUND: .planning/workstreams/sgproc-render/phases/16-manifest-evolution/16-01-SUMMARY.md
+- FOUND: b4ec958 (Task 1 commit)
+- FOUND: d5993ac (Task 2 commit)
+- FOUND: fa1ae8a (SUMMARY.md commit)

@@ -3,16 +3,17 @@ gsd_state_version: 1.0
 milestone: v2.3
 milestone_name: Deferred Gap Closure
 current_phase: 16
-status: planning
-stopped_at: Phase 16 context gathered
-last_updated: "2026-08-17T23:47:48.102Z"
-last_activity: 2026-08-17
-last_activity_desc: "Milestone v2.3 roadmap created (Phase 16: Manifest Evolution, Phase 17: Render-Path Cross-Hardware Tolerance, Phase 18: Build Stability, Phase 19: Validation Re-Verification)"
+current_phase_name: Manifest Evolution
+status: executing
+stopped_at: Completed 16-01-PLAN.md
+last_updated: "2026-08-18T00:31:06.391Z"
+last_activity: 2026-08-18
+last_activity_desc: Phase 16 execution started
 progress:
   total_phases: 4
   completed_phases: 0
-  total_plans: 0
-  completed_plans: 0
+  total_plans: 3
+  completed_plans: 1
   percent: 0
 ---
 
@@ -23,14 +24,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-08-03), workstream section "Workstream: sgproc-render"
 
 **Core value:** Elevate SGProcessingManager from a "parse-and-hope" pipeline to a contract-driven execution engine — jobs are validated before work starts, execution is cancellable and budget-aware, results are typed artifacts with provenance, and every processor is covered by a common test suite.
-**Current focus:** Phase 16 — manifest-evolution
+**Current focus:** Phase 16 — Manifest Evolution
 
 ## Current Position
 
-Phase: 16 — Manifest Evolution (not started)
-Plan: — (roadmap complete, no plans created yet)
-Status: Roadmap created, ready for /gsd-plan-phase 16
-Last activity: 2026-08-17 — Milestone v2.3 roadmap created (Phase 16: Manifest Evolution, Phase 17: Render-Path Cross-Hardware Tolerance, Phase 18: Build Stability, Phase 19: Validation Re-Verification)
+Phase: 16 (Manifest Evolution) — EXECUTING
+Plan: 2 of 3
+Status: Ready to execute
+Last activity: 2026-08-18 — Phase 16 execution started
 
 ## Performance Metrics
 
@@ -87,6 +88,7 @@ Last activity: 2026-08-17 — Milestone v2.3 roadmap created (Phase 16: Manifest
 | Phase 15 P02 | 35min | 2 tasks | 4 files |
 | Phase 15 P03 | 40min | 2 tasks | 6 files |
 | Phase 15 P04 | 65min | 1 tasks | 3 files |
+| Phase 16 P01 | 10min | 2 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -179,9 +181,9 @@ Items acknowledged and deferred at milestone v2.2 close on 2026-08-14 (same Phas
 
 ## Session Continuity
 
-Last session: 2026-08-17T23:47:48.095Z
-Stopped at: Phase 16 context gathered
-Resume file: .planning/workstreams/sgproc-render/phases/16-manifest-evolution/16-CONTEXT.md
+Last session: 2026-08-18T00:31:06.385Z
+Stopped at: Completed 16-01-PLAN.md
+Resume file: None
 
 - [Phase 09 P10]: combinedHash/manifest.manifestHash computed over a timing-zeroed ExecutionManifest copy rather than modifying SerializeManifest()/ComputeManifestHash() themselves — preserves byte-for-byte compatibility with Phase 08's artifact_serializer_test.cpp round-trip tests over real timestamps
 - [Phase 09 P11]: InferenceCanExecuteReflectsPassTypeRegistryGap documents (not fixes) that INFERENCE passes are schema-valid but not capability-registered — registering INFERENCE/RETRAIN into the capability registry is a separate, larger cross-phase change, deferred as a follow-up item
@@ -232,3 +234,5 @@ Resume file: .planning/workstreams/sgproc-render/phases/16-manifest-evolution/16
 - [Phase 15-03]: SgnsProcessing::get_parameters() returns boost::optional<vector<Parameter>> by value, not a pointer -- stored into a local jobParametersStorage vector declared alongside parsedProcessing before the ValidateResults call so the pointer's lifetime spans the call
 - [Phase 15]: Created a new corrupted-model fixture (secv02-corrupted-float_model.mnn) instead of reusing SECV-01's, because SECV-01's fixture doesn't diverge at the single-window (width=64/block_len=64) granularity this test requires
 - [Phase 15]: Gave the two SECV-02 jobs distinct output filenames so the tolerance-fallback fetch reads each run's own saved output, not the second run's overwrite of the first
+- [Phase 16-01]: ARTF-07/ARTF-08 marked 'Won't implement — not applicable' (not 'deferred') in REQUIREMENTS.md and ROADMAP.md, citing 16-CONTEXT.md D-01..D-08
+- [Phase 16-01]: ROADMAP.md Phase 16 Success Criteria renumbered from 4 to 2 items (former SC3/SC4 only); SC1 (Merkle)/SC2 (CDC) removed and replaced by a dedicated Won't implement subsection; Requirements/Depends on/Plans lines left unchanged
