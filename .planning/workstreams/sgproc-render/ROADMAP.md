@@ -170,7 +170,7 @@ Plans:
 | 13. Re-Validation & Scope Boundary Documentation | v2.1 | 6/6 | Complete (override — VALD-01 MNN 1/15-chunk gap accepted, see 13-VERIFICATION.md) | 2026-08-13 |
 | 14. Configurable Normalization Precision | v2.2 | 3/3 | Complete    | 2026-08-14 |
 | 15. Validation Comparison Mechanism | v2.2 | 4/4 | Complete    | 2026-08-14 |
-| 16. Manifest Evolution | v2.3 | 3/3 | Complete   | 2026-08-18 |
+| 16. Manifest Evolution | v2.3 | 3/3 | Complete    | 2026-08-18 |
 | 17. Render-Path Cross-Hardware Tolerance | v2.3 | 0/TBD | Not started | - |
 | 18. Build Stability | v2.3 | 0/TBD | Not started | - |
 | 19. Validation Re-Verification | v2.3 | 0/TBD | Not started | - |
