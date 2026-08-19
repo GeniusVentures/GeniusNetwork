@@ -121,12 +121,12 @@ Plans:
   4. With the new tolerance mechanism configured against RENDTOL-01's fixture, a fresh two-machine `capture_diff` run shows the fixture's processor-level output hash matching cross-hardware (or, if a residual gap remains, it is characterized with the same honesty as VALD-01/`13-SCOPE-BOUNDARY.md` rather than silently declared passing).
   5. A SECV-01-style counter-test proves the new render tolerance is not loose enough to also mask a deliberately wrong/corrupted render result on the new fixture.
 
-**Plans**: 8 plans
+**Plans**: 1/8 plans executed
 
 Plans:
 **Wave 1**
 
-- [ ] 17-01-PLAN.md — Lighting fixture (shaders, vertex data, job JSON), zero RenderProcessor/schema changes; corrects ROADMAP/REQUIREMENTS singular-fixture wording
+- [x] 17-01-PLAN.md — Lighting fixture (shaders, vertex data, job JSON), zero RenderProcessor/schema changes; corrects ROADMAP/REQUIREMENTS singular-fixture wording
 - [ ] 17-02-PLAN.md — Blend-state schema extension + wire-format pairing + BuildPipeline wiring + blending fixture
 
 **Wave 2** *(blocked on 17-02 — shared schema/wire-format files)*
@@ -201,6 +201,6 @@ Plans:
 | 14. Configurable Normalization Precision | v2.2 | 3/3 | Complete    | 2026-08-14 |
 | 15. Validation Comparison Mechanism | v2.2 | 4/4 | Complete    | 2026-08-14 |
 | 16. Manifest Evolution | v2.3 | 3/3 | Complete    | 2026-08-18 |
-| 17. Render-Path Cross-Hardware Tolerance | v2.3 | 0/TBD | Not started | - |
+| 17. Render-Path Cross-Hardware Tolerance | v2.3 | 1/8 | In Progress|  |
 | 18. Build Stability | v2.3 | 0/TBD | Not started | - |
 | 19. Validation Re-Verification | v2.3 | 0/TBD | Not started | - |

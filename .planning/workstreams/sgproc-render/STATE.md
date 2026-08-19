@@ -3,17 +3,17 @@ gsd_state_version: 1.0
 milestone: v2.3
 milestone_name: Deferred Gap Closure
 current_phase: 17
-current_phase_name: Render-Path Cross-Hardware Tolerance
+current_phase_name: render-path-cross-hardware-tolerance
 status: executing
-stopped_at: Phase 17 context gathered
-last_updated: "2026-08-19T19:30:58.410Z"
-last_activity: 2026-08-18
-last_activity_desc: Phase 16 complete, transitioned to Phase 17
+stopped_at: Completed 17-01-PLAN.md
+last_updated: "2026-08-19T20:39:25.116Z"
+last_activity: 2026-08-19
+last_activity_desc: Phase 17 execution started
 progress:
   total_phases: 4
   completed_phases: 1
-  total_plans: 3
-  completed_plans: 3
+  total_plans: 11
+  completed_plans: 4
   percent: 25
 ---
 
@@ -24,14 +24,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-08-03), workstream section "Workstream: sgproc-render"
 
 **Core value:** Elevate SGProcessingManager from a "parse-and-hope" pipeline to a contract-driven execution engine — jobs are validated before work starts, execution is cancellable and budget-aware, results are typed artifacts with provenance, and every processor is covered by a common test suite.
-**Current focus:** Phase 16 — Manifest Evolution
+**Current focus:** Phase 17 — render-path-cross-hardware-tolerance
 
 ## Current Position
 
-Phase: 17 — Render-Path Cross-Hardware Tolerance
-Plan: Not started
+Phase: 17 (render-path-cross-hardware-tolerance) — EXECUTING
+Plan: 2 of 8
 Status: Ready to execute
-Last activity: 2026-08-18 — Phase 16 complete, transitioned to Phase 17
+Last activity: 2026-08-19 — Phase 17 execution started
 
 ## Performance Metrics
 
@@ -91,6 +91,7 @@ Last activity: 2026-08-18 — Phase 16 complete, transitioned to Phase 17
 | Phase 16 P01 | 10min | 2 tasks | 2 files |
 | Phase 16 P02 | 35min | 3 tasks | 4 files |
 | Phase 16 P03 | 30min | 3 tasks | 3 files |
+| Phase 17 P01 | 25min | 2 tasks | 6 files |
 
 ## Accumulated Context
 
@@ -183,9 +184,9 @@ Items acknowledged and deferred at milestone v2.2 close on 2026-08-14 (same Phas
 
 ## Session Continuity
 
-Last session: 2026-08-18T21:06:08.618Z
-Stopped at: Phase 17 context gathered
-Resume file: .planning/workstreams/sgproc-render/phases/17-render-path-cross-hardware-tolerance/17-CONTEXT.md
+Last session: 2026-08-19T20:39:25.110Z
+Stopped at: Completed 17-01-PLAN.md
+Resume file: None
 
 - [Phase 09 P10]: combinedHash/manifest.manifestHash computed over a timing-zeroed ExecutionManifest copy rather than modifying SerializeManifest()/ComputeManifestHash() themselves — preserves byte-for-byte compatibility with Phase 08's artifact_serializer_test.cpp round-trip tests over real timestamps
 - [Phase 09 P11]: InferenceCanExecuteReflectsPassTypeRegistryGap documents (not fixes) that INFERENCE passes are schema-valid but not capability-registered — registering INFERENCE/RETRAIN into the capability registry is a separate, larger cross-phase change, deferred as a follow-up item
@@ -242,3 +243,4 @@ Resume file: .planning/workstreams/sgproc-render/phases/17-render-path-cross-har
 - [Phase ?]: [Phase 16-02]: DeserializeManifest's two trailer bounds checks (schemaVersion presence, then errorMessage presence) kept strictly sequential and independent, never combined into one compound condition, per ASVS V5
 - [Phase ?]: [Phase 16-02]: SC4 Direction 1 (new-writer bytes read by an old reader) proven via a test-local DeserializeManifestBaseFieldsOnly proxy helper, honestly documented as a same-mechanism proof rather than a claim that a literal pre-Phase-16 binary was tested
 - [Phase 16-03]: buildFailureManifest() reuses the same fallback error string literal already present at the generic-error log call so all four terminal states get real ProcessingError::message text; TIMED_OUT and generic Error are structurally-verified via source grep, not fixture-proven end-to-end, per plan-checker's honest-reporting instruction
+- [Phase 17-01]: capture_harness requires --model-input-source for render-type fixtures with no MNN model field — Rule 3 auto-fix: the plan's suggested invocation omitted the required flag; fixed by passing --model-input-source input:lightingVertexInput, mirroring the happy-path fixture's own convention
