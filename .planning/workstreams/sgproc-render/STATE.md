@@ -6,7 +6,7 @@ current_phase: 17
 current_phase_name: render-path-cross-hardware-tolerance
 status: executing
 stopped_at: Completed 17-02-PLAN.md
-last_updated: "2026-08-19T20:52:34.935Z"
+last_updated: "2026-08-19T22:32:14.005Z"
 last_activity: 2026-08-19
 last_activity_desc: Phase 17 execution started
 progress:
@@ -247,3 +247,4 @@ Resume file: None
 - [Phase 16-03]: buildFailureManifest() reuses the same fallback error string literal already present at the generic-error log call so all four terminal states get real ProcessingError::message text; TIMED_OUT and generic Error are structurally-verified via source grep, not fixture-proven end-to-end, per plan-checker's honest-reporting instruction
 - [Phase 17-01]: capture_harness requires --model-input-source for render-type fixtures with no MNN model field — Rule 3 auto-fix: the plan's suggested invocation omitted the required flag; fixed by passing --model-input-source input:lightingVertexInput, mirroring the happy-path fixture's own convention
 - [Phase ?]: [Phase 17-02]: Fixed pre-existing schema/generated-header drift (data_type enum missing 'llm') found while regenerating headers for the blend schema fields -- ProcessingManager.cpp:401 and two tests reference DataType::LLM, which the schema itself never declared; restored before regenerating to avoid silently dropping the enum value
+- [Phase 17]: Post-merge gate after Wave 1 found and fixed 2 pre-existing Phase-16 bugs: DeserializeCaptureFile read MANIFEST_SERIALIZED_SIZE (old base size) instead of MANIFEST_V2_SERIALIZED_SIZE for the manifest region, desyncing the trailing combinedHash read; ManifestDeterministicSerialization test asserted the same stale constant — Neither 17-01 nor 17-02 touched capture_file_format.cpp or this test -- root cause is Phase 16's SerializeManifest always emitting the larger V2 size, a gap Phase 16's own regression checks missed. Fixed now (not deferred) because Waves 4/6/7's empirical capture-and-diff mechanism depends on capture files round-tripping correctly
