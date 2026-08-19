@@ -75,7 +75,7 @@ Full detail archived at `.planning/milestones/sgproc-render-v2.2-ROADMAP.md`.
 **Dependency order note:** Unlike v2.1's hard-chained Phases 10-13 or v2.2's Phase 14→15 chain, all four v2.3 phases are independent of one another — each closes a distinct, previously-deferred gap with no shared prerequisite beyond already-shipped milestones (Phase 15/v2.2 for Phases 16 and 19; Phase 10/Phase 14's patterns for Phase 17; nothing project-specific for Phase 18). The order below follows REQUIREMENTS.md's category order, not an execution dependency — phases may be planned/executed in any order.
 
 - [x] **Phase 16: Manifest Evolution** - Human-readable error messages retrievable from the manifest, and a schema-evolvable binary manifest format — closing Phase 08's deferred scope (Merkle-tree chunk integrity and content-defined chunking concluded 'Won't implement — not applicable' during phase discussion; see 16-CONTEXT.md D-01..D-08) (completed 2026-08-18)
-- [ ] **Phase 17: Render-Path Cross-Hardware Tolerance** - A non-trivial render fixture plus a real schema-configurable tolerance mechanism, replacing `QuantizeByteBuffer`'s byte-identity no-op
+- [ ] **Phase 17: Render-Path Cross-Hardware Tolerance** - Three non-trivial render fixtures (texturing, blending, lighting) plus a real schema-configurable tolerance mechanism, replacing `QuantizeByteBuffer`'s byte-identity no-op
 - [ ] **Phase 18: Build Stability** - Fixes the `VulkanInitMutex` re-entrancy deadlock in `ProcessingManager::Create()`'s capability probe
 - [ ] **Phase 19: Validation Re-Verification** - Re-runs VALD-01's MNN fixture through Phase 15's tolerance-fallback mechanism and documents whether the gap is actually closed
 
@@ -110,13 +110,13 @@ Plans:
 
 ### Phase 17: Render-Path Cross-Hardware Tolerance
 
-**Goal**: The render path gains both a non-trivial fixture that actually exercises floating-point-heavy render computation (texturing, blending, or MSAA/lighting) and a real, schema-configurable tolerance mechanism for its output comparison — replacing `QuantizeByteBuffer`'s current byte-identity no-op — closing the untested risk v2.2's STATE.md flagged: that the render path's byte-identity claim was only ever measured against a near-zero-computation 8x8 solid-color fixture.
+**Goal**: The render path gains three non-trivial fixtures (texturing, blending, and lighting — MSAA excluded per D-03's architectural hard-block) that actually exercise floating-point-heavy render computation, and a real, schema-configurable tolerance mechanism for its output comparison — replacing `QuantizeByteBuffer`'s current byte-identity no-op — closing the untested risk v2.2's STATE.md flagged: that the render path's byte-identity claim was only ever measured against a near-zero-computation 8x8 solid-color fixture.
 **Depends on**: Nothing beyond already-shipped foundations (Phase 10's capture/diff tooling, Phase 14's `ResolveQuantScale`/`ResolveByteQuantMode` pattern) — independent of Phases 16, 18, 19 in this milestone
 **Requirements**: RENDTOL-01, RENDTOL-02
 **Success Criteria** (what must be TRUE):
 
-  1. A new render fixture definition exists that exercises texturing, blending, or MSAA/lighting — producing measurably more floating-point computation than `render-pass-happy-path-definition.json`'s constant-color 8x8 point-list case.
-  2. Running the new fixture through `capture_harness` on two distinct real-hardware machines (mirroring Phase 11's dataset) produces a real, non-zero captured divergence in the raw render output — evidence the fixture actually stresses cross-hardware floating-point behavior, unlike the trivial case.
+  1. Three new render fixture definitions exist, one each for texturing, blending, and lighting — each producing measurably more floating-point computation than `render-pass-happy-path-definition.json`'s constant-color 8x8 point-list case.
+  2. Running each new fixture through `capture_harness` on two distinct real-hardware machines (mirroring Phase 11's dataset) produces a real, non-zero captured divergence in the raw render output — evidence each fixture actually stresses cross-hardware floating-point behavior, unlike the trivial case.
   3. A schema-configurable tolerance parameter (mirroring Phase 14's `ResolveQuantScale`/`ResolveByteQuantMode` pattern) governs `QuantizeByteBuffer`'s behavior, with a silent fallback to the existing byte-identity behavior when unconfigured — proving the change is additive, not a breaking change to the existing trivial fixture.
   4. With the new tolerance mechanism configured against RENDTOL-01's fixture, a fresh two-machine `capture_diff` run shows the fixture's processor-level output hash matching cross-hardware (or, if a residual gap remains, it is characterized with the same honesty as VALD-01/`13-SCOPE-BOUNDARY.md` rather than silently declared passing).
   5. A SECV-01-style counter-test proves the new render tolerance is not loose enough to also mask a deliberately wrong/corrupted render result on the new fixture.

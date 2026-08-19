@@ -18,8 +18,8 @@ This milestone is not new feature work — it closes four real, previously-surfa
 
 ### Render-Path Cross-Hardware Tolerance
 
-- [ ] **RENDTOL-01**: A non-trivial render fixture exists (texturing, blending, or MSAA/lighting) exercising real floating-point-heavy render computation — not just the existing trivial 8x8 solid-color fixture (`render-pass-happy-path-definition.json`)
-- [ ] **RENDTOL-02**: The render output path has a real schema-configurable tolerance mechanism (mirroring Phase 14's `ResolveQuantScale`/`ResolveByteQuantMode` pattern for MNN), replacing `QuantizeByteBuffer`'s current byte-identity no-op — proven against real cross-hardware capture data from RENDTOL-01's fixture
+- [ ] **RENDTOL-01**: Three non-trivial render fixtures exist (texturing, blending, and lighting — MSAA excluded per D-03's architectural hard-block), each exercising real floating-point-heavy render computation — not just the existing trivial 8x8 solid-color fixture (`render-pass-happy-path-definition.json`)
+- [ ] **RENDTOL-02**: The render output path has a real schema-configurable tolerance mechanism (mirroring Phase 14's `ResolveQuantScale`/`ResolveByteQuantMode` pattern for MNN), replacing `QuantizeByteBuffer`'s current byte-identity no-op — proven independently against real cross-hardware capture data from each of RENDTOL-01's three fixtures
 
 ### Build Stability
 
