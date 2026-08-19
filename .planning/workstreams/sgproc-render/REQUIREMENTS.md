@@ -18,7 +18,7 @@ This milestone is not new feature work — it closes four real, previously-surfa
 
 ### Render-Path Cross-Hardware Tolerance
 
-- [ ] **RENDTOL-01**: Three non-trivial render fixtures exist (texturing, blending, and lighting — MSAA excluded per D-03's architectural hard-block), each exercising real floating-point-heavy render computation — not just the existing trivial 8x8 solid-color fixture (`render-pass-happy-path-definition.json`) — **in progress: lighting (17-01) and blending (17-02) done; texturing (17-03/17-04) pending**
+- [ ] **RENDTOL-01**: Three non-trivial render fixtures exist (texturing, blending, and lighting — MSAA excluded per D-03's architectural hard-block), each exercising real floating-point-heavy render computation — not just the existing trivial 8x8 solid-color fixture (`render-pass-happy-path-definition.json`) — **in progress: lighting (17-01) and blending (17-02) done; texturing's schema/validation/wire-format contract (17-03) done, Vulkan sampler/descriptor/upload implementation (17-04) pending**
 - [ ] **RENDTOL-02**: The render output path has a real schema-configurable tolerance mechanism (mirroring Phase 14's `ResolveQuantScale`/`ResolveByteQuantMode` pattern for MNN), replacing `QuantizeByteBuffer`'s current byte-identity no-op — proven independently against real cross-hardware capture data from each of RENDTOL-01's three fixtures — **not started: no cross-machine capture round has run yet (waves 4-7 pending)**
 
 ### Build Stability
@@ -55,7 +55,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | ARTF-08 | Phase 16 | Won't implement — not applicable (D-05..D-08) |
 | ARTF-09 | Phase 16 | Complete |
 | ARTF-10 | Phase 16 | Complete |
-| RENDTOL-01 | Phase 17 | In progress (2/3 fixtures) |
+| RENDTOL-01 | Phase 17 | In progress (2/3 fixtures done; texturing schema/wire-format done, Vulkan implementation pending) |
 | RENDTOL-02 | Phase 17 | Pending (no capture round run yet) |
 | BUILD-01 | Phase 18 | Pending |
 | VALD-02 | Phase 19 | Pending |

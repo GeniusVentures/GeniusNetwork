@@ -5,15 +5,15 @@ milestone_name: Deferred Gap Closure
 current_phase: 17
 current_phase_name: render-path-cross-hardware-tolerance
 status: executing
-stopped_at: Completed 17-02-PLAN.md
-last_updated: "2026-08-19T22:32:14.005Z"
+stopped_at: Completed 17-03-PLAN.md
+last_updated: "2026-08-19T22:51:15.056Z"
 last_activity: 2026-08-19
 last_activity_desc: Phase 17 execution started
 progress:
   total_phases: 4
   completed_phases: 1
   total_plans: 11
-  completed_plans: 5
+  completed_plans: 6
   percent: 25
 ---
 
@@ -29,7 +29,7 @@ See: .planning/PROJECT.md (updated 2026-08-03), workstream section "Workstream: 
 ## Current Position
 
 Phase: 17 (render-path-cross-hardware-tolerance) — EXECUTING
-Plan: 3 of 8
+Plan: 4 of 8
 Status: Ready to execute
 Last activity: 2026-08-19 — Phase 17 execution started
 
@@ -93,6 +93,7 @@ Last activity: 2026-08-19 — Phase 17 execution started
 | Phase 16 P03 | 30min | 3 tasks | 3 files |
 | Phase 17 P01 | 25min | 2 tasks | 6 files |
 | Phase 17 P02 | 20min | 2 tasks | 13 files |
+| Phase 17 P03 | 27min | 3 tasks | 12 files |
 
 ## Accumulated Context
 
@@ -186,8 +187,8 @@ Items acknowledged and deferred at milestone v2.2 close on 2026-08-14 (same Phas
 
 ## Session Continuity
 
-Last session: 2026-08-19T20:51:44.715Z
-Stopped at: Completed 17-02-PLAN.md
+Last session: 2026-08-19T22:51:15.050Z
+Stopped at: Completed 17-03-PLAN.md
 Resume file: None
 
 - [Phase 09 P10]: combinedHash/manifest.manifestHash computed over a timing-zeroed ExecutionManifest copy rather than modifying SerializeManifest()/ComputeManifestHash() themselves — preserves byte-for-byte compatibility with Phase 08's artifact_serializer_test.cpp round-trip tests over real timestamps
@@ -248,3 +249,4 @@ Resume file: None
 - [Phase 17-01]: capture_harness requires --model-input-source for render-type fixtures with no MNN model field — Rule 3 auto-fix: the plan's suggested invocation omitted the required flag; fixed by passing --model-input-source input:lightingVertexInput, mirroring the happy-path fixture's own convention
 - [Phase ?]: [Phase 17-02]: Fixed pre-existing schema/generated-header drift (data_type enum missing 'llm') found while regenerating headers for the blend schema fields -- ProcessingManager.cpp:401 and two tests reference DataType::LLM, which the schema itself never declared; restored before regenerating to avoid silently dropping the enum value
 - [Phase 17]: Post-merge gate after Wave 1 found and fixed 2 pre-existing Phase-16 bugs: DeserializeCaptureFile read MANIFEST_SERIALIZED_SIZE (old base size) instead of MANIFEST_V2_SERIALIZED_SIZE for the manifest region, desyncing the trailing combinedHash read; ManifestDeterministicSerialization test asserted the same stale constant — Neither 17-01 nor 17-02 touched capture_file_format.cpp or this test -- root cause is Phase 16's SerializeManifest always emitting the larger V2 size, a gap Phase 16's own regression checks missed. Fixed now (not deferred) because Waves 4/6/7's empirical capture-and-diff mechanism depends on capture files round-tripping correctly
+- [Phase 17-03]: texture_buffer modeled as independent pass-level field (not routed through the uniforms map), mirroring vertex_buffer/index_buffer's existing bypass of ResolveUniforms/PackUniformValue (RESEARCH.md Pitfall 4)
