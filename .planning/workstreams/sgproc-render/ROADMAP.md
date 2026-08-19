@@ -121,7 +121,37 @@ Plans:
   4. With the new tolerance mechanism configured against RENDTOL-01's fixture, a fresh two-machine `capture_diff` run shows the fixture's processor-level output hash matching cross-hardware (or, if a residual gap remains, it is characterized with the same honesty as VALD-01/`13-SCOPE-BOUNDARY.md` rather than silently declared passing).
   5. A SECV-01-style counter-test proves the new render tolerance is not loose enough to also mask a deliberately wrong/corrupted render result on the new fixture.
 
-**Plans**: TBD
+**Plans**: 8 plans
+
+Plans:
+**Wave 1**
+
+- [ ] 17-01-PLAN.md — Lighting fixture (shaders, vertex data, job JSON), zero RenderProcessor/schema changes; corrects ROADMAP/REQUIREMENTS singular-fixture wording
+- [ ] 17-02-PLAN.md — Blend-state schema extension + wire-format pairing + BuildPipeline wiring + blending fixture
+
+**Wave 2** *(blocked on 17-02 — shared schema/wire-format files)*
+
+- [ ] 17-03-PLAN.md — texture_buffer schema/wire-format/validation contract (Interface-First: define contracts)
+
+**Wave 3** *(blocked on 17-03 — shared processing_processor_render.cpp)*
+
+- [ ] 17-04-PLAN.md — Texture upload/sampler/descriptor Vulkan infrastructure + texturing fixture (Interface-First: implement against contract)
+
+**Wave 4** *(blocked on 17-01/17-02/17-04 — all fixtures must exist)*
+
+- [ ] 17-05-PLAN.md — Round 1 cross-machine capture (raw, byteQuantMode-absent divergence), all three fixtures — has checkpoint
+
+**Wave 5** *(blocked on 17-05 — needs real divergence data)*
+
+- [ ] 17-06-PLAN.md — Binary-search byteQuantMode + counter-test for lighting and blending
+
+**Wave 6** *(blocked on 17-06 — shared processing_conformance_security CMakeLists.txt)*
+
+- [ ] 17-07-PLAN.md — Binary-search byteQuantMode + counter-test for texturing
+
+**Wave 7** *(blocked on 17-06/17-07 — needs final derived tolerances)*
+
+- [ ] 17-08-PLAN.md — Round 2 cross-machine capture with final tolerances, SC4 verdict, ROADMAP close-out — has checkpoint
 
 ### Phase 18: Build Stability
 
