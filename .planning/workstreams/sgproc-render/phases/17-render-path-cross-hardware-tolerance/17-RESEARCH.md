@@ -491,22 +491,25 @@ Note `--element-type uint8` (not `float32`) — render output is always RGBA8/RG
 
 **None of these are compliance/security/retention-policy claims** — they are engineering predictions about GPU hardware behavior that the phase's own empirical capture step (Phase-11-style, D-09) will confirm or refute directly. This is expected and by design: SC2 exists specifically to observe whichever outcome the real hardware produces, and D-08 exists specifically to handle the "didn't diverge enough" or "diverged too much to close" outcomes honestly.
 
-## Open Questions
+## Open Questions (RESOLVED — see per-item resolution notes)
 
-1. **Does the texturing fixture's chosen filter mode (NEAREST vs LINEAR) actually produce measurable divergence on the Mac+Windows pair?**
+1. **(RESOLVED) Does the texturing fixture's chosen filter mode (NEAREST vs LINEAR) actually produce measurable divergence on the Mac+Windows pair?**
    - What we know: Bilinear filtering hardware is a plausible, commonly-cited divergence source; nearest-neighbor sampling is bit-exact by construction (no interpolation).
    - What's unclear: Whether THIS PARTICULAR pair of machines (an Apple Silicon or Intel/AMD Mac GPU vs. whatever Windows GPU "Mofu" has — not established in any read document this session) actually diverges on either mode, given that even the trivial happy-path fixture's uint8 output matched byte-for-byte in Phase 11.
    - Recommendation: Start with NEAREST (Pitfall 1's recommendation); if capture shows zero divergence, that is itself a valid documented finding, and the plan should have a documented decision point (not a silent fallback) for whether to retry with LINEAR.
+   - **Resolution:** Not a planning blocker — this is an empirical question the plans resolve by measurement, not by research. Plan 17-05 (Round 1 capture) executes the NEAREST-first fixture against both machines; Plan 17-08 (Round 2 capture) reflects whichever filter mode Round 1's data supports, with the decision point documented rather than silently defaulted.
 
-2. **What GPU hardware does "Mofu" (the Windows machine) actually have?**
+2. **(RESOLVED) What GPU hardware does "Mofu" (the Windows machine) actually have?**
    - What we know: STATE.md/11-CAPTURE-RESULTS.md identify it only as `Mofu---Windows`; capture_harness's `MachineIdTag()` deliberately excludes GPU vendor/driver detail (D-03: "hostname + OS only, no GPU vendor/driver detail").
    - What's unclear: Whether it's discrete or integrated, which vendor (matters directly for predicting texture-filtering/blend-rounding divergence characteristics).
    - Recommendation: Not necessary to resolve before planning — the empirical capture step will reveal actual behavior regardless of a priori vendor knowledge; do not block planning on this.
+   - **Resolution:** Deliberately deferred, no action needed — confirmed non-blocking by this research's own recommendation; no plan depends on knowing this in advance.
 
-3. **Should ROADMAP.md's Phase 17 SC1/SC2 wording (singular "a fixture") be corrected to reflect three fixtures before or after implementation?**
+3. **(RESOLVED) Should ROADMAP.md's Phase 17 SC1/SC2 wording (singular "a fixture") be corrected to reflect three fixtures before or after implementation?**
    - What we know: 17-CONTEXT.md flags this explicitly as Claude's Discretion, citing Phase 16's own SC-wording-correction precedent (done as part of implementation, not a blocking pre-step).
    - What's unclear: Nothing — this is a pure sequencing/discretion call, not a technical unknown.
    - Recommendation: Follow the Phase 16 precedent — correct the wording as part of implementation (likely in the first plan/wave), not as a separate blocking task.
+   - **Resolution:** Addressed in Plan 17-01, Task 2 — the ROADMAP.md/REQUIREMENTS.md wording fix lands as part of the first implementation wave, per the Phase 16 precedent.
 
 ## Environment Availability
 
