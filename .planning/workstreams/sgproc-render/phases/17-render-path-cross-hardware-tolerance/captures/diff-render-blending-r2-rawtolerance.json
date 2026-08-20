@@ -1,0 +1,24 @@
+{
+  "chunkDiffs": [],
+  "chunkHashesMatch": [],
+  "combinedHashMatch": false,
+  "contentHashMatch": false,
+  "elementCount": 16384,
+  "elementType": "uint8",
+  "maxAbsDelta": 64.0,
+  "maxRelDelta": 0.5,
+  "maxUlpDistance": 64,
+  "percentExceedingThreshold": 25.0,
+  "rawToleranceCheck": {
+    "byteQuantMode": 6,
+    "checked": true,
+    "elementCount": 16384,
+    "maxAbsDelta": 1.0,
+    "maxRelDelta": 0.0078125,
+    "maxUlpDistance": 1,
+    "percentExceedingThreshold": 0.0,
+    "sizeMismatch": false,
+    "withinTolerance": true
+  },
+  "sizeMismatch": false
+}
