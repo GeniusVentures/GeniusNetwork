@@ -5,8 +5,8 @@ milestone_name: Deferred Gap Closure
 current_phase: 18
 current_phase_name: Build Stability
 status: completed
-stopped_at: Completed 17-09-PLAN.md, Phase 17 fully done (9/9) -- RENDTOL-02 closed
-last_updated: "2026-08-20T18:58:04.898Z"
+stopped_at: Phase 18 context gathered
+last_updated: "2026-08-20T20:06:53.408Z"
 last_activity: 2026-08-20
 last_activity_desc: Phase 17 complete, transitioned to Phase 18
 progress:
@@ -193,9 +193,9 @@ Items acknowledged and deferred at milestone v2.2 close on 2026-08-14 (same Phas
 
 ## Session Continuity
 
-Last session: 2026-08-20T18:37:17.053Z
-Stopped at: Completed 17-09-PLAN.md, Phase 17 fully done (9/9) -- RENDTOL-02 closed
-Resume file: None
+Last session: 2026-08-20T20:06:53.401Z
+Stopped at: Phase 18 context gathered
+Resume file: .planning/workstreams/sgproc-render/phases/18-build-stability/18-CONTEXT.md
 
 - [Phase 09 P10]: combinedHash/manifest.manifestHash computed over a timing-zeroed ExecutionManifest copy rather than modifying SerializeManifest()/ComputeManifestHash() themselves — preserves byte-for-byte compatibility with Phase 08's artifact_serializer_test.cpp round-trip tests over real timestamps
 - [Phase 09 P11]: InferenceCanExecuteReflectsPassTypeRegistryGap documents (not fixes) that INFERENCE passes are schema-valid but not capability-registered — registering INFERENCE/RETRAIN into the capability registry is a separate, larger cross-phase change, deferred as a follow-up item
