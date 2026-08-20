@@ -129,3 +129,7 @@ None - no external service configuration required.
 ---
 *Phase: 18-build-stability*
 *Completed: 2026-08-20*
+
+## Self-Check: PASSED
+
+All created/modified files confirmed present on disk (`vulkan_init_concurrency_test.cpp`, `CMakeLists.txt`, `18-BUILD-STABILITY-EVIDENCE.md`, `18-01-SUMMARY.md`). All commit hashes confirmed present in git history (`d4270c79`, `e902ae2e` in `SuperGenius`; `c91f0df`, `eec3b51`, `689b915`, `825ef32` in the outer repo).
