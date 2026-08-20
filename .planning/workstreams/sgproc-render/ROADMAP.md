@@ -75,7 +75,7 @@ Full detail archived at `.planning/milestones/sgproc-render-v2.2-ROADMAP.md`.
 **Dependency order note:** Unlike v2.1's hard-chained Phases 10-13 or v2.2's Phase 14→15 chain, all four v2.3 phases are independent of one another — each closes a distinct, previously-deferred gap with no shared prerequisite beyond already-shipped milestones (Phase 15/v2.2 for Phases 16 and 19; Phase 10/Phase 14's patterns for Phase 17; nothing project-specific for Phase 18). The order below follows REQUIREMENTS.md's category order, not an execution dependency — phases may be planned/executed in any order.
 
 - [x] **Phase 16: Manifest Evolution** - Human-readable error messages retrievable from the manifest, and a schema-evolvable binary manifest format — closing Phase 08's deferred scope (Merkle-tree chunk integrity and content-defined chunking concluded 'Won't implement — not applicable' during phase discussion; see 16-CONTEXT.md D-01..D-08) (completed 2026-08-18)
-- [x] **Phase 17: Render-Path Cross-Hardware Tolerance** - Three non-trivial render fixtures (texturing, blending, lighting) plus a real schema-configurable tolerance mechanism, replacing `QuantizeByteBuffer`'s byte-identity no-op (completed 2026-08-20, closed with a residual gap -- blending's byteQuantMode=6 does not close cross-hardware divergence and measurably worsens it under real capture data; see 17-TOLERANCE-RESULTS.md)
+- [x] **Phase 17: Render-Path Cross-Hardware Tolerance** - Three non-trivial render fixtures (texturing, blending, lighting) plus a real schema-configurable tolerance mechanism, replacing `QuantizeByteBuffer`'s byte-identity no-op (completed 2026-08-20, closed with a residual gap -- blending's byteQuantMode=6 does not close cross-hardware divergence and measurably worsens it under real capture data; see 17-TOLERANCE-RESULTS.md) -- gap-closure plan 17-09 queued to prove the user's chosen numeric-tolerance-fallback resolution (17-CONTEXT.md D-10/D-11), see 17-VERIFICATION.md
 - [ ] **Phase 18: Build Stability** - Fixes the `VulkanInitMutex` re-entrancy deadlock in `ProcessingManager::Create()`'s capability probe
 - [ ] **Phase 19: Validation Re-Verification** - Re-runs VALD-01's MNN fixture through Phase 15's tolerance-fallback mechanism and documents whether the gap is actually closed
 
@@ -121,7 +121,7 @@ Plans:
   4. With the new tolerance mechanism configured against RENDTOL-01's fixture, a fresh two-machine `capture_diff` run shows the fixture's processor-level output hash matching cross-hardware (or, if a residual gap remains, it is characterized with the same honesty as VALD-01/`13-SCOPE-BOUNDARY.md` rather than silently declared passing). **Outcome: MIXED, reported honestly — lighting: hash match confirmed (fresh Round 2 capture against the corrected shader). Texturing: hash match confirmed (fixture never diverged, raw or quantized). Blending: residual gap that got WORSE under quantization — raw `maxAbsDelta=1.0` (Round 1) became quantized `maxAbsDelta=64.0` (Round 2, `contentHashMatch=false`, 25% of elements exceed threshold) — root-caused in 17-TOLERANCE-RESULTS.md to bit-masking amplifying boundary-straddling raw deltas, not fixed by this plan.**
   5. A SECV-01-style counter-test proves the new render tolerance is not loose enough to also mask a deliberately wrong/corrupted render result on the new fixture. **Outcome: TRUE for all three fixtures — `secv01_render_lighting_counter_test.cpp`/`secv01_render_blending_counter_test.cpp` (17-06) and `secv01_render_texturing_counter_test.cpp` (17-07) each proved via binary search that the chosen byteQuantMode sits one step below a confirmed corruption-masking boundary.**
 
-**Plans**: 8/8 plans complete
+**Plans**: 8/9 plans complete (17-09 is a gap-closure plan, queued to close RENDTOL-02's blending residual gap — see 17-VERIFICATION.md Gap 1)
 
 Plans:
 **Wave 1**
@@ -152,6 +152,10 @@ Plans:
 **Wave 7** *(blocked on 17-06/17-07 — needs final derived tolerances)*
 
 - [x] 17-08-PLAN.md — Round 2 cross-machine capture with final tolerances, SC4 verdict, ROADMAP close-out — completed 2026-08-20, closed with blending's residual gap honestly documented (see 17-TOLERANCE-RESULTS.md)
+
+**Wave 8** *(blocked on 17-08 — gap closure, RENDTOL-02 blending residual)*
+
+- [ ] 17-09-PLAN.md — Extend `capture_diff` with a raw-buffer numeric-tolerance check (reusing production's `IsByteChunkWithinTolerance` unmodified) to prove blending's byteQuantMode=6 against already-captured Round 2 data, per the user's D-10 decision; close out REQUIREMENTS.md/ROADMAP.md
 
 ### Phase 18: Build Stability
 
@@ -201,6 +205,6 @@ Plans:
 | 14. Configurable Normalization Precision | v2.2 | 3/3 | Complete    | 2026-08-14 |
 | 15. Validation Comparison Mechanism | v2.2 | 4/4 | Complete    | 2026-08-14 |
 | 16. Manifest Evolution | v2.3 | 3/3 | Complete    | 2026-08-18 |
-| 17. Render-Path Cross-Hardware Tolerance | v2.3 | 8/8 | Complete   | 2026-08-20 |
+| 17. Render-Path Cross-Hardware Tolerance | v2.3 | 8/9 | Gap closure pending (17-09 — RENDTOL-02 blending residual, see 17-VERIFICATION.md) | 2026-08-20 |
 | 18. Build Stability | v2.3 | 0/TBD | Not started | - |
 | 19. Validation Re-Verification | v2.3 | 0/TBD | Not started | - |
