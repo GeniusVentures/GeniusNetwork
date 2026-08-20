@@ -121,7 +121,7 @@ Plans:
   4. With the new tolerance mechanism configured against RENDTOL-01's fixture, a fresh two-machine `capture_diff` run shows the fixture's processor-level output hash matching cross-hardware (or, if a residual gap remains, it is characterized with the same honesty as VALD-01/`13-SCOPE-BOUNDARY.md` rather than silently declared passing).
   5. A SECV-01-style counter-test proves the new render tolerance is not loose enough to also mask a deliberately wrong/corrupted render result on the new fixture.
 
-**Plans**: 3/8 plans executed
+**Plans**: 4/8 plans executed
 
 Plans:
 **Wave 1**
@@ -135,7 +135,7 @@ Plans:
 
 **Wave 3** *(blocked on 17-03 — shared processing_processor_render.cpp)*
 
-- [ ] 17-04-PLAN.md — Texture upload/sampler/descriptor Vulkan infrastructure + texturing fixture (Interface-First: implement against contract)
+- [x] 17-04-PLAN.md — Texture upload/sampler/descriptor Vulkan infrastructure + texturing fixture (Interface-First: implement against contract)
 
 **Wave 4** *(blocked on 17-01/17-02/17-04 — all fixtures must exist)*
 
@@ -201,6 +201,6 @@ Plans:
 | 14. Configurable Normalization Precision | v2.2 | 3/3 | Complete    | 2026-08-14 |
 | 15. Validation Comparison Mechanism | v2.2 | 4/4 | Complete    | 2026-08-14 |
 | 16. Manifest Evolution | v2.3 | 3/3 | Complete    | 2026-08-18 |
-| 17. Render-Path Cross-Hardware Tolerance | v2.3 | 3/8 | In Progress|  |
+| 17. Render-Path Cross-Hardware Tolerance | v2.3 | 4/8 | In Progress|  |
 | 18. Build Stability | v2.3 | 0/TBD | Not started | - |
 | 19. Validation Re-Verification | v2.3 | 0/TBD | Not started | - |
