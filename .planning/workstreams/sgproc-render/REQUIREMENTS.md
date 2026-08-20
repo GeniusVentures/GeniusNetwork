@@ -23,7 +23,7 @@ This milestone is not new feature work — it closes four real, previously-surfa
 
 ### Build Stability
 
-- [ ] **BUILD-01**: `ProcessingManager::Create()`'s Vulkan capability-probe no longer deadlocks `ProcessingDatatypesTest`/`ProcessingDispatchTest`/`vulkan_init_concurrency_test` when a real Vulkan device is present (fix the `VulkanInitMutex` re-entrancy bug tracked in `.planning/todos/pending/2026-08-10-fix-vulkan-capability-probe-deadlock-in-processingmanager-cr.md`)
+- [x] **BUILD-01**: `ProcessingManager::Create()`'s Vulkan capability-probe no longer deadlocks `ProcessingDatatypesTest`/`ProcessingDispatchTest`/`vulkan_init_concurrency_test` when a real Vulkan device is present (fix the `VulkanInitMutex` re-entrancy bug tracked in `.planning/todos/pending/2026-08-10-fix-vulkan-capability-probe-deadlock-in-processingmanager-cr.md`)
 
 ### Validation Re-Verification
 
@@ -57,7 +57,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | ARTF-10 | Phase 16 | Complete |
 | RENDTOL-01 | Phase 17 | Complete |
 | RENDTOL-02 | Phase 17 | Complete — numeric-tolerance fallback proven (17-TOLERANCE-RESULTS.md Gap Closure Addendum) |
-| BUILD-01 | Phase 18 | Pending |
+| BUILD-01 | Phase 18 | Complete |
 | VALD-02 | Phase 19 | Pending |
 
 **Coverage:**

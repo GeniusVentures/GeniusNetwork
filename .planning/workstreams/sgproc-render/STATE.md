@@ -3,18 +3,18 @@ gsd_state_version: 1.0
 milestone: v2.3
 milestone_name: Deferred Gap Closure
 current_phase: 18
-current_phase_name: Build Stability
-status: executing
-stopped_at: Phase 18 context gathered
-last_updated: "2026-08-20T20:29:59.865Z"
+current_phase_name: build-stability
+status: verifying
+stopped_at: Completed 18-01-PLAN.md
+last_updated: "2026-08-20T20:51:28.478Z"
 last_activity: 2026-08-20
-last_activity_desc: Phase 17 complete, transitioned to Phase 18
+last_activity_desc: Phase 18 execution started
 progress:
   total_phases: 4
-  completed_phases: 2
-  total_plans: 12
-  completed_plans: 12
-  percent: 50
+  completed_phases: 3
+  total_plans: 13
+  completed_plans: 13
+  percent: 75
 ---
 
 # Project State
@@ -24,14 +24,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-08-03), workstream section "Workstream: sgproc-render"
 
 **Core value:** Elevate SGProcessingManager from a "parse-and-hope" pipeline to a contract-driven execution engine — jobs are validated before work starts, execution is cancellable and budget-aware, results are typed artifacts with provenance, and every processor is covered by a common test suite.
-**Current focus:** Phase 17 — render-path-cross-hardware-tolerance
+**Current focus:** Phase 18 — build-stability
 
 ## Current Position
 
-Phase: 18 — Build Stability
-Plan: Not started
-Status: Ready to execute
-Last activity: 2026-08-20 — Phase 17 complete, transitioned to Phase 18
+Phase: 18 (build-stability) — EXECUTING
+Plan: 1 of 1
+Status: Phase complete — ready for verification
+Last activity: 2026-08-20 — Phase 18 execution started
 
 ## Performance Metrics
 
@@ -100,6 +100,7 @@ Last activity: 2026-08-20 — Phase 17 complete, transitioned to Phase 18
 | Phase 17 P07 | 40min | 2 tasks | 5 files |
 | Phase 17 P08 | 55min | 2 tasks | 8 files |
 | Phase 17 P09 | 25min | 3 tasks | 8 files |
+| Phase 18 P01 | 20min | 3 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -193,9 +194,9 @@ Items acknowledged and deferred at milestone v2.2 close on 2026-08-14 (same Phas
 
 ## Session Continuity
 
-Last session: 2026-08-20T20:06:53.401Z
-Stopped at: Phase 18 context gathered
-Resume file: .planning/workstreams/sgproc-render/phases/18-build-stability/18-CONTEXT.md
+Last session: 2026-08-20T20:51:28.471Z
+Stopped at: Completed 18-01-PLAN.md
+Resume file: None
 
 - [Phase 09 P10]: combinedHash/manifest.manifestHash computed over a timing-zeroed ExecutionManifest copy rather than modifying SerializeManifest()/ComputeManifestHash() themselves — preserves byte-for-byte compatibility with Phase 08's artifact_serializer_test.cpp round-trip tests over real timestamps
 - [Phase 09 P11]: InferenceCanExecuteReflectsPassTypeRegistryGap documents (not fixes) that INFERENCE passes are schema-valid but not capability-registered — registering INFERENCE/RETRAIN into the capability registry is a separate, larger cross-phase change, deferred as a follow-up item
@@ -267,3 +268,5 @@ Resume file: .planning/workstreams/sgproc-render/phases/18-build-stability/18-CO
 - [Phase 17]: Phase 17 verification: gaps_found. RENDTOL-01 fully complete (3 fixtures, real computation, Round-2 hash-matched). RENDTOL-02 partially satisfied: byteQuantMode mechanism works and is counter-test-proven for all 3 fixtures, but blending's Round 2 capture shows quantization made cross-hardware divergence WORSE (raw maxAbsDelta=1.0 -> quantized 64.0), not better — QuantizeByteBuffer's bit-masking (value &= ~((1<<N)-1)) has no rounding tie-break, so raw deltas straddling a 64-wide bucket boundary get amplified into a full-bucket difference for blending specifically. This is a real architectural limitation the SECV-01 counter-test methodology cannot catch (it only proves tolerance isn't too loose, never that it improves real cross-hardware agreement). Requires a human decision: redesign quantization with round-to-nearest, fall back to numeric-tolerance comparison for blending, or accept as a documented override mirroring the VALD-01 precedent. 17-VERIFICATION.md has full detail
 - [Phase 17]: IsByteChunkWithinToleranceForMode is a pure additive wrapper for CLI callers with a bare byteQuantMode int -- delegates to IsByteChunkWithinTolerance unmodified — Lets capture_diff reuse production's exact tolerance bound formula without a job Parameter array or any change to the underlying function
 - [Phase 17]: RENDTOL-02 closed for blending via numeric-tolerance fallback (D-10/D-11), not by fixing QuantizeByteBuffer — capture_diff's new --byte-quant-mode raw-tolerance check proves blending's real raw delta (1.0) is within byteQuantMode=6's bound (63) against already-captured Round 2 preQuantizeBytes; the strict quantized-hash mismatch (64.0/false) remains true and is documented side by side, not reinterpreted
+- [Phase ?]: TIMEOUT=12 derived from this session's own observed ctest wall-clock (2.99s x4 margin), not RESEARCH.md's illustrative placeholder
+- [Phase ?]: BUILD-01 closed via verify-and-close: pre-existing fix 528a92a confirmed at HEAD, no code change to VulkanInitMutex/BuildSnapshot/InitializeContext

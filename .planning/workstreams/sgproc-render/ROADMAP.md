@@ -76,7 +76,7 @@ Full detail archived at `.planning/milestones/sgproc-render-v2.2-ROADMAP.md`.
 
 - [x] **Phase 16: Manifest Evolution** - Human-readable error messages retrievable from the manifest, and a schema-evolvable binary manifest format — closing Phase 08's deferred scope (Merkle-tree chunk integrity and content-defined chunking concluded 'Won't implement — not applicable' during phase discussion; see 16-CONTEXT.md D-01..D-08) (completed 2026-08-18)
 - [x] **Phase 17: Render-Path Cross-Hardware Tolerance** - Three non-trivial render fixtures (texturing, blending, lighting) plus a real schema-configurable tolerance mechanism, replacing `QuantizeByteBuffer`'s byte-identity no-op (completed 2026-08-20; RENDTOL-02's blending residual gap closed by 17-09 via the user's chosen numeric-tolerance-fallback resolution (17-CONTEXT.md D-10/D-11) — the strict quantized-hash mismatch remains true, and blending's real raw cross-hardware delta is now proven within its byteQuantMode=6 tolerance bound; see 17-TOLERANCE-RESULTS.md's Gap Closure Addendum)
-- [ ] **Phase 18: Build Stability** - Fixes the `VulkanInitMutex` re-entrancy deadlock in `ProcessingManager::Create()`'s capability probe
+- [x] **Phase 18: Build Stability** - Fixes the `VulkanInitMutex` re-entrancy deadlock in `ProcessingManager::Create()`'s capability probe (completed 2026-08-20)
 - [ ] **Phase 19: Validation Re-Verification** - Re-runs VALD-01's MNN fixture through Phase 15's tolerance-fallback mechanism and documents whether the gap is actually closed
 
 ## Phase Details
@@ -169,12 +169,12 @@ Plans:
   3. `vulkan_init_concurrency_test` completes (no hang, no deadlock) and its existing concurrent-init assertions still pass.
   4. The shared `VulkanInitMutex()` coexistence contract (MNN + RenderProcessor sharing one process-wide init lock, established in Phase 1) is unchanged in observable behavior for every other caller — only the re-entrancy defect is fixed, not the locking model itself.
 
-**Plans**: 0/1 plans complete
+**Plans**: 1/1 plans complete
 
 Plans:
 **Wave 1**
 
-- [ ] 18-01-PLAN.md — Add D-03's regression `TEST_F` + CMake `TIMEOUT` to `vulkan_init_concurrency_test`, then run the scoped 3-test gate and document the BUILD-01 closure evidence trail
+- [x] 18-01-PLAN.md — Add D-03's regression `TEST_F` + CMake `TIMEOUT` to `vulkan_init_concurrency_test`, then run the scoped 3-test gate and document the BUILD-01 closure evidence trail
 
 ### Phase 19: Validation Re-Verification
 
@@ -211,5 +211,5 @@ Plans:
 | 15. Validation Comparison Mechanism | v2.2 | 4/4 | Complete    | 2026-08-14 |
 | 16. Manifest Evolution | v2.3 | 3/3 | Complete    | 2026-08-18 |
 | 17. Render-Path Cross-Hardware Tolerance | v2.3 | 9/9 | Complete    | 2026-08-20 |
-| 18. Build Stability | v2.3 | 0/1 | Planned | - |
+| 18. Build Stability | v2.3 | 1/1 | Complete   | 2026-08-20 |
 | 19. Validation Re-Verification | v2.3 | 0/TBD | Not started | - |
