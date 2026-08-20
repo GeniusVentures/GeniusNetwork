@@ -6,7 +6,7 @@ current_phase: 17
 current_phase_name: render-path-cross-hardware-tolerance
 status: executing
 stopped_at: Completed 17-05-PLAN.md
-last_updated: "2026-08-20T02:20:16.785Z"
+last_updated: "2026-08-20T02:36:07.489Z"
 last_activity: 2026-08-19
 last_activity_desc: Phase 17 execution started
 progress:
@@ -257,3 +257,4 @@ Resume file: None
 - [Phase 17]: 17-05: Blending confirmed real cross-hardware divergence (maxAbsDelta=1); lighting/texturing measured zero divergence this round, honestly flagged per D-08 rather than reinterpreted as a pass
 - [Phase 17]: 17-05: Did not re-run requirements.mark-complete for RENDTOL-01/02 (already prematurely checked off after 17-02); left as a known open discrepancy for phase-close revisit
 - [Phase ?]: 17-06: Fixed a real push-constant field-order bug in lighting_fragment_shader.glsl (uniforms packed alphabetically by ResolveUniforms but shader declared natural order) -- this also explains 17-05's 'zero divergence' Round 1 finding for lighting as a degenerate solid-black render, not real Phong math; lighting=N5/blending=N6 chosen via binary search against new dedicated counter-tests
+- [Phase 17]: 17-06 found and fixed a real push-constant field-order bug in lighting_fragment_shader.glsl that made the lighting fixture always render solid black; derived byteQuantMode=5 (lighting) and =6 (blending), each proven via new SECV-01-style counter-tests — 17-05's Round 1 zero-divergence result for lighting was a degenerate artifact of the bug (comparing black-vs-black), not proof of real hardware tolerance -- Wave 7 (17-08 Round 2) MUST recapture lighting fresh against the corrected shader; the old Round 1 maxAbsDelta=0.0 for lighting must not be reused or assumed to still hold
