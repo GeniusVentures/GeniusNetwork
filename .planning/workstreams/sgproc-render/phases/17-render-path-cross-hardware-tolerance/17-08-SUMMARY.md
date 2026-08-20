@@ -146,3 +146,14 @@ None - no external service configuration required.
 ---
 *Phase: 17-render-path-cross-hardware-tolerance*
 *Completed: 2026-08-20*
+
+## Self-Check: PASSED
+
+- FOUND: .planning/workstreams/sgproc-render/phases/17-render-path-cross-hardware-tolerance/17-TOLERANCE-RESULTS.md
+- FOUND: .planning/workstreams/sgproc-render/phases/17-render-path-cross-hardware-tolerance/captures/diff-render-lighting-r2.json
+- FOUND: .planning/workstreams/sgproc-render/phases/17-render-path-cross-hardware-tolerance/captures/diff-render-blending-r2.json
+- FOUND: .planning/workstreams/sgproc-render/phases/17-render-path-cross-hardware-tolerance/captures/diff-render-texturing-r2.json
+- FOUND: .planning/workstreams/sgproc-render/phases/17-render-path-cross-hardware-tolerance/17-08-SUMMARY.md
+- FOUND commit 6bdb643 (Task 2)
+- FOUND commit e5c4855 (Task 3)
+- FOUND commit 7583509 (plan metadata)
