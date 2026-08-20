@@ -5,15 +5,15 @@ milestone_name: Deferred Gap Closure
 current_phase: 17
 current_phase_name: render-path-cross-hardware-tolerance
 status: executing
-stopped_at: Completed 17-03-PLAN.md
-last_updated: "2026-08-20T00:27:18.446Z"
+stopped_at: Completed 17-05-PLAN.md
+last_updated: "2026-08-20T01:37:39.588Z"
 last_activity: 2026-08-19
 last_activity_desc: Phase 17 execution started
 progress:
   total_phases: 4
   completed_phases: 1
   total_plans: 11
-  completed_plans: 7
+  completed_plans: 8
   percent: 25
 ---
 
@@ -29,7 +29,7 @@ See: .planning/PROJECT.md (updated 2026-08-03), workstream section "Workstream: 
 ## Current Position
 
 Phase: 17 (render-path-cross-hardware-tolerance) — EXECUTING
-Plan: 5 of 8
+Plan: 6 of 8
 Status: Ready to execute
 Last activity: 2026-08-19 — Phase 17 execution started
 
@@ -95,6 +95,7 @@ Last activity: 2026-08-19 — Phase 17 execution started
 | Phase 17 P02 | 20min | 2 tasks | 13 files |
 | Phase 17 P03 | 27min | 3 tasks | 12 files |
 | Phase 17 P04 | 50min | 2 tasks | 6 files |
+| Phase 17 P05 | 25min | 3 tasks | 7 files |
 
 ## Accumulated Context
 
@@ -188,8 +189,8 @@ Items acknowledged and deferred at milestone v2.2 close on 2026-08-14 (same Phas
 
 ## Session Continuity
 
-Last session: 2026-08-20T00:27:18.438Z
-Stopped at: Completed 17-03-PLAN.md
+Last session: 2026-08-20T01:37:39.582Z
+Stopped at: Completed 17-05-PLAN.md
 Resume file: None
 
 - [Phase 09 P10]: combinedHash/manifest.manifestHash computed over a timing-zeroed ExecutionManifest copy rather than modifying SerializeManifest()/ComputeManifestHash() themselves — preserves byte-for-byte compatibility with Phase 08's artifact_serializer_test.cpp round-trip tests over real timestamps
@@ -252,3 +253,5 @@ Resume file: None
 - [Phase 17]: Post-merge gate after Wave 1 found and fixed 2 pre-existing Phase-16 bugs: DeserializeCaptureFile read MANIFEST_SERIALIZED_SIZE (old base size) instead of MANIFEST_V2_SERIALIZED_SIZE for the manifest region, desyncing the trailing combinedHash read; ManifestDeterministicSerialization test asserted the same stale constant — Neither 17-01 nor 17-02 touched capture_file_format.cpp or this test -- root cause is Phase 16's SerializeManifest always emitting the larger V2 size, a gap Phase 16's own regression checks missed. Fixed now (not deferred) because Waves 4/6/7's empirical capture-and-diff mechanism depends on capture files round-tripping correctly
 - [Phase 17-03]: texture_buffer modeled as independent pass-level field (not routed through the uniforms map), mirroring vertex_buffer/index_buffer's existing bypass of ResolveUniforms/PackUniformValue (RESEARCH.md Pitfall 4)
 - [Phase ?]: [Phase 17-04]: The wire format never threads a per-texture filter mode across SerializeRenderPassConfig/ParseRenderPassConfig, so UploadTexture() always uses sgns::TextureFilter::NEAREST regardless of the fixture's declared texture_buffer.filter -- matches this fixture's own filter:nearest declaration and Pitfall 1's recommendation, but the schema field is not yet functionally threaded through end-to-end
+- [Phase 17]: 17-05: Blending confirmed real cross-hardware divergence (maxAbsDelta=1); lighting/texturing measured zero divergence this round, honestly flagged per D-08 rather than reinterpreted as a pass
+- [Phase 17]: 17-05: Did not re-run requirements.mark-complete for RENDTOL-01/02 (already prematurely checked off after 17-02); left as a known open discrepancy for phase-close revisit
