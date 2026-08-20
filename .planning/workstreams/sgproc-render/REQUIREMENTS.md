@@ -19,7 +19,7 @@ This milestone is not new feature work — it closes four real, previously-surfa
 ### Render-Path Cross-Hardware Tolerance
 
 - [x] **RENDTOL-01**: Three non-trivial render fixtures exist (texturing, blending, and lighting — MSAA excluded per D-03's architectural hard-block), each exercising real floating-point-heavy render computation — not just the existing trivial 8x8 solid-color fixture (`render-pass-happy-path-definition.json`) — **complete: all 3 fixtures built, and Round 2 (17-08) proved via real two-machine capture that each exercises genuine non-trivial computation**
-- [ ] **RENDTOL-02**: The render output path has a real schema-configurable tolerance mechanism (mirroring Phase 14's `ResolveQuantScale`/`ResolveByteQuantMode` pattern for MNN), replacing `QuantizeByteBuffer`'s current byte-identity no-op — proven independently against real cross-hardware capture data from each of RENDTOL-01's three fixtures — **partially satisfied (17-VERIFICATION.md gap #1): mechanism exists and byteQuantMode values (lighting=5, blending=6, texturing=7) are derived and counter-test-proven not-too-loose, and Round 2 hash-matched for lighting+texturing — but blending's Round 2 capture shows the quantization made cross-hardware divergence WORSE (raw maxAbsDelta=1.0 → quantized 64.0), a real architectural gap in `QuantizeByteBuffer`'s bit-masking (no rounding tie-break), not yet resolved. Requires a human decision: redesign the quantization, fall back to numeric-tolerance comparison for blending, or accept as a documented override (VALD-01 precedent).**
+- [x] **RENDTOL-02**: The render output path has a real schema-configurable tolerance mechanism (mirroring Phase 14's `ResolveQuantScale`/`ResolveByteQuantMode` pattern for MNN), replacing `QuantizeByteBuffer`'s current byte-identity no-op — proven independently against real cross-hardware capture data from each of RENDTOL-01's three fixtures — **complete: mechanism exists and byteQuantMode values (lighting=5, blending=6, texturing=7) are derived and counter-test-proven not-too-loose; lighting+texturing hash-matched in Round 2, and blending is now proven via the user's chosen numeric-tolerance-fallback path (D-10/D-11) — `capture_diff`'s new `--byte-quant-mode` raw-tolerance check confirms blending's real raw cross-hardware delta (1.0) is within byteQuantMode=6's tolerance bound (63) against the already-captured Round 2 `preQuantizeBytes`, mirroring production's `AttemptToleranceFallback` exactly. The strict quantized-hash mismatch (maxAbsDelta=64.0) remains true and is not reinterpreted — see 17-TOLERANCE-RESULTS.md's Gap Closure Addendum for both numbers side by side.**
 
 ### Build Stability
 
@@ -56,7 +56,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | ARTF-09 | Phase 16 | Complete |
 | ARTF-10 | Phase 16 | Complete |
 | RENDTOL-01 | Phase 17 | Complete |
-| RENDTOL-02 | Phase 17 | Partial — blending residual gap open (17-VERIFICATION.md gap #1), human decision needed |
+| RENDTOL-02 | Phase 17 | Complete — numeric-tolerance fallback proven (17-TOLERANCE-RESULTS.md Gap Closure Addendum) |
 | BUILD-01 | Phase 18 | Pending |
 | VALD-02 | Phase 19 | Pending |
 

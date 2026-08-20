@@ -134,3 +134,26 @@ Round 2 (`byteQuantMode=7`), full verbatim contents of `captures/diff-render-tex
 RENDTOL-02's SC4 requirement ("a fresh two-machine `capture_diff` run shows the fixture's processor-level output hash matching cross-hardware, or a residual gap is characterized honestly") is satisfied on its own honest terms: **2 of 3 fixtures (lighting, texturing) hash-match cross-hardware; 1 of 3 (blending) has a real, specifically-characterized residual gap that the chosen tolerance mechanism makes worse, not better.** This is not silently declared passing -- RENDTOL-02 as a whole is **not fully closed**; blending's gap is real, understood, and left open for future architectural work (see Root Cause above), exactly as D-08's honesty bar requires.
 
 SC5 (a SECV-01-style counter-test proves the tolerance is not too loose to mask corruption) **is satisfied for all three fixtures** independently of SC4's outcome -- `secv01_render_lighting_counter_test.cpp`/`secv01_render_blending_counter_test.cpp` (17-06) and `secv01_render_texturing_counter_test.cpp` (17-07) each proved their fixture's chosen `byteQuantMode` sits one step below a confirmed corruption-masking boundary. SC4 and SC5 are answering different questions, and blending's SC4 gap does not imply an SC5 problem -- the mechanism correctly refuses to mask a *deliberate* corruption; it simply also, as a side effect of its bit-masking design, sometimes amplifies small *real* cross-hardware noise past the point of matching.
+
+## Gap Closure Addendum (RENDTOL-02 numeric-tolerance fallback, D-10/D-11)
+
+The strict quantized-hash comparison `capture_diff` already performed for blending, documented above, is **unchanged**: `contentHashMatch=false`, `maxAbsDelta=64.0` (on `quantizedBytes`, byteQuantMode=6 bit-masking applied). That number still shows a mismatch and is not reinterpreted here as passing.
+
+Per the user's locked resolution (`17-CONTEXT.md` D-10: numeric-tolerance fallback) and D-11's grounded finding, `capture_diff` was extended with a new opt-in `--byte-quant-mode <N>` raw-tolerance mode (Plan 17-09, Task 2). This mode calls `IsByteChunkWithinToleranceForMode` -- a thin CLI-facing wrapper (Task 1) that delegates, unmodified, to `IsByteChunkWithinTolerance`, the exact function/bound formula production's `AttemptToleranceFallback` already applies to raw pre-quantization bytes. Neither `QuantizeByteBuffer`, `IsByteChunkWithinTolerance`, nor any `ValidateResults` code was modified by this addendum.
+
+Run against the already-captured Round 2 blending `.cap` files' `preQuantizeBytes` field (recorded unconditionally at capture time, independent of the `byteQuantMode` active when captured -- no new hardware capture round was required), the result (`captures/diff-render-blending-r2-rawtolerance.json`) is:
+
+```json
+{
+  "rawToleranceCheck": {
+    "byteQuantMode": 6,
+    "checked": true,
+    "maxAbsDelta": 1.0,
+    "withinTolerance": true
+  }
+}
+```
+
+The real raw cross-hardware delta (`1.0`) is exactly Round 1's independently-measured raw `maxAbsDelta` cited above, confirming `preQuantizeBytes` coherence across capture rounds. It is well within `byteQuantMode=6`'s mask-width tolerance bound (`(1<<6)-1 = 63`), so `withinTolerance=true`.
+
+**Conclusion:** RENDTOL-02 is now satisfied for blending via the user's chosen numeric-tolerance-fallback path, proven with the exact mechanism production already relies on -- not a new, second tolerance mechanism. The strict quantized-hash number (`64.0`/`false`) and the raw-tolerance number (`1.0`/`true`) coexist and answer different questions: the former asks "does `QuantizeByteBuffer`'s bit-masking output match bit-for-bit cross-hardware" (no, per the Blending Fixture section's root-cause analysis above), while the latter asks "is the real, pre-quantization cross-hardware divergence within the schema-declared tolerance bound production's own fallback mechanism would accept" (yes). RENDTOL-02's tolerance mechanism is now proven, for all three of RENDTOL-01's fixtures, against real cross-hardware capture data: lighting and texturing via strict hash-match (unchanged from above), blending via this raw-buffer numeric-tolerance check.
