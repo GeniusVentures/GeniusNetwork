@@ -6,14 +6,14 @@ current_phase: 17
 current_phase_name: render-path-cross-hardware-tolerance
 status: executing
 stopped_at: Completed 17-05-PLAN.md
-last_updated: "2026-08-20T01:37:39.588Z"
+last_updated: "2026-08-20T02:20:16.785Z"
 last_activity: 2026-08-19
 last_activity_desc: Phase 17 execution started
 progress:
   total_phases: 4
   completed_phases: 1
   total_plans: 11
-  completed_plans: 8
+  completed_plans: 9
   percent: 25
 ---
 
@@ -29,7 +29,7 @@ See: .planning/PROJECT.md (updated 2026-08-03), workstream section "Workstream: 
 ## Current Position
 
 Phase: 17 (render-path-cross-hardware-tolerance) — EXECUTING
-Plan: 6 of 8
+Plan: 7 of 8
 Status: Ready to execute
 Last activity: 2026-08-19 — Phase 17 execution started
 
@@ -96,6 +96,7 @@ Last activity: 2026-08-19 — Phase 17 execution started
 | Phase 17 P03 | 27min | 3 tasks | 12 files |
 | Phase 17 P04 | 50min | 2 tasks | 6 files |
 | Phase 17 P05 | 25min | 3 tasks | 7 files |
+| Phase 17 P06 | 90min | 2 tasks | 7 files |
 
 ## Accumulated Context
 
@@ -189,7 +190,7 @@ Items acknowledged and deferred at milestone v2.2 close on 2026-08-14 (same Phas
 
 ## Session Continuity
 
-Last session: 2026-08-20T01:37:39.582Z
+Last session: 2026-08-20T02:20:16.779Z
 Stopped at: Completed 17-05-PLAN.md
 Resume file: None
 
@@ -255,3 +256,4 @@ Resume file: None
 - [Phase ?]: [Phase 17-04]: The wire format never threads a per-texture filter mode across SerializeRenderPassConfig/ParseRenderPassConfig, so UploadTexture() always uses sgns::TextureFilter::NEAREST regardless of the fixture's declared texture_buffer.filter -- matches this fixture's own filter:nearest declaration and Pitfall 1's recommendation, but the schema field is not yet functionally threaded through end-to-end
 - [Phase 17]: 17-05: Blending confirmed real cross-hardware divergence (maxAbsDelta=1); lighting/texturing measured zero divergence this round, honestly flagged per D-08 rather than reinterpreted as a pass
 - [Phase 17]: 17-05: Did not re-run requirements.mark-complete for RENDTOL-01/02 (already prematurely checked off after 17-02); left as a known open discrepancy for phase-close revisit
+- [Phase ?]: 17-06: Fixed a real push-constant field-order bug in lighting_fragment_shader.glsl (uniforms packed alphabetically by ResolveUniforms but shader declared natural order) -- this also explains 17-05's 'zero divergence' Round 1 finding for lighting as a degenerate solid-black render, not real Phong math; lighting=N5/blending=N6 chosen via binary search against new dedicated counter-tests

@@ -121,7 +121,7 @@ Plans:
   4. With the new tolerance mechanism configured against RENDTOL-01's fixture, a fresh two-machine `capture_diff` run shows the fixture's processor-level output hash matching cross-hardware (or, if a residual gap remains, it is characterized with the same honesty as VALD-01/`13-SCOPE-BOUNDARY.md` rather than silently declared passing).
   5. A SECV-01-style counter-test proves the new render tolerance is not loose enough to also mask a deliberately wrong/corrupted render result on the new fixture.
 
-**Plans**: 5/8 plans executed
+**Plans**: 6/8 plans executed
 
 Plans:
 **Wave 1**
@@ -143,7 +143,7 @@ Plans:
 
 **Wave 5** *(blocked on 17-05 — needs real divergence data)*
 
-- [ ] 17-06-PLAN.md — Binary-search byteQuantMode + counter-test for lighting and blending
+- [x] 17-06-PLAN.md — Binary-search byteQuantMode + counter-test for lighting and blending
 
 **Wave 6** *(blocked on 17-06 — shared processing_conformance_security CMakeLists.txt)*
 
@@ -201,6 +201,6 @@ Plans:
 | 14. Configurable Normalization Precision | v2.2 | 3/3 | Complete    | 2026-08-14 |
 | 15. Validation Comparison Mechanism | v2.2 | 4/4 | Complete    | 2026-08-14 |
 | 16. Manifest Evolution | v2.3 | 3/3 | Complete    | 2026-08-18 |
-| 17. Render-Path Cross-Hardware Tolerance | v2.3 | 5/8 | In Progress|  |
+| 17. Render-Path Cross-Hardware Tolerance | v2.3 | 6/8 | In Progress|  |
 | 18. Build Stability | v2.3 | 0/TBD | Not started | - |
 | 19. Validation Re-Verification | v2.3 | 0/TBD | Not started | - |
