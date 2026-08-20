@@ -4,16 +4,16 @@ milestone: v2.3
 milestone_name: Deferred Gap Closure
 current_phase: 17
 current_phase_name: render-path-cross-hardware-tolerance
-status: executing
-stopped_at: Completed 17-08-PLAN.md, Phase 17 done (8/8, residual gap on blending)
-last_updated: "2026-08-20T18:20:59.625Z"
-last_activity: 2026-08-19
-last_activity_desc: Phase 17 execution started
+status: phase_complete
+stopped_at: Completed 17-09-PLAN.md, Phase 17 fully done (9/9) -- RENDTOL-02 closed
+last_updated: "2026-08-20T18:37:17.060Z"
+last_activity: 2026-08-20
+last_activity_desc: Completed 17-09-PLAN.md (gap-closure plan)
 progress:
   total_phases: 4
   completed_phases: 2
-  total_plans: 11
-  completed_plans: 11
+  total_plans: 12
+  completed_plans: 12
   percent: 50
 ---
 
@@ -28,10 +28,10 @@ See: .planning/PROJECT.md (updated 2026-08-03), workstream section "Workstream: 
 
 ## Current Position
 
-Phase: 17 (render-path-cross-hardware-tolerance) — EXECUTING
-Plan: 8 of 8
-Status: Ready to execute
-Last activity: 2026-08-19 — Phase 17 execution started
+Phase: 17 (render-path-cross-hardware-tolerance) — COMPLETE (9/9 plans)
+Plan: 9 of 9
+Status: Phase 17 complete -- RENDTOL-01 fully satisfied, RENDTOL-02 now fully satisfied (numeric-tolerance fallback proven for blending, D-10/D-11)
+Last activity: 2026-08-20 — Completed 17-09-PLAN.md (gap-closure plan)
 
 ## Performance Metrics
 
@@ -99,6 +99,7 @@ Last activity: 2026-08-19 — Phase 17 execution started
 | Phase 17 P06 | 90min | 2 tasks | 7 files |
 | Phase 17 P07 | 40min | 2 tasks | 5 files |
 | Phase 17 P08 | 55min | 2 tasks | 8 files |
+| Phase 17 P09 | 25min | 3 tasks | 8 files |
 
 ## Accumulated Context
 
@@ -192,8 +193,8 @@ Items acknowledged and deferred at milestone v2.2 close on 2026-08-14 (same Phas
 
 ## Session Continuity
 
-Last session: 2026-08-20T07:17:23.387Z
-Stopped at: Completed 17-08-PLAN.md, Phase 17 done (8/8, residual gap on blending)
+Last session: 2026-08-20T18:37:17.053Z
+Stopped at: Completed 17-09-PLAN.md, Phase 17 fully done (9/9) -- RENDTOL-02 closed
 Resume file: None
 
 - [Phase 09 P10]: combinedHash/manifest.manifestHash computed over a timing-zeroed ExecutionManifest copy rather than modifying SerializeManifest()/ComputeManifestHash() themselves — preserves byte-for-byte compatibility with Phase 08's artifact_serializer_test.cpp round-trip tests over real timestamps
@@ -264,3 +265,5 @@ Resume file: None
 - [Phase 17-08]: Blending's Round 2 byteQuantMode=6 result got WORSE than raw (maxAbsDelta 1.0 -> 64.0), root-caused to bit-masking amplifying boundary-straddling deltas; RENDTOL-02 not fully closed — Honest per-fixture SC4 reporting (D-08) over silently declaring passing; a real architectural limitation of QuantizeByteBuffer's bit-masking design, not a bug in this plan's process
 - [Phase 17-08]: Lighting's Round 2 hash-match is a fresh, legitimate zero-divergence measurement against 17-06's corrected shader (not a reuse of Round 1's degenerate figure); texturing confirmed to never diverge — Mirrors 13-SCOPE-BOUNDARY.md's honesty convention; SC4 satisfied for 2/3 fixtures, RENDTOL-01 fully satisfied
 - [Phase 17]: Phase 17 verification: gaps_found. RENDTOL-01 fully complete (3 fixtures, real computation, Round-2 hash-matched). RENDTOL-02 partially satisfied: byteQuantMode mechanism works and is counter-test-proven for all 3 fixtures, but blending's Round 2 capture shows quantization made cross-hardware divergence WORSE (raw maxAbsDelta=1.0 -> quantized 64.0), not better — QuantizeByteBuffer's bit-masking (value &= ~((1<<N)-1)) has no rounding tie-break, so raw deltas straddling a 64-wide bucket boundary get amplified into a full-bucket difference for blending specifically. This is a real architectural limitation the SECV-01 counter-test methodology cannot catch (it only proves tolerance isn't too loose, never that it improves real cross-hardware agreement). Requires a human decision: redesign quantization with round-to-nearest, fall back to numeric-tolerance comparison for blending, or accept as a documented override mirroring the VALD-01 precedent. 17-VERIFICATION.md has full detail
+- [Phase 17]: IsByteChunkWithinToleranceForMode is a pure additive wrapper for CLI callers with a bare byteQuantMode int -- delegates to IsByteChunkWithinTolerance unmodified — Lets capture_diff reuse production's exact tolerance bound formula without a job Parameter array or any change to the underlying function
+- [Phase 17]: RENDTOL-02 closed for blending via numeric-tolerance fallback (D-10/D-11), not by fixing QuantizeByteBuffer — capture_diff's new --byte-quant-mode raw-tolerance check proves blending's real raw delta (1.0) is within byteQuantMode=6's bound (63) against already-captured Round 2 preQuantizeBytes; the strict quantized-hash mismatch (64.0/false) remains true and is documented side by side, not reinterpreted
