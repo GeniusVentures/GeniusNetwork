@@ -75,7 +75,7 @@ Full detail archived at `.planning/milestones/sgproc-render-v2.2-ROADMAP.md`.
 **Dependency order note:** Unlike v2.1's hard-chained Phases 10-13 or v2.2's Phase 14→15 chain, all four v2.3 phases are independent of one another — each closes a distinct, previously-deferred gap with no shared prerequisite beyond already-shipped milestones (Phase 15/v2.2 for Phases 16 and 19; Phase 10/Phase 14's patterns for Phase 17; nothing project-specific for Phase 18). The order below follows REQUIREMENTS.md's category order, not an execution dependency — phases may be planned/executed in any order.
 
 - [x] **Phase 16: Manifest Evolution** - Human-readable error messages retrievable from the manifest, and a schema-evolvable binary manifest format — closing Phase 08's deferred scope (Merkle-tree chunk integrity and content-defined chunking concluded 'Won't implement — not applicable' during phase discussion; see 16-CONTEXT.md D-01..D-08) (completed 2026-08-18)
-- [ ] **Phase 17: Render-Path Cross-Hardware Tolerance** - Three non-trivial render fixtures (texturing, blending, lighting) plus a real schema-configurable tolerance mechanism, replacing `QuantizeByteBuffer`'s byte-identity no-op
+- [x] **Phase 17: Render-Path Cross-Hardware Tolerance** - Three non-trivial render fixtures (texturing, blending, lighting) plus a real schema-configurable tolerance mechanism, replacing `QuantizeByteBuffer`'s byte-identity no-op (completed 2026-08-20, closed with a residual gap -- blending's byteQuantMode=6 does not close cross-hardware divergence and measurably worsens it under real capture data; see 17-TOLERANCE-RESULTS.md)
 - [ ] **Phase 18: Build Stability** - Fixes the `VulkanInitMutex` re-entrancy deadlock in `ProcessingManager::Create()`'s capability probe
 - [ ] **Phase 19: Validation Re-Verification** - Re-runs VALD-01's MNN fixture through Phase 15's tolerance-fallback mechanism and documents whether the gap is actually closed
 
@@ -115,13 +115,13 @@ Plans:
 **Requirements**: RENDTOL-01, RENDTOL-02
 **Success Criteria** (what must be TRUE):
 
-  1. Three new render fixture definitions exist, one each for texturing, blending, and lighting — each producing measurably more floating-point computation than `render-pass-happy-path-definition.json`'s constant-color 8x8 point-list case.
-  2. Running each new fixture through `capture_harness` on two distinct real-hardware machines (mirroring Phase 11's dataset) produces a real, non-zero captured divergence in the raw render output — evidence each fixture actually stresses cross-hardware floating-point behavior, unlike the trivial case.
-  3. A schema-configurable tolerance parameter (mirroring Phase 14's `ResolveQuantScale`/`ResolveByteQuantMode` pattern) governs `QuantizeByteBuffer`'s behavior, with a silent fallback to the existing byte-identity behavior when unconfigured — proving the change is additive, not a breaking change to the existing trivial fixture.
-  4. With the new tolerance mechanism configured against RENDTOL-01's fixture, a fresh two-machine `capture_diff` run shows the fixture's processor-level output hash matching cross-hardware (or, if a residual gap remains, it is characterized with the same honesty as VALD-01/`13-SCOPE-BOUNDARY.md` rather than silently declared passing).
-  5. A SECV-01-style counter-test proves the new render tolerance is not loose enough to also mask a deliberately wrong/corrupted render result on the new fixture.
+  1. Three new render fixture definitions exist, one each for texturing, blending, and lighting — each producing measurably more floating-point computation than `render-pass-happy-path-definition.json`'s constant-color 8x8 point-list case. **Outcome: TRUE — all three fixtures built (17-01/17-02/17-03+17-04); each independently confirmed to exercise genuine per-fixture floating-point computation (17-06 found and fixed a real bug that had made lighting degenerate; 17-07 proved texturing's zero divergence is honest, not a hidden defect).**
+  2. Running each new fixture through `capture_harness` on two distinct real-hardware machines (mirroring Phase 11's dataset) produces a real, non-zero captured divergence in the raw render output — evidence each fixture actually stresses cross-hardware floating-point behavior, unlike the trivial case. **Outcome: PARTIAL, reported honestly — blending: real non-zero raw divergence confirmed (`maxAbsDelta=1.0`, Round 1). Lighting and texturing measured zero raw divergence (Round 1, and Round 2's fresh corrected-shader lighting capture) — flagged per D-08 rather than reinterpreted as a pass.**
+  3. A schema-configurable tolerance parameter (mirroring Phase 14's `ResolveQuantScale`/`ResolveByteQuantMode` pattern) governs `QuantizeByteBuffer`'s behavior, with a silent fallback to the existing byte-identity behavior when unconfigured — proving the change is additive, not a breaking change to the existing trivial fixture. **Outcome: TRUE — `ResolveByteQuantMode`/`QuantizeByteBuffer` (Phase 14) wired into all three fixtures' `parameters` arrays (lighting=5, blending=6, texturing=7); N<=0/absent still resolves to the exact byte-identity no-op, unchanged for `render-pass-happy-path-definition.json`.**
+  4. With the new tolerance mechanism configured against RENDTOL-01's fixture, a fresh two-machine `capture_diff` run shows the fixture's processor-level output hash matching cross-hardware (or, if a residual gap remains, it is characterized with the same honesty as VALD-01/`13-SCOPE-BOUNDARY.md` rather than silently declared passing). **Outcome: MIXED, reported honestly — lighting: hash match confirmed (fresh Round 2 capture against the corrected shader). Texturing: hash match confirmed (fixture never diverged, raw or quantized). Blending: residual gap that got WORSE under quantization — raw `maxAbsDelta=1.0` (Round 1) became quantized `maxAbsDelta=64.0` (Round 2, `contentHashMatch=false`, 25% of elements exceed threshold) — root-caused in 17-TOLERANCE-RESULTS.md to bit-masking amplifying boundary-straddling raw deltas, not fixed by this plan.**
+  5. A SECV-01-style counter-test proves the new render tolerance is not loose enough to also mask a deliberately wrong/corrupted render result on the new fixture. **Outcome: TRUE for all three fixtures — `secv01_render_lighting_counter_test.cpp`/`secv01_render_blending_counter_test.cpp` (17-06) and `secv01_render_texturing_counter_test.cpp` (17-07) each proved via binary search that the chosen byteQuantMode sits one step below a confirmed corruption-masking boundary.**
 
-**Plans**: 7/8 plans executed
+**Plans**: 8/8 plans complete
 
 Plans:
 **Wave 1**
@@ -151,7 +151,7 @@ Plans:
 
 **Wave 7** *(blocked on 17-06/17-07 — needs final derived tolerances)*
 
-- [ ] 17-08-PLAN.md — Round 2 cross-machine capture with final tolerances, SC4 verdict, ROADMAP close-out — has checkpoint
+- [x] 17-08-PLAN.md — Round 2 cross-machine capture with final tolerances, SC4 verdict, ROADMAP close-out — completed 2026-08-20, closed with blending's residual gap honestly documented (see 17-TOLERANCE-RESULTS.md)
 
 ### Phase 18: Build Stability
 
@@ -201,6 +201,6 @@ Plans:
 | 14. Configurable Normalization Precision | v2.2 | 3/3 | Complete    | 2026-08-14 |
 | 15. Validation Comparison Mechanism | v2.2 | 4/4 | Complete    | 2026-08-14 |
 | 16. Manifest Evolution | v2.3 | 3/3 | Complete    | 2026-08-18 |
-| 17. Render-Path Cross-Hardware Tolerance | v2.3 | 7/8 | In Progress|  |
+| 17. Render-Path Cross-Hardware Tolerance | v2.3 | 8/8 | Complete (residual gap — blending, see 17-TOLERANCE-RESULTS.md) | 2026-08-20 |
 | 18. Build Stability | v2.3 | 0/TBD | Not started | - |
 | 19. Validation Re-Verification | v2.3 | 0/TBD | Not started | - |
