@@ -6,7 +6,7 @@ current_phase: 17
 current_phase_name: render-path-cross-hardware-tolerance
 status: verifying
 stopped_at: Completed 17-08-PLAN.md, Phase 17 done (8/8, residual gap on blending)
-last_updated: "2026-08-20T07:17:23.394Z"
+last_updated: "2026-08-20T07:30:08.204Z"
 last_activity: 2026-08-19
 last_activity_desc: Phase 17 execution started
 progress:
@@ -263,3 +263,4 @@ Resume file: None
 - [Phase ?]: 17-07: Derived texturing's byteQuantMode=7 via binary search against a new corrupted-source-image counter-test (N=0-7 pass, N=8 fails -- all-zero-byte edge case); confirmed texturing's Round 1 zero-divergence finding is honest (unlike lighting's 17-06 hidden bug) since the counter-test's own corruption still diverges at every safe N -- RENDTOL-02's byteQuantMode derivation now complete for all three fixtures (lighting=5, blending=6, texturing=7)
 - [Phase 17-08]: Blending's Round 2 byteQuantMode=6 result got WORSE than raw (maxAbsDelta 1.0 -> 64.0), root-caused to bit-masking amplifying boundary-straddling deltas; RENDTOL-02 not fully closed — Honest per-fixture SC4 reporting (D-08) over silently declaring passing; a real architectural limitation of QuantizeByteBuffer's bit-masking design, not a bug in this plan's process
 - [Phase 17-08]: Lighting's Round 2 hash-match is a fresh, legitimate zero-divergence measurement against 17-06's corrected shader (not a reuse of Round 1's degenerate figure); texturing confirmed to never diverge — Mirrors 13-SCOPE-BOUNDARY.md's honesty convention; SC4 satisfied for 2/3 fixtures, RENDTOL-01 fully satisfied
+- [Phase 17]: Phase 17 verification: gaps_found. RENDTOL-01 fully complete (3 fixtures, real computation, Round-2 hash-matched). RENDTOL-02 partially satisfied: byteQuantMode mechanism works and is counter-test-proven for all 3 fixtures, but blending's Round 2 capture shows quantization made cross-hardware divergence WORSE (raw maxAbsDelta=1.0 -> quantized 64.0), not better — QuantizeByteBuffer's bit-masking (value &= ~((1<<N)-1)) has no rounding tie-break, so raw deltas straddling a 64-wide bucket boundary get amplified into a full-bucket difference for blending specifically. This is a real architectural limitation the SECV-01 counter-test methodology cannot catch (it only proves tolerance isn't too loose, never that it improves real cross-hardware agreement). Requires a human decision: redesign quantization with round-to-nearest, fall back to numeric-tolerance comparison for blending, or accept as a documented override mirroring the VALD-01 precedent. 17-VERIFICATION.md has full detail
