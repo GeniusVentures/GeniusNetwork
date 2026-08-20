@@ -1,0 +1,13 @@
+{
+  "chunkDiffs": [],
+  "chunkHashesMatch": [],
+  "combinedHashMatch": false,
+  "contentHashMatch": true,
+  "elementCount": 16384,
+  "elementType": "uint8",
+  "maxAbsDelta": 0.0,
+  "maxRelDelta": 0.0,
+  "maxUlpDistance": 0,
+  "percentExceedingThreshold": 0.0,
+  "sizeMismatch": false
+}
