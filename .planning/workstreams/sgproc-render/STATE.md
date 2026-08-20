@@ -4,17 +4,17 @@ milestone: v2.3
 milestone_name: Deferred Gap Closure
 current_phase: 17
 current_phase_name: render-path-cross-hardware-tolerance
-status: executing
-stopped_at: Completed 17-07-PLAN.md
-last_updated: "2026-08-20T03:00:51.081Z"
+status: verifying
+stopped_at: Completed 17-08-PLAN.md, Phase 17 done (8/8, residual gap on blending)
+last_updated: "2026-08-20T07:17:23.394Z"
 last_activity: 2026-08-19
 last_activity_desc: Phase 17 execution started
 progress:
   total_phases: 4
-  completed_phases: 1
+  completed_phases: 2
   total_plans: 11
-  completed_plans: 10
-  percent: 25
+  completed_plans: 11
+  percent: 50
 ---
 
 # Project State
@@ -30,7 +30,7 @@ See: .planning/PROJECT.md (updated 2026-08-03), workstream section "Workstream: 
 
 Phase: 17 (render-path-cross-hardware-tolerance) — EXECUTING
 Plan: 8 of 8
-Status: Ready to execute
+Status: Phase complete — ready for verification
 Last activity: 2026-08-19 — Phase 17 execution started
 
 ## Performance Metrics
@@ -98,6 +98,7 @@ Last activity: 2026-08-19 — Phase 17 execution started
 | Phase 17 P05 | 25min | 3 tasks | 7 files |
 | Phase 17 P06 | 90min | 2 tasks | 7 files |
 | Phase 17 P07 | 40min | 2 tasks | 5 files |
+| Phase 17 P08 | 55min | 2 tasks | 8 files |
 
 ## Accumulated Context
 
@@ -191,8 +192,8 @@ Items acknowledged and deferred at milestone v2.2 close on 2026-08-14 (same Phas
 
 ## Session Continuity
 
-Last session: 2026-08-20T03:00:51.074Z
-Stopped at: Completed 17-07-PLAN.md
+Last session: 2026-08-20T07:17:23.387Z
+Stopped at: Completed 17-08-PLAN.md, Phase 17 done (8/8, residual gap on blending)
 Resume file: None
 
 - [Phase 09 P10]: combinedHash/manifest.manifestHash computed over a timing-zeroed ExecutionManifest copy rather than modifying SerializeManifest()/ComputeManifestHash() themselves — preserves byte-for-byte compatibility with Phase 08's artifact_serializer_test.cpp round-trip tests over real timestamps
@@ -260,3 +261,5 @@ Resume file: None
 - [Phase ?]: 17-06: Fixed a real push-constant field-order bug in lighting_fragment_shader.glsl (uniforms packed alphabetically by ResolveUniforms but shader declared natural order) -- this also explains 17-05's 'zero divergence' Round 1 finding for lighting as a degenerate solid-black render, not real Phong math; lighting=N5/blending=N6 chosen via binary search against new dedicated counter-tests
 - [Phase 17]: 17-06 found and fixed a real push-constant field-order bug in lighting_fragment_shader.glsl that made the lighting fixture always render solid black; derived byteQuantMode=5 (lighting) and =6 (blending), each proven via new SECV-01-style counter-tests — 17-05's Round 1 zero-divergence result for lighting was a degenerate artifact of the bug (comparing black-vs-black), not proof of real hardware tolerance -- Wave 7 (17-08 Round 2) MUST recapture lighting fresh against the corrected shader; the old Round 1 maxAbsDelta=0.0 for lighting must not be reused or assumed to still hold
 - [Phase ?]: 17-07: Derived texturing's byteQuantMode=7 via binary search against a new corrupted-source-image counter-test (N=0-7 pass, N=8 fails -- all-zero-byte edge case); confirmed texturing's Round 1 zero-divergence finding is honest (unlike lighting's 17-06 hidden bug) since the counter-test's own corruption still diverges at every safe N -- RENDTOL-02's byteQuantMode derivation now complete for all three fixtures (lighting=5, blending=6, texturing=7)
+- [Phase 17-08]: Blending's Round 2 byteQuantMode=6 result got WORSE than raw (maxAbsDelta 1.0 -> 64.0), root-caused to bit-masking amplifying boundary-straddling deltas; RENDTOL-02 not fully closed — Honest per-fixture SC4 reporting (D-08) over silently declaring passing; a real architectural limitation of QuantizeByteBuffer's bit-masking design, not a bug in this plan's process
+- [Phase 17-08]: Lighting's Round 2 hash-match is a fresh, legitimate zero-divergence measurement against 17-06's corrected shader (not a reuse of Round 1's degenerate figure); texturing confirmed to never diverge — Mirrors 13-SCOPE-BOUNDARY.md's honesty convention; SC4 satisfied for 2/3 fixtures, RENDTOL-01 fully satisfied
