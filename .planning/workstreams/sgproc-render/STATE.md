@@ -4,17 +4,17 @@ milestone: v2.3
 milestone_name: Deferred Gap Closure
 current_phase: 19
 current_phase_name: Validation Re-Verification
-status: executing
-stopped_at: Phase 19 context gathered
-last_updated: "2026-08-21T21:37:18.931Z"
-last_activity: 2026-08-20
-last_activity_desc: Phase 18 complete, transitioned to Phase 19
+status: complete
+stopped_at: Phase 19 complete (CLOSED, VALD-02) -- all 4 v2.3 phases done, ready for /gsd-complete-milestone
+last_updated: "2026-08-21T18:30:00.000Z"
+last_activity: 2026-08-21
+last_activity_desc: Phase 19 complete, verified -- VALD-02 CLOSED via re-verification against a fresh 2-machine capture
 progress:
   total_phases: 4
-  completed_phases: 3
-  total_plans: 13
-  completed_plans: 13
-  percent: 75
+  completed_phases: 4
+  total_plans: 14
+  completed_plans: 14
+  percent: 100
 ---
 
 # Project State
@@ -24,14 +24,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-08-03), workstream section "Workstream: sgproc-render"
 
 **Core value:** Elevate SGProcessingManager from a "parse-and-hope" pipeline to a contract-driven execution engine — jobs are validated before work starts, execution is cancellable and budget-aware, results are typed artifacts with provenance, and every processor is covered by a common test suite.
-**Current focus:** Phase 18 — build-stability
+**Current focus:** Phase 19 complete — all 4 v2.3 phases done
 
 ## Current Position
 
-Phase: 19 — Validation Re-Verification
-Plan: Not started
-Status: Ready to execute
-Last activity: 2026-08-20 — Phase 18 complete, transitioned to Phase 19
+Phase: 19 — Validation Re-Verification — Complete, CLOSED
+Plan: 19-01 complete (1/1)
+Status: v2.3 (Deferred Gap Closure) all 4 phases complete — ready for /gsd-complete-milestone
+Last activity: 2026-08-21 — Phase 19 complete: VALD-02 CLOSED via re-verification against a fresh 2-machine capture (Phase 13's archived .cap files found unreadable by current tooling mid-phase, see 19-REVERIFICATION.md)
 
 ## Performance Metrics
 
@@ -57,7 +57,7 @@ Last activity: 2026-08-20 — Phase 18 complete, transitioned to Phase 19
 | 16 — Manifest Evolution | 0/TBD | Not started |
 | 17 — Render-Path Cross-Hardware Tolerance | 0/TBD | Not started |
 | 18 — Build Stability | 0/TBD | Not started |
-| 19 — Validation Re-Verification | 0/TBD | Not started |
+| 19 — Validation Re-Verification | 1/1 | ✓ Complete, CLOSED (VALD-02) |
 
 *Updated after each plan completion*
 | Phase 09 P08 | 25min | 2 tasks | 4 files |
@@ -101,6 +101,7 @@ Last activity: 2026-08-20 — Phase 18 complete, transitioned to Phase 19
 | Phase 17 P08 | 55min | 2 tasks | 8 files |
 | Phase 17 P09 | 25min | 3 tasks | 8 files |
 | Phase 18 P01 | 20min | 3 tasks | 3 files |
+| Phase 19 P01 | 55min | 3 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -154,7 +155,7 @@ Last activity: 2026-08-20 — Phase 18 complete, transitioned to Phase 19
 - Build verification pending on prior phases — C++ compilation not retested in this session
 - Validation layers: system-level layer availability varies by platform (Vulkan SDK, NDK, MoltenVK)
 - **Pre-existing bug found during Phase 10's regression gate (not caused by Phase 10 — confirmed via diff, of the implicated files were touched by any of Phase 10's 6 plans):** `ProcessingDatatypesTest`/`ProcessingDispatchTest`/`vulkan_init_concurrency_test` all deadlock/crash in `ProcessingManager::Create()`'s Vulkan capability-probe path (`VulkanInitMutex()` re-entered on the same thread) whenever a real Vulkan device is present. Tracked at `.planning/todos/pending/2026-08-10-fix-vulkan-capability-probe-deadlock-in-processingmanager-cr.md`. Does not block Phase 10 — `processing_conformance_hashing_test` (the most directly relevant regression check for Phase 10's changes) and `CaptureSmokeTest` both pass. **Queued for v2.3 Phase 18 (BUILD-01).**
-- VALD-01 only partially satisfied: fresh re-validation (13-SCOPE-BOUNDARY.md) shows render fixture's processor-level hash matches cross-hardware, but MNN float32 fixture's does not (12/15 chunkHashesMatch still false post-quantization) -- open gap for future follow-up, not resolved by Phase 13. **Queued for v2.3 Phase 19 (VALD-02) re-verification against Phase 15's tolerance-fallback mechanism.**
+- ~~VALD-01 only partially satisfied: fresh re-validation (13-SCOPE-BOUNDARY.md) shows render fixture's processor-level hash matches cross-hardware, but MNN float32 fixture's does not (12/15 chunkHashesMatch still false post-quantization) -- open gap for future follow-up, not resolved by Phase 13.~~ — **Resolved 2026-08-21: Phase 19 re-verification confirmed `ValidateResults`/`AttemptToleranceFallback` genuinely closes this gap for the comparison mechanism's purposes (chunk 10, `maxAbsDelta=3.0517578125e-05`, within the D-03 bound), see 19-REVERIFICATION.md.**
 - ~~13-04 Task 1: S=2^14 grid widening regressed SECV-01~~ — resolved 2026-08-12 (this session): widening `QuantizeFloatBuffer`'s `kScale` from 2^20 (1048576.0f) to the plan's originally-proposed 2^14 (16384.0f) made `Secv01CounterTest.MnnCorruptedModelStillDiverges` FAIL (memcmp equal, 0 vs 0, confirmed deterministic by re-running twice — not flaky). Rather than abandoning the fix or accepting the MNN gap, ran a local binary search over power-of-two `S` values against the same SECV-01 test: S=2^20/2^17/2^16/2^15 all pass, S=2^14 fails deterministically. Chose **S=2^15 (32768.0f)** — one full power-of-two step of margin above the confirmed S=2^14 failure boundary, 32x the old S=2^20 grid step (~292x Phase 11's original maxAbsDelta) — and committed it (`quantization.cpp`/`.hpp`/`quantization_test.cpp` in the `SGProcessingManager` nested submodule, plus pointer bumps through `SuperGenius` and the outer repo). `QuantizationTest` (7/7) and both SECV-01 cases pass locally at S=2^15. Task 2's hands-on cross-machine re-capture checkpoint has been returned to the user with numbers updated to reflect S=2^15 (not the plan's original S=2^14/64x/585x citation). Whether S=2^15 actually closes VALD-01's MNN cross-hardware gap remains unverified until Task 2's fresh capture is diffed by Plan 13-05 — this remains an empirically-validated mitigation, not a guaranteed fix.
 - **New evidence for `QUANT-CFG-01` (schema-configurable normalization precision, already deferred out of v2.1 on 2026-08-07): a single global quantization scale cannot serve models with materially different cross-hardware divergence magnitudes.** Post-Phase-13, ad hoc cross-machine testing (outside v2.1's tested fixture set — this processor was never part of the render/float fixtures REQUIREMENTS.md/ROADMAP.md scoped this milestone to) captured the `tex3d`/volume MNN processor (`processing_processor_mnn_volume.cpp`) running **`spleen_ct_seg`, a real workload** (3D medical CT spleen segmentation), not a toy fixture — this is what makes the finding notable rather than a corner case. Result: **all 25 chunk hashes mismatch** Mac vs Windows, plus `contentHashMatch`/`combinedHashMatch` both `false` too (unlike the float fixture, nothing agrees) — confirmed genuinely cross-hardware-only, not same-machine flakiness (`capture_harness` reported 3/3 stable, self-checked runs on *each* machine independently). Deltas are real quantized-grid multiples (e.g. `0.005126953125` = exactly 168× the current S=2^15 grid step), i.e. quantization is running correctly — the raw pre-quantization divergence for this heavier workload (~44M elements total) is simply ~2-3 orders of magnitude larger than what S=2^15 was empirically derived to absorb (the tiny float fixture's ~1e-7 delta). A grid coarse enough to absorb `tex3d`'s divergence (~S=2^7-2^8) would be far below the already-confirmed S=2^14 SECV-01 failure boundary for the small model — there is no single `kScale` that is simultaneously safe for the small model and adequate for this one. **Important nuance from the operator's own prior, separate validation:** despite this large raw/hash-level divergence, the operator has previously run this same `spleen_ct_seg` workload across multiple real machines and visually inspected the outputs in 3D Slicer — both machines produced visually correct spleen isolation in 3D (small visible differences, but correct on the whole). This suggests bit-exact hash equality may be the wrong correctness bar entirely for segmentation-style workloads — a semantic/output-level comparison (e.g. Dice/overlap score) could plausibly show near-total agreement even where every chunk hash fails. Whatever design `QUANT-CFG-01` eventually adopts should account for this: per-workload tolerance tuning alone may not be sufficient if the comparison primitive itself (hash equality) is a poor fit for high-dimensional real-world model outputs.
 - **Untested risk (not yet observed, inferred from architecture): the render path's byte-identity claim is only validated against a near-zero-computation fixture and has no tolerance mechanism at all if it doesn't generalize.** `render-pass-happy-path-definition.json` — the only fixture this milestone's render-path cross-hardware match was ever measured against — is an 8x8 pixel target, `point_list` topology, and `solid_red_fragment_shader.glsl` (a constant-color output): about the least floating-point-computation a render job can do. `QuantizeByteBuffer` (`quantization.cpp`) is a **literal no-op** (`(void)data; (void)count;`), a deliberate byte-identity pass-through justified entirely by this one fixture's zero measured delta — unlike the MNN float path, there is no tolerance/quantization mechanism to fall back on at all. Realistic render jobs (texture sampling/filtering, blending, lighting math, MSAA) are exactly the kind of floating-point-heavy operations that produced `tex3d`'s much larger divergence above, and nothing currently exists to absorb that if it occurs on the render path. No more-complex render fixture exists in this project yet to actually test this (unlike `tex3d`, which was tested with real data) — flagging as a documented, plausible-but-unverified risk for whoever next builds a non-trivial render fixture, rather than a confirmed finding. **Queued for v2.3 Phase 17 (RENDTOL-01/02).**
@@ -173,7 +174,8 @@ Last activity: 2026-08-20 — Phase 18 complete, transitioned to Phase 19
 | v2.1 | Cross-node consensus/redundant-execution plumbing (XNODE-01c) | Still deferred — considered CI verification scope, not a v2.3 requirement | 2026-08-07 |
 | v2.2 (new) | Render-path cross-hardware tolerance untested risk (no fixture/mechanism beyond trivial 8x8 case) | Queued for v2.3 Phase 17 (RENDTOL-01/02) | 2026-08-14 |
 | v2.1 | Pre-existing Vulkan capability-probe deadlock (ProcessingManager::Create()) | Queued for v2.3 Phase 18 (BUILD-01) | 2026-08-10 |
-| v2.1 | VALD-01 MNN float32 fixture 12/15 chunk-hash gap — never re-checked against Phase 15's tolerance fallback | Queued for v2.3 Phase 19 (VALD-02) | 2026-08-13 |
+| v2.1 | VALD-01 MNN float32 fixture 12/15 chunk-hash gap — never re-checked against Phase 15's tolerance fallback | Resolved — Phase 19 re-verification confirmed AttemptToleranceFallback closes the gap (chunk 10, maxAbsDelta=3.0517578125e-05, within the 6.103515625e-05 D-03 bound; ValidateResults reports no error, zero subtasks invalidated), see 19-REVERIFICATION.md | 2026-08-21 |
+| v2.3 (new) | `DeserializeCaptureFile` cannot parse any pre-Phase-16 `.cap` file (SGProcessingManager commit `bf7e694` unconditionally requires the newer `MANIFEST_V2_SERIALIZED_SIZE` region, no backward-compatible fallback) — affects all of Phase 13's archived captures | Discovered during Phase 19 (VALD-02); out of Phase 19's scope to fix (D-04); documented in 19-REVERIFICATION.md, not yet queued to a specific future phase | 2026-08-21 |
 
 Items acknowledged and deferred at milestone v2.0 close on 2026-08-07:
 
@@ -194,9 +196,9 @@ Items acknowledged and deferred at milestone v2.2 close on 2026-08-14 (same Phas
 
 ## Session Continuity
 
-Last session: 2026-08-21T21:07:14.453Z
-Stopped at: Phase 19 context gathered
-Resume file: .planning/workstreams/sgproc-render/phases/19-validation-re-verification/19-CONTEXT.md
+Last session: 2026-08-21T18:30:00.000Z
+Stopped at: Phase 19 complete -- v2.3 (Deferred Gap Closure) all 4 phases done, ready for /gsd-complete-milestone
+Resume file: None
 
 - [Phase 09 P10]: combinedHash/manifest.manifestHash computed over a timing-zeroed ExecutionManifest copy rather than modifying SerializeManifest()/ComputeManifestHash() themselves — preserves byte-for-byte compatibility with Phase 08's artifact_serializer_test.cpp round-trip tests over real timestamps
 - [Phase 09 P11]: InferenceCanExecuteReflectsPassTypeRegistryGap documents (not fixes) that INFERENCE passes are schema-valid but not capability-registered — registering INFERENCE/RETRAIN into the capability registry is a separate, larger cross-phase change, deferred as a follow-up item
@@ -270,3 +272,8 @@ Resume file: .planning/workstreams/sgproc-render/phases/19-validation-re-verific
 - [Phase 17]: RENDTOL-02 closed for blending via numeric-tolerance fallback (D-10/D-11), not by fixing QuantizeByteBuffer — capture_diff's new --byte-quant-mode raw-tolerance check proves blending's real raw delta (1.0) is within byteQuantMode=6's bound (63) against already-captured Round 2 preQuantizeBytes; the strict quantized-hash mismatch (64.0/false) remains true and is documented side by side, not reinterpreted
 - [Phase ?]: TIMEOUT=12 derived from this session's own observed ctest wall-clock (2.99s x4 margin), not RESEARCH.md's illustrative placeholder
 - [Phase ?]: BUILD-01 closed via verify-and-close: pre-existing fix 528a92a confirmed at HEAD, no code change to VulkanInitMutex/BuildSnapshot/InitializeContext
+- [Phase 19-01]: Discovered mid-phase that Phase 13's archived .cap fixture pair (D-01's exact named files) is unreadable by current tooling -- SGProcessingManager commit bf7e694 (Phase 17) made DeserializeCaptureFile unconditionally require the post-Phase-16 MANIFEST_V2_SERIALIZED_SIZE region, silently breaking backward compatibility with every pre-Phase-16 .cap file. Independently confirmed via the unmodified capture_diff CLI failing identically. Presented as a 3-way checkpoint (document as still-open / fix the parser / fresh capture); user chose a fresh 2-machine capture over touching production code or leaving VALD-02 unresolved
+- [Phase 19-01]: Fresh capture (mnn-float_Fuus-Mac-mini.local---macOS_20260821T221542.cap / mnn-float_Mofu---Windows_20260821T221735.cap) independently reproduced Phase 13's exact original signature (chunk 10, maxAbsDelta=3.0517578125e-05, maxUlpDistance=2048) via a fresh capture_diff cross-check -- the same one-grid-step rounding-boundary divergence reproduces reliably across an independent capture session five days later
+- [Phase 19-01]: VALD-02 classified CLOSED -- ValidateResults/AttemptToleranceFallback (unmodified since Phase 15) genuinely engages for chunk 10 and resolves it as a tolerant match (no error, zero subtasks invalidated across the full 15-chunk fixture); the underlying cross-hardware numeric divergence still physically exists and is not eliminated -- what closes is whether the comparison mechanism correctly absorbs it, which it does. No production code modified (D-04)
+- [Phase 19-01]: Raised spdlog::set_level(debug) inside one TEST case only (test-file-scoped logging verbosity, no production code/behavior change) so AttemptToleranceFallback's existing production debug log line became visible in captured ctest output as citable numeric evidence
+- [Phase 19-01]: DeserializeCaptureFile's pre-Phase-16 backward-compatibility regression (bf7e694) is flagged in 19-REVERIFICATION.md but left unfixed -- out of this phase's declared scope (D-04); affects re-analysis of Phase 13's own archived captures with current tooling, deferred as a follow-up item for a future phase

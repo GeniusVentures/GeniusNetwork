@@ -77,7 +77,7 @@ Full detail archived at `.planning/milestones/sgproc-render-v2.2-ROADMAP.md`.
 - [x] **Phase 16: Manifest Evolution** - Human-readable error messages retrievable from the manifest, and a schema-evolvable binary manifest format — closing Phase 08's deferred scope (Merkle-tree chunk integrity and content-defined chunking concluded 'Won't implement — not applicable' during phase discussion; see 16-CONTEXT.md D-01..D-08) (completed 2026-08-18)
 - [x] **Phase 17: Render-Path Cross-Hardware Tolerance** - Three non-trivial render fixtures (texturing, blending, lighting) plus a real schema-configurable tolerance mechanism, replacing `QuantizeByteBuffer`'s byte-identity no-op (completed 2026-08-20; RENDTOL-02's blending residual gap closed by 17-09 via the user's chosen numeric-tolerance-fallback resolution (17-CONTEXT.md D-10/D-11) — the strict quantized-hash mismatch remains true, and blending's real raw cross-hardware delta is now proven within its byteQuantMode=6 tolerance bound; see 17-TOLERANCE-RESULTS.md's Gap Closure Addendum)
 - [x] **Phase 18: Build Stability** - Fixes the `VulkanInitMutex` re-entrancy deadlock in `ProcessingManager::Create()`'s capability probe (completed 2026-08-20)
-- [ ] **Phase 19: Validation Re-Verification** - Re-runs VALD-01's MNN fixture through Phase 15's tolerance-fallback mechanism and documents whether the gap is actually closed
+- [x] **Phase 19: Validation Re-Verification** - Re-runs VALD-01's MNN fixture through Phase 15's tolerance-fallback mechanism and documents whether the gap is actually closed — **CLOSED**: AttemptToleranceFallback genuinely engages for chunk 10 and resolves it as a match (completed 2026-08-21; re-run against a fresh 2-machine capture after Phase 13's archived .cap files were found unreadable by current tooling, see 19-REVERIFICATION.md)
 
 ## Phase Details
 
@@ -183,16 +183,16 @@ Plans:
 **Requirements**: VALD-02
 **Success Criteria** (what must be TRUE):
 
-  1. The original VALD-01 MNN float32 fixture (the exact fixture behind Phase 13's 12/15 chunk-hash-mismatch finding) is re-run end-to-end through the current `ValidateResults` tolerance-fallback path, not a re-derived or substitute fixture.
-  2. The re-run's outcome is captured as concrete evidence — which chunks match/mismatch post-fallback, and whether the numeric-tolerance fallback actually engaged — not inferred from Phase 14/15's general test suite passing.
-  3. The outcome is documented as explicitly closed, partially closed, or still open (mirroring Phase 13's own honest-reporting convention), with any remaining gap characterized rather than left implicit.
+  1. The original VALD-01 MNN float32 fixture (the exact fixture behind Phase 13's 12/15 chunk-hash-mismatch finding) is re-run end-to-end through the current `ValidateResults` tolerance-fallback path, not a re-derived or substitute fixture. **Outcome: TRUE, against a substituted-but-equivalent fixture — Phase 13's original archived `.cap` pair was found unreadable by current tooling mid-phase (a pre-existing, unrelated backward-compatibility regression in `DeserializeCaptureFile`, see 19-REVERIFICATION.md); per the user's explicit choice, a fresh 2-machine capture replaced it, independently proven via `capture_diff` to reproduce the exact same signature (chunk 10, `maxAbsDelta=3.0517578125e-05`, `maxUlpDistance=2048`) as Phase 13's original finding.**
+  2. The re-run's outcome is captured as concrete evidence — which chunks match/mismatch post-fallback, and whether the numeric-tolerance fallback actually engaged — not inferred from Phase 14/15's general test suite passing. **Outcome: TRUE — verbatim ctest output captures `AttemptToleranceFallback`'s own debug log line (`maxAbsDelta=3.0517578125e-05 maxRelDelta=0.00015477479610126466 withinTolerance=true`) plus `ValidateResults`' final `has_error()=false`/`invalidSubTaskIds.empty()=true` outcome for the full 15-chunk fixture.**
+  3. The outcome is documented as explicitly closed, partially closed, or still open (mirroring Phase 13's own honest-reporting convention), with any remaining gap characterized rather than left implicit. **Outcome: CLOSED — see 19-REVERIFICATION.md's Classification section. The underlying cross-hardware numeric divergence still physically exists (not eliminated); what closes is the question this phase asked — whether `ValidateResults`' comparison mechanism correctly absorbs it, which it does.**
 
-**Plans**: 0/1 plans complete
+**Plans**: 1/1 plans complete
 
 Plans:
 **Wave 1**
 
-- [ ] 19-01-PLAN.md — Add 2 new TEST cases to processing_validation_core_test.cpp feeding Phase 13's real .cap fixture pair (all 15 chunks) through ValidateResults/AttemptToleranceFallback, run them, and document the honest closed/partially-closed/still-open outcome in 19-REVERIFICATION.md
+- [x] 19-01-PLAN.md — Add 2 new TEST cases to processing_validation_core_test.cpp feeding a real .cap fixture pair (all 15 chunks) through ValidateResults/AttemptToleranceFallback, run them, and document the honest closed/partially-closed/still-open outcome in 19-REVERIFICATION.md
 
 ## Progress
 
@@ -217,4 +217,4 @@ Plans:
 | 16. Manifest Evolution | v2.3 | 3/3 | Complete    | 2026-08-18 |
 | 17. Render-Path Cross-Hardware Tolerance | v2.3 | 9/9 | Complete    | 2026-08-20 |
 | 18. Build Stability | v2.3 | 1/1 | Complete    | 2026-08-20 |
-| 19. Validation Re-Verification | v2.3 | 0/1 | Planned | - |
+| 19. Validation Re-Verification | v2.3 | 1/1 | Complete, CLOSED | 2026-08-21 |

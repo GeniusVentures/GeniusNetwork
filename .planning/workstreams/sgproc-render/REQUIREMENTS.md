@@ -27,7 +27,7 @@ This milestone is not new feature work — it closes four real, previously-surfa
 
 ### Validation Re-Verification
 
-- [ ] **VALD-02**: The original VALD-01 MNN float32 fixture (Phase 13's 12/15 chunk-hash mismatch finding) is re-run through Phase 15's `ValidateResults` tolerance-fallback mechanism, with the outcome (closed vs. still-open) documented with evidence — not assumed
+- [x] **VALD-02**: The original VALD-01 MNN float32 fixture (Phase 13's 12/15 chunk-hash mismatch finding, narrowed to 1/15 by Phase 13's own gap-closure round) is re-run through Phase 15's `ValidateResults` tolerance-fallback mechanism, with the outcome documented with evidence — **CLOSED, see 19-REVERIFICATION.md: AttemptToleranceFallback genuinely engages for chunk 10 (maxAbsDelta=3.0517578125e-05, within the 2.0/32768.0=6.103515625e-05 D-03 bound) and resolves it as a match; ValidateResults reports no error and invalidates zero subtasks across the full 15-chunk fixture. Re-run against a fresh 2-machine capture (D-01-REVISED) after Phase 13's original archived .cap files were found unreadable by current tooling — an unrelated pre-existing regression, documented in 19-REVERIFICATION.md, not fixed this phase.**
 
 ## v2 Requirements
 
@@ -58,14 +58,15 @@ Which phases cover which requirements. Updated during roadmap creation.
 | RENDTOL-01 | Phase 17 | Complete |
 | RENDTOL-02 | Phase 17 | Complete — numeric-tolerance fallback proven (17-TOLERANCE-RESULTS.md Gap Closure Addendum) |
 | BUILD-01 | Phase 18 | Complete |
-| VALD-02 | Phase 19 | Pending |
+| VALD-02 | Phase 19 | Complete — CLOSED (19-REVERIFICATION.md) |
 
 **Coverage:**
 
 - v2.3 requirements: 8 total
 - Mapped to phases: 8 ✓
 - Unmapped: 0
+- Complete: 8/8
 
 ---
 *Requirements defined: 2026-08-17*
-*Last updated: 2026-08-17 — roadmap created (Phases 16-19), all 8 requirements mapped*
+*Last updated: 2026-08-21 — Phase 19 (VALD-02) complete, CLOSED via re-verification against a fresh 2-machine capture; all 8 v2.3 requirements now complete*
