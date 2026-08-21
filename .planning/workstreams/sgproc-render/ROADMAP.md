@@ -187,7 +187,12 @@ Plans:
   2. The re-run's outcome is captured as concrete evidence — which chunks match/mismatch post-fallback, and whether the numeric-tolerance fallback actually engaged — not inferred from Phase 14/15's general test suite passing.
   3. The outcome is documented as explicitly closed, partially closed, or still open (mirroring Phase 13's own honest-reporting convention), with any remaining gap characterized rather than left implicit.
 
-**Plans**: TBD
+**Plans**: 0/1 plans complete
+
+Plans:
+**Wave 1**
+
+- [ ] 19-01-PLAN.md — Add 2 new TEST cases to processing_validation_core_test.cpp feeding Phase 13's real .cap fixture pair (all 15 chunks) through ValidateResults/AttemptToleranceFallback, run them, and document the honest closed/partially-closed/still-open outcome in 19-REVERIFICATION.md
 
 ## Progress
 
@@ -212,4 +217,4 @@ Plans:
 | 16. Manifest Evolution | v2.3 | 3/3 | Complete    | 2026-08-18 |
 | 17. Render-Path Cross-Hardware Tolerance | v2.3 | 9/9 | Complete    | 2026-08-20 |
 | 18. Build Stability | v2.3 | 1/1 | Complete    | 2026-08-20 |
-| 19. Validation Re-Verification | v2.3 | 0/TBD | Not started | - |
+| 19. Validation Re-Verification | v2.3 | 0/1 | Planned | - |
