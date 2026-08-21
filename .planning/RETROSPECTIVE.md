@@ -300,6 +300,45 @@ Schema-configurable per-data-type normalization precision (QUANT-CFG-01/02/03) r
 - Sessions: single session, 2026-08-13 evening through 2026-08-14
 - Notable: Phase 14 Plan 3's empirical binary search (5 rebuild+run iterations against a real ~19MB model) was the single most wall-clock-expensive step in either phase, despite yielding a negative result
 
+## Milestone: sgproc-render v2.3 — Deferred Gap Closure
+
+**Shipped:** 2026-08-21 (closed with an acknowledged carryover — Phase 04 gap, unrelated to this milestone's own phases; plus one newly-discovered, explicitly deferred parsing regression)
+**Phases:** 4 (16-19) | **Plans:** 14 | **Tasks:** 35
+
+### What Was Built
+
+Manifest evolution closing two of Phase 08's deferred gaps (ARTF-09/ARTF-10: human-readable error text + additive schema evolution, both proven in both compatibility directions; ARTF-07/ARTF-08 concluded "won't implement, not applicable"). Three non-trivial render fixtures (lighting, blending, texturing) proving genuine cross-hardware floating-point computation on the render path, plus a real schema-configurable tolerance mechanism (`byteQuantMode`) replacing `QuantizeByteBuffer`'s byte-identity no-op — closed even after a real architectural limitation (bit-masking amplifying blending's divergence) surfaced mid-milestone. Verify-and-close of a reported `VulkanInitMutex` deadlock (BUILD-01, already fixed by a pre-existing commit). Re-verification proving Phase 15's tolerance-fallback mechanism genuinely absorbs VALD-01's residual MNN chunk-10 gap (VALD-02, CLOSED).
+
+### What Worked
+
+- Treating all four phases as genuinely independent (no roadmap-encoded dependency chain, unlike v2.1/v2.2) let BUILD-01 and VALD-02 close as fast, low-effort verification passes without waiting on the much larger Phase 17 render work.
+- When Phase 17's Round 2 capture showed blending's tolerance mechanism made divergence *worse*, escalating to the user as an explicit human decision (rather than silently picking a resolution) surfaced that production's `AttemptToleranceFallback` already had the fix — the actual gap was only in the offline verification tool, the cheapest possible resolution.
+- Phase 19's 3-way checkpoint (document-as-open / fix-the-parser / fresh-capture) when Phase 13's archived fixture turned out unreadable avoided two worse outcomes: silently declaring the requirement unverifiable, or scope-creeping into fixing an unrelated production regression mid-phase.
+
+### What Was Inefficient
+
+- The pre-close artifact audit re-surfaced the same Phase 04 (v1.0) carryover gap for the third milestone running (v2.0, v2.2, now v2.3) — still never resolved, only re-acknowledged each time.
+- Phase 17's own `capture_diff` verification tool had silently drifted stricter than what production actually enforced (comparing only strict quantized-hash bytes, never calling the raw-tolerance function `AttemptToleranceFallback` already used) — undetected until Round 2's capture forced the question, costing a full escalation-and-research cycle (17-09) that a synced verification-vs-production contract would have avoided.
+- Phase 19 discovered a genuine backward-compatibility regression in `DeserializeCaptureFile` (introduced by Phase 17) that silently broke every pre-Phase-16 `.cap` file — invisible until this phase specifically needed to read one of Phase 13's old fixtures.
+
+### Patterns Established
+
+- When an offline/CLI verification tool's pass bar can silently drift from what production actually enforces (Phase 17's `capture_diff` vs. `AttemptToleranceFallback`), the fix is to make the tool call the same production function, not to loosen the tool's own threshold or accept a mismatch as a permanent override.
+- A "re-verify an existing mechanism against real evidence" phase (VALD-02) is legitimately cheap (1 plan) when the mechanism itself is unchanged — the cost is in fixture archaeology (finding/regenerating readable capture data), not new logic.
+- Milestone-archive filename collisions in this multi-workstream project are checked for via `.planning/milestones/` + `git tag -l` before writing — but this milestone showed the check must happen *before invoking the CLI tool itself*, not just before manually writing files: `gsd-tools.cjs milestone complete` has no workstream-namespacing and will happily overwrite another workstream's same-named archive the instant it's invoked without a pre-qualified version string.
+
+### Key Lessons
+
+- A verification tool and the production code it's meant to verify can drift apart silently — when a gap surfaces between what a CLI reports and what a mechanism actually does at runtime, check whether the *verification path* itself is missing a call the production path already makes, before assuming production needs a fix.
+- Even a CLI tool with a documented multi-workstream collision history (this repo's `milestone.complete`, already implicated in the v2.0 and v2.2 closes) will collide again on the very next invocation if the caller doesn't pass a qualified version string — "we know about this bug" is not the same as "we're protected from it"; the fix has to be applied at every single invocation, not just remembered.
+- Recovery from an accidental cross-workstream file overwrite is fast and safe *only* if caught before committing — `git status`/`git diff` immediately after any bulk-write tool call, before any commit, is the actual safety net; the awareness alone is not.
+
+### Cost Observations
+
+- Model mix: not tracked separately for this milestone
+- Sessions: spans 2026-08-17 through 2026-08-21
+- Notable: Phase 17 (9 plans, including a gap-closure plan) dwarfed the other three phases' combined plan count (5) — the render-path tolerance work was this milestone's real substance; Phases 18/19 were single-plan verification passes that closed fast once their underlying evidence existed
+
 ## Cross-Milestone Trends
 
 | Milestone | Phases | Plans | Duration | Notes |
@@ -313,3 +352,4 @@ Schema-configurable per-data-type normalization precision (QUANT-CFG-01/02/03) r
 | sgproc-render v2.0 Execution Contracts & Quality Gates | 4 | 27 | 4 days (2026-08-04 to 08-07) | Verification override: Phases 06-08 not phase_complete/verified, Phase 04 carryover gap; milestone-archive filename collision with child-wallet's own v2.0 caught and fixed before commit |
 | sgproc-render v2.1 Cross-Hardware Hash Tolerance | 4 | 15 | ~4 days (2026-08-10 to 08-13) | Accepted override: VALD-01 MNN fixture retains 1/15-chunk boundary tie-break (chunk 10, S=2^15 grid step); render fixture fully matched cross-hardware |
 | sgproc-render v2.2 Cross-Hardware Validation Tolerance | 2 | 7 | 2 days (2026-08-13 to 08-14) | QUANT-CFG-* configurable precision + XNODE-01b/02 ValidateResults fix, both requirements 6/6 shipped clean; only gap was the recurring Phase 04 (v1.0) carryover, unrelated to this milestone; filename collision with child-wallet's own v2.2 checked and avoided proactively |
+| sgproc-render v2.3 Deferred Gap Closure | 4 | 14 | 5 days (2026-08-17 to 08-21) | Four independent gap-closure phases (manifest evolution, render tolerance, build stability, validation re-verification), 8/8 requirements resolved; recurring Phase 04 carryover acknowledged a third time; filename collision with child-wallet's own (still-unshipped) v2.3 caught mid-close via `git status` after an unqualified CLI invocation briefly overwrote it, reverted, re-archived by hand |

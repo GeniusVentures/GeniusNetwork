@@ -4,11 +4,11 @@ milestone: v2.3
 milestone_name: Deferred Gap Closure
 current_phase: 19
 current_phase_name: Validation Re-Verification
-status: complete
-stopped_at: Phase 19 complete (CLOSED, VALD-02) -- all 4 v2.3 phases done, ready for /gsd-complete-milestone
-last_updated: "2026-08-21T18:30:00.000Z"
+status: v2.3 milestone complete
+stopped_at: v2.3 (Deferred Gap Closure) milestone completed and archived -- awaiting next milestone
+last_updated: "2026-08-21T23:30:00.000Z"
 last_activity: 2026-08-21
-last_activity_desc: Phase 19 complete, verified -- VALD-02 CLOSED via re-verification against a fresh 2-machine capture
+last_activity_desc: v2.3 milestone completed and archived
 progress:
   total_phases: 4
   completed_phases: 4
@@ -28,10 +28,10 @@ See: .planning/PROJECT.md (updated 2026-08-03), workstream section "Workstream: 
 
 ## Current Position
 
-Phase: 19 — Validation Re-Verification — Complete, CLOSED
-Plan: 19-01 complete (1/1)
-Status: v2.3 (Deferred Gap Closure) all 4 phases complete — ready for /gsd-complete-milestone
-Last activity: 2026-08-21 — Phase 19 complete: VALD-02 CLOSED via re-verification against a fresh 2-machine capture (Phase 13's archived .cap files found unreadable by current tooling mid-phase, see 19-REVERIFICATION.md)
+Phase: Milestone v2.3 complete
+Plan: —
+Status: Awaiting next milestone
+Last activity: 2026-08-21 — Milestone v2.3 (Deferred Gap Closure) completed and archived: `.planning/milestones/sgproc-render-v2.3-ROADMAP.md`/`REQUIREMENTS.md`, git tag `sgproc-render-v2.3`
 
 ## Performance Metrics
 
@@ -194,10 +194,18 @@ Items acknowledged and deferred at milestone v2.2 close on 2026-08-14 (same Phas
 | uat | Phase 04: 04-UAT.md — 1 pending scenario | testing |
 | verification | Phase 04: 04-VERIFICATION.md | human_needed |
 
+Items acknowledged and deferred at milestone v2.3 close on 2026-08-21 (same Phase 04 carryover re-surfaced by the pre-close artifact audit for the third milestone running, unchanged since v2.0/v2.2 — all 4 v2.3 phases themselves have no open gaps, fully complete/verification-passed):
+
+| Category | Item | Status |
+|----------|------|--------|
+| uat | Phase 04: 04-UAT.md — 1 pending scenario | testing |
+| verification | Phase 04: 04-VERIFICATION.md | human_needed |
+| new (this milestone) | `DeserializeCaptureFile` cannot parse pre-Phase-16 `.cap` files (commit `bf7e694`), discovered during Phase 19 | deferred, not yet queued to a phase |
+
 ## Session Continuity
 
-Last session: 2026-08-21T18:30:00.000Z
-Stopped at: Phase 19 complete -- v2.3 (Deferred Gap Closure) all 4 phases done, ready for /gsd-complete-milestone
+Last session: 2026-08-21T23:30:00.000Z
+Stopped at: Milestone v2.3 (Deferred Gap Closure) completed and archived -- awaiting next milestone
 Resume file: None
 
 - [Phase 09 P10]: combinedHash/manifest.manifestHash computed over a timing-zeroed ExecutionManifest copy rather than modifying SerializeManifest()/ComputeManifestHash() themselves — preserves byte-for-byte compatibility with Phase 08's artifact_serializer_test.cpp round-trip tests over real timestamps
@@ -215,7 +223,7 @@ Resume file: None
 
 ## Operator Next Steps
 
-- v2.3 (Deferred Gap Closure) roadmap created 2026-08-17: Phase 16 (Manifest Evolution: ARTF-07..10), Phase 17 (Render-Path Cross-Hardware Tolerance: RENDTOL-01/02), Phase 18 (Build Stability: BUILD-01), Phase 19 (Validation Re-Verification: VALD-02) — all 8 v2.3 requirements mapped, no dependency ordering between the four phases. Ready for `/gsd-plan-phase 16` (or any of 17/18/19, since none block each other).
+- v2.3 (Deferred Gap Closure) shipped 2026-08-21 — all 4 phases (16-19) complete and archived. Start the next milestone with `/gsd-new-milestone --ws sgproc-render`.
 
 ## Decisions
 

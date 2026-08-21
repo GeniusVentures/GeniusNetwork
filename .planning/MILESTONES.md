@@ -1,5 +1,29 @@
 # Milestones
 
+## v2.3 Deferred Gap Closure — sgproc-render workstream (Shipped: 2026-08-21)
+
+**Phases completed:** 4 phases, 14 plans, 35 tasks
+
+Full archive: `.planning/milestones/sgproc-render-v2.3-ROADMAP.md`, `.planning/milestones/sgproc-render-v2.3-REQUIREMENTS.md` (filenames workstream-qualified — the child-wallet workstream already owns bare `v2.3-ROADMAP.md`/`v2.3-REQUIREMENTS.md`/git tag `v2.3` for its own, still-unshipped "Child Wallet Transfers" milestone; same collision class as v2.0/v2.1/v2.2).
+
+**Key accomplishments:**
+
+- REQUIREMENTS.md and ROADMAP.md's Phase 16 bookkeeping now shows ARTF-07 (Merkle tree) and ARTF-08 (content-defined chunking) as "Won't implement — not applicable," citing 16-CONTEXT.md D-01..D-08, instead of a stale "Pending"/Merkle-CDC goal.
+- `ExecutionManifest` gains a new `errorMessage[256]` field (ARTF-09) delivered via a bounds-checked, append-only binary trailer mechanism (ARTF-10) that lets `SerializeManifest`/`DeserializeManifest` grow the format without breaking any existing fixed-offset field or hardcoded-literal test.
+- `ProcessingManager::ProcessInternal()` now builds and stores a minimal `ExecutionManifest` (with a real, non-empty `errorMessage`) on every terminal path via a new `GetLastManifest()` accessor, proven against real CANCELLED/BUDGET_EXCEEDED/Success fixtures.
+- Three non-trivial render fixtures (lighting, blending, texturing) proven to exercise genuine floating-point-heavy render computation via real two-machine capture — replacing the render path's only-ever-tested trivial 8x8 solid-color fixture.
+- A real schema-configurable render-output tolerance mechanism (`byteQuantMode`, mirroring Phase 14's `ResolveQuantScale` pattern) replaces `QuantizeByteBuffer`'s byte-identity no-op; lighting/texturing hash-match cross-hardware, and blending's residual gap (quantization made its real divergence *worse*, not better) is closed via a numeric-tolerance-fallback proof reusing production's `IsByteChunkWithinTolerance` unmodified — no new hardware capture, no production code changed.
+- Confirmed BUILD-01's Vulkan capability-probe deadlock was already fixed by pre-existing commit `528a92a`, closed verify-and-close with a persistent regression `TEST_F` + CMake fail-fast `TIMEOUT`.
+- Two new gtest cases prove `ProcessingValidationCore::ValidateResults`/`AttemptToleranceFallback` genuinely closes VALD-01's residual chunk-10 MNN float32 gap (`maxAbsDelta=3.0517578125e-05`, within the `2.0/32768.0` bound), re-run against a fresh 2-machine capture after Phase 13's archived fixture was found unreadable by current tooling — VALD-02 classified CLOSED.
+
+### Known Gaps
+
+- **Phase 04 (v1.0 carryover) re-surfaced, unresolved**: the pre-close artifact audit found the same `04-UAT.md` (1 pending scenario) and `04-VERIFICATION.md` (`human_needed`) gaps already acknowledged at v2.0 and v2.2 close — still open, unrelated to and unchanged by this milestone's own work (all 4 v2.3 phases are fully complete and verification-passed with no gaps of their own).
+- **New this milestone**: `DeserializeCaptureFile` cannot parse any pre-Phase-16 `.cap` file (a Phase 17 commit, `bf7e694`, unconditionally requires the newer `MANIFEST_V2_SERIALIZED_SIZE` region) — discovered during Phase 19 (VALD-02), explicitly left unfixed as out of that phase's scope, not yet queued to a specific future phase.
+- Milestone closed via acknowledged carryover (`closeout_type=override_closeout` on the Phase 04 item only) — same pattern as this workstream's v2.0/v2.1/v2.2 closeouts. See STATE.md Deferred Items for the full acknowledgment record.
+
+---
+
 ## v2.2 Cross-Hardware Validation Tolerance — sgproc-render workstream (Shipped: 2026-08-14)
 
 **Phases completed:** 2 phases, 7 plans, 14 tasks
