@@ -72,21 +72,21 @@
 
 | REQ-ID | Phase | Status |
 |--------|-------|--------|
-| JOB-01 | TBD | Pending |
-| JOB-02 | TBD | Pending |
-| JOB-03 | TBD | Pending |
-| JOB-04 | TBD | Pending |
-| FUND-01 | TBD | Pending |
-| FUND-02 | TBD | Pending |
-| FUND-03 | TBD | Pending |
-| MCHE-01 | TBD | Pending |
-| MCHE-02 | TBD | Pending |
-| MCHE-03 | TBD | Pending |
-| GEN-01 | TBD | Pending |
-| GEN-02 | TBD | Pending |
-| GEN-03 | TBD | Pending |
-| RES-01 | TBD | Pending |
-| RES-02 | TBD | Pending |
-| E2E-01 | TBD | Pending |
-| E2E-02 | TBD | Pending |
-| E2E-03 | TBD | Pending |
+| JOB-01 | Phase 1 | Pending |
+| JOB-02 | Phase 4 | Pending |
+| JOB-03 | Phase 1 | Pending |
+| JOB-04 | Phase 4 | Pending |
+| FUND-01 | Phase 1 | Pending |
+| FUND-02 | Phase 1 | Pending |
+| FUND-03 | Phase 1 | Pending |
+| MCHE-01 | Phase 2 | Pending |
+| MCHE-02 | Phase 2 | Pending |
+| MCHE-03 | Phase 2 | Pending |
+| GEN-01 | Phase 3 | Pending |
+| GEN-02 | Phase 3 | Pending |
+| GEN-03 | Phase 3 | Pending |
+| RES-01 | Phase 3 | Pending |
+| RES-02 | Phase 4 | Pending |
+| E2E-01 | Phase 4 | Pending |
+| E2E-02 | Phase 4 | Pending |
+| E2E-03 | Phase 4 | Pending |
