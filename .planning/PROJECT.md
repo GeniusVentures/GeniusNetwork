@@ -74,6 +74,21 @@ This project now runs parallel workstreams (see `.planning/workstreams/`). Each 
 - Bridge/gateway design — GNUS token movement between main net and subnet, trust model
 - Job isolation & consensus impact — subnet-scoped job scheduling, CRDT/registration/validation-gate subnet-awareness
 
+### Workstream: elmbridge
+
+**Goal:** A GCS-style requestor submits one funded `elm_processing` job (`elms[]` work items in existing `Task.json_data`); a single SuperGenius node distributes it through the existing processing grid and executes each ELM work item via SGProcessingManager — fetch model, verify, generate, publish work-item-tagged results. Single-node E2E.
+
+**Target features (v1.0):**
+- Job model — `job_type: "elm_processing"` with `elms[]` (work_item_id, elm_type, model manifest uri+hash, input, generation settings) entirely in `Task.json_data`; each work item maps to a subtask via the existing splitter/queue — no protobuf change, no new ownership protocol
+- Funding — deterministic from job JSON (`funding.maximum_processing_hours`, `escrow_path`) at the fixed $0.0003/hour rate through existing escrow/accounting; model download is billable job work
+- Manifest resolution — load manifest, hash-verify, fetch each artifact (sha256-verified); a node never executes an unverified model
+- Model cache — content-addressed `cache/<model-manifest-hash>/`, dedup downloads, pin while processing, verify before reuse
+- Real ELM processor — tokenizer + chat template, prompt tokenization, prefill, autoregressive generation with KV cache, sampling (`max_output_tokens`/`temperature`/`top_p`/`seed`), stop tokens/strings, detokenization, accurate token counts, cancellation
+- Work-item results — every result identifies its originating work item (existing `SubTask.subtaskid` mapping); requestor aggregates, no SuperGenius-side aggregation
+- E2E proof — single node with empty cache completes an assigned ELM subtask by downloading a small MNN causal-LM (e.g. Qwen-0.5B-class) as part of the job
+
+**Branches:** `dev_elmruntime` (SuperGenius + SGProcessingManager, already checked out). Tracking: SuperGenius#369, SGProcessingManager#17 (this workstream owns its own roadmap — SuperGenius `.planning` Phase 13/14 labels not carried over).
+
 ## Requirements
 
 ### Validated
@@ -233,4 +248,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-08-21 — sgproc-render v2.3 (Deferred Gap Closure) milestone complete and archived: all 4 phases (16-19) shipped, 8/8 requirements resolved, closed via an acknowledged Phase 04 carryover. Full archive: `.planning/milestones/sgproc-render-v2.3-*.md`, git tag `sgproc-render-v2.3`. No v2.4 requirements defined yet for this workstream.*
+*Last updated: 2026-09-09 — elmbridge workstream created; v1.0 (Single-Node ELM Job Execution) milestone defined. Prior: sgproc-render v2.3 closed 2026-08-21.*
