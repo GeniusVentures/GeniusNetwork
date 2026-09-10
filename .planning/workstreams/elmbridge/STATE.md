@@ -30,20 +30,20 @@ progress:
 
 ## Current Position
 
-Phase: 1 — ELM Job Model & Funding (executing)
-Plan: 01-03 — wave 3 of 3 (01-01 + 01-02 complete)
-Status: Executing — plans 01-01/01-02 committed (SGProcessingManager 4 commits, SuperGenius 4 commits on dev_elmruntime)
-Last activity: 2026-09-10 — Plan 01-02 complete (clocks utility, cost branch, interim rejection, rate record; 10/10 isolated tests)
+Phase: 1 — ELM Job Model & Funding (COMPLETE — verification pending)
+Plan: 01-03 complete — all 3 plans done (01-01 schema, 01-02 funding, 01-03 wiring+designs)
+Status: Phase 1 execution complete — 9 SuperGenius commits + 4 SGProcessingManager commits + 2 design artifacts; phase verification next
+Last activity: 2026-09-10 — Plan 01-03 complete (lock-timeout wiring, validation assertion, settlement + mapping designs; 10/10 isolated tests)
 
 ## Progress
 
-**Phases Complete:** 0 / 4
-**Current Plan:** 01-03 (wave 3 of 3; 01-01, 01-02 done)
-**Milestone Progress:** `[█▓░░░░░░░░] 15%`
+**Phases Complete:** 1 / 4 (verification pending)
+**Current Plan:** phase verification → Phase 2 (Manifest & Model Cache)
+**Milestone Progress:** `[██▓░░░░░░░] 25%`
 
 | Phase | Status |
 |-------|--------|
-| 1. ELM Job Model & Funding | Executing — 01-01 + 01-02 complete (01-03 remains) |
+| 1. ELM Job Model & Funding | Complete — all 3 plans done (verification pending) |
 | 2. Manifest & Model Cache | Not started |
 | 3. ELM Processor | Not started |
 | 4. Grid Integration & E2E Proof | Not started |
