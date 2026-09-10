@@ -31,19 +31,19 @@ progress:
 ## Current Position
 
 Phase: 1 — ELM Job Model & Funding (executing)
-Plan: 01-02 — wave 2 of 3 (01-01 complete: schema + gates + 27/27 tests)
-Status: Executing — plan 01-01 committed in SGProcessingManager (4 commits on dev_elmruntime)
-Last activity: 2026-09-10 — Plan 01-01 complete (Elm schema, parse gates, rejection matrix; 15/15 test binaries green)
+Plan: 01-03 — wave 3 of 3 (01-01 + 01-02 complete)
+Status: Executing — plans 01-01/01-02 committed (SGProcessingManager 4 commits, SuperGenius 4 commits on dev_elmruntime)
+Last activity: 2026-09-10 — Plan 01-02 complete (clocks utility, cost branch, interim rejection, rate record; 10/10 isolated tests)
 
 ## Progress
 
 **Phases Complete:** 0 / 4
-**Current Plan:** 01-02 (wave 2 of 3; 01-01 done)
-**Milestone Progress:** `[█░░░░░░░░░] 8%`
+**Current Plan:** 01-03 (wave 3 of 3; 01-01, 01-02 done)
+**Milestone Progress:** `[█▓░░░░░░░░] 15%`
 
 | Phase | Status |
 |-------|--------|
-| 1. ELM Job Model & Funding | Executing — 01-01 complete (3 plans, 3 waves) |
+| 1. ELM Job Model & Funding | Executing — 01-01 + 01-02 complete (01-03 remains) |
 | 2. Manifest & Model Cache | Not started |
 | 3. ELM Processor | Not started |
 | 4. Grid Integration & E2E Proof | Not started |
