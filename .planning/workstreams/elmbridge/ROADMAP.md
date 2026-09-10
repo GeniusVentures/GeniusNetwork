@@ -25,8 +25,12 @@
   3. Lock timeout, execution deadline, and escrow maximum for an ELM job all derive from `funding.maximum_processing_hours` in one place; an ELM subtask holding a valid lock at t>60s is NOT re-grabbed by another node
   4. An over-time ELM job reaches a terminal published state (e.g. `BUDGET_EXCEEDED`) and is never silently re-grabbed; settlement refunds unused escrow — declared maximum escrowed up front, settled by measured wall-clock (subtask grab → publication, model download included)
   5. A non-ELM job submitted through the same entry point follows the existing byte-based cost, 15s lock, and chunk-validation paths byte-for-byte — the ELM branch changes nothing observable for existing jobs
-**Plans**: TBD
-**Note**: Schema lands in SGProcessingManager first (quicktype regen, zero hand-edits to `generated/`); the SuperGenius cost/submit branch follows the submodule pointer bump. Includes the `work_item_id ↔ subtaskid` mapping *design* (implementation is Phase 4's splitter). Research flags for planning: (a) verify escrow wall-clock accounting measures from subtask grab (download included) — don't assume; (b) design how the subtask queue finalizes ELM subtasks without chunk-hash cross-subtask comparison.
+**Plans**: 3 plans
+Plans:
+- [ ] 01-01-PLAN.md — ELM job schema + quicktype regen + parse gates + rejection matrix (SGProcessingManager, submodule-first)
+- [ ] 01-02-PLAN.md — Three-clock derivation + GetElmProcessCost + interim ELM submit rejection + rate-record CRDT helper (SuperGenius, after pointer bump)
+- [ ] 01-03-PLAN.md — Derived lock-timeout wiring + validation-mode assertion + settlement/subtask-mapping design artifacts + SC-5 regression legs
+**Note**: Schema lands in SGProcessingManager first (quicktype regen, zero hand-edits to `generated/`); the SuperGenius cost/submit branch follows the submodule pointer bump. Includes the `work_item_id ↔ subtaskid` mapping *design* (implementation is Phase 4's splitter). Research flags resolved in 01-RESEARCH.md: (a) escrow wall-clock accounting measures NOTHING today — refund-by-measured-wall-clock designed in 01-DESIGN-SETTLEMENT.md, built Phase 4; (b) subtask queue finalization needs no `ValidateResults` change — D-11 corrected to a defensive assertion at `FinalizeQueueProcessing`.
 
 ### Phase 2: Manifest & Model Cache
 **Goal**: A node can turn a manifest `uri`+`hash` into a verified, loadable MNN model bundle on disk — fail-closed, downloaded once, safely reusable
@@ -77,7 +81,7 @@
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. ELM Job Model & Funding | 0/? | Not started | - |
+| 1. ELM Job Model & Funding | 0/3 | Planned | - |
 | 2. Manifest & Model Cache | 0/? | Not started | - |
 | 3. ELM Processor | 0/? | Not started | - |
 | 4. Grid Integration & E2E Proof | 0/? | Not started | - |
