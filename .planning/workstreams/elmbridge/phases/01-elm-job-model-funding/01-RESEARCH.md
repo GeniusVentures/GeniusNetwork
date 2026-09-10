@@ -396,14 +396,16 @@ Not a rename/refactor/migration phase — **skipped** (greenfield feature riding
 | A2 | Interim Phase-1 ELM submit stops **before** `HoldEscrow` (structured not-yet-splittable error) because a hold without a completable task strands reserved UTXOs (no un-reserve API short of payout) | F4, Open Questions | If the owner wants escrow exercised end-to-end in Phase 1, a minimal subtask path would have to be pulled forward from Phase 4; SC-2 would then verify via `ProcessImage` instead of unit-level |
 | A3 | `exclusiveMinimum` on `top_p` may not survive quicktype C++ codegen (unverified for 23.2.6) — fallback one-line C++ gate `top_p > 0` | Pattern 1, Pitfall 6 | None — either mechanism satisfies D-05; verify at regen time and keep the C++ check regardless (belt-and-braces) |
 
-## Open Questions
+## Open Questions (RESOLVED)
 
-1. **Interim ELM submit behavior in `ProcessImage` (Phase 1)**
+> **All three questions were resolved by the project owner at plan review (2026-09-09) and are locked into the plans as owner decisions OD-1/OD-2/OD-3.** Q1→OD-1 (reject before `HoldEscrow` with structured `ELM_SUBMIT_UNAVAILABLE` error; SC-2 verified via public `GetElmProcessCost` + rate-record unit test); Q2→OD-2 (`R = 1.0`, named constant `kUsdPerGnusRate` following the existing `GetProcessCost` USD-conversion shape); Q3→OD-3 (proportional-by-measured-window refund split).
+
+1. **Interim ELM submit behavior in `ProcessImage` (Phase 1)** — **RESOLVED → OD-1: reject with structured error before `HoldEscrow`**
    - What we know: splitter + full wiring are Phase 4 (CONTEXT domain, ROADMAP note). Holding escrow without a completable task strands reserved UTXOs (`ReserveUTXOs` in `HoldEscrow:1090`; no release path short of payout).
    - What's unclear: whether SC-2's "escrow held … equals …" is satisfied unit-level (public `GetElmProcessCost` + rate-record helper + review of the hold call site) or demands a live hold in Phase 1.
    - Recommendation: branch returns a structured `ELM_SUBMIT_UNAVAILABLE` error before `HoldEscrow`; SC-2 verified via `GetElmProcessCost` (public, like `GetProcessCost` which tests already call directly, `account_management_test.cpp:308`) + a rate-record unit test. Confirm with owner at plan review.
-2. **Rate constant value (A1)** — confirm `R = 1.0` or the owner's number before locking the minions formula tests.
-3. **Refund split rule for multi-work-item ELM settlement (Phase-4 implementation, design now)** — even split across work items (current `BuildPayoutOutputs` shape) vs. per-window proportional. Recommend proportional-by-measured-window (matches D-01); flag for owner since it changes peer payouts.
+2. **Rate constant value (A1)** — **RESOLVED → OD-2: `R = 1.0`** (named constant `kUsdPerGnusRate` in `processing_clocks_elm.hpp`, recorded in the `elm_rate` CRDT sibling key at hold time; follows the existing `GetProcessCost`/`CalculateCostMinions` USD-conversion shape with the deterministic constant replacing `GetGNUSPrice()`).
+3. **Refund split rule for multi-work-item ELM settlement (Phase-4 implementation, design now)** — **RESOLVED → OD-3: proportional-by-measured-window** (each subtask settles by its own measured grab→publication wall-clock window, matching D-01 sum-of-per-subtask billing; explicitly supersedes even-split for ELM).
 
 ## Environment Availability
 
