@@ -30,20 +30,20 @@ progress:
 
 ## Current Position
 
-Phase: 1 — ELM Job Model & Funding (planned)
-Plan: 01-01 — run `/gsd-execute-phase 1 --ws elmbridge`
-Status: Ready to execute — 3 plans in 3 waves (research + patterns + checker passed)
-Last activity: 2026-09-09 — Phase 1 planning complete
+Phase: 1 — ELM Job Model & Funding (executing)
+Plan: 01-02 — wave 2 of 3 (01-01 complete: schema + gates + 27/27 tests)
+Status: Executing — plan 01-01 committed in SGProcessingManager (4 commits on dev_elmruntime)
+Last activity: 2026-09-10 — Plan 01-01 complete (Elm schema, parse gates, rejection matrix; 15/15 test binaries green)
 
 ## Progress
 
 **Phases Complete:** 0 / 4
-**Current Plan:** 01-01 (wave 1 of 3)
-**Milestone Progress:** `[░░░░░░░░░░] 0%`
+**Current Plan:** 01-02 (wave 2 of 3; 01-01 done)
+**Milestone Progress:** `[█░░░░░░░░░] 8%`
 
 | Phase | Status |
 |-------|--------|
-| 1. ELM Job Model & Funding | Planned (3 plans, 3 waves) |
+| 1. ELM Job Model & Funding | Executing — 01-01 complete (3 plans, 3 waves) |
 | 2. Manifest & Model Cache | Not started |
 | 3. ELM Processor | Not started |
 | 4. Grid Integration & E2E Proof | Not started |
