@@ -357,7 +357,13 @@ No packages installed by this phase (zero-new-dependency workstream, D-003). qui
 | A4 | Default byte cap 15GB (mid D-04 range) as a named constant + setter, no config file | RQ8 | If owner wants operator config, defer to Phase 4 `sgns_config.json` wiring; constant remains the default |
 | A5 | Smoke-check placement pre-rename (against staging dir) satisfies "complete before usable" | Rec. 8 | If post-rename placement is preferred, a failed check must quarantine the just-published entry instead — equivalent safety, slightly more states; planner's call (explicitly discretionary) |
 
-## Open Questions
+## Open Questions (RESOLVED)
+
+> All four resolved at plan review (2026-09-10); resolutions implemented in the phase plans:
+> 1. A1 quicktype reachability → resolved in 02-01 Task 1 (root regen first, sanctioned A1 fallback second; `model_format` is a pattern-constrained string, not an enum, so the live `sgns::ModelFormat` regenerates byte-identical either way)
+> 2. Real-model smoke coverage → resolved per recommendation in 02-03 Task 3 (failure-path + gating assertions only; first real load is Phase 4's E2E)
+> 3. A3 memory axis → resolved as option (ii) host-RAM in 02-02 (QueryAvailableMemoryBytes + CheckElmResources)
+> 4. Q4 staging-failure cleanup vs quarantine → resolved as cleanup in 02-03 Task 2 (quarantine reserved for reuse-time mismatch per D-02's letter)
 
 1. **Quicktype reachability of unreferenced definitions (R1/A1)**
    - What we know: Phase 1's types were all root-reachable; quicktype's multi-source output generally covers all named definitions, but this is unverified for 23.2.6 against this schema.
