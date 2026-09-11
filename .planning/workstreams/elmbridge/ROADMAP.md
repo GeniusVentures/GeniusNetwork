@@ -57,12 +57,12 @@ Plans:
   4. Two concurrent subtasks requesting the same model trigger exactly one download (single-flight); both pin and load the same cache entry; a pinned entry is never evicted mid-use
   5. Partial downloads recover; unpinned entries evict LRU under disk pressure; `%TEMP%` stays clean across runs (no per-execution materialization — the cache is the single materialization point)
 
-**Plans**: 3 plans
+**Plans**: 1/3 plans executed
 Plans:
 
 **Wave 1**
 
-- [ ] 02-01-PLAN.md — Manifest layer: schema defs + quicktype regen (D-05, A1 fallback sanctioned), ElmRuntimeError category, ElmManifest hash-verify/gates, FetchFn + FileManager production wiring (D-08) + rejection-matrix tests (SGProcessingManager `src/elmruntime/`)
+- [x] 02-01-PLAN.md — Manifest layer: schema defs + quicktype regen (D-05, A1 fallback sanctioned), ElmRuntimeError category, ElmManifest hash-verify/gates, FetchFn + FileManager production wiring (D-08) + rejection-matrix tests (SGProcessingManager `src/elmruntime/`)
 
 **Wave 2** *(blocked on 02-01; 02-02 and 02-03 parallel — disjoint file sets: capability/ vs elmruntime/)*
 
@@ -114,6 +114,6 @@ Plans:
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. ELM Job Model & Funding | 0/3 | Planned | - |
-| 2. Manifest & Model Cache | 0/3 | Planned | - |
+| 2. Manifest & Model Cache | 1/3 | In Progress|  |
 | 3. ELM Processor | 0/? | Not started | - |
 | 4. Grid Integration & E2E Proof | 0/? | Not started | - |
