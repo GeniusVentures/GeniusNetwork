@@ -84,8 +84,22 @@ Plans:
   4. Every result envelope carries `work_item_id`, generated text, prompt/completion token counts, finish reason, and `model_manifest_hash` provenance
   5. An LLM model load does not stall other processors on the node (`VulkanInitMutex` scope narrowed to actual GPU init / dedicated LLM load lock); a fresh `Llm` session per work item means the same work items executed in either order produce identical outputs; no per-execution leaks
 
-**Plans**: TBD
-**Note**: Ships in SGProcessingManager (`processors/processing_processor_elm.*`) behind an MNN_LLM-style gate. The sampler-seed and `USER_CANCEL` MNN fork patches are user-approved (GEN-01/GEN-02) — they add `thirdparty/MNN` to the pointer chain (innermost-first commit discipline). `gen_seq_len` early-stop accounting must be verified against `output_tokens.size()` before trusting reported counts.
+**Plans**: 4 plans
+Plans:
+**Wave 1** *(03-01 and 03-02 parallel — disjoint file sets: thirdparty/MNN vs SGProcessingManager processors)*
+
+- [ ] 03-01-PLAN.md — MNN fork patches: D-12 sampler seed config key + D-13 `Llm::cancel()` + D-14 fork marker, MNN rebuild-verify, thirdparty pointer bump (GEN-01/GEN-02)
+- [ ] 03-02-PLAN.md — `LlmLoadMutex()` split + `MNN_Llm` retired to fail-closed shim with `MaterializeModelToTempDir` deleted (D-01/D-03/D-04, GEN-03)
+
+**Wave 2** *(blocked on 03-01 + 03-02)*
+
+- [ ] 03-03-PLAN.md — `ElmEnvelope` + `ElmStopStringStreamBuf` no-MNN units; gated ELM processor TU (acquire → preflight → split-lock session → set_config-assert-load → response → reconcile → envelope); factory registration + `SGPROC_MNN_LLM_FORK_PATCHES` marker; smoke-check lock split (GEN-01/GEN-02/GEN-03/RES-01)
+
+**Wave 3** *(blocked on 03-03)*
+
+- [ ] 03-04-PLAN.md — ELM processor conformance tests (determinism, cancel latency, order permutation, both lock legs, envelope matrix, `SGPROC_ELM_TEST_MODEL_DIR` fixture seam) + chain-final SuperGenius/root pointer commits
+
+**Note**: Ships in SGProcessingManager (`processors/processing_processor_elm.*`) behind an MNN_LLM-style gate. The sampler-seed and `USER_CANCEL` MNN fork patches are user-approved (GEN-01/GEN-02) — they add `thirdparty/MNN` to the pointer chain (five levels, innermost-first: MNN → thirdparty → SGProcessingManager → SuperGenius → root). `gen_seq_len` early-stop accounting must be verified against `output_tokens.size()` before trusting reported counts. Planner resolutions for research open questions: Q1 cancel wiring = streambuf-poll of `IsCancelled()` per token flush (zero ProcessManager changes); Q2 D-04 MNN_Llm end-state = fail-closed shim; Q3 routing scope = processor + factory registration now, grid routing Phase 4.
 
 ### Phase 4: Grid Integration & E2E Proof
 
@@ -115,5 +129,5 @@ Plans:
 |-------|----------------|--------|-----------|
 | 1. ELM Job Model & Funding | 0/3 | Planned | - |
 | 2. Manifest & Model Cache | 3/3 | Complete    | 2026-09-11 |
-| 3. ELM Processor | 0/? | Not started | - |
+| 3. ELM Processor | 0/4 | Planned | - |
 | 4. Grid Integration & E2E Proof | 0/? | Not started | - |
