@@ -60,13 +60,13 @@ Plans:
 **Plans**: 3 plans
 Plans:
 
-**Wave 1** *(parallel — zero file overlap)*
+**Wave 1**
 
 - [ ] 02-01-PLAN.md — Manifest layer: schema defs + quicktype regen (D-05, A1 fallback sanctioned), ElmRuntimeError category, ElmManifest hash-verify/gates, FetchFn + FileManager production wiring (D-08) + rejection-matrix tests (SGProcessingManager `src/elmruntime/`)
-- [ ] 02-02-PLAN.md — `required_memory_bytes` preflight: host-RAM snapshot field (A3 → option ii), QueryAvailableMemoryBytes, CapabilityValidator::CheckElmResources plain-values entry point + mock-snapshot tests
 
-**Wave 2** *(blocked on 02-01)*
+**Wave 2** *(blocked on 02-01; 02-02 and 02-03 parallel — disjoint file sets: capability/ vs elmruntime/)*
 
+- [ ] 02-02-PLAN.md — `required_memory_bytes` preflight: host-RAM snapshot field (A3 → option ii), QueryAvailableMemoryBytes, CapabilityValidator::CheckElmResources plain-values entry point + mock-snapshot tests (consumes 02-01's generated manifest types)
 - [ ] 02-03-PLAN.md — Cache core: ElmSmokeCheck (gated TU, A5 pre-rename), ElmModelCache (stage→verify→smoke→rename atomic publish, D-01 size-first hit, D-02 quarantine, D-04 LRU byte-cap 15GiB, D-06 restart scan, single-flight, pin RAII) + full lifecycle test matrix (Q2 failure-path only)
 
 **Note**: Ships entirely in SGProcessingManager (`src/elmruntime/`) on `dev_elmruntime` — fully unit-testable with no SuperGenius dependency. Hashing/filesystem-heavy work runs on worker threads, never in asio handlers; every new timer/callback captures `weak_from_this`.
