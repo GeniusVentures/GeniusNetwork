@@ -26,9 +26,9 @@
 
 ### Manifest & Cache (MCHE)
 
-- [ ] **MCHE-01**: The node loads each referenced manifest, verifies its hash, fetches each artifact, and sha256-verifies every artifact — a node never executes a model whose manifest or artifacts fail verification (fail-closed, quarantined on failure)
-- [ ] **MCHE-02**: Model bundles live in a content-addressed cache at `cache/<model-manifest-hash>/`, materialized in MNN's expected on-disk layout, with pin-while-processing and verify-before-reuse
-- [ ] **MCHE-03**: Cache lifecycle is robust: duplicate downloads single-flighted, partial downloads recovered, LRU eviction under disk pressure, and a model-load smoke check after publish
+- [x] **MCHE-01**: The node loads each referenced manifest, verifies its hash, fetches each artifact, and sha256-verifies every artifact — a node never executes a model whose manifest or artifacts fail verification (fail-closed, quarantined on failure)
+- [x] **MCHE-02**: Model bundles live in a content-addressed cache at `cache/<model-manifest-hash>/`, materialized in MNN's expected on-disk layout, with pin-while-processing and verify-before-reuse
+- [x] **MCHE-03**: Cache lifecycle is robust: duplicate downloads single-flighted, partial downloads recovered, LRU eviction under disk pressure, and a model-load smoke check after publish
 
 ### Generation (GEN)
 
@@ -79,9 +79,9 @@
 | FUND-01 | Phase 1 | Pending |
 | FUND-02 | Phase 1 | Pending |
 | FUND-03 | Phase 1 | Pending |
-| MCHE-01 | Phase 2 | Pending |
-| MCHE-02 | Phase 2 | Pending |
-| MCHE-03 | Phase 2 | Pending |
+| MCHE-01 | Phase 2 | Complete |
+| MCHE-02 | Phase 2 | Complete |
+| MCHE-03 | Phase 2 | Complete |
 | GEN-01 | Phase 3 | Pending |
 | GEN-02 | Phase 3 | Pending |
 | GEN-03 | Phase 3 | Pending |

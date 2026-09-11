@@ -9,7 +9,7 @@
 ## Phases
 
 - [ ] **Phase 1: ELM Job Model & Funding** — ELM job schema in `Task.json_data`, deterministic hours-based escrow, schema-level validation mode, and the three-clock rule (lock ≈ deadline ≈ escrow max)
-- [ ] **Phase 2: Manifest & Model Cache** — Fail-closed manifest resolution and content-addressed model cache in SGProcessingManager `src/elmruntime/`
+- [x] **Phase 2: Manifest & Model Cache** — Fail-closed manifest resolution and content-addressed model cache in SGProcessingManager `src/elmruntime/` (completed 2026-09-11)
 - [ ] **Phase 3: ELM Processor** — Causal-LM work-item execution on MNN: generation loop, seeded sampling, stop conditions, token counts, mid-generation cancellation, result envelope
 - [ ] **Phase 4: Grid Integration & E2E Proof** — ELM splitter + full submit wiring, results convention, empty-cache single-node E2E, non-ELM regression gate, anti-scope audit
 
@@ -57,7 +57,7 @@ Plans:
   4. Two concurrent subtasks requesting the same model trigger exactly one download (single-flight); both pin and load the same cache entry; a pinned entry is never evicted mid-use
   5. Partial downloads recover; unpinned entries evict LRU under disk pressure; `%TEMP%` stays clean across runs (no per-execution materialization — the cache is the single materialization point)
 
-**Plans**: 2/3 plans executed
+**Plans**: 3/3 plans complete
 Plans:
 
 **Wave 1**
@@ -67,7 +67,7 @@ Plans:
 **Wave 2** *(blocked on 02-01; 02-02 and 02-03 parallel — disjoint file sets: capability/ vs elmruntime/)*
 
 - [x] 02-02-PLAN.md — `required_memory_bytes` preflight: host-RAM snapshot field (A3 → option ii), QueryAvailableMemoryBytes, CapabilityValidator::CheckElmResources plain-values entry point + mock-snapshot tests (consumes 02-01's generated manifest types)
-- [ ] 02-03-PLAN.md — Cache core: ElmSmokeCheck (gated TU, A5 pre-rename), ElmModelCache (stage→verify→smoke→rename atomic publish, D-01 size-first hit, D-02 quarantine, D-04 LRU byte-cap 15GiB, D-06 restart scan, single-flight, pin RAII) + full lifecycle test matrix (Q2 failure-path only)
+- [x] 02-03-PLAN.md — Cache core: ElmSmokeCheck (gated TU, A5 pre-rename), ElmModelCache (stage→verify→smoke→rename atomic publish, D-01 size-first hit, D-02 quarantine, D-04 LRU byte-cap 15GiB, D-06 restart scan, single-flight, pin RAII) + full lifecycle test matrix (Q2 failure-path only)
 
 **Note**: Ships entirely in SGProcessingManager (`src/elmruntime/`) on `dev_elmruntime` — fully unit-testable with no SuperGenius dependency. Hashing/filesystem-heavy work runs on worker threads, never in asio handlers; every new timer/callback captures `weak_from_this`.
 
@@ -114,6 +114,6 @@ Plans:
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. ELM Job Model & Funding | 0/3 | Planned | - |
-| 2. Manifest & Model Cache | 2/3 | In Progress|  |
+| 2. Manifest & Model Cache | 3/3 | Complete    | 2026-09-11 |
 | 3. ELM Processor | 0/? | Not started | - |
 | 4. Grid Integration & E2E Proof | 0/? | Not started | - |
