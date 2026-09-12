@@ -32,13 +32,13 @@
 
 ### Generation (GEN)
 
-- [ ] **GEN-01**: An ELM processor executes causal-LM work items end-to-end: tokenizer + chat-template application, prompt tokenization, prefill, autoregressive KV-cache decode, sampling honoring `temperature`/`top_p`/`seed` (same-node/same-build determinism), stop tokens/strings, detokenization, and accurate prompt/completion token counts
-- [ ] **GEN-02**: Mid-generation cancellation aborts in-flight generation promptly when the job's deadline/cancel token fires (via MNN fork patch for `USER_CANCEL` or a documented bounded alternative)
-- [ ] **GEN-03**: The ELM processor fits SGProcessingManager's processor family conventions — `VulkanInitMutex` scope narrowed to actual GPU init, temp-dir materialization replaced by the content-addressed cache as single materialization point, no per-execution leaks
+- [x] **GEN-01**: An ELM processor executes causal-LM work items end-to-end: tokenizer + chat-template application, prompt tokenization, prefill, autoregressive KV-cache decode, sampling honoring `temperature`/`top_p`/`seed` (same-node/same-build determinism), stop tokens/strings, detokenization, and accurate prompt/completion token counts
+- [x] **GEN-02**: Mid-generation cancellation aborts in-flight generation promptly when the job's deadline/cancel token fires (via MNN fork patch for `USER_CANCEL` or a documented bounded alternative)
+- [x] **GEN-03**: The ELM processor fits SGProcessingManager's processor family conventions — `VulkanInitMutex` scope narrowed to actual GPU init, temp-dir materialization replaced by the content-addressed cache as single materialization point, no per-execution leaks
 
 ### Results (RES)
 
-- [ ] **RES-01**: Every result identifies its originating work item via the existing `SubTask.subtaskid` mapping (subtaskid↔work_item_id map embedded in task JSON); the result envelope carries `work_item_id`, generated text, prompt/completion token counts, and finish reason (`stop|max_tokens|cancelled|error`)
+- [x] **RES-01**: Every result identifies its originating work item via the existing `SubTask.subtaskid` mapping (subtaskid↔work_item_id map embedded in task JSON); the result envelope carries `work_item_id`, generated text, prompt/completion token counts, and finish reason (`stop|max_tokens|cancelled|error`)
 - [ ] **RES-02**: Results flow through the existing gossip results channel and IPFS artifact path unchanged — no SuperGenius-side aggregation; GCS reconstructs the job result by aggregating envelopes by `work_item_id`
 
 ### E2E Proof (E2E)
@@ -82,10 +82,10 @@
 | MCHE-01 | Phase 2 | Complete |
 | MCHE-02 | Phase 2 | Complete |
 | MCHE-03 | Phase 2 | Complete |
-| GEN-01 | Phase 3 | Pending |
-| GEN-02 | Phase 3 | Pending |
-| GEN-03 | Phase 3 | Pending |
-| RES-01 | Phase 3 | Pending |
+| GEN-01 | Phase 3 | Complete |
+| GEN-02 | Phase 3 | Complete |
+| GEN-03 | Phase 3 | Complete |
+| RES-01 | Phase 3 | Complete |
 | RES-02 | Phase 4 | Pending |
 | E2E-01 | Phase 4 | Pending |
 | E2E-02 | Phase 4 | Pending |
