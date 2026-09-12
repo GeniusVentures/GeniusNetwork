@@ -65,6 +65,7 @@ Last activity: 2026-09-11 — Phase 2 complete, transitioned to Phase 3
 
 - `/gsd-plan-phase 1` — includes targeted verification of escrow wall-clock accounting semantics (from subtask grab?) and the no-chunk-hash validation finalization design
 - Phase 3 planning carries the fork-patch implementation details (MNN seed patch ~20 lines + `USER_CANCEL` setter, per PITFALLS 1/9)
+- **Phase 4 (escalated from 03-03 plan revision, 2026-09-11):** schema amendment required for stop-string job-JSON carriage — Phase 1 `gnus-processing-schema.json` `ElmGeneration` has no `stop` field (only max_output_tokens/temperature/top_p/seed), so D-05/D-06/D-07 stop strings cannot ride the job JSON. Phase 3 passes them via the `StartProcessingElm` `stopStrings` parameter (same seam as `promptText`). Phase 4 (splitter/submit wiring) must amend the schema (add `stop` array to `ElmGeneration`), regenerate quicktype types, and extend the validator if requestor-supplied stop strings are to be supported end-to-end. Decision trail: 03-03-PLAN.md `<plan_notes>`.
 
 ### Blockers
 

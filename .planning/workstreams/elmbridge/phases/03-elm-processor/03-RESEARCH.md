@@ -363,7 +363,14 @@ const auto *ctx = llm->getContext();
 | A4 | `sgns::ElmGeneration.seed` (int64) → JSON number → `set_config` round-trip preserves full value | Fork patch | int64 > 2^53 loses precision in some JSON paths; nlohmann handles int64 natively; MNN's `ujson` is nlohmann-derived [ASSUMED — verify at implementation] |
 | A5 | Determinism scope is same-node/same-build (locked upstream); `std::mt19937` + `uniform_real_distribution<float>` are deterministic given identical seed AND identical libstdc++/MSVC runtime — the determinism test runs on one build only | Test strategy | None for this phase; cross-node bit-identity is an explicit anti-feature |
 
-## Open Questions
+## Open Questions (RESOLVED)
+
+1. **CancellationToken callback collision (Pitfall 4)** — RESOLVED: streambuf-poll (03-03 Task 2 step h: `SetExternalCancelPoll` wires `execCtx.cancelToken.IsCancelled()` into the streambuf flush; zero ProcessManager changes; cancel latency ≈ one token satisfies SC-3; D-09 disambiguation via the two separate intent latches)
+2. **D-04's exact MNN_Llm end-state (Pitfall 9)** — RESOLVED: fail-closed shim (03-02 Task 2: materializer deleted, LoadModel removed, non-empty-model calls return structured RESOURCE_RESOLUTION retirement message; both existing mnn_llm_test legs stay green — they short-circuit before LoadModel)
+3. **ELM subtask → processor routing key (A3)** — RESOLVED: registration now, grid routing Phase 4 (03-03 Task 3 registers ElmProcessor for DataType::LLM behind SGPROC_HAS_MNN_LLM; ELM work items enter via the standalone-testable StartProcessingElm per Q3's recommendation; Phase 4's splitter/submit wiring carries full grid routing) — with one carried amendment: job-JSON stop-string carriage needs a Phase 1 schema `stop` field (ElmGeneration has none); Phase 3 passes stop strings via the StartProcessingElm stopStrings parameter, and the schema amendment is escalated to the workstream STATE.md TODOs for Phase 4 planning
+
+<details>
+<summary>Original question text (for the decision trail)</summary>
 
 1. **CancellationToken callback collision (Pitfall 4)**
    - What we know: ProcessInternal sets the token callback to cancel the deadline timer; the token holds one callback; the processor needs `llm->cancel()` on cancel.
@@ -377,6 +384,8 @@ const auto *ctx = llm->getContext();
    - What we know: ELM jobs carry no `passes[]`; `ProcessInternal` resolves processors via input-type lookup; `GetCidForProc` has an ELM-parity comment anticipating an ELM branch.
    - What's unclear: whether Phase 3 wires the full routing (processor factory + ProcessInternal branch + GetCidForProc bypass) or only the processor + registration behind the gate, with routing completed in Phase 4's splitter/submit wiring.
    - Recommendation: Phase 3 ships the processor + factory registration + a Process()-level ELM entry path testable standalone (conformance-test style, not full-grid); full grid routing is Phase 4 by roadmap. The phase boundary says "ships in SGProcessingManager... processor factory registration point" — registration yes, grid routing no.
+
+</details>
 
 ## Environment Availability
 

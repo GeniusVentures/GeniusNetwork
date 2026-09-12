@@ -93,11 +93,11 @@ Plans:
 
 **Wave 2** *(blocked on 03-01 + 03-02)*
 
-- [ ] 03-03-PLAN.md — `ElmEnvelope` + `ElmStopStringStreamBuf` no-MNN units; gated ELM processor TU (acquire → preflight → split-lock session → set_config-assert-load → response → reconcile → envelope); factory registration + `SGPROC_MNN_LLM_FORK_PATCHES` marker; smoke-check lock split (GEN-01/GEN-02/GEN-03/RES-01)
+- [ ] 03-03-PLAN.md — `ElmEnvelope` + `ElmStopStringStreamBuf` no-MNN units; gated ELM processor TU with `StartProcessingElm(promptText, stopStrings, ...)` seams (acquire → preflight → split-lock session → set_config-assert-load → response → reconcile → envelope); CMake fork marker + factory registration + smoke-check lock split (GEN-01/GEN-02/GEN-03/RES-01). Stop-string job-JSON carriage escalated to Phase 4 (schema `stop` field amendment — STATE.md TODOs)
 
 **Wave 3** *(blocked on 03-03)*
 
-- [ ] 03-04-PLAN.md — ELM processor conformance tests (determinism, cancel latency, order permutation, both lock legs, envelope matrix, `SGPROC_ELM_TEST_MODEL_DIR` fixture seam) + chain-final SuperGenius/root pointer commits
+- [ ] 03-04-PLAN.md — real-model fixture staging (ModelScope MNN/Qwen2.5-0.5B-Instruct bundle: hash-recorded download, synthesized Phase 2 manifest, `SGPROC_ELM_TEST_MODEL_DIR` convention, explicit escalation-not-silent-skip) + ELM processor conformance tests (determinism, cancel latency, order permutation, both lock legs, envelope matrix, stop-string leg) + chain-final SuperGenius/root pointer commits
 
 **Note**: Ships in SGProcessingManager (`processors/processing_processor_elm.*`) behind an MNN_LLM-style gate. The sampler-seed and `USER_CANCEL` MNN fork patches are user-approved (GEN-01/GEN-02) — they add `thirdparty/MNN` to the pointer chain (five levels, innermost-first: MNN → thirdparty → SGProcessingManager → SuperGenius → root). `gen_seq_len` early-stop accounting must be verified against `output_tokens.size()` before trusting reported counts. Planner resolutions for research open questions: Q1 cancel wiring = streambuf-poll of `IsCancelled()` per token flush (zero ProcessManager changes); Q2 D-04 MNN_Llm end-state = fail-closed shim; Q3 routing scope = processor + factory registration now, grid routing Phase 4.
 
