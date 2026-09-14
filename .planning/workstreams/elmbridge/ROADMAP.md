@@ -114,7 +114,7 @@ Plans:
   4. Existing chunk-based jobs behave byte-identically before/after across splitter, funding, validation, and results paths — the regression gate passes
   5. The removed scope stays removed — no capability/inventory/cache advertising, bidding/negotiation, requester-side selection, claims/leases, or worker-side `/v1` in code or schema; new code carries ≥80% coverage with wait-condition (non-sleep) tests; SuperGenius/GeniusSDK/GeniusWallet builds all stay green
 
-**Plans**: 2/5 plans executed
+**Plans**: 3/5 plans executed
 Plans:
 **Wave 1**
 
@@ -126,7 +126,7 @@ Plans:
 
 **Wave 3** *(blocked on Wave 2 completion; solely owns the SGProcessingManager pointer bump)*
 
-- [ ] 04-03-PLAN.md — ELM splitter + submit (SuperGenius): `ProcessTaskSplitterELM` 1:1 mapping + `elm_subtask_map` + `ProcessImage` submit branch + atomic rate record (P4-9); flips the Phase 1 rejection test
+- [x] 04-03-PLAN.md — ELM splitter + submit (SuperGenius): `ProcessTaskSplitterELM` 1:1 mapping + `elm_subtask_map` + `ProcessImage` submit branch + atomic rate record (P4-9); flips the Phase 1 rejection test
 
 **Wave 4** *(blocked on Wave 3 completion)*
 
@@ -151,4 +151,4 @@ Plans:
 | 1. ELM Job Model & Funding | 0/3 | Planned | - |
 | 2. Manifest & Model Cache | 3/3 | Complete    | 2026-09-11 |
 | 3. ELM Processor | 4/4 | Complete    | 2026-09-12 |
-| 4. Grid Integration & E2E Proof | 2/5 | In Progress|  |
+| 4. Grid Integration & E2E Proof | 3/5 | In Progress|  |
