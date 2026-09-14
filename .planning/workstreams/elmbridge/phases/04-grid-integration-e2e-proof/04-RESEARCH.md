@@ -385,18 +385,20 @@ conservation        : Σ(outputs) == escrow_amount               (uint128; refun
 | A4 | Quicktype regen of the root set for `stop` produces `boost::optional<std::vector<std::string>> get_stop()` (array-of-string on an optional parent) — exact getter shape unverified until regen runs (consistent with `tags` precedent in `SgnsProcessing.hpp:63`) | Schema amendment | LOW — shape follows the established vector-of-string pattern |
 | A5 | Single-node both-roles E2E needs no second node's gossip round-trip for results delivery (the node receives its own results-channel publication) — the multi-test fixture implies self-delivery, but self-subscription behavior on the exact channel implementation is runtime-verified only in the non-ELM path | E2E design | MEDIUM — if self-delivery doesn't occur, the E2E polls `GetTaskResult`/queue state instead (wait-condition, still single-node); flag for early E2E spike |
 
-## Open Questions
+## Open Questions (RESOLVED)
 
-1. **Stamp capture mechanics inside the processor seam**
+All three questions are resolved at plan level; dispositions below are binding for executors.
+
+1. **Stamp capture mechanics inside the processor seam** — RESOLVED → 04-02 Task 2 (c): additive `execCtx` field set by the ELM branch before prompt fetch
    - What we know: D-04 locks stamps onto the envelope; the design table says grab = before ANY fetch (incl. model download), finish = envelope assembly. `ProcessInternal` already captures `startTimeUsec`/`endTimeUsec` around `StartProcessing` (`:1622-1636`).
-   - What's unclear: whether grab is stamped by the wrapper (passed in via an additive `ExecutionContext` field — prompt fetch then included) or by the processor at its own entry (prompt fetch excluded, model download included).
-   - Recommendation: additive `execCtx` field set by the ELM branch before prompt fetch (matches the design's "before any fetch" exactly, zero signature change to the shipped `StartProcessingElm`).
-2. **Inline envelope-minus-text serialization target**
+   - What was unclear: whether grab is stamped by the wrapper (passed in via an additive `ExecutionContext` field — prompt fetch then included) or by the processor at its own entry (prompt fetch excluded, model download included).
+   - Resolution (adopted by 04-02): additive `execCtx` field set by the ELM branch before prompt fetch (matches the design's "before any fetch" exactly, zero signature change to the shipped `StartProcessingElm`).
+2. **Inline envelope-minus-text serialization target** — RESOLVED → 04-02 Task 3 (c)/(d): two-distinct-digest convention per the recommendation below, verbatim
    - What we know: `SubTaskResult` has `result_hash`, `chunk_hashes`, `ipfs_results_data_id` (+ payout fields); CONTEXT leaves field choice to discretion following validation-core conventions.
-   - Recommendation: `result_hash` = sha256(envelope-minus-text JSON); the single `chunk_hashes[0]` = sha256(full envelope JSON) (the processor's existing resultHash of the full envelope — reuse verbatim); `ipfs_results_data_id` = artifact CID. This keeps `ValidateIndividualResult` untouched and gives the requestor two deterministic digests.
-3. **Overtime-leg test placement**
+   - Resolution (adopted by 04-02): `result_hash` = sha256(envelope-minus-text JSON); the single `chunk_hashes[0]` = sha256(full envelope JSON) (the processor's existing resultHash of the full envelope — reused verbatim); `ipfs_results_data_id` = artifact CID. Two DISTINCT digests — the plans assert `result_hash ≠ chunk_hashes[0]` for text-bearing envelopes. This keeps `ValidateIndividualResult` untouched and gives the requestor two deterministic digests. Residual deviation from D-07's literal inline fields (no arbitrary-payload `SubTaskResult` field exists and proto changes are out of scope) is documented in 04-02 Task 3 (d) and its SUMMARY for user ratification.
+3. **Overtime-leg test placement** — RESOLVED → 04-05 Task 2 Leg 2: separate CTest CASE in the same binary, warm cache
    - What we know: same binary vs separate target is discretionary; CTest TIMEOUT budget governs; the ~557MB model download makes the empty-cache leg the long pole.
-   - Recommendation: separate CTest test CASE in the same binary, with the model already cached by the first leg (the overtime leg doesn't need an empty cache — it needs a short deadline), keeping total wall-clock bounded by one model download.
+   - Resolution (adopted by 04-05): separate CTest test CASE in the same binary, with the model already cached by the first leg (the overtime leg doesn't need an empty cache — it needs a short deadline), keeping total wall-clock bounded by one model download.
 
 ## Environment Availability
 
