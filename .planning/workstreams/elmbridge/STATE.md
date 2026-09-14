@@ -6,16 +6,16 @@ current_phase: 4
 current_phase_name: Grid Integration & E2E Proof
 current_plan: 1
 status: executing
-stopped_at: Completed 04-01-PLAN.md (schema amendments + envelope stamps)
-last_updated: "2026-09-14T21:05:17.980Z"
+stopped_at: Completed 04-02-PLAN.md (ELM worker routing + publication)
+last_updated: "2026-09-14T21:22:18.692Z"
 last_activity: 2026-09-14
 last_activity_desc: Phase 4 execution started
 progress:
   total_phases: 4
   completed_phases: 3
   total_plans: 15
-  completed_plans: 11
-  percent: 73
+  completed_plans: 12
+  percent: 75
 ---
 
 # Project State
@@ -31,7 +31,7 @@ progress:
 ## Current Position
 
 Phase: 4 (Grid Integration & E2E Proof) — EXECUTING
-Plan: 2 of 5
+Plan: 3 of 5
 Status: Ready to execute
 Last activity: 2026-09-14 — Phase 4 execution started
 
@@ -76,8 +76,8 @@ None.
 
 ## Session Continuity
 
-**Last session:** 2026-09-14T21:05:17.974Z
+**Last session:** 2026-09-14T21:22:18.686Z
 
-**Stopped At:** Completed 04-01-PLAN.md (schema amendments + envelope stamps)
-**Resume File:** .planning/workstreams/elmbridge/phases/04-grid-integration-e2e-proof/04-02-PLAN.md
+**Stopped At:** Completed 04-02-PLAN.md (ELM worker routing + publication)
+**Resume File:** .planning/workstreams/elmbridge/phases/04-grid-integration-e2e-proof/04-03-PLAN.md
 **Next Steps:** Execute Phase 4 — `/gsd-execute-phase 4 --ws elmbridge`. The two schema-amendment TODOs (stop-string carriage, embedding role) are closed by 04-01 (D-01..D-03); D-07 inline-payload convention RATIFIED as D-P4-1 (2026-09-14) — metadata rides the artifact via `ipfs_results_data_id`, inline carries two digests
