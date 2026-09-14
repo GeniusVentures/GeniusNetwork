@@ -114,11 +114,11 @@ Plans:
   4. Existing chunk-based jobs behave byte-identically before/after across splitter, funding, validation, and results paths — the regression gate passes
   5. The removed scope stays removed — no capability/inventory/cache advertising, bidding/negotiation, requester-side selection, claims/leases, or worker-side `/v1` in code or schema; new code carries ≥80% coverage with wait-condition (non-sleep) tests; SuperGenius/GeniusSDK/GeniusWallet builds all stay green
 
-**Plans**: 5 plans
+**Plans**: 1/5 plans executed
 Plans:
 **Wave 1**
 
-- [ ] 04-01-PLAN.md — Schema amendments + envelope stamps (SGProcessingManager): `stop` array (D-01/D-02) + `embedding_file` role (D-03) quicktype regen, ElmEnvelope settlement stamps (D-04), fixture injection workaround retired
+- [x] 04-01-PLAN.md — Schema amendments + envelope stamps (SGProcessingManager): `stop` array (D-01/D-02) + `embedding_file` role (D-03) quicktype regen, ElmEnvelope settlement stamps (D-04), fixture injection workaround retired
 
 **Wave 2** *(blocked on Wave 1 completion)*
 
@@ -151,4 +151,4 @@ Plans:
 | 1. ELM Job Model & Funding | 0/3 | Planned | - |
 | 2. Manifest & Model Cache | 3/3 | Complete    | 2026-09-11 |
 | 3. ELM Processor | 4/4 | Complete    | 2026-09-12 |
-| 4. Grid Integration & E2E Proof | 0/5 | Planned | - |
+| 4. Grid Integration & E2E Proof | 1/5 | In Progress|  |
