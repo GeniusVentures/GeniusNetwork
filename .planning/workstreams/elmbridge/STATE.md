@@ -4,16 +4,16 @@ milestone: v1.0
 milestone_name: ELM Bridge — Single-Node ELM Job Execution
 current_phase: 4
 current_phase_name: Grid Integration & E2E Proof
-current_plan: Not started
-status: executing
-stopped_at: Phase 4 context gathered
-last_updated: "2026-09-14T18:28:13.311Z"
-last_activity: 2026-09-12
-last_activity_desc: Phase 03 complete, transitioned to Phase 4
+current_plan: 1 of 5
+status: ready-to-execute
+stopped_at: Phase 4 planned (5 plans, waves 1-5, verification passed)
+last_updated: "2026-09-14T19:45:00.000Z"
+last_activity: 2026-09-14
+last_activity_desc: Phase 4 planned — 5 plans across 5 waves, plan-checker passed after 2 revisions
 progress:
   total_phases: 4
   completed_phases: 3
-  total_plans: 10
+  total_plans: 15
   completed_plans: 10
   percent: 75
 ---
@@ -31,22 +31,22 @@ progress:
 ## Current Position
 
 Phase: 4 — Grid Integration & E2E Proof
-Plan: 4 of 4
+Plan: 1 of 5
 Status: Ready to execute
-Last activity: 2026-09-12 — Phase 03 complete, transitioned to Phase 4
+Last activity: 2026-09-14 — Phase 4 planned (5 plans, waves 1-5, verification passed)
 
 ## Progress
 
 **Phases Complete:** 3 / 4
-**Current Plan:** Not started
-**Milestone Progress:** `[████████████████████] 10/10 plans complete (Phases 1-3; Phase 4 unplanned)`
+**Current Plan:** 1 of 5 (Phase 4, Wave 1 — 04-01 schema amendments + envelope stamps)
+**Milestone Progress:** `[████████████████░░░░░░] 10/15 plans complete (Phases 1-3; Phase 4 planned)`
 
 | Phase | Status |
 |-------|--------|
 | 1. ELM Job Model & Funding | Complete (2026-09-11) |
 | 2. Manifest & Model Cache | Complete (2026-09-11) |
 | 3. ELM Processor | Complete (2026-09-12) — verified, 4/4 plans |
-| 4. Grid Integration & E2E Proof | Ready to plan |
+| 4. Grid Integration & E2E Proof | Planned (2026-09-14) — 5 plans, waves 1-5, ready to execute |
 
 ## Performance Metrics
 
@@ -76,8 +76,8 @@ None.
 
 ## Session Continuity
 
-**Last session:** 2026-09-14T18:28:13.306Z
+**Last session:** 2026-09-14T19:45:00.000Z
 
-**Stopped At:** Phase 4 context gathered
-**Resume File:** .planning/workstreams/elmbridge/phases/04-grid-integration-e2e-proof/04-CONTEXT.md
-**Next Steps:** Phase 4 needs context gathering (`/gsd-discuss-phase 4 --ws elmbridge`) — no CONTEXT.md yet; two schema-amendment seams await Phase 4 planning (see TODOs)
+**Stopped At:** Phase 4 planned (5 plans, waves 1-5, plan-checker VERIFICATION PASSED after 2 revisions)
+**Resume File:** .planning/workstreams/elmbridge/phases/04-grid-integration-e2e-proof/04-01-PLAN.md
+**Next Steps:** Execute Phase 4 — `/gsd-execute-phase 4 --ws elmbridge`. The two schema-amendment TODOs (stop-string carriage, embedding role) are closed by 04-01 (D-01..D-03); D-07 inline-payload deviation (counts/finish_reason/stamps ride artifact-only — SubTaskResult has no payload field, proto changes locked out) awaits user ratification at 04-02-SUMMARY / 04-05 Task 4 human-verify checkpoint
