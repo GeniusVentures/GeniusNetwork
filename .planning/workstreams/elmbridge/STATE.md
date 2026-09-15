@@ -6,8 +6,8 @@ current_phase: 4
 current_phase_name: Grid Integration & E2E Proof
 current_plan: 1
 status: executing
-stopped_at: Completed 04-04-PLAN.md (settlement arithmetic + payout branch)
-last_updated: "2026-09-14T23:16:06.420Z"
+stopped_at: "04-05 mid-execution: Task 1 (ProcessingDone wiring) committed + green; Task 2 E2E bring-up committed — Leg 3 regression green; Legs 1-2 need full-terminal diagnostics (spdlog console output lost in redirects) + longer/bounded waits; Task 3 audit evidence gathered (zero proto/wallet/bidding matches)"
+last_updated: "2026-09-15T02:49:02.300Z"
 last_activity: 2026-09-14
 last_activity_desc: Phase 4 execution started
 progress:
@@ -76,8 +76,8 @@ None.
 
 ## Session Continuity
 
-**Last session:** 2026-09-14T23:16:06.415Z
+**Last session:** 2026-09-15T02:49:02.291Z
 
-**Stopped At:** Completed 04-04-PLAN.md (settlement arithmetic + payout branch)
+**Stopped At:** 04-05 mid-execution: Task 1 (ProcessingDone wiring) committed + green; Task 2 E2E bring-up committed — Leg 3 regression green; Legs 1-2 need full-terminal diagnostics (spdlog console output lost in redirects) + longer/bounded waits; Task 3 audit evidence gathered (zero proto/wallet/bidding matches)
 **Resume File:** .planning/workstreams/elmbridge/phases/04-grid-integration-e2e-proof/04-05-PLAN.md
 **Next Steps:** Execute Phase 4 — `/gsd-execute-phase 4 --ws elmbridge`. The two schema-amendment TODOs (stop-string carriage, embedding role) are closed by 04-01 (D-01..D-03); D-07 inline-payload convention RATIFIED as D-P4-1 (2026-09-14) — metadata rides the artifact via `ipfs_results_data_id`, inline carries two digests
