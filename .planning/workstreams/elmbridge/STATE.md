@@ -6,10 +6,10 @@ current_phase: 4
 current_phase_name: Grid Integration & E2E Proof
 current_plan: 1
 status: executing
-stopped_at: "04-05 mid-execution: Task 1 (ProcessingDone wiring) committed + green; Task 2 E2E bring-up committed — Leg 3 regression green; Legs 1-2 need full-terminal diagnostics (spdlog console output lost in redirects) + longer/bounded waits; Task 3 audit evidence gathered (zero proto/wallet/bidding matches)"
-last_updated: "2026-09-15T02:49:02.300Z"
-last_activity: 2026-09-14
-last_activity_desc: Phase 4 execution started
+stopped_at: "04-05 mid-execution: Task 1 (ProcessingDone wiring) committed + green; Task 2 E2E bring-up committed — Leg 3 regression green; Legs 1-2 need full-terminal diagnostics (spdlog console output lost in redirects) + longer/bounded waits; Task 3 audit evidence gathered (zero proto/wallet/bidding matches). 2026-09-24: base merges landed — SuperGenius dev_elmruntime 39d1f699c (develop merged, 324 commits) + 373bc14ab (test value_or shims), SGProcMgr ee0627a (dev_wholearchive merged), thirdparty dev_elmruntime ab44980 (MNN fork bump 0485555); MNN rebuilt from scratch (fork patches verified in install); SuperGenius Release rebuilt green; regression battery: registration_transaction + elm_settlement PASS always, elm suites PASS standalone but ctest-sequencing flaky (pre-existing Windows node-fixture teardown interference), child_registration + processing_nodes SetUpTestSuite failures DEFERRED for dedicated debugging (post-merge node-sync behavior change); redundant stashes dropped; feature branches pushed; root NOT pushed"
+last_updated: "2026-09-24T00:00:00.000Z"
+last_activity: 2026-09-24
+last_activity_desc: Merge prep for 04-05 resume (quick task 20260924-elmbridge-merge-resume)
 progress:
   total_phases: 4
   completed_phases: 3

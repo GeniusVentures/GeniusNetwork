@@ -42,17 +42,18 @@ work). Untracked scratch (.raw/.obj/log files) left as-is.
 ## Steps
 
 1. [x] Verify clean trees; classify anomalies (done — see State)
-2. [ ] Triage SuperGenius stash bb4ed3bc + SGProcMgr stash 5976867a → drop if redundant
-3. [ ] Push MNN + SGProcMgr dev_elmruntime branches
-4. [ ] thirdparty: checkout MNN dev_elmruntime, commit pointer bump, push branch
-5. [ ] SGProcMgr: merge dev_wholearchive (keep BOTH: wholearchive opts + elm closure +
-       Precision_High incl ELM sites), push
-6. [ ] SuperGenius: fetch, merge origin/develop (playbook: a787108a merge, f2bf12c
-       full_node_m rename, 370ed6f registration restore, 1654541 include propagation,
-       8714d6b nonce chain), bump SGProcMgr pointer
-7. [ ] Root: bump SuperGenius + thirdparty pointers, restore STATE.md from HEAD,
-       commit (.planning note). NO root push.
-8. [ ] Reconfigure (cmake .) + build Release + regression ctest
+2. [x] Triage SuperGenius stash bb4ed3bc + SGProcMgr stash 5976867a → drop if redundant
+   (both verified redundant: SG = 1-line develop-rename diff; SGProcMgr = empty diff)
+3. [x] Push MNN + SGProcMgr dev_elmruntime branches
+4. [x] thirdparty: checkout MNN dev_elmruntime, commit pointer bump (ab44980), push branch
+5. [x] SGProcMgr: merge dev_wholearchive (clean, 0 conflicts; both sides verified present), push (ee0627a)
+6. [x] SuperGenius: merge origin/develop 8440fb5 (39d1f699c; 6 conflicts resolved —
+       TM.hpp elm PayEscrow sig, TM.cpp tailAmount+qualified DEVELOPER_CUT_SCALE,
+       engine.cpp develop-structure+elm-try/catch, CMakeLists both, access.hpp both;
+       dev_cognitive merge-fixes confirmed already in develop), push
+7. [x] Root: bump SuperGenius + thirdparty pointers (8640a4f), restore STATE.md from HEAD.
+       NO root push.
+8. [~] Reconfigure (cmake .) + build Release + regression ctest
        (registration/elm_settlement/elm_splitter/elm_cost_clocks/processing_multi)
 
 ## Verification
