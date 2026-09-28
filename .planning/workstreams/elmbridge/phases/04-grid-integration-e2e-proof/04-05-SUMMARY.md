@@ -151,20 +151,21 @@ Every row maps; no unmappable deliverable.
 1. **Overtime leg premise correction (plan expected download to be the long pole):** single-node transport serves the "download" from the node's own local store in ~1s (it published the blocks; seed-provider registry). The 18s deadline therefore never fired with a 64-token cap — generation finished in ~4s as legitimate `max_tokens` (run2 evidence). Fix: cap `max_output_tokens=2048` so generation spans expiry; the deadline Cancel() + per-token external-cancel poll produce `finish_reason=cancelled`. Committed in 41f7f8492.
 2. **Leg-2 tail fetch used the bare `ioc->run()`** (leg 1's drainer fix wasn't ported): completion posted from node threads arrived after run() drained → "Value of: ok" failure with a green pipeline. Ported the drainer pattern (4th site).
 3. **processing_multi_test not in build** (commented out upstream 2025-12-09, commit 3ca011d26, pre-elmbridge): E2E-02's plan-named leg is unavailable; gate covered by elm_e2e_test leg 3 (same-node legacy job) + registration_transaction_test + the 14-suite sgproc battery + processing_* suites.
-4. **Run-1 AV (heap corruption, `AZJ77akme` garbage + 0xC0000005 during cold weight fetch) never reproduced** across 4+ subsequent full runs after the ioc completion-race fixes (SGPM 5c5af6a + test-side drainers). Attributed to that race family; flagged for recurrence watch.
+4. **Intermittent AV during cold 278MB weight fetch — OPEN, recurrence confirmed at checkpoint verification (2026-09-28 ~14:50):** `0xC0000005` write to freed memory (`rw=0`) on the bitswap/ipfs-lite completion thread immediately after `Assembled complete file (277967498 bytes)` / mid-`ElmModelCache::Acquire` (crashed runs leave a `.tmp-` cache dir with exactly 2 of 6 files: llm_config.json + llm.mnn). Frequency at verification: 3 crashes in ~9 runs (~30-40%), interleaved with fully-green runs of the SAME binary (3-leg ctest PASS → leg-1 crash → leg-1 PASS → crash). The earlier "never reproduced" note was wrong. d2ec18a (BitswapRequestContext timer UAF fix) IS in the build; remaining suspects: the elmbridge local-first transport commits (ipfs-bitswap-cpp 5d46357 + 4cd1980) and the ContentRequestContext timeout handler (raw `this`+cid capture; the context's lifetime is owned by the `contentRequests_` map and released at completion — the 30s timer stays armed for the lifetime of a 278MB single-file transfer whose callback fires long before expiry). Needs a minidump or Debug-build symbolized stack before Task 4 is approved with confidence; candidate hardening = capture a shared_ptr in the timeout handler (same shape as the d2ec18a fix) or cancel the timer before erase.
 
 ## Issues Encountered
 
 - **elm_cost_clocks_test ElmCostNode legs flaky (pre-existing):** intermittent `C++ exception "vector too long"` from node-fixture startup (~1 leg fails per full run; passes on repeat/isolation; test file unchanged since 09-14; passed the 09-24 battery). Classified post-develop-merge node-fixture startup flake — same family as the DEFERRED child_registration/processing_nodes SetUpTestSuite failures already recorded in STATE.md. Not a Phase 4 blocker; needs dedicated debugging.
 - Windows log-rotation "file in use" errors on sgnslog rename: benign noise across node fixtures.
 
-## Self-Check: PASSED
+## Self-Check: PASSED WITH ONE OPEN FLAKE
 
-- elm_e2e_test 3/3 (single process, 2026-09-28)
+- elm_e2e_test 3/3 (single process, 2026-09-28) — green runs prove the milestone semantics
 - Regression battery green (see Performance)
 - GeniusSDK Release build exit 0; SuperGenius Release green
 - Anti-scope audit: 5/5 clean
 - Chain consistency: SGPM 5c5af6a ⊆ SuperGenius HEAD (41f7f8492); root pointer commits 1c94c35/dbda07b + final pointer (post-SUMMARY)
+- **Open (blocking confident approval):** intermittent AV during the cold 278MB weight fetch (~30-40% of runs) — see Deviations #4; green runs are genuine but the crash recurrence must be root-caused or de-flaked
 
 ## User Setup Required
 
