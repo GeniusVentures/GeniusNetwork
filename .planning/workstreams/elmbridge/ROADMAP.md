@@ -11,7 +11,7 @@
 - [ ] **Phase 1: ELM Job Model & Funding** — ELM job schema in `Task.json_data`, deterministic hours-based escrow, schema-level validation mode, and the three-clock rule (lock ≈ deadline ≈ escrow max)
 - [x] **Phase 2: Manifest & Model Cache** — Fail-closed manifest resolution and content-addressed model cache in SGProcessingManager `src/elmruntime/` (completed 2026-09-11)
 - [x] **Phase 3: ELM Processor** — Causal-LM work-item execution on MNN: generation loop, seeded sampling, stop conditions, token counts, mid-generation cancellation, result envelope (completed 2026-09-12)
-- [ ] **Phase 4: Grid Integration & E2E Proof** — ELM splitter + full submit wiring, results convention, empty-cache single-node E2E, non-ELM regression gate, anti-scope audit
+- [x] **Phase 4: Grid Integration & E2E Proof** — ELM splitter + full submit wiring, results convention, empty-cache single-node E2E, non-ELM regression gate, anti-scope audit (completed 2026-09-28)
 
 ## Phase Details
 
@@ -114,7 +114,7 @@ Plans:
   4. Existing chunk-based jobs behave byte-identically before/after across splitter, funding, validation, and results paths — the regression gate passes
   5. The removed scope stays removed — no capability/inventory/cache advertising, bidding/negotiation, requester-side selection, claims/leases, or worker-side `/v1` in code or schema; new code carries ≥80% coverage with wait-condition (non-sleep) tests; SuperGenius/GeniusSDK/GeniusWallet builds all stay green
 
-**Plans**: 4/5 plans executed
+**Plans**: 5/5 plans complete
 Plans:
 **Wave 1**
 
@@ -134,7 +134,7 @@ Plans:
 
 **Wave 5** *(blocked on Wave 4 completion)*
 
-- [ ] 04-05-PLAN.md — `ProcessingDone` settlement wiring + empty-cache single-node E2E + overtime leg + regression gate + anti-scope audit + innermost-first chain commits (human-verify checkpoint)
+- [x] 04-05-PLAN.md — `ProcessingDone` settlement wiring + empty-cache single-node E2E + overtime leg + regression gate + anti-scope audit + innermost-first chain commits (human-verify checkpoint)
 
 **Note**: Spans both repos — splitter + submit wiring in SuperGenius (`processing_tasksplit_elm.*`, `GeniusNode::ProcessImage` fully wired); consumes Phases 2-3 via submodule pointer bump. The E2E must run with `validation: none` (never enable redundant validation for text — Pitfall 2). New test targets respect `SGPROC_TEST_DISCOVERY` gating and CTest `TIMEOUT` properties.
 
@@ -151,4 +151,4 @@ Plans:
 | 1. ELM Job Model & Funding | 0/3 | Planned | - |
 | 2. Manifest & Model Cache | 3/3 | Complete    | 2026-09-11 |
 | 3. ELM Processor | 4/4 | Complete    | 2026-09-12 |
-| 4. Grid Integration & E2E Proof | 4/5 | In Progress|  |
+| 4. Grid Integration & E2E Proof | 5/5 | Complete   | 2026-09-28 |
