@@ -74,6 +74,19 @@ This project now runs parallel workstreams (see `.planning/workstreams/`). Each 
 - Bridge/gateway design — GNUS token movement between main net and subnet, trust model
 - Job isolation & consensus impact — subnet-scoped job scheduling, CRDT/registration/validation-gate subnet-awareness
 
+### Workstream: tokenprice
+
+**Goal:** Resilient token pricing for GNUS nodes via a two-tier hybrid PriceCoordinator — a device-side Local Price Manager (L1 cache, request coalescing, batched direct CoinGecko) with `token.gnus.ai` (Cloudflare Worker + Durable Object) as the shared-cache/coalescing fallback — so price-dependent paths (`GetProcessCost` → `GetGNUSPrice`) never hard-fail when CoinGecko's anonymous endpoint is WAF/rate-limit blocked.
+
+**Target features (v1.0):**
+- `token.gnus.ai` PriceCoordinator service (TypeScript Cloudflare Worker + SQLite-backed Durable Object) — `GET /v1/prices?ids=...&vs=usd` envelope response (`currency/prices/fetchedAt/age/source/stale`), DO single-flight request coalescing across clients, shared cache via `caches.default`; no Cloudflare Queues, no KV for the hot cache; CoinGecko key (if any) stays server-side only, clients keyless. Worker code + tests this milestone — live deployment is a later/manual step.
+- Client-side Local Price Manager (C++, replacing today's `coinprices.cpp` behavior) — in-memory L1 cache (60s freshness), ~50ms request coalescing, multi-id batching in one `/simple/price` call, fallback chain local cache → CoinGecko direct → `token.gnus.ai` → last-known-good, truthful HTTP status handling, User-Agent header, retry only on transient errors with real backoff.
+- Provider-independent `PriceQuote` surface (source enum: LocalCache / CoinGecko / GnusPriceService; OnChain reserved for a future milestone).
+- Freshness bands: 0–60s fresh / 60s–5min stale-but-usable / >5min unavailable.
+- Hermetic `account_management_test.SetPayoutAddress` via a configurable price endpoint (local stub), removing its live-internet dependency (currently CI-excluded on Linux aarch64-Debug).
+
+**Motivating diagnosis (2026-09-29):** CoinGecko's anonymous `/simple/price` is 403-blocked at the CloudFront/WAF layer (path-scoped IP reputation; CI runner egress IPs near-permanently blocked) plus a minutes-scale 429 limiter with no rate-limit headers; free tier is migrating to keyed access. `coinprices.cpp` swallows HTTP status codes (403 HTML fed to rapidjson → misleading `JSON Parse Error: 3`), sends no User-Agent, and its 3×250/500ms retry loop re-triggers the 429 limiter. Design reference: `.planning/research/pricing_coordinator.md`.
+
 ### Workstream: elmbridge
 
 **Goal:** A GCS-style requestor submits one funded `elm_processing` job (`elms[]` work items in existing `Task.json_data`); a single SuperGenius node distributes it through the existing processing grid and executes each ELM work item via SGProcessingManager — fetch model, verify, generate, publish work-item-tagged results. Single-node E2E.
@@ -248,4 +261,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-09-09 — elmbridge workstream created; v1.0 (Single-Node ELM Job Execution) milestone defined. Prior: sgproc-render v2.3 closed 2026-08-21.*
+*Last updated: 2026-09-29 — tokenprice workstream milestone v1.0 (PriceCoordinator hybrid) defined. Prior: elmbridge workstream created 2026-09-09; sgproc-render v2.3 closed 2026-08-21.*
