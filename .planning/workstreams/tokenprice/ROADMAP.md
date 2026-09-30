@@ -37,7 +37,7 @@ This milestone delivers a two-tier hybrid price system. Phase 1 builds the new-t
 Plans:
 **Wave 1**
 
-- [ ] 01-01: Project scaffold — `package.json` with STACK.md-pinned versions (`wrangler@^4.144.0`, `@cloudflare/vitest-plugin@^1.3.3`, `vitest@^4.1.0`, `@cloudflare/workers-types`, TS `~5.9`), `wrangler.jsonc` with SQLite DO migration, tsconfig, vitest config; hello-world fetch test green
+- [x] 01-01: Project scaffold — `package.json` with STACK.md-pinned versions (`wrangler@^4.144.0`, `@cloudflare/vitest-plugin@^1.3.3`, `vitest@^4.1.0`, `@cloudflare/workers-types`, TS `~5.9`), `wrangler.jsonc` with SQLite DO migration, tsconfig, vitest config; hello-world fetch test green
 
 **Wave 2** *(blocked on Wave 1 completion)*
 
@@ -142,7 +142,7 @@ Plans:
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. token.gnus.ai Worker Service | 0/5 | Not started | - |
+| 1. token.gnus.ai Worker Service | 1/5 | Executing | - |
 | 2. C++ Price HTTP Client & Quote Surface | 0/4 | Not started | - |
 | 3. Local Price Manager | 0/4 | Not started | - |
 | 4. GeniusNode Integration & Hermetic Tests | 0/3 | Not started | - |
