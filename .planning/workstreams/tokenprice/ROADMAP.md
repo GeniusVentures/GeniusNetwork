@@ -71,10 +71,17 @@ Plans:
 **Plans**: 4 plans
 
 Plans:
+**Wave 1**
 
 - [ ] 02-01: `PriceQuote` type + `PriceSource` enum + freshness-band classifier with unit tests (QUOTE-01/02, FRESH-02)
 - [ ] 02-02: Boost.Beast HTTPS client in the price module — status/headers surfaced, UA header, `beast::tcp_stream::expires_after` timeouts, SNI, `verify_peer` + pinned `cacert.pem` (LPM-05/06/08)
+
+**Wave 2** *(blocked on Wave 1 completion)*
+
 - [ ] 02-03: Scriptable Beast stub server test fixture + client-level tests against 200/403-HTML/429/timeout cases (TEST-03)
+
+**Wave 3** *(blocked on Wave 2 completion)*
+
 - [ ] 02-04: Retry/backoff policy — transient-only classification, real backoff, 403/429 immediate fall-through (LPM-07)
 
 ### Phase 3: Local Price Manager
