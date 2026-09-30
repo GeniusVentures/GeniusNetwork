@@ -49,7 +49,7 @@ Plans:
 
 **Wave 4** *(blocked on Wave 3 completion)*
 
-- [ ] 01-04: `caches.default` read-through with sub-60s TTL ahead of the DO (SRVC-04)
+- [x] 01-04: `caches.default` read-through with sub-60s TTL ahead of the DO (SRVC-04)
 
 **Wave 5** *(blocked on Wave 4 completion)*
 
@@ -142,7 +142,7 @@ Plans:
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. token.gnus.ai Worker Service | 3/5 | Executing | - |
+| 1. token.gnus.ai Worker Service | 4/5 | Executing | - |
 | 2. C++ Price HTTP Client & Quote Surface | 0/4 | Not started | - |
 | 3. Local Price Manager | 0/4 | Not started | - |
 | 4. GeniusNode Integration & Hermetic Tests | 0/3 | Not started | - |
