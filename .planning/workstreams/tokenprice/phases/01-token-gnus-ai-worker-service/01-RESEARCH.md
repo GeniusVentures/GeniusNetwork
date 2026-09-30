@@ -716,17 +716,16 @@ Not a rename/refactor/migration phase — greenfield addition. For completeness:
 
 ---
 
-## Open Questions
+## Open Questions (RESOLVED)
 
-1. **Envelope `source` for fresh-from-SQL serving (contract ambiguity — needs resolution before 01-02 finalizes the builder; affects Phase 2/3 C++ mapping).**
-   - What we know: D-06 defines `"coingecko"` = "(live upstream fetch)" and `"coingecko-cache"` = "(DO stale-served from SQL)". D-12 requires serving fresh (≤60s) rows from SQL **without refetch** — a path that is neither a live fetch in that request nor stale.
-   - The gap: which `source` does the fresh-SQL envelope carry?
-   - Recommendation: **tier-based** — any envelope built from SQL rows is `"coingecko-cache"` (fresh: `stale:false`; upstream-failure stale: `stale:true` per D-07); `"coingecko"` is reserved for envelopes built from this cycle's live upstream response. This maps cleanly onto Phase 3's `PriceSource::{CoinGecko, GnusPriceService}` and keeps exactly two values. The alternative (provenance-based: fresh-SQL → `"coingecko"`) reads D-06's parentheticals more literally but makes `source` ambiguous about which tier answered. Planner should confirm with the user if cheap, else proceed tier-based and document in `envelope.ts`.
-2. **MSW vs `outboundService` layering (A2)** — settled empirically by the 01-01/01-05 canary test; fallback path defined.
-3. **Batch window size / caps (A7)** — discretion per CONTEXT.md; recommended defaults given; no user input needed unless desired.
-4. **SQL row pruning policy** — discretion (D-10 area); recommended delete-on-flush for >5min rows; alternative keep-but-unservable is behaviorally identical, just unbounded storage.
+1. **Envelope `source` for fresh-from-SQL serving — RESOLVED by user decision D-06a (2026-09-29), overturning the tier-based recommendation below.**
+   - **Binding answer (D-06a):** `source` is **freshness-based**: any envelope whose returned ids are all ≤60s old reports `"coingecko"` — including fresh data the DO served from SQL without refetching. `"coingecko-cache"` appears **only** on stale-served-on-upstream-failure envelopes (ages 60s–5min, `stale: true`).
+   - ~~Recommendation: **tier-based** — any envelope built from SQL rows is `"coingecko-cache"` (fresh: `stale:false`; upstream-failure stale: `stale:true` per D-07); `"coingecko"` is reserved for envelopes built from this cycle's live upstream response.~~ **Superseded — do NOT implement.** The user chose the provenance-based alternative: fresh-SQL → `"coingecko"`. All plans (01-02..01-05) and PATTERNS.md implement D-06a; executors must follow D-06a, not the struck-through recommendation.
+2. **MSW vs `outboundService` layering (A2)** — RESOLVED empirically: settled by the 01-01/01-05 canary test; fallback path defined.
+3. **Batch window size / caps (A7)** — RESOLVED as discretion per CONTEXT.md; recommended defaults given (~15ms window, MAX_IDS_PER_REQUEST=50); no user input needed unless desired.
+4. **SQL row pruning policy** — RESOLVED as discretion (D-10 area); recommended delete-on-flush for >5min rows; alternative keep-but-unservable is behaviorally identical, just unbounded storage.
 
-None of these block planning; Q1 is the only one with cross-phase contract impact and has a recommended default.
+All questions resolved; Q1's binding answer is D-06a in 01-CONTEXT.md.
 
 ---
 
