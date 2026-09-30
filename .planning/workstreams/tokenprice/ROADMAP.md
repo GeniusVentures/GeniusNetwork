@@ -41,7 +41,7 @@ Plans:
 
 **Wave 2** *(blocked on Wave 1 completion)*
 
-- [ ] 01-02: `GET /v1/prices` request validation (SRVC-08) + envelope response + keyless client surface with server-side-only key binding (SRVC-01, SRVC-06)
+- [x] 01-02: `GET /v1/prices` request validation (SRVC-08) + envelope response + keyless client surface with server-side-only key binding (SRVC-01, SRVC-06)
 
 **Wave 3** *(blocked on Wave 2 completion)*
 
@@ -142,7 +142,7 @@ Plans:
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. token.gnus.ai Worker Service | 1/5 | Executing | - |
+| 1. token.gnus.ai Worker Service | 2/5 | Executing | - |
 | 2. C++ Price HTTP Client & Quote Surface | 0/4 | Not started | - |
 | 3. Local Price Manager | 0/4 | Not started | - |
 | 4. GeniusNode Integration & Hermetic Tests | 0/3 | Not started | - |
