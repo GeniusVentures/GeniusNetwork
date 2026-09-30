@@ -11,7 +11,7 @@ This milestone delivers a two-tier hybrid price system. Phase 1 builds the new-t
 
 ## Phases
 
-- [ ] **Phase 1: token.gnus.ai Worker Service** — TypeScript Cloudflare Worker + SQLite Durable Object + Cache API serving the `/v1/prices` envelope, hermetically tested in workerd
+- [x] **Phase 1: token.gnus.ai Worker Service** — TypeScript Cloudflare Worker + SQLite Durable Object + Cache API serving the `/v1/prices` envelope, hermetically tested in workerd
 - [ ] **Phase 2: C++ Price HTTP Client & Quote Surface** — Boost.Beast client with truthful status/UA/TLS/timeouts, `PriceQuote`/`PriceSource` types, freshness-band classification, scriptable local stub server
 - [ ] **Phase 3: Local Price Manager** — L1 cache, request coalescing, multi-id batching, and the four-tier fallback chain (L1 → CoinGecko → token.gnus.ai → last-known-good)
 - [ ] **Phase 4: GeniusNode Integration & Hermetic Tests** — configurable endpoints, `GetCoinprice`/`GetGNUSPrice` seam cutover, `SetPayoutAddress` + `price_retrieval_test` made hermetic
@@ -53,7 +53,7 @@ Plans:
 
 **Wave 5** *(blocked on Wave 4 completion)*
 
-- [ ] 01-05: Full hermetic vitest suite — coalescing call-count proofs, freshness/stale envelopes, upstream 429/5xx/timeout, malformed-request 4xx, DO eviction persistence (TEST-01; verifies SRVC-07 by config inspection)
+- [x] 01-05: Full hermetic vitest suite — coalescing call-count proofs, freshness/stale envelopes, upstream 429/5xx/timeout, malformed-request 4xx, DO eviction persistence (TEST-01; verifies SRVC-07 by config inspection)
 
 ### Phase 2: C++ Price HTTP Client & Quote Surface
 
@@ -142,7 +142,7 @@ Plans:
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. token.gnus.ai Worker Service | 4/5 | Executing | - |
+| 1. token.gnus.ai Worker Service | 5/5 | Complete | 2026-09-30 |
 | 2. C++ Price HTTP Client & Quote Surface | 0/4 | Not started | - |
 | 3. Local Price Manager | 0/4 | Not started | - |
 | 4. GeniusNode Integration & Hermetic Tests | 0/3 | Not started | - |
