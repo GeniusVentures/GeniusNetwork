@@ -45,7 +45,7 @@ Plans:
 
 **Wave 3** *(blocked on Wave 2 completion)*
 
-- [ ] 01-03: `PriceCoordinator` Durable Object — `idFromName` per-currency instances, `ctx.storage.sql` price table, single-flight coalescing, stale-serving on upstream failure (SRVC-02, SRVC-03, SRVC-05)
+- [x] 01-03: `PriceCoordinator` Durable Object — `idFromName` per-currency instances, `ctx.storage.sql` price table, single-flight coalescing, stale-serving on upstream failure (SRVC-02, SRVC-03, SRVC-05)
 
 **Wave 4** *(blocked on Wave 3 completion)*
 
@@ -142,7 +142,7 @@ Plans:
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. token.gnus.ai Worker Service | 2/5 | Executing | - |
+| 1. token.gnus.ai Worker Service | 3/5 | Executing | - |
 | 2. C++ Price HTTP Client & Quote Surface | 0/4 | Not started | - |
 | 3. Local Price Manager | 0/4 | Not started | - |
 | 4. GeniusNode Integration & Hermetic Tests | 0/3 | Not started | - |
