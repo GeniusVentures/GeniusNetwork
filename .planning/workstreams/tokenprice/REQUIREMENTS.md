@@ -12,14 +12,14 @@ Requirements for the PriceCoordinator milestone. Each maps to roadmap phases (tr
 
 ### Worker Service — `token.gnus.ai` (SRVC)
 
-- [ ] **SRVC-01**: TypeScript Cloudflare Worker serves `GET /v1/prices?ids=<csv>&vs=<currency>` returning the envelope `{ currency, prices: { <id>: <number> }, fetchedAt, age, source, stale }` with the exact field semantics from the design reference
-- [ ] **SRVC-02**: Durable Object class `PriceCoordinator` (one instance per currency, e.g. `PriceCoordinator:USD` via `idFromName`) provides cross-client single-flight request coalescing — concurrent requests for overlapping id-sets result in exactly one upstream CoinGecko call per freshness window
-- [ ] **SRVC-03**: SQLite-backed Durable Object via the `new_sqlite_classes` migration tag (Free-plan requirement; KV-backed `new_classes` is paid-only); price state survives DO eviction within the test runtime
-- [ ] **SRVC-04**: Worker consults `caches.default` before the DO and populates it on miss with a sub-60s TTL, so per-colo repeated requests bypass the DO entirely
-- [ ] **SRVC-05**: Upstream CoinGecko errors are handled truthfully: 429/5xx/timeouts do not crash the worker; the DO serves stale-but-usable cached prices (`"stale": true`, `source` indicating cache) when available, and a structured error envelope when not
-- [ ] **SRVC-06**: Clients are keyless — no CoinGecko API key appears in any client-facing code, config, or response; if a key exists it is read exclusively server-side (Worker secret/`env` binding)
-- [ ] **SRVC-07**: No Cloudflare Queues and no Workers KV anywhere in the price path (explicit design decision — Queues free-tier op accounting and KV's 1,000 writes/day cap make both unusable)
-- [ ] **SRVC-08**: Malformed requests (missing/empty `ids`, oversized id lists, invalid `vs`) are rejected with 4xx and a JSON error body, not a 500
+- [x] **SRVC-01**: TypeScript Cloudflare Worker serves `GET /v1/prices?ids=<csv>&vs=<currency>` returning the envelope `{ currency, prices: { <id>: <number> }, fetchedAt, age, source, stale }` with the exact field semantics from the design reference
+- [x] **SRVC-02**: Durable Object class `PriceCoordinator` (one instance per currency, e.g. `PriceCoordinator:USD` via `idFromName`) provides cross-client single-flight request coalescing — concurrent requests for overlapping id-sets result in exactly one upstream CoinGecko call per freshness window
+- [x] **SRVC-03**: SQLite-backed Durable Object via the `new_sqlite_classes` migration tag (Free-plan requirement; KV-backed `new_classes` is paid-only); price state survives DO eviction within the test runtime
+- [x] **SRVC-04**: Worker consults `caches.default` before the DO and populates it on miss with a sub-60s TTL, so per-colo repeated requests bypass the DO entirely
+- [x] **SRVC-05**: Upstream CoinGecko errors are handled truthfully: 429/5xx/timeouts do not crash the worker; the DO serves stale-but-usable cached prices (`"stale": true`, `source` indicating cache) when available, and a structured error envelope when not
+- [x] **SRVC-06**: Clients are keyless — no CoinGecko API key appears in any client-facing code, config, or response; if a key exists it is read exclusively server-side (Worker secret/`env` binding)
+- [x] **SRVC-07**: No Cloudflare Queues and no Workers KV anywhere in the price path (explicit design decision — Queues free-tier op accounting and KV's 1,000 writes/day cap make both unusable)
+- [x] **SRVC-08**: Malformed requests (missing/empty `ids`, oversized id lists, invalid `vs`) are rejected with 4xx and a JSON error body, not a 500
 
 ### Local Price Manager — C++ (LPM)
 
@@ -41,12 +41,12 @@ Requirements for the PriceCoordinator milestone. Each maps to roadmap phases (tr
 
 ### Freshness Bands (FRESH)
 
-- [ ] **FRESH-01**: Quotes are classified 0–60s = fresh / 60s–5min = stale-but-usable / >5min = unavailable, in both the Worker envelope (`stale` field, `age` seconds) and the C++ manager (band-aware fallback decisions)
+- [x] **FRESH-01**: Quotes are classified 0–60s = fresh / 60s–5min = stale-but-usable / >5min = unavailable, in both the Worker envelope (`stale` field, `age` seconds) and the C++ manager (band-aware fallback decisions)
 - [ ] **FRESH-02**: A stale-but-usable quote is served (flagged) rather than failing, when no fresher source is reachable; only the >5min band is treated as unavailable for the fallback chain
 
 ### Test Infrastructure & CI (TEST)
 
-- [ ] **TEST-01**: Worker unit/integration tests run via `@cloudflare/vitest-plugin` + `vitest@^4.1.0` inside the local workerd runtime with real DO-SQLite and Cache API, CoinGecko mocked — hermetic, zero network egress, deterministic (coalescing proven by upstream call-count assertions)
+- [x] **TEST-01**: Worker unit/integration tests run via `@cloudflare/vitest-plugin` + `vitest@^4.1.0` inside the local workerd runtime with real DO-SQLite and Cache API, CoinGecko mocked — hermetic, zero network egress, deterministic (coalescing proven by upstream call-count assertions)
 - [ ] **TEST-02**: C++ Local Price Manager is unit-tested against an injected client interface (no sockets): L1 hit, coalescing dedupe, fallback order, last-known-good, freshness bands, retry classification (403/429 never retried against CoinGecko)
 - [ ] **TEST-03**: A scriptable local HTTP stub server (Boost.Beast, `127.0.0.1`, OS-assigned port, plain HTTP) serves canned status/body responses for client-level tests including the 403-HTML and 429 cases from the diagnosis
 - [ ] **TEST-04**: `account_management_test.SetPayoutAddress` runs hermetically against the local stub (configurable endpoint), and its Linux aarch64-Debug `GTEST_FILTER` exclusion in `SuperGenius/.github/workflows/cmake.yml` is removed
@@ -120,6 +120,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | TEST-06 | Phase 5 | Mapped |
 
 **Coverage:**
+
 - v1 requirements: 28 total
 - Mapped to phases: 28
 - Unmapped: 0 ✓
