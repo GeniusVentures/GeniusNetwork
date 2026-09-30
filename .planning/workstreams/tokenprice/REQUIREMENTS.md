@@ -36,13 +36,13 @@ Requirements for the PriceCoordinator milestone. Each maps to roadmap phases (tr
 
 ### Provider-Independent Quote Surface (QUOTE)
 
-- [ ] **QUOTE-01**: A `PriceQuote` type exposes `asset`, `currency`, `price`, `timestamp`, `source`, `stale` — decoupling callers from which provider served the quote
-- [ ] **QUOTE-02**: `PriceSource` enum defines `LocalCache`, `CoinGecko`, `GnusPriceService`, and a reserved-but-unimplemented `OnChain` value
+- [x] **QUOTE-01**: A `PriceQuote` type exposes `asset`, `currency`, `price`, `timestamp`, `source`, `stale` — decoupling callers from which provider served the quote
+- [x] **QUOTE-02**: `PriceSource` enum defines `LocalCache`, `CoinGecko`, `GnusPriceService`, and a reserved-but-unimplemented `OnChain` value
 
 ### Freshness Bands (FRESH)
 
 - [x] **FRESH-01**: Quotes are classified 0–60s = fresh / 60s–5min = stale-but-usable / >5min = unavailable, in both the Worker envelope (`stale` field, `age` seconds) and the C++ manager (band-aware fallback decisions)
-- [ ] **FRESH-02**: A stale-but-usable quote is served (flagged) rather than failing, when no fresher source is reachable; only the >5min band is treated as unavailable for the fallback chain
+- [x] **FRESH-02**: A stale-but-usable quote is served (flagged) rather than failing, when no fresher source is reachable; only the >5min band is treated as unavailable for the fallback chain
 
 ### Test Infrastructure & CI (TEST)
 
