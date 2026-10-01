@@ -13,7 +13,7 @@ This milestone delivers a two-tier hybrid price system. Phase 1 builds the new-t
 
 - [x] **Phase 1: token.gnus.ai Worker Service** — TypeScript Cloudflare Worker + SQLite Durable Object + Cache API serving the `/v1/prices` envelope, hermetically tested in workerd
 - [x] **Phase 2: C++ Price HTTP Client & Quote Surface** — Boost.Beast client with truthful status/UA/TLS/timeouts, `PriceQuote`/`PriceSource` types, freshness-band classification, scriptable local stub server (completed 2026-10-01)
-- [ ] **Phase 3: Local Price Manager** — L1 cache, request coalescing, multi-id batching, and the four-tier fallback chain (L1 → CoinGecko → token.gnus.ai → last-known-good)
+- [x] **Phase 3: Local Price Manager** — L1 cache, request coalescing, multi-id batching, and the four-tier fallback chain (L1 → CoinGecko → token.gnus.ai → last-known-good) (completed 2026-10-01)
 - [ ] **Phase 4: GeniusNode Integration & Hermetic Tests** — configurable endpoints, `GetCoinprice`/`GetGNUSPrice` seam cutover, `SetPayoutAddress` + `price_retrieval_test` made hermetic
 - [ ] **Phase 5: CI Integration** — `worker-tests` GitHub job, removal of the aarch64-Debug price-test exclusion
 
@@ -102,24 +102,30 @@ Plans:
   3. When CoinGecko direct fails (403/429/timeout), the manager queries `token.gnus.ai`; when that also fails, a quote ≤5min old is served stale-flagged; only >5min-or-nothing errors
   4. Every behavior above is proven with an injected fake client — the unit suite opens no sockets and runs deterministically
 
-**Plans**: 4 plans
+**Plans**: 4/4 plans complete
 
 Plans:
+
+- [x] 03-01-PLAN.md
+- [x] 03-02-PLAN.md
+- [x] 03-03-PLAN.md
+- [x] 03-04-PLAN.md
+
 **Wave 1**
 
-- [ ] 03-01: L1 cache — timestamped entries, 60s freshness window, thread-safe (LPM-01)
+- [x] 03-01: L1 cache — timestamped entries, 60s freshness window, thread-safe (LPM-01)
 
 **Wave 2** *(blocked on Wave 1 completion)*
 
-- [ ] 03-02: Coalescing window (~50ms) + multi-id batching into one `/simple/price` call (LPM-02, LPM-03)
+- [x] 03-02: Coalescing window (~50ms) + multi-id batching into one `/simple/price` call (LPM-02, LPM-03)
 
 **Wave 3** *(blocked on Wave 2 completion)*
 
-- [ ] 03-03: Four-tier fallback chain with band-aware decisions and last-known-good (LPM-04, FRESH-01/02)
+- [x] 03-03: Four-tier fallback chain with band-aware decisions and last-known-good (LPM-04, FRESH-01/02)
 
 **Wave 4** *(blocked on Wave 3 completion)*
 
-- [ ] 03-04: Full injected-fake unit suite — L1 hit, dedupe, fallback order, last-known-good, retry classification (TEST-02)
+- [x] 03-04: Full injected-fake unit suite — L1 hit, dedupe, fallback order, last-known-good, retry classification (TEST-02)
 
 ### Phase 4: GeniusNode Integration & Hermetic Tests
 
@@ -167,7 +173,7 @@ Plans:
 |-------|----------------|--------|-----------|
 | 1. token.gnus.ai Worker Service | 5/5 | Complete    | 2026-09-30 |
 | 2. C++ Price HTTP Client & Quote Surface | 4/4 | Complete    | 2026-10-01 |
-| 3. Local Price Manager | 0/4 | Not started | - |
+| 3. Local Price Manager | 4/4 | Complete   | 2026-10-01 |
 | 4. GeniusNode Integration & Hermetic Tests | 0/3 | Not started | - |
 | 5. CI Integration | 0/2 | Not started | - |
 

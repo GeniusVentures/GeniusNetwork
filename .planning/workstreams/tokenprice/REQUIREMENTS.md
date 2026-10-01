@@ -23,10 +23,10 @@ Requirements for the PriceCoordinator milestone. Each maps to roadmap phases (tr
 
 ### Local Price Manager — C++ (LPM)
 
-- [ ] **LPM-01**: In-memory L1 cache holds fetched prices with timestamps; a hit within the freshness window (60s) is served without any network I/O and reported with `source: LocalCache`
-- [ ] **LPM-02**: Concurrent requests for prices arriving within the coalescing window (~50ms) collapse into a single upstream call covering the union of requested ids; all waiters receive their requested subsets
-- [ ] **LPM-03**: Multi-id requests are batched into one CoinGecko `/simple/price` call (`ids=a,b,c&vs_currencies=usd`) — never one request per id
-- [ ] **LPM-04**: Fallback chain in order: fresh L1 cache → CoinGecko direct → `token.gnus.ai` → last-known-good (stale ≤ 5 min); each tier is attempted only when the prior tier fails
+- [x] **LPM-01**: In-memory L1 cache holds fetched prices with timestamps; a hit within the freshness window (60s) is served without any network I/O and reported with `source: LocalCache`
+- [x] **LPM-02**: Concurrent requests for prices arriving within the coalescing window (~50ms) collapse into a single upstream call covering the union of requested ids; all waiters receive their requested subsets
+- [x] **LPM-03**: Multi-id requests are batched into one CoinGecko `/simple/price` call (`ids=a,b,c&vs_currencies=usd`) — never one request per id
+- [x] **LPM-04**: Fallback chain in order: fresh L1 cache → CoinGecko direct → `token.gnus.ai` → last-known-good (stale ≤ 5 min); each tier is attempted only when the prior tier fails
 - [x] **LPM-05**: HTTP status codes are surfaced truthfully — a 403/429/5xx from CoinGecko is logged with its real status and classified (not fed to the JSON parser as a misleading `JsonParseError`); the logged error string for a blocked request contains the actual status code
 - [x] **LPM-06**: All outbound HTTP requests send a meaningful `User-Agent` header and use the Boost.Beast client scoped to the price module (not `FileManager::LoadASync`), with connect/handshake/read timeouts ≈ 5s
 - [x] **LPM-07**: Retry policy: only transient transport errors (timeout, connection reset, DNS) are retried, with real backoff; 403 falls through to the next tier immediately; 429 falls through without re-triggering CoinGecko's limiter (no sub-minute retries against CoinGecko)
@@ -47,7 +47,7 @@ Requirements for the PriceCoordinator milestone. Each maps to roadmap phases (tr
 ### Test Infrastructure & CI (TEST)
 
 - [x] **TEST-01**: Worker unit/integration tests run via `@cloudflare/vitest-plugin` + `vitest@^4.1.0` inside the local workerd runtime with real DO-SQLite and Cache API, CoinGecko mocked — hermetic, zero network egress, deterministic (coalescing proven by upstream call-count assertions)
-- [ ] **TEST-02**: C++ Local Price Manager is unit-tested against an injected client interface (no sockets): L1 hit, coalescing dedupe, fallback order, last-known-good, freshness bands, retry classification (403/429 never retried against CoinGecko)
+- [x] **TEST-02**: C++ Local Price Manager is unit-tested against an injected client interface (no sockets): L1 hit, coalescing dedupe, fallback order, last-known-good, freshness bands, retry classification (403/429 never retried against CoinGecko)
 - [x] **TEST-03**: A scriptable local HTTP stub server (Boost.Beast, `127.0.0.1`, OS-assigned port, plain HTTP) serves canned status/body responses for client-level tests including the 403-HTML and 429 cases from the diagnosis
 - [ ] **TEST-04**: `account_management_test.SetPayoutAddress` runs hermetically against the local stub (configurable endpoint), and its Linux aarch64-Debug `GTEST_FILTER` exclusion in `SuperGenius/.github/workflows/cmake.yml` is removed
 - [ ] **TEST-05**: The existing network-dependent `price_retrieval_test` cases are replaced by hermetic equivalents (no live CoinGecko calls in the suite)
