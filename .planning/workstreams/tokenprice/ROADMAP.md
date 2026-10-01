@@ -88,7 +88,7 @@ Plans:
 
 **Wave 3** *(blocked on Wave 2 completion)*
 
-- [ ] 02-04: Retry/backoff policy — transient-only classification, real backoff, 403/429 immediate fall-through (LPM-07)
+- [x] 02-04: Retry/backoff policy — transient-only classification, real backoff, 403/429 immediate fall-through (LPM-07)
 
 ### Phase 3: Local Price Manager
 
@@ -156,7 +156,7 @@ Plans:
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. token.gnus.ai Worker Service | 5/5 | Complete    | 2026-09-30 |
-| 2. C++ Price HTTP Client & Quote Surface | 4/4 | Complete   | 2026-10-01 |
+| 2. C++ Price HTTP Client & Quote Surface | 4/4 | Complete    | 2026-10-01 |
 | 3. Local Price Manager | 0/4 | Not started | - |
 | 4. GeniusNode Integration & Hermetic Tests | 0/3 | Not started | - |
 | 5. CI Integration | 0/2 | Not started | - |
