@@ -12,7 +12,7 @@ This milestone delivers a two-tier hybrid price system. Phase 1 builds the new-t
 ## Phases
 
 - [x] **Phase 1: token.gnus.ai Worker Service** — TypeScript Cloudflare Worker + SQLite Durable Object + Cache API serving the `/v1/prices` envelope, hermetically tested in workerd
-- [ ] **Phase 2: C++ Price HTTP Client & Quote Surface** — Boost.Beast client with truthful status/UA/TLS/timeouts, `PriceQuote`/`PriceSource` types, freshness-band classification, scriptable local stub server
+- [x] **Phase 2: C++ Price HTTP Client & Quote Surface** — Boost.Beast client with truthful status/UA/TLS/timeouts, `PriceQuote`/`PriceSource` types, freshness-band classification, scriptable local stub server (completed 2026-10-01)
 - [ ] **Phase 3: Local Price Manager** — L1 cache, request coalescing, multi-id batching, and the four-tier fallback chain (L1 → CoinGecko → token.gnus.ai → last-known-good)
 - [ ] **Phase 4: GeniusNode Integration & Hermetic Tests** — configurable endpoints, `GetCoinprice`/`GetGNUSPrice` seam cutover, `SetPayoutAddress` + `price_retrieval_test` made hermetic
 - [ ] **Phase 5: CI Integration** — `worker-tests` GitHub job, removal of the aarch64-Debug price-test exclusion
@@ -68,14 +68,14 @@ Plans:
   4. `PriceQuote{asset, currency, price, timestamp, source, stale}` and `PriceSource{LocalCache, CoinGecko, GnusPriceService, OnChain}` compile and freshness bands (0-60s / 60s-5min / >5min) classify correctly
   5. The stub server (127.0.0.1, OS-assigned port, plain HTTP, scriptable status/body per path) serves the 403-HTML and 429 fixtures from the diagnosis and drives all tests with no live network
 
-**Plans**: 3/4 plans executed
+**Plans**: 4/4 plans complete
 
 Plans:
 
 - [x] 02-01-PLAN.md
 - [x] 02-02-PLAN.md
 - [x] 02-03-PLAN.md
-- [ ] 02-04-PLAN.md
+- [x] 02-04-PLAN.md
 
 **Wave 1**
 
@@ -84,7 +84,7 @@ Plans:
 
 **Wave 2** *(blocked on Wave 1 completion)*
 
-- [ ] 02-03: Scriptable Beast stub server test fixture + client-level tests against 200/403-HTML/429/timeout cases (TEST-03)
+- [x] 02-03: Scriptable Beast stub server test fixture + client-level tests against 200/403-HTML/429/timeout cases (TEST-03)
 
 **Wave 3** *(blocked on Wave 2 completion)*
 
@@ -156,7 +156,7 @@ Plans:
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. token.gnus.ai Worker Service | 5/5 | Complete    | 2026-09-30 |
-| 2. C++ Price HTTP Client & Quote Surface | 3/4 | In Progress|  |
+| 2. C++ Price HTTP Client & Quote Surface | 4/4 | Complete   | 2026-10-01 |
 | 3. Local Price Manager | 0/4 | Not started | - |
 | 4. GeniusNode Integration & Hermetic Tests | 0/3 | Not started | - |
 | 5. CI Integration | 0/2 | Not started | - |
