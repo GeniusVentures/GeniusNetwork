@@ -105,10 +105,20 @@ Plans:
 **Plans**: 4 plans
 
 Plans:
+**Wave 1**
 
 - [ ] 03-01: L1 cache — timestamped entries, 60s freshness window, thread-safe (LPM-01)
+
+**Wave 2** *(blocked on Wave 1 completion)*
+
 - [ ] 03-02: Coalescing window (~50ms) + multi-id batching into one `/simple/price` call (LPM-02, LPM-03)
+
+**Wave 3** *(blocked on Wave 2 completion)*
+
 - [ ] 03-03: Four-tier fallback chain with band-aware decisions and last-known-good (LPM-04, FRESH-01/02)
+
+**Wave 4** *(blocked on Wave 3 completion)*
+
 - [ ] 03-04: Full injected-fake unit suite — L1 hit, dedupe, fallback order, last-known-good, retry classification (TEST-02)
 
 ### Phase 4: GeniusNode Integration & Hermetic Tests
