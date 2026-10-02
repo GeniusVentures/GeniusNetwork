@@ -142,8 +142,12 @@ Plans:
 **Plans**: 3 plans
 
 Plans:
+**Wave 1**
 
 - [ ] 04-01: Configurable price endpoints (env/config) + cutover of `GetCoinprice` to the Local Price Manager; `CoinGeckoPriceRetriever` retired or reduced to what still compiles (LPM-09, LPM-10)
+
+**Wave 2** *(blocked on Wave 1 completion)*
+
 - [ ] 04-02: `SetPayoutAddress` pointed at the local stub, hermetic and green (TEST-04)
 - [ ] 04-03: `price_retrieval_test` converted to hermetic equivalents (TEST-05)
 
