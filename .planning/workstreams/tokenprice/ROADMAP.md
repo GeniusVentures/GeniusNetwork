@@ -139,12 +139,17 @@ Plans:
   3. `account_management_test.SetPayoutAddress` passes entirely against the local stub, no live CoinGecko
   4. `price_retrieval_test` contains no live-network cases — every scenario is stub- or fake-driven
 
-**Plans**: 3 plans
+**Plans**: 1/3 plans executed
 
 Plans:
+
+- [x] 04-01-PLAN.md
+- [ ] 04-02-PLAN.md
+- [ ] 04-03-PLAN.md
+
 **Wave 1**
 
-- [ ] 04-01: Configurable price endpoints (env/config) + cutover of `GetCoinprice` to the Local Price Manager; `CoinGeckoPriceRetriever` retired or reduced to what still compiles (LPM-09, LPM-10)
+- [x] 04-01: Configurable price endpoints (env/config) + cutover of `GetCoinprice` to the Local Price Manager; `CoinGeckoPriceRetriever` retired or reduced to what still compiles (LPM-09, LPM-10)
 
 **Wave 2** *(blocked on Wave 1 completion)*
 
@@ -178,7 +183,7 @@ Plans:
 | 1. token.gnus.ai Worker Service | 5/5 | Complete    | 2026-09-30 |
 | 2. C++ Price HTTP Client & Quote Surface | 4/4 | Complete    | 2026-10-01 |
 | 3. Local Price Manager | 4/4 | Complete   | 2026-10-01 |
-| 4. GeniusNode Integration & Hermetic Tests | 0/3 | Not started | - |
+| 4. GeniusNode Integration & Hermetic Tests | 1/3 | In Progress|  |
 | 5. CI Integration | 0/2 | Not started | - |
 
 ---
