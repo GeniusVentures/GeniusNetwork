@@ -24,7 +24,7 @@
 	url = ../zkLLVM.git
 [submodule "wallet-assets"]
 	path = wallet-assets
-	url = ./wallet-assets
+	url = ./wallet-assets.git
 [submodule "GeniusCognitiveSystem"]
 	path = GeniusCognitiveSystem
-	url = ../GeniusCognitiveSystem
+	url = ../GeniusCognitiveSystem.git
