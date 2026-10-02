@@ -82,7 +82,7 @@ Explicitly excluded from v1.0. Documented to prevent scope creep.
 | Refactoring `FileManager`/`HTTPDevice` (AsyncIOManager) to surface status codes / fix the verify-peer dead toggle | Touches every MNN/IPFS/SFTP loader consumer; new Beast client is scoped to the price module instead. Pre-existing issues logged in STACK.md for a future milestone |
 | GeniusWallet Flutter price-path changes | Wallet has its own separate CoinGecko usage; out of scope unless trivially relevant |
 | gRPC exposure of price data | No API surface change requested; `GetGNUSPrice` C++ seam is the only integration point |
-| Historical price endpoints (`getHistoricalPrices`/`getHistoricalPriceRange`) redesign | Kept compiling behind the existing surface; only the current-price path is in scope |
+| Historical price endpoints (`getHistoricalPrices`/`getHistoricalPriceRange`) redesign | Superseded by Phase 4 decision D-09: `CoinGeckoPriceRetriever` was deleted in its entirety along with the `GetCoinPriceByDate`/`GetCoinPricesByDateRange` forwarders (zero consumers verified); only the current-price path exists |
 
 ## Traceability
 
