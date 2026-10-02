@@ -25,6 +25,6 @@
 [submodule "wallet-assets"]
 	path = wallet-assets
 	url = ./wallet-assets
-[submodule "GeniusCogntiveSystem"]
-	path = GeniusCogntiveSystem
-	url = ../GeniusCogntiveSystem
+[submodule "GeniusCognitiveSystem"]
+	path = GeniusCognitiveSystem
+	url = ../GeniusCognitiveSystem
