@@ -154,7 +154,7 @@ Plans:
 **Wave 2** *(blocked on Wave 1 completion)*
 
 - [x] 04-02: `SetPayoutAddress` pointed at the local stub, hermetic and green (TEST-04)
-- [ ] 04-03: `price_retrieval_test` converted to hermetic equivalents (TEST-05)
+- [x] 04-03: `price_retrieval_test` converted to hermetic equivalents (TEST-05)
 
 ### Phase 5: CI Integration
 
