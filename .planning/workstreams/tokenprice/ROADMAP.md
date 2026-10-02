@@ -14,7 +14,7 @@ This milestone delivers a two-tier hybrid price system. Phase 1 builds the new-t
 - [x] **Phase 1: token.gnus.ai Worker Service** — TypeScript Cloudflare Worker + SQLite Durable Object + Cache API serving the `/v1/prices` envelope, hermetically tested in workerd
 - [x] **Phase 2: C++ Price HTTP Client & Quote Surface** — Boost.Beast client with truthful status/UA/TLS/timeouts, `PriceQuote`/`PriceSource` types, freshness-band classification, scriptable local stub server (completed 2026-10-01)
 - [x] **Phase 3: Local Price Manager** — L1 cache, request coalescing, multi-id batching, and the four-tier fallback chain (L1 → CoinGecko → token.gnus.ai → last-known-good) (completed 2026-10-01)
-- [ ] **Phase 4: GeniusNode Integration & Hermetic Tests** — configurable endpoints, `GetCoinprice`/`GetGNUSPrice` seam cutover, `SetPayoutAddress` + `price_retrieval_test` made hermetic
+- [x] **Phase 4: GeniusNode Integration & Hermetic Tests** — configurable endpoints, `GetCoinprice`/`GetGNUSPrice` seam cutover, `SetPayoutAddress` + `price_retrieval_test` made hermetic (completed 2026-10-02)
 - [ ] **Phase 5: CI Integration** — `worker-tests` GitHub job, removal of the aarch64-Debug price-test exclusion
 
 ## Phase Details
@@ -139,13 +139,13 @@ Plans:
   3. `account_management_test.SetPayoutAddress` passes entirely against the local stub, no live CoinGecko
   4. `price_retrieval_test` contains no live-network cases — every scenario is stub- or fake-driven
 
-**Plans**: 1/3 plans executed
+**Plans**: 3/3 plans complete
 
 Plans:
 
 - [x] 04-01-PLAN.md
-- [ ] 04-02-PLAN.md
-- [ ] 04-03-PLAN.md
+- [x] 04-02-PLAN.md
+- [x] 04-03-PLAN.md
 
 **Wave 1**
 
@@ -153,7 +153,7 @@ Plans:
 
 **Wave 2** *(blocked on Wave 1 completion)*
 
-- [ ] 04-02: `SetPayoutAddress` pointed at the local stub, hermetic and green (TEST-04)
+- [x] 04-02: `SetPayoutAddress` pointed at the local stub, hermetic and green (TEST-04)
 - [ ] 04-03: `price_retrieval_test` converted to hermetic equivalents (TEST-05)
 
 ### Phase 5: CI Integration
@@ -183,7 +183,7 @@ Plans:
 | 1. token.gnus.ai Worker Service | 5/5 | Complete    | 2026-09-30 |
 | 2. C++ Price HTTP Client & Quote Surface | 4/4 | Complete    | 2026-10-01 |
 | 3. Local Price Manager | 4/4 | Complete   | 2026-10-01 |
-| 4. GeniusNode Integration & Hermetic Tests | 1/3 | In Progress|  |
+| 4. GeniusNode Integration & Hermetic Tests | 3/3 | Complete   | 2026-10-02 |
 | 5. CI Integration | 0/2 | Not started | - |
 
 ---
