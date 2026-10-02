@@ -183,7 +183,7 @@ Plans:
 | 1. token.gnus.ai Worker Service | 5/5 | Complete    | 2026-09-30 |
 | 2. C++ Price HTTP Client & Quote Surface | 4/4 | Complete    | 2026-10-01 |
 | 3. Local Price Manager | 4/4 | Complete   | 2026-10-01 |
-| 4. GeniusNode Integration & Hermetic Tests | 3/3 | Complete   | 2026-10-02 |
+| 4. GeniusNode Integration & Hermetic Tests | 3/3 | Complete    | 2026-10-02 |
 | 5. CI Integration | 0/2 | Not started | - |
 
 ---

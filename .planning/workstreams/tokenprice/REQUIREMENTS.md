@@ -31,8 +31,8 @@ Requirements for the PriceCoordinator milestone. Each maps to roadmap phases (tr
 - [x] **LPM-06**: All outbound HTTP requests send a meaningful `User-Agent` header and use the Boost.Beast client scoped to the price module (not `FileManager::LoadASync`), with connect/handshake/read timeouts ≈ 5s
 - [x] **LPM-07**: Retry policy: only transient transport errors (timeout, connection reset, DNS) are retried, with real backoff; 403 falls through to the next tier immediately; 429 falls through without re-triggering CoinGecko's limiter (no sub-minute retries against CoinGecko)
 - [x] **LPM-08**: HTTPS peer verification is enabled in the new client (verify_peer + SNI + pinned in-repo CA bundle — the existing `HTTPDevice` verify toggle is a no-op and out of scope)
-- [ ] **LPM-09**: The price endpoint base URL(s) are configurable (env var and/or `GeniusNodeConfig` field) with CoinGecko defaults, so tests can point at a local stub
-- [ ] **LPM-10**: `GeniusNode::GetGNUSPrice` / `GetCoinprice` seam is preserved: same `outcome::result` surface, finite/positive price validation unchanged, existing call sites (`GetProcessCost`) compile and pass without modification
+- [x] **LPM-09**: The price endpoint base URL(s) are configurable (env var and/or `GeniusNodeConfig` field) with CoinGecko defaults, so tests can point at a local stub
+- [x] **LPM-10**: `GeniusNode::GetGNUSPrice` / `GetCoinprice` seam is preserved: same `outcome::result` surface, finite/positive price validation unchanged, existing call sites (`GetProcessCost`) compile and pass without modification
 
 ### Provider-Independent Quote Surface (QUOTE)
 
@@ -49,8 +49,8 @@ Requirements for the PriceCoordinator milestone. Each maps to roadmap phases (tr
 - [x] **TEST-01**: Worker unit/integration tests run via `@cloudflare/vitest-plugin` + `vitest@^4.1.0` inside the local workerd runtime with real DO-SQLite and Cache API, CoinGecko mocked — hermetic, zero network egress, deterministic (coalescing proven by upstream call-count assertions)
 - [x] **TEST-02**: C++ Local Price Manager is unit-tested against an injected client interface (no sockets): L1 hit, coalescing dedupe, fallback order, last-known-good, freshness bands, retry classification (403/429 never retried against CoinGecko)
 - [x] **TEST-03**: A scriptable local HTTP stub server (Boost.Beast, `127.0.0.1`, OS-assigned port, plain HTTP) serves canned status/body responses for client-level tests including the 403-HTML and 429 cases from the diagnosis
-- [ ] **TEST-04**: `account_management_test.SetPayoutAddress` runs hermetically against the local stub (configurable endpoint), and its Linux aarch64-Debug `GTEST_FILTER` exclusion in `SuperGenius/.github/workflows/cmake.yml` is removed
-- [ ] **TEST-05**: The existing network-dependent `price_retrieval_test` cases are replaced by hermetic equivalents (no live CoinGecko calls in the suite)
+- [x] **TEST-04**: `account_management_test.SetPayoutAddress` runs hermetically against the local stub (configurable endpoint), and its Linux aarch64-Debug `GTEST_FILTER` exclusion in `SuperGenius/.github/workflows/cmake.yml` is removed
+- [x] **TEST-05**: The existing network-dependent `price_retrieval_test` cases are replaced by hermetic equivalents (no live CoinGecko calls in the suite)
 - [ ] **TEST-06**: CI gains a lightweight `worker-tests` job (Node 22, `npm ci` → typecheck → `vitest run`, path-filtered) separate from the 16-config C++ build matrix; C++ price tests run inside the existing `ctest` invocation with no new matrix entries
 
 ## v2 Requirements
