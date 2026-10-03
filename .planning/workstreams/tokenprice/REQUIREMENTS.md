@@ -51,7 +51,7 @@ Requirements for the PriceCoordinator milestone. Each maps to roadmap phases (tr
 - [x] **TEST-03**: A scriptable local HTTP stub server (Boost.Beast, `127.0.0.1`, OS-assigned port, plain HTTP) serves canned status/body responses for client-level tests including the 403-HTML and 429 cases from the diagnosis
 - [x] **TEST-04**: `account_management_test.SetPayoutAddress` runs hermetically against the local stub (configurable endpoint), and its Linux aarch64-Debug `GTEST_FILTER` exclusion in `SuperGenius/.github/workflows/cmake.yml` is removed
 - [x] **TEST-05**: The existing network-dependent `price_retrieval_test` cases are replaced by hermetic equivalents (no live CoinGecko calls in the suite)
-- [ ] **TEST-06**: CI gains a lightweight `worker-tests` job (Node 22, `npm ci` → typecheck → `vitest run`, path-filtered) separate from the 16-config C++ build matrix; C++ price tests run inside the existing `ctest` invocation with no new matrix entries
+- [x] **TEST-06**: CI gains a lightweight `worker-tests` job (Node 22, `npm ci` → typecheck → `vitest run`, path-filtered) separate from the 16-config C++ build matrix; C++ price tests run inside the existing `ctest` invocation with no new matrix entries
 
 ## v2 Requirements
 
