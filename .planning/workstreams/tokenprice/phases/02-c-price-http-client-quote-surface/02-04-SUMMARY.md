@@ -95,7 +95,7 @@ Phase-closing composition: `PriceHttpClient` facade over the proven 02-02 transp
 
 **[Rule 3 - Test correctness] Integer price literals** — Found during: MissingId test | Issue: `IsDouble()` guard rejected `"usd": 1` (int literal) → NoDataFound on a valid partial response | Fix: `IsNumber()` | Files: PriceHttpClient.cpp | Commit: faa5eac33
 
-**[Rule 3 - Design refinement] Per-attempt io_context** — Found during: TimeoutRetries hang | Issue: sequential `ExecuteBlocking` calls on one caller ioc — a run()-completed ioc needs restart(), and the restart path still hung in the asio scheduler | Fix: facade creates a fresh ioc per attempt (retry is inherently sequential; Phase 3's manager owns contexts) + kept `ioc->restart()` in ExecuteBlocking as defense | Files: PriceHttpClient.cpp, AsyncIOManager/src/HTTPClient.cpp | Commit: faa5eac33 (+AsyncIOManager pending)
+**[Rule 3 - Design refinement] Per-attempt io_context** — Found during: TimeoutRetries hang | Issue: sequential `ExecuteBlocking` calls on one caller ioc — a run()-completed ioc needs restart(), and the restart path still hung in the asio scheduler | Fix: facade creates a fresh ioc per attempt (retry is inherently sequential; Phase 3's manager owns contexts) (the `ioc->restart()` defense in ExecuteBlocking was never committed; not on disk/HEAD) | Files: PriceHttpClient.cpp, AsyncIOManager/src/HTTPClient.cpp | Commit: faa5eac33
 
 **[Rule 3 - API addition] Injectable requestTimeout** — Found during: TimeoutRetries test design | Issue: 5s default timeouts make timeout tests slow/flaky against a 3s stub delay | Fix: constructor parameter (default 5000ms, LPM-06 unchanged) | Files: PriceHttpClient.hpp/.cpp | Commit: faa5eac33
 
@@ -111,7 +111,7 @@ Phase-closing composition: `PriceHttpClient` facade over the proven 02-02 transp
 
 ## Issues Encountered
 
-One AsyncIOManager follow-up commit (`ioc->restart()` defense) is included in the SuperGenius-commit chain but not yet committed on the AsyncIOManager branch — noted below.
+The `ioc->restart()` defense in AsyncIOManager was never committed and is not part of this phase; the per-attempt io_context in the facade makes it unnecessary.
 
 ## Next Phase Readiness
 

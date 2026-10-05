@@ -15,7 +15,7 @@ This milestone delivers a two-tier hybrid price system. Phase 1 builds the new-t
 - [x] **Phase 2: C++ Price HTTP Client & Quote Surface** — Boost.Beast client with truthful status/UA/TLS/timeouts, `PriceQuote`/`PriceSource` types, freshness-band classification, scriptable local stub server (completed 2026-10-01)
 - [x] **Phase 3: Local Price Manager** — L1 cache, request coalescing, multi-id batching, and the four-tier fallback chain (L1 → CoinGecko → token.gnus.ai → last-known-good) (completed 2026-10-01)
 - [x] **Phase 4: GeniusNode Integration & Hermetic Tests** — configurable endpoints, `GetCoinprice`/`GetGNUSPrice` seam cutover, `SetPayoutAddress` + `price_retrieval_test` made hermetic (completed 2026-10-02)
-- [x] **Phase 5: CI Integration** — `worker-tests` GitHub job, removal of the aarch64-Debug price-test exclusion (completed 2026-10-03)
+- [x] **Phase 5: CI Integration** — `worker-tests` GitHub job; price suites proven hermetic on aarch64-Debug (Vulkan-only exclusion retained pending MNN rebuild) (completed 2026-10-03)
 
 ## Phase Details
 
@@ -175,7 +175,7 @@ Plans:
 - [x] 05-02-PLAN.md
 
 - [x] 05-01: Add `worker-tests` job to `SuperGenius/.github/workflows/cmake.yml` (TEST-06)
-- [ ] 05-02: Remove the aarch64-Debug `SetPayoutAddress` exclusion; run/verify the affected matrix leg (TEST-06, closes TEST-04)
+- [x] 05-02: Remove the aarch64-Debug `SetPayoutAddress` exclusion; run/verify the affected matrix leg (TEST-06, closes TEST-04)
 
 ## Progress
 
