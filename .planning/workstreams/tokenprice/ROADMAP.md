@@ -40,7 +40,9 @@ Plans:
   2. Future, stale, cost-mismatch and no-coverage cases behave per policy
   3. All thresholds configurable with documented defaults
 
-**Plans**: TBD
+**Plans**: 1 plan
+Plans:
+- [ ] 07-01-PLAN.md — pure `ValidatePrice` fail-fast chain (typed reasons, config + `SGNS_PRICEVAL_*` env, no-coverage/legacy policies) + hermetic `price_validator_test` (VAL-01..VAL-04, TEST-01)
 
 ### Phase 8: Consensus Integration
 
@@ -58,5 +60,5 @@ Plans:
 | Phase | Plans | Status | Completed |
 |-------|-------|--------|-----------|
 | 6. Price Claim Wire Format & History | 0/0 | Complete    | 2026-10-05 |
-| 7. Price Validator | 0/0 | Not started | - |
+| 7. Price Validator | 0/1 | Planning complete | - |
 | 8. Consensus Integration | 0/0 | Not started | - |
