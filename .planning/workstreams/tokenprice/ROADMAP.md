@@ -53,7 +53,12 @@ Plans:
   2. Honest job is accepted by all honest nodes
   3. Multi-node loopback test green
 
-**Plans**: TBD
+**Plans**: 4/4 plans planned
+Plans:
+- [ ] 08-01-PLAN.md — consensus price gate (ValidateTransactionForConsensus escrow branch, Pending-on-missing-task) + claim-time backstop in GrabTask, GeniusNode evidence wiring, task_queue_test unit cases (CONS-01, CONS-03)
+- [ ] 08-02-PLAN.md — TaskRejectionSubject consensus subject: proto message + sgns.task_rejection.v1 constant + Create/Decode + CheckSubject branch + dispatch switches, gated by one-way-publish decision checkpoint (CONS-02)
+- [ ] 08-03-PLAN.md — rejection-subject handlers (independent re-verification), first-rejector proposal trigger, poster refund regime 1 (FAILED rollback) + regime 2 (CONFIRMED-gated full-refund release) (CONS-02, CONS-03)
+- [ ] 08-04-PLAN.md — TEST-02: GamedPriceJobRejectedAndRefunded multi-node case (stub-flip construction, no-processing + exact-refund assertions) + full-suite honest-acceptance proof (CONS-01, CONS-02, CONS-03, TEST-02)
 
 ## Progress
 
@@ -61,4 +66,4 @@ Plans:
 |-------|-------|--------|-----------|
 | 6. Price Claim Wire Format & History | 0/0 | Complete    | 2026-10-05 |
 | 7. Price Validator | 0/1 | Complete    | 2026-10-06 |
-| 8. Consensus Integration | 0/0 | Not started | - |
+| 8. Consensus Integration | 0/4 | Planning | - |
