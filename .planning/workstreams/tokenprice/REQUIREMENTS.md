@@ -9,22 +9,22 @@
 
 ## Design Decisions (locked unless revisited)
 
-- **D-01 Anti-gaming method:** the job carries `claimed_price` and `price_timestamp` (the `PriceQuote` fetch time). A validator accepts only if (a) `price_timestamp` is plausible relative to the job post time, and (b) the claimed price lies within the **[min, max] of the validator's own observed prices in a window around `price_timestamp`, widened by a tolerance percentage**. Min/max-with-tolerance is used rather than a single point because validators fetch at different moments and the market moves.
+- **D-01 Anti-gaming method:** the job carries `claimed_price` on the wire; the reference time is not a wire field — it is the escrow DAG timestamp (`DAGStruct.timestamp`, reachable via `task.escrow_path`; D-06-02/D-06-03). A validator accepts only if (a) the escrow DAG timestamp is plausible relative to the job post time, and (b) the claimed price lies within the **[min, max] of the validator's own observed prices in a window around that timestamp, widened by a tolerance percentage** (the window looks back by quote TTL plus clock skew, since a quote may be served from cache). Min/max-with-tolerance is used rather than a single point because validators fetch at different moments and the market moves.
 - **D-02 Cost binding:** validators recompute `CalculateCostMinions(blockSize, claimed_price)` and require it to equal the escrowed amount, so a poster cannot pair an honest price with a lowered escrow.
-- **D-03 Timestamp bound:** `price_timestamp` must not be in the future (beyond clock skew) and not older than a max age relative to the job post time, so a poster cannot cherry-pick an old favourable price.
+- **D-03 Timestamp bound:** the reference time — the escrow DAG timestamp (D-06-02/D-06-03) — must not be in the future (beyond clock skew) and not older than a max age relative to the job post time, so a poster cannot cherry-pick an old favourable price.
 - **D-04 Independence:** validators use only their own `LocalPriceManager` observations, never the poster's data.
 
 ## v1.1 Requirements
 
 ### Wire Format (WIRE)
 
-- [ ] **WIRE-01**: `SGProcessing::Task` gains backward-compatible fields for the claimed GNUS price and the price timestamp; existing builds and stored tasks still parse
-- [ ] **WIRE-02**: `ProcessImage` stamps the price and timestamp from the same `PriceQuote` that produced the escrowed cost (single read, no second fetch)
+- [x] **WIRE-01**: `SGProcessing::Task` gains a backward-compatible `claimed_price` (double) field; no separate time field is carried — the escrow DAG timestamp (`DAGStruct.timestamp`, reachable via `task.escrow_path`) is the reference time (D-06-02); existing builds and stored tasks still parse
+- [x] **WIRE-02**: `ProcessImage` stamps `claimed_price` from the same `PriceQuote` that produced the escrowed cost (single read, no second fetch)
 
 ### Price History (HIST)
 
-- [ ] **HIST-01**: `LocalPriceManager` retains a bounded, timestamped history of fetched `genius-ai` quotes (ring buffer, configurable retention) with min/max-over-window queries
-- [ ] **HIST-02**: History survives restart or degrades safely (documented behavior when empty after startup)
+- [x] **HIST-01**: `LocalPriceManager` retains a bounded, timestamped history of fetched `genius-ai` quotes (ring buffer, configurable retention) with min/max-over-window queries
+- [x] **HIST-02**: History survives restart or degrades safely (documented behavior when empty after startup)
 
 ### Validation Engine (VAL)
 
