@@ -28,10 +28,10 @@
 
 ### Validation Engine (VAL)
 
-- [ ] **VAL-01**: Pure validator function: timestamp sanity (D-03), tolerance-band check against observed window (D-01), and cost-binding check (D-02), returning accept/reject with a typed reason
-- [ ] **VAL-02**: Tolerance %, window width, max age and clock skew are configurable with documented defaults
-- [ ] **VAL-03**: Insufficient-coverage policy when the validator has no observations near `price_timestamp` (fetch current and widen, or defer) is defined and tested
-- [ ] **VAL-04**: Legacy tasks without the new fields have a defined policy (reject after a grace flag, or accept with warning)
+- [x] **VAL-01**: Pure validator function: timestamp sanity (D-03), tolerance-band check against observed window (D-01), and cost-binding check (D-02), returning accept/reject with a typed reason
+- [x] **VAL-02**: Tolerance %, window width, max age and clock skew are configurable with documented defaults
+- [x] **VAL-03**: Insufficient-coverage policy when the validator has no observations near `price_timestamp` (fetch current and widen, or defer) is defined and tested
+- [x] **VAL-04**: Legacy tasks without the new fields have a defined policy (reject after a grace flag, or accept with warning)
 
 ### Consensus Integration (CONS)
 
@@ -41,7 +41,7 @@
 
 ### Testing (TEST)
 
-- [ ] **TEST-01**: Hermetic unit tests for the validator covering in-band, out-of-band (high and low), future/stale timestamp, cost mismatch, no-coverage and legacy cases
+- [x] **TEST-01**: Hermetic unit tests for the validator covering in-band, out-of-band (high and low), future/stale timestamp, cost mismatch, no-coverage and legacy cases
 - [ ] **TEST-02**: Multi-node integration test: honest job accepted, gamed-price job rejected, using the loopback stub price source
 
 ## Open Questions (resolve during phase discussion)
