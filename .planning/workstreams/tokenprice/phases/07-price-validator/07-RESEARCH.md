@@ -415,21 +415,27 @@ SuperGenius\build\Windows\Release\test_bin\Release\price_validator_test.exe --gt
 | A5 | The `Reason` mapping for non-finite/negative prices is `CostMismatch` (enum locked; mapping is a recommendation) | Pitfall 1 | Low: any deterministic mapping satisfies VAL-01; Phase 8 telemetry just needs the documented bucket |
 | A6 | Window knob = TTL component (default `kStaleMaxAge`), `from = T − (ttl + skew)` | Pitfall 3 / Open Q2 | Medium: 30s disagreement between caller window and test expectations if planner picks the other reading; Pattern 4 helper contains the blast radius |
 
-## Open Questions
+## Open Questions (RESOLVED)
+
+All four were adopted by 07-01-PLAN.md; inline RESOLVED markers cite the adopting tasks.
 
 1. **Where does `now` enter the pure validator?** (D-07-12's field list omits it, but D-07-03's max-age is "relative to when the validator runs" and D-07-11's timestamp checks need a reference.)
    - What we know: validator must be pure and hermetic (TEST-01 "no mocks"); price_manager_test's kEpochBase pattern injects all times.
    - What's unclear: struct field vs second function parameter.
    - Recommendation: **field in `PriceValidationInput`** (single-struct call signature, matches D-07-10's shape intent; diagnostics can echo it). Planner treats this as a small extension of the locked input struct, documented in the plan.
+   - **RESOLVED:** `now` is a `system_clock::time_point now` field in `PriceValidationInput` — adopted by 07-01-PLAN.md Task 1 (tracer; must_haves artifact `PriceValidator.hpp`).
 2. **"Window width" knob semantics** (D-07-04 names the knob; D-07-02 gives the formula `T − (ttl + skew)`).
    - What we know: TTL component defaults to `kStaleMaxAge` = 300s; skew = 30s; total lookback 330s.
    - What's unclear: does the env knob set the TTL component (300 default) or total lookback (330 default)?
    - Recommendation: knob sets the **TTL component** (name it e.g. `SGNS_PRICEVAL_WINDOW_TTL_S`, default 300) so the default reads as "quote TTL" — one constant reused from `PriceFreshness.hpp`, no near-duplicate 330.
+   - **RESOLVED:** knob sets the TTL component — env var `SGNS_PRICEVAL_WINDOW_TTL_S`, `PriceValidatorConfig::windowTtl` defaulting to `kStaleMaxAge` — adopted by 07-01-PLAN.md Task 1 (config struct) and Task 3 (env resolver).
 3. **Which test target hosts TEST-01?** (Agent's discretion.)
    - What we know: `account_management_test` already links `genius_node_test` (Phase 6 wire tests live there) [VERIFIED: test/src/account/CMakeLists.txt:35-39]; a fresh `price_validator_test` follows the `price_*` suite convention and isolates the new suite; either link pulls `TokenAmount.o`.
    - Recommendation: **new `price_validator_test`** under `test/src/price_validator/` (matches the coinprices-domain suite family, keeps account test binary untouched, faster single-target builds). Link: `coinprices` + `genius_node_test` + `${AsyncIOManager_INCLUDE_DIR}` include (price_manager precedent).
+   - **RESOLVED:** new `price_validator_test` target under `test/src/price_validator/`, linked `coinprices` + `genius_node_test` — adopted by 07-01-PLAN.md Task 1 (build wiring; must_haves artifact `test/src/price_validator/CMakeLists.txt`).
 4. **Self-heal helper placement** (D-07-06; agent's discretion): small free function beside the validator (e.g., `ShouldSelfHealFetch(reason) -> bool` or a documented note) vs purely inline in the Phase 8 caller.
    - Recommendation: land a trivial `bool ShouldTriggerRefetch(PriceValidationReason)` beside the validator now (testable, documents the policy), leaving the actual `GetQuotes` call to Phase 8.
+   - **RESOLVED:** `ShouldTriggerRefetch(PriceValidationReason)` lands beside the validator in `PriceValidator.hpp` — adopted by 07-01-PLAN.md Task 3 (self-heal hook, D-07-06).
 
 ## Environment Availability
 
@@ -506,7 +512,7 @@ ASVS Level 1 (config `security_asvs_level: 1`, `security_enforcement: true`, blo
 
 **Confidence breakdown:**
 - Standard stack: HIGH — every component read from source this session; zero external packages
-- Architecture: HIGH — pure-function shape, check order, config mechanism, and build wiring all anchored to verified in-repo precedents; two open questions (Q1 `now`, Q2 window knob) carry explicit recommendations
+- Architecture: HIGH — pure-function shape, check order, config mechanism, and build wiring all anchored to verified in-repo precedents; all four open questions (Open Questions section) are RESOLVED and adopted by 07-01-PLAN.md
 - Pitfalls: HIGH — five of seven pitfalls grounded in verbatim source; NaN-semantics claim honestly tagged [ASSUMED] with a code-level mitigation that is safe either way
 
 **Research date:** 2026-10-06
