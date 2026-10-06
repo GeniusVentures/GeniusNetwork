@@ -1,10 +1,37 @@
 # Milestones
 
+## tokenprice v1.0 PriceCoordinator (Shipped: 2026-10-05)
+
+**Phases completed:** 5 phases, 18 plans, 35 tasks
+
+**Archives:** milestones/tokenprice-v1.0-ROADMAP.md, milestones/tokenprice-v1.0-REQUIREMENTS.md (workstream-prefixed to avoid colliding with project v1.0)
+
+**Known deferred items at close:** Phase 02 live WAF/UA comparison + real 403 (UAT partial); Phase 05 live CI path-gate proof (human_needed); thirdparty develop refresh; MNN Vulkan rebuild (re-include SetPayoutAddress on aarch64-Debug).
+
+**Key accomplishments:**
+
+- Greenfield Cloudflare Worker project at `SuperGenius/pricecoordinator/` with the full vitest-in-workerd harness proven green — `npm ci && npm run typecheck && npm run test` all exit 0, zero network egress proven by canary.
+- The Worker's request/response contract layer is live and pinned by tests: six-key envelope, allowlist validation, D-08 error taxonomy, and server-side-only CoinGecko key binding — 35/35 hermetic tests green.
+- The milestone's namesake is live: single-flight coalescing, SQL persistence, freshness gates, stale-serve, hold-off, and truthful 502s — 51/51 hermetic tests including the one-upstream-call coalescing proof and eviction persistence.
+- SRVC-04 delivered: a per-colo cache tier ahead of the Durable Object with canonical keys and fresh-only admission — 58/58 tests green, and two empirical cache-API findings recorded that 01-05 and any future plugin upgrade must respect.
+- TEST-01 delivered in full — 63/63 tests across 10 files, the clean triple-gate green from scratch, every phase criterion mapped to a named green test, and the config guard proven by negative control.
+- Env-var price endpoints (SGNS_COINGECKO_URL/SGNS_PRICE_FALLBACK_URL) + GetCoinprice rebuilt on the lazy LocalPriceManager, with CoinGeckoPriceRetriever and all node price-cache state deleted (D-09).
+- SetPayoutAddress now runs against a loopback HttpStubServer serving genius-ai@0.19 USD — the suite's live-CoinGecko dependency is gone; every TEST_F body byte-untouched.
+- Full-node integration suite now proves the whole fallback chain through the real GetCoinprice seam — one stub serving both tiers, 5/5 scenarios green on loopback only, CTest-registered for the first time.
+- Path-gated Node 22 `worker-tests` job (npm ci -> typecheck -> vitest) added to Release Build CI as a non-matrix sidecar, with the existing trigger policy and C++ matrix untouched.
+- Exclusion removed, CI run, crash root-caused to a stub-server Beast lifetime bug (fixed), and the exclusion then deliberately reinstated — now documented as Vulkan-only — after proof that the price path itself is hermetic and green on the aarch64-Debug lane.
+
+---
+
 ## v2.3 Deferred Gap Closure — sgproc-render workstream (Shipped: 2026-08-21)
 
 **Phases completed:** 4 phases, 14 plans, 35 tasks
 
 Full archive: `.planning/milestones/sgproc-render-v2.3-ROADMAP.md`, `.planning/milestones/sgproc-render-v2.3-REQUIREMENTS.md` (filenames workstream-qualified — the child-wallet workstream already owns bare `v2.3-ROADMAP.md`/`v2.3-REQUIREMENTS.md`/git tag `v2.3` for its own, still-unshipped "Child Wallet Transfers" milestone; same collision class as v2.0/v2.1/v2.2).
+
+**Archives:** milestones/tokenprice-v1.0-ROADMAP.md, milestones/tokenprice-v1.0-REQUIREMENTS.md (workstream-prefixed to avoid colliding with project v1.0)
+
+**Known deferred items at close:** Phase 02 live WAF/UA comparison + real 403 (UAT partial); Phase 05 live CI path-gate proof (human_needed); thirdparty develop refresh; MNN Vulkan rebuild (re-include SetPayoutAddress on aarch64-Debug).
 
 **Key accomplishments:**
 
@@ -29,6 +56,10 @@ Full archive: `.planning/milestones/sgproc-render-v2.3-ROADMAP.md`, `.planning/m
 **Phases completed:** 2 phases, 7 plans, 14 tasks
 
 Full archive: `.planning/milestones/sgproc-render-v2.2-ROADMAP.md`, `.planning/milestones/sgproc-render-v2.2-REQUIREMENTS.md` (filenames workstream-qualified — the child-wallet workstream already owns bare `v2.2-ROADMAP.md`/`v2.2-REQUIREMENTS.md`/git tag `v2.2` for its own "GeniusSDK Child Wallet Interfaces" milestone; same collision class as v2.0/v2.1, this time checked for and avoided proactively before writing anything).
+
+**Archives:** milestones/tokenprice-v1.0-ROADMAP.md, milestones/tokenprice-v1.0-REQUIREMENTS.md (workstream-prefixed to avoid colliding with project v1.0)
+
+**Known deferred items at close:** Phase 02 live WAF/UA comparison + real 403 (UAT partial); Phase 05 live CI path-gate proof (human_needed); thirdparty develop refresh; MNN Vulkan rebuild (re-include SetPayoutAddress on aarch64-Debug).
 
 **Key accomplishments:**
 
@@ -55,6 +86,10 @@ Full archive: `.planning/milestones/sgproc-render-v2.2-ROADMAP.md`, `.planning/m
 
 Full archive: `.planning/milestones/sgproc-render-v2.1-ROADMAP.md`, `.planning/milestones/sgproc-render-v2.1-REQUIREMENTS.md` (filenames workstream-qualified to avoid colliding with the child-wallet workstream's own pre-existing v2.1 milestone archive).
 
+**Archives:** milestones/tokenprice-v1.0-ROADMAP.md, milestones/tokenprice-v1.0-REQUIREMENTS.md (workstream-prefixed to avoid colliding with project v1.0)
+
+**Known deferred items at close:** Phase 02 live WAF/UA comparison + real 403 (UAT partial); Phase 05 live CI path-gate proof (human_needed); thirdparty develop refresh; MNN Vulkan rebuild (re-include SetPayoutAddress on aarch64-Debug).
+
 **Key accomplishments:**
 
 - Added the `sgprocmanagerquant` identity-stub library (mirrors `sgprocmanagersha`) and `ExecutionContext::rawOutputCapture`, the two foundation pieces every Wave 2/3 plan in this phase builds on.
@@ -78,6 +113,10 @@ Full archive: `.planning/milestones/sgproc-render-v2.1-ROADMAP.md`, `.planning/m
 ## v2.0 Execution Contracts & Quality Gates — sgproc-render workstream (Shipped: 2026-08-07)
 
 **Phases completed:** 4 phases, 27 plans, 39 tasks
+
+**Archives:** milestones/tokenprice-v1.0-ROADMAP.md, milestones/tokenprice-v1.0-REQUIREMENTS.md (workstream-prefixed to avoid colliding with project v1.0)
+
+**Known deferred items at close:** Phase 02 live WAF/UA comparison + real 403 (UAT partial); Phase 05 live CI path-gate proof (human_needed); thirdparty develop refresh; MNN Vulkan rebuild (re-include SetPayoutAddress on aarch64-Debug).
 
 **Key accomplishments:**
 
@@ -119,6 +158,10 @@ Full archive: `.planning/milestones/sgproc-render-v2.1-ROADMAP.md`, `.planning/m
 
 **Phases completed:** 2 phases (6 formally planned/executed via GSD, 7 completed directly by the user), 5 plans, 2 tasks
 
+**Archives:** milestones/tokenprice-v1.0-ROADMAP.md, milestones/tokenprice-v1.0-REQUIREMENTS.md (workstream-prefixed to avoid colliding with project v1.0)
+
+**Known deferred items at close:** Phase 02 live WAF/UA comparison + real 403 (UAT partial); Phase 05 live CI path-gate proof (human_needed); thirdparty develop refresh; MNN Vulkan rebuild (re-include SetPayoutAddress on aarch64-Debug).
+
 **Key accomplishments:**
 
 - Two-parent merge commit (SuperGenius `cb4e46da`, parents `5fd137dc` + `2981cd83`) finalizing origin/develop into dev_childwallet, resolving both real conflicts (retired `ProcessingTransaction` consistently) and sweeping the `DevConfig_st`→`GeniusNodeConfig` rename across all ~17 affected files. Push to `origin/dev_childwallet` (initially withheld per explicit user instruction) later confirmed complete — `dev_childwallet` HEAD `500b1969` matches `origin/dev_childwallet` exactly.
@@ -137,6 +180,10 @@ Full archive: `.planning/milestones/sgproc-render-v2.1-ROADMAP.md`, `.planning/m
 
 **Phases completed:** 2 phases, 5 plans, 11 tasks
 
+**Archives:** milestones/tokenprice-v1.0-ROADMAP.md, milestones/tokenprice-v1.0-REQUIREMENTS.md (workstream-prefixed to avoid colliding with project v1.0)
+
+**Known deferred items at close:** Phase 02 live WAF/UA comparison + real 403 (UAT partial); Phase 05 live CI path-gate proof (human_needed); thirdparty develop refresh; MNN Vulkan rebuild (re-include SetPayoutAddress on aarch64-Debug).
+
 **Key accomplishments:**
 
 - Added `Blockchain::CheckCertifiedParent` (D-63 CRDT certified-status lookup, zero `genius_node` dependency) and `GeniusTransaction::CheckSignatureAgainst` (parameterized signature verification `CheckSignature` now delegates to) — the two shared primitives Plan 02's gate and `CheckTransactionAuthorization` extension build on
@@ -150,6 +197,10 @@ Full archive: `.planning/milestones/sgproc-render-v2.1-ROADMAP.md`, `.planning/m
 ## v2.2 GeniusSDK Child Wallet Interfaces (Shipped: 2026-07-20)
 
 **Phases completed:** 1 phases, 1 plans, 2 tasks
+
+**Archives:** milestones/tokenprice-v1.0-ROADMAP.md, milestones/tokenprice-v1.0-REQUIREMENTS.md (workstream-prefixed to avoid colliding with project v1.0)
+
+**Known deferred items at close:** Phase 02 live WAF/UA comparison + real 403 (UAT partial); Phase 05 live CI path-gate proof (human_needed); thirdparty develop refresh; MNN Vulkan rebuild (re-include SetPayoutAddress on aarch64-Debug).
 
 **Key accomplishments:**
 
@@ -165,6 +216,10 @@ Full archive: `.planning/milestones/sgproc-render-v2.1-ROADMAP.md`, `.planning/m
 
 **Phases completed:** 1 phases, 2 plans, 4 tasks
 
+**Archives:** milestones/tokenprice-v1.0-ROADMAP.md, milestones/tokenprice-v1.0-REQUIREMENTS.md (workstream-prefixed to avoid colliding with project v1.0)
+
+**Known deferred items at close:** Phase 02 live WAF/UA comparison + real 403 (UAT partial); Phase 05 live CI path-gate proof (human_needed); thirdparty develop refresh; MNN Vulkan rebuild (re-include SetPayoutAddress on aarch64-Debug).
+
 **Key accomplishments:**
 
 - Added `GeniusNode::GetChildBalance` (token-filtered and all-tokens overloads) as thin aliases over the existing `UTXOManager::GetBalance` family, with the child-first/token-first argument-order swap at the delegation boundary — verified by a clean `genius_node_test` build.
@@ -175,6 +230,10 @@ Full archive: `.planning/milestones/sgproc-render-v2.1-ROADMAP.md`, `.planning/m
 ## v2.0 Registration Implementation (Shipped: 2026-07-17)
 
 **Phases completed:** 2 phases, 6 plans, 14 tasks
+
+**Archives:** milestones/tokenprice-v1.0-ROADMAP.md, milestones/tokenprice-v1.0-REQUIREMENTS.md (workstream-prefixed to avoid colliding with project v1.0)
+
+**Known deferred items at close:** Phase 02 live WAF/UA comparison + real 403 (UAT partial); Phase 05 live CI path-gate proof (human_needed); thirdparty develop refresh; MNN Vulkan rebuild (re-include SetPayoutAddress on aarch64-Debug).
 
 **Key accomplishments:**
 
@@ -190,6 +249,10 @@ Full archive: `.planning/milestones/sgproc-render-v2.1-ROADMAP.md`, `.planning/m
 ## v1.0 Child Wallet Design (Shipped: 2026-07-15)
 
 **Phases completed:** 3 phases, 6 plans, 13 tasks
+
+**Archives:** milestones/tokenprice-v1.0-ROADMAP.md, milestones/tokenprice-v1.0-REQUIREMENTS.md (workstream-prefixed to avoid colliding with project v1.0)
+
+**Known deferred items at close:** Phase 02 live WAF/UA comparison + real 403 (UAT partial); Phase 05 live CI path-gate proof (human_needed); thirdparty develop refresh; MNN Vulkan rebuild (re-include SetPayoutAddress on aarch64-Debug).
 
 **Key accomplishments:**
 

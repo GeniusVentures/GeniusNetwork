@@ -1,7 +1,7 @@
 # Roadmap: PriceCoordinator — Local Manager + token.gnus.ai Fallback (v1.0)
 
 **Workstream:** tokenprice
-**Status:** SHIPPED 2026-10-05 (archived: milestones/tokenprice-v1.0-ROADMAP.md)
+**Status:** 🚧 PLANNING
 **Phases:** 1-5
 **Total Plans:** 18
 
