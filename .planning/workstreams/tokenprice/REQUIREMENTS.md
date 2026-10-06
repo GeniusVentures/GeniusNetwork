@@ -60,6 +60,16 @@
 
 | Requirement | Phase |
 |-------------|-------|
-| WIRE-01, WIRE-02, HIST-01, HIST-02 | Phase 6 |
-| VAL-01, VAL-02, VAL-03, VAL-04, TEST-01 | Phase 7 |
-| CONS-01, CONS-02, CONS-03, TEST-02 | Phase 8 |
+| WIRE-01 | Phase 6 |
+| WIRE-02 | Phase 6 |
+| HIST-01 | Phase 6 |
+| HIST-02 | Phase 6 |
+| VAL-01 | Phase 7 |
+| VAL-02 | Phase 7 |
+| VAL-03 | Phase 7 |
+| VAL-04 | Phase 7 |
+| TEST-01 | Phase 7 |
+| CONS-01 | Phase 8 |
+| CONS-02 | Phase 8 |
+| CONS-03 | Phase 8 |
+| TEST-02 | Phase 8 |
