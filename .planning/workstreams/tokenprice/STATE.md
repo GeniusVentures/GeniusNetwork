@@ -1,35 +1,35 @@
 ---
 gsd_state_version: 1.0
-milestone: v1.0
-milestone_name: PriceCoordinator — Local Manager + token.gnus.ai Fallback
-current_phase: 0
+milestone: v1.1
+milestone_name: Job Price Validation
+current_phase: 6
 current_plan: Not started
-status: Awaiting next milestone
+status: Defining phases
 stopped_at: "Phase 5 complete: both plans executed; TEST-04 CI clause = hermetic-proven, Vulkan-only exclusion retained; ready for verify-work"
 last_updated: "2026-10-06T00:03:49.272Z"
 last_activity: 2026-10-06
 last_activity_desc: Milestone v1.0 completed and archived
 progress:
-  total_phases: 5
-  completed_phases: 5
-  total_plans: 18
-  completed_plans: 18
-  percent: 100
-current_phase_name: CI Integration
+  total_phases: 3
+  completed_phases: 0
+  total_plans: 0
+  completed_plans: 0
+  percent: 0
+current_phase_name: Price Claim Wire Format & History
 ---
 
 # Project State
 
 ## Current Position
 
-Phase: Milestone v1.0 complete
+Phase: 6 (not started)
 Plan: —
-Status: Awaiting next milestone
+Status: Milestone v1.1 defined
 Last activity: 2026-10-06 — Milestone v1.0 completed and archived
 
 ## Progress
 
-**Phases Complete:** 1/5
+**Phases Complete:** 0/3
 **Current Plan:** Not started
 
 ## Session Continuity
@@ -41,7 +41,7 @@ Last activity: 2026-10-06 — Milestone v1.0 completed and archived
 
 ## Operator Next Steps
 
-- Start the next milestone with /gsd-new-milestone
+- /gsd-discuss-phase 6 --ws tokenprice
 
 ## Deferred Items
 
