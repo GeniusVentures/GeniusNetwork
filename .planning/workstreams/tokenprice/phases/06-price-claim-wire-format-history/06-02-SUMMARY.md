@@ -18,7 +18,9 @@ affects: [07-price-validator, 08-consensus-integration, GeniusSDK, GeniusWallet]
 actuals:
   tokens: 9809   # chars/4 over realized diffs (SuperGenius 31416 + GeniusSDK 933 + planning 6888); estimate was 70000
   tasks: 3
-  commits: 3     # SuperGenius (7c50b8d60, a8e26d2d6, 9fcdabf5a) + GeniusSDK (9f2e955) + parent docs commit
+  commits: 6     # measured: SuperGenius 3 (7c50b8d60, a8e26d2d6, 9fcdabf5a) + GeniusSDK 1 (9f2e955) + parent 2 (ledger a76beb5..4cb0bda)
+plan_head_before: a76beb55bf602cdaa1e06eda5e427064f61f8fe9
+plan_head_after: 158a918   # docs(06-02) summary-creation commit; self-check commit(s) after it are part of the same measured window (base..HEAD = 2)
 
 tech-stack:
   added: []
@@ -184,5 +186,13 @@ None.
 
 None — all deliverables are wired and verified.
 
-## Self-Check: PENDING
+## Self-Check: PASSED
+
+- All 10 created/modified files exist on disk (verified Test-Path).
+- All 5 commits verified via `git log`: SuperGenius `7c50b8d60`, `a8e26d2d6`, `9fcdabf5a`; GeniusSDK `9f2e955`; parent `158a918`.
+- Parent commit scoped to exactly 5 files (2 submodule pointers, SUMMARY.md, REQUIREMENTS.md, ROADMAP.md); no tracked deletions (`--diff-filter=D` empty).
+- Tests: `ClaimedPriceMatchesEscrowQuote`, `TaskClaimedPriceWire.RoundTripPreservesDouble`, `TaskClaimedPriceWire.OldMessageParsesAsZero` — 3/3 PASSED; `SetPayoutAddress` PASSED post-repair; three test targets build clean.
+- Repo-wide `GetProcessCost` grep: 0 non-`.minions` code callers (2 prose hits in GeniusSDK/.planning docs documented above).
+- Submodules clean except pre-existing `? SGProcessingManager` (untouched as instructed).
+- Note: SuperGenius (`7c50b8d60`, `a8e26d2d6`, `9fcdabf5a`) and GeniusSDK (`9f2e955`) hashes resolve in their submodule repos, not the parent history — verify-summary's commits_exist check cannot see across submodules by design.
 
