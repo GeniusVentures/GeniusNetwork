@@ -1,31 +1,31 @@
 ---
 gsd_state_version: "1.0"
 milestone: v1.1
-current_phase: 8
-current_phase_name: Consensus Integration
-current_plan: 4
-status: phase_complete
+status: Awaiting next milestone
 stopped_at: Phase 8 review warnings ALL fixed (WR-01..04, verified by build + 3 test suites)
-last_updated: "2026-10-07T00:00:00.000Z"
+last_updated: "2026-10-07T21:14:30.649Z"
 last_activity: 2026-10-07
-last_activity_desc: Phase 8 fix pass complete — all 4 warnings fixed + verified (task_queue 20/20, processing_nodes 2/2, account_management 8/8); elm contamination restored
-state_head: 3bdc4ce
+last_activity_desc: Milestone v1.1 completed and archived
+state_head: 15c9b9c9357b9eb4330d163fb29bd4b7279335dd
 progress:
   total_phases: 3
   completed_phases: 3
-  total_plans: 4
-  completed_plans: 4
+  total_plans: 7
+  completed_plans: 7
 milestone_name: Job Price Validation
+current_phase: 8
+current_phase_name: Consensus Integration
+current_plan: 4
 ---
 
 # Project State
 
 ## Current Position
 
-Phase: 08 — Consensus Integration
-Plan: All 4 plans complete (08-01, 08-02, 08-03, 08-04)
-Status: Phase 8 complete — verified (PASSED WITH NOTES, 20/20 must-haves), reviewed, and all 4 review warnings fixed + test-verified (WR-01..WR-04)
-Last activity: 2026-10-07 — Phase 8 review fix pass complete
+Phase: Milestone v1.1 complete
+Plan: —
+Status: Awaiting next milestone
+Last activity: 2026-10-07 — Milestone v1.1 completed and archived
 
 ## Session
 
@@ -36,9 +36,7 @@ Last activity: 2026-10-07 — Phase 8 review fix pass complete
 
 ## Operator Next Steps
 
-- Decide on the 4 open Info findings (IN-01..IN-04) or defer to next milestone
-- /gsd-complete-milestone --ws tokenprice (all v1.1 phases complete; all warnings fixed)
-- /gsd-extract-learnings 8 --ws tokenprice (optional)
+- Start the next milestone with /gsd-new-milestone
 
 ## Deferred Items
 
@@ -50,6 +48,14 @@ Items acknowledged and deferred at milestone close on 2026-10-05:
 | verification | Phase 05 live CI path-gate proof (first real push/PR) | human_needed |
 | rider | thirdparty develop refresh (AsyncIOManager HTTP headers) | open |
 | rider | MNN Vulkan rebuild; then re-include SetPayoutAddress on aarch64-Debug | open |
+
+Items acknowledged and deferred at milestone close on 2026-10-07 (v1.1 close):
+
+| Category | Item | Status |
+|----------|------|--------|
+| todos | 2026-08-10 Vulkan capability-probe deadlock in ProcessingManager (predates this milestone) | testing |
+| deferred_items | Phase 06: flaky ConcurrentGetQuotes test on loaded Windows host; pre-existing GeniusNode UPnP compile break (since resolved — genius_node_test compiles clean as of 2026-10-07) | acknowledged |
+| deferred_items | Phase 06-02: dead processing_multi_test.cpp never built (uncompilable before this plan; fix only if revived) | acknowledged |
 
 ## Performance Metrics
 

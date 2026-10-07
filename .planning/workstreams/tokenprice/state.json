@@ -1,0 +1,28 @@
+{
+  "contract": "1.0.0",
+  "flavor": "core",
+  "milestone": "v1.1",
+  "phases": [
+    {
+      "number": "6",
+      "name": "Price Claim Wire Format & History",
+      "status": "complete"
+    },
+    {
+      "number": "7",
+      "name": "Price Validator",
+      "status": "complete"
+    },
+    {
+      "number": "8",
+      "name": "Consensus Integration",
+      "status": "complete"
+    }
+  ],
+  "next": {
+    "command": "/gsd-progress",
+    "label": "Show progress",
+    "reason": "Unsure of state — showing progress"
+  },
+  "updated_at": "2026-10-07T21:14:30.703Z"
+}

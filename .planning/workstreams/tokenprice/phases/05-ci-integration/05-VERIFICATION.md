@@ -10,6 +10,10 @@ overrides:
     reason: "Hermetic conversion proven (price path stub-served, '1 fresh', run 37082942495); exclusion deliberately reinstated as Vulkan-only (MNN VulkanInstance.cpp:89 assert, no ICD on ARM runner), not network. Rationale rewritten in the workflow comment."
     accepted_by: "user (ratified direction, recorded in 05-02-SUMMARY Rule-4 deviation)"
     accepted_at: "2026-10-03"
+audit_acknowledged:
+  milestone: v1.1
+  at: 2026-10-07
+  status: human_needed
 ---
 
 # Phase 5 Verification: CI Integration
