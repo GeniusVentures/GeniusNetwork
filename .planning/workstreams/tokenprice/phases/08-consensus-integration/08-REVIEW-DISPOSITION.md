@@ -9,7 +9,7 @@ findings:
     title: "Unchecked `.front()` on empty payout vector — undefined behavior in the regime-2 release builder"
   - id: WR-02
     severity: warning
-    disposition: skipped
+    disposition: fixed
     title: "`priceManager_` mutex added for the consensus thread but not applied to both `reset()` sites — remaining data race"
   - id: WR-03
     severity: warning
@@ -37,7 +37,7 @@ findings:
     title: "Misleading test variable name `era_10`"
 open: 4
 total: 8
-recorded: 2026-10-07T19:00:54.561Z
+recorded: 2026-10-07T20:24:36.455Z
 ---
 
 # Phase 08: Code Review Disposition
@@ -45,7 +45,7 @@ recorded: 2026-10-07T19:00:54.561Z
 | Finding | Severity | Disposition | Source |
 |---------|----------|-------------|--------|
 | WR-01 | warning | fixed | 08-REVIEW-FIX.md |
-| WR-02 | warning | skipped | 08-REVIEW-FIX.md |
+| WR-02 | warning | fixed | 08-REVIEW-FIX.md |
 | WR-03 | warning | fixed | 08-REVIEW-FIX.md |
 | WR-04 | warning | fixed | 08-REVIEW-FIX.md |
 | IN-01 | info | open | - |
