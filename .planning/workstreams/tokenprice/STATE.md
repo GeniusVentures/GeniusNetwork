@@ -5,11 +5,11 @@ current_phase: 8
 current_phase_name: Consensus Integration
 current_plan: 4
 status: phase_complete
-stopped_at: Phase 8 verified (PASSED WITH NOTES, 20/20) + code review (0 critical / 4 warning)
+stopped_at: Phase 8 review warnings fixed (WR-01/03/04 fixed, WR-02 skipped — superseded by in-flight GeniusNode refactor)
 last_updated: "2026-10-07T00:00:00.000Z"
-last_activity: 2026-10-06
-last_activity_desc: Phase 8 complete — 4/4 plans executed, verified, reviewed
-state_head: 6c72c92
+last_activity: 2026-10-07
+last_activity_desc: Phase 8 review fix pass — 3/4 warnings fixed in SuperGenius submodule (7942c5214, 5d94af72f, 5e9254d5c), WR-02 skipped, disposition ledger reconciled
+state_head: f1d577c
 progress:
   total_phases: 3
   completed_phases: 3
@@ -24,19 +24,21 @@ milestone_name: Job Price Validation
 
 Phase: 08 — Consensus Integration
 Plan: All 4 plans complete (08-01, 08-02, 08-03, 08-04)
-Status: Phase 8 complete — verified (PASSED WITH NOTES, 20/20 must-haves) + code reviewed (0 critical / 4 warning / 4 info)
-Last activity: 2026-10-06 — Phase 8 executed
+Status: Phase 8 complete — verified (PASSED WITH NOTES, 20/20 must-haves), reviewed, and fix pass applied (WR-01/WR-03/WR-04 fixed; WR-02 skipped — target seam removed by in-flight GeniusNode refactor)
+Last activity: 2026-10-07 — Phase 8 review fix pass
 
 ## Session
 
 **Last session:** 2026-10-07T00:00:00.000Z
 
-**Stopped At:** Milestone v1.1 (Job Price Validation) — all 3 phases complete; ready for transition/close
-**Resume File:** .planning/workstreams/tokenprice/phases/08-consensus-integration/08-VERIFICATION.md
+**Stopped At:** Milestone v1.1 (Job Price Validation) — all 3 phases complete; review warnings triaged; ready for transition/close
+**Resume File:** .planning/workstreams/tokenprice/phases/08-consensus-integration/08-REVIEW-DISPOSITION.md
 
 ## Operator Next Steps
 
-- /gsd-complete-milestone --ws tokenprice (all v1.1 phases complete) — or first fix REVIEW.md warnings (WR-01..WR-04)
+- Human-verify WR-03 (Stalled-retry refund classification — logic-level change, commit 5d94af72f in SuperGenius)
+- Decide on the 4 open Info findings (IN-01..IN-04) or defer to next milestone
+- /gsd-complete-milestone --ws tokenprice (all v1.1 phases complete; review warnings triaged)
 - /gsd-extract-learnings 8 --ws tokenprice (optional)
 
 ## Deferred Items
