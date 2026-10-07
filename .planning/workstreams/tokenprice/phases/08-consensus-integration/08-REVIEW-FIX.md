@@ -27,20 +27,20 @@ status: partial
 
 ## Fixed Issues
 
-### WR-01: Unchecked `.front()` on empty payout vector — UB in the regime-2 release builder
+### WR-01: Unchecked `.front()` on empty payout vector — undefined behavior in the regime-2 release builder
 
 **Files modified:** `SuperGenius/src/transaction/TransactionManager.cpp`
 **Commit:** `7942c5214`
 **Applied fix:** Added the PayEscrow-style guard at `BuildRejectionReleaseTransaction` entry: `escrow_params.second.empty()` now logs (`m_logger->error`, mirroring `PayEscrow`'s message shape) and returns `std::errc::invalid_argument` before any `.front()` dereference. Because the vector is then provably non-empty, the downstream `token_id` ternary (empty → `TokenID::FromBytes({0x00})`) was simplified to a direct `.front().token_id` read and the duplicate `GetUTXOParameters()` call removed. Return convention (`std::errc`) and Ullman braces match the surrounding code.
 
-### WR-03: Regime-2 refund is single-shot — transient release-construction failure permanently strands the escrow
+### WR-03: Regime-2 refund is single-shot — transient release-construction failure permanently strands the poster's escrow
 
 **Files modified:** `SuperGenius/src/transaction/TransactionManager.cpp`
 **Commit:** `5d94af72f`
 **Status:** fixed: requires human verification (logic-level change)
 **Applied fix:** In `HandleTaskRejectionCertificate`'s CONFIRMED branch, failure classification now splits transient from terminal: `std::errc::operation_canceled` (manager stopping) returns `ConsensusManager::Check::Stalled`, so the certificate-work journal's existing retry machinery (`ProcessCommittedCertificate` → `MarkStalled` → 500ms tick with exponential backoff, plus restart recovery via `RecoverStaleProcessing`) re-drives the handler and the refund construction; all other failures (`invalid_argument` — no payout output, non-CONFIRMED escrow) settle `Approve` as terminal. Verified before applying: every failure return in `BuildRejectionReleaseTransaction` fires **before** the release is constructed or enqueued, so a retry cannot double-spend; a constructed release returns success and never re-enters the error branch. This mirrors the regime-1 branch's existing contract (transient `ChangeTransactionState` failure already returns `outcome::failure` to keep work retryable).
 
-### WR-04: Backstop rejection leaks the claim lock — rejected task stays network-visible as locked until expiry
+### WR-04: Backstop rejection leaks the claim lock — rejected task remains network-visible as locked, and only the 10s expiry cleans it up
 
 **Files modified:** `SuperGenius/src/processing/impl/TaskQueueImpl.cpp`
 **Commit:** `5e9254d5c`
