@@ -23,7 +23,7 @@ status: partial
 
 **Environment note:** All edits and commits were made directly in the `SuperGenius` submodule working tree (branch `dev_price_validation`, base `5dbcf2a5c`), per this repo's established convention — the isolated-worktree protocol cannot apply because the parent-repo worktree would contain an uninitialized submodule. Rollback safety was preserved by staging only explicitly-listed file paths; the pre-existing uncommitted refactor (`src/account/GeniusNode.cpp`, `src/account/GeniusNode.hpp`, `src/processing/CMakeLists.txt`) was never staged, committed, or reverted, and remains uncommitted as found.
 
-**Verification note:** No C++ syntax checker was available and a full cmake build was ruled too heavy per the directive, so verification was Tier 1 only (careful re-read of each modified region plus consistency checks against surrounding code and the CRDT/journal machinery the fixes rely on). Verification ran against the submodule working tree, which is the tree the commits landed in.
+**Verification note:** No C++ syntax checker was available and a full cmake build was ruled too heavy per the directive, so verification was Tier 1 only (careful re-read of each modified region plus consistency checks against surrounding code and the CRDT/journal machinery the fixes rely on). Verification ran against the submodule working tree, which is the tree the commits landed in. **Post-hoc build + test verification (2026-10-07, after the fix pass):** `genius_transaction_objs` compiled clean (Release/x64); `task_queue_test` 20/20 PASS with the WR-04 lock-release observed in logs; `processing_nodes_test` 2/2 PASS including `GamedPriceJobRejectedAndRefunded` (multi-node regime-1 refund end-to-end). WR-01's guard sits on a forged-escrow branch with no test driver (same as the review noted); WR-03's transient branch fires only during shutdown — kill-restart test remains the open proof.
 
 ## Fixed Issues
 
@@ -37,13 +37,14 @@ status: partial
 
 **Files modified:** `SuperGenius/src/transaction/TransactionManager.cpp`
 **Commit:** `5d94af72f`
-**Status:** fixed: requires human verification (logic-level change)
+**Status:** fixed — verified 2026-10-07 (compile + multi-node behavioral: `processing_nodes_test` `GamedPriceJobRejectedAndRefunded` PASS end-to-end with the Stalled/Approve split in place; the `operation_canceled`→Stalled branch itself fires only during shutdown, so its remaining proof is a kill-restart test)
 **Applied fix:** In `HandleTaskRejectionCertificate`'s CONFIRMED branch, failure classification now splits transient from terminal: `std::errc::operation_canceled` (manager stopping) returns `ConsensusManager::Check::Stalled`, so the certificate-work journal's existing retry machinery (`ProcessCommittedCertificate` → `MarkStalled` → 500ms tick with exponential backoff, plus restart recovery via `RecoverStaleProcessing`) re-drives the handler and the refund construction; all other failures (`invalid_argument` — no payout output, non-CONFIRMED escrow) settle `Approve` as terminal. Verified before applying: every failure return in `BuildRejectionReleaseTransaction` fires **before** the release is constructed or enqueued, so a retry cannot double-spend; a constructed release returns success and never re-enters the error branch. This mirrors the regime-1 branch's existing contract (transient `ChangeTransactionState` failure already returns `outcome::failure` to keep work retryable).
 
 ### WR-04: Backstop rejection leaks the claim lock — rejected task remains network-visible as locked, and only the 10s expiry cleans it up
 
 **Files modified:** `SuperGenius/src/processing/impl/TaskQueueImpl.cpp`
 **Commit:** `5e9254d5c`
+**Status:** fixed — verified 2026-10-07 (`task_queue_test` 20/20 PASS; log shows the lock-key CRDT delete firing immediately after backstop rejection)
 **Applied fix:** After `MarkTaskBad(taskId)` in the `GrabTask` price-backstop rejection branch, the durable claim lock is now removed — `(void) db_->Remove( sgns::crdt::HierarchicalKey( TaskKeys::LockKey( taskKey ) ), { processing_topic_ } )` — before `continue`, per the review's smaller-variant recommendation. Conventions matched to the file (`HierarchicalKey` wrapping, `{ processing_topic_ }` topic set, `(void)` discard as in `Consensus.cpp:4761`, existing `TaskQueueImplLogger()->error` line kept unchanged). The existing test workaround at `task_queue_test.cpp:443-447` was deliberately left untouched: `CrdtDatastore::DeleteKey` on an absent/already-tombstoned key returns success with an empty delta (no-op), so the test's disambiguating cleanup remains valid (though now redundant, it still proves the skip is `incompatible_jobs_` rather than a lock). The second backstop test (`PriceBackstopUnsetKeepsBehavior`) is unaffected — its rejected task's lock is now also released, and subsequent scans rely on `incompatible_jobs_` alone, which is exactly what it asserts.
 
 ## Skipped Issues
