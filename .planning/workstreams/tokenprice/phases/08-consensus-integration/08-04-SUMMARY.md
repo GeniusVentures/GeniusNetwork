@@ -164,6 +164,13 @@ None - no external service configuration required.
 - Phase 8 is functionally complete: all four requirements (CONS-01, CONS-02, CONS-03, TEST-02) delivered and machine-verified; ROADMAP criteria 1-3 all evidenced (gamed rejected+refunded; honest accepted with enforcement live; full multi-node suite green).
 - The `.gsd/08-04-*.log` captures retain the raw evidence chain if the verifier wants to audit the gate/certificate/refund interleaving.
 
+## Self-Check: PASSED
+
+- `08-04-SUMMARY.md` exists at `.planning/workstreams/tokenprice/phases/08-consensus-integration/` — FOUND
+- `TEST_F( ProcessingNodesTest, GamedPriceJobRejectedAndRefunded )` present in `SuperGenius/test/src/processing_nodes/processing_nodes_test.cpp` — FOUND
+- Submodule commit `5dbcf2a5c` (test), parent commits `5343626` (chore pointer bump), `9acdb96` (docs) — FOUND
+- Shared orchestrator artifacts (`tokenprice/STATE.md`, `tokenprice/ROADMAP.md`, `.planning/STATE.md`) — untouched (clean `git status`)
+
 ---
 *Phase: 08-consensus-integration*
 *Completed: 2026-10-06*
