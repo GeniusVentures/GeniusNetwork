@@ -3,9 +3,9 @@ gsd_state_version: "1.0"
 milestone: v1.1
 status: Awaiting next milestone
 stopped_at: Phase 8 review warnings ALL fixed (WR-01..04, verified by build + 3 test suites)
-last_updated: "2026-10-09T20:30:00.000Z"
+last_updated: "2026-10-09T22:10:00.000Z"
 last_activity: 2026-10-09
-last_activity_desc: Quick task 261009-mbi — document steps to deploy token.gnus.ai Cloudflare Worker live (runbook at SuperGenius/pricecoordinator/DEPLOYMENT.md, submodule commit 0fd1de762)
+last_activity_desc: Quick task 261009-oxi — add User-Agent to CoinGecko upstream fetch, fixing live 403 (submodule commit 3df8433b3; resolves deferred Phase 02 UA/403 diagnosis)
 state_head: 15c9b9c9357b9eb4330d163fb29bd4b7279335dd
 progress:
   total_phases: 3
@@ -25,7 +25,7 @@ current_plan: 4
 Phase: Milestone v1.1 complete
 Plan: —
 Status: Awaiting next milestone
-Last activity: 2026-10-09 - Completed quick task 261009-mbi: Document the steps to deploy the token.gnus.ai Cloudflare Worker (tier-2 fallback price feed) live
+Last activity: 2026-10-09 - Completed quick task 261009-oxi: Add User-Agent header to price coordinator CoinGecko upstream fetch — fixes live 403 (local and deployed)
 
 ## Session
 
