@@ -28,7 +28,9 @@ Decimal phases appear between their surrounding integers in numeric order.
   2. Every block request yields exactly one terminal result — a completion flag checked under the mutex makes success and timeout mutually exclusive, even when an already-dequeued genuinely-expired handler fires late with success after a cancel
   3. Consumer-initiated cancellation and success produce no error callback; only a genuine timeout produces exactly one failure callback (`REQUEST_TIMEOUT`-class)
   4. Race tests for the timer orderings (cancel-vs-expiry in both orders, response-then-canceled-timer-fires, timeout-then-late-response) pass deterministically on a single-threaded `io_context` with injected timeouts and no sleeps — establishing the harness Phase 2 extends
-**Plans**: TBD
+**Plans**: 1 plan
+Plans:
+- [ ] 01-01-PLAN.md — Disk-space gate (W: vs C: build tree), tracer: fix branch from `d2ec18af` + full C-5/C-7 port + first race ordering green through the verified Windows harness; expansion: remaining orderings + consumer `Cancel()` + regression + content-probe self-check
 
 ### Phase 2: Bitswap Callback Reentrancy
 **Goal**: Consumer callbacks are safe to call from — Bitswap never invokes them under an internal mutex, so re-entrant consumers cannot deadlock the protocol
@@ -71,7 +73,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 (Phase 3 is technically par
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Bitswap Timer Correctness | 0/? | Not started | - |
+| 1. Bitswap Timer Correctness | 0/1 | Not started | - |
 | 2. Bitswap Callback Reentrancy | 0/? | Not started | - |
 | 3. GossipSub Resource Bounds | 0/? | Not started | - |
 | 4. Repin & Cross-Repo Verification | 0/? | Not started | - |
