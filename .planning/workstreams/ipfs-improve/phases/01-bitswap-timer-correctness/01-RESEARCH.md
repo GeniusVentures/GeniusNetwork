@@ -474,14 +474,14 @@ Parallel note: pass MSBuild args through cmake (`--parallel 4`) — raw `-m:4` a
 
 ## Open Questions
 
-1. **Does BSTP-03's "consumer-initiated cancellation" require a public `Cancel()` API?**
+1. **Does BSTP-03's "consumer-initiated cancellation" require a public `Cancel()` API?** *(RESOLVED in 01-01-PLAN.md — planner decision: YES; Task 3 step 1 adds the additive public `Cancel()` exactly per A2; recorded in the plan objective.)*
    - What we know: no cancel API exists on `BitswapRequestContext` or `Bitswap` (verified against the full hpp public surface this session). The four ROADMAP orderings can all be driven through ctor/`AddCallback`/`HandleResponse` + timer. BSTP-03/SC3 phrase cancellation as a first-class outcome ("Consumer-initiated cancellation and success produce no error callback").
    - What's unclear: whether the phase's acceptance reads "consumer cancel" as the disarm-inside-completion only, or demands an explicit cancel entry point.
    - Recommendation: add the small additive public `Cancel()` (A2) — reversible, within D-05's class scope, makes orderings 1 and BSTP-03 directly testable, and gives Phase 2 a reentrancy probe target. Planner decides.
-2. **Disk space: free W: or relocate the test tree?**
+2. **Disk space: free W: or relocate the test tree?** *(RESOLVED in 01-01-PLAN.md — Task 1 is a blocking-human `checkpoint:decision` gate with options free-w / use-c; the chosen path becomes $B for every build command in Tasks 2-3.)*
    - What we know: W: full (~582 KB); C: probe proven end-to-end; TESTING.md prefers the real `build/<Platform>/<Config>` tree.
    - Recommendation: first task = operator checkpoint to free ≥1–2 GB on W: (candidates listed above); the C: probe remains the fallback if the operator declines.
-3. **Push the fix branch now or at Phase 4?**
+3. **Push the fix branch now or at Phase 4?** *(RESOLVED in 01-01-PLAN.md — no push in Phase 1: plan prohibition #4 keeps the branch local-only until Phase 4's content-probed pin, overriding the push-early recommendation above.)*
    - What we know: remote is SSH; auth untested this session; Phase 4 pins by content probe, not branch name, so local commits suffice until then.
    - Recommendation: push after Phase 1 verification as a `checkpoint:human-verify` (auth may need the operator), so Phases 2–4 branch from a shared tip.
 
