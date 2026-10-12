@@ -72,26 +72,26 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| BSTP-01 | — | Pending |
-| BSTP-02 | — | Pending |
-| BSTP-03 | — | Pending |
-| BSTP-04 | — | Pending |
-| BSTP-05 | — | Pending |
-| GOSS-01 | — | Pending |
-| GOSS-02 | — | Pending |
-| GOSS-03 | — | Pending |
-| GOSS-04 | — | Pending |
-| TEST-01 | — | Pending |
-| TEST-02 | — | Pending |
-| INTG-01 | — | Pending |
-| INTG-02 | — | Pending |
-| INTG-03 | — | Pending |
+| BSTP-01 | Phase 1 | Pending |
+| BSTP-02 | Phase 1 | Pending |
+| BSTP-03 | Phase 1 | Pending |
+| BSTP-04 | Phase 2 | Pending |
+| BSTP-05 | Phase 2 | Pending |
+| GOSS-01 | Phase 3 | Pending |
+| GOSS-02 | Phase 3 | Pending |
+| GOSS-03 | Phase 3 | Pending |
+| GOSS-04 | Phase 3 | Pending |
+| TEST-01 | Phase 2 | Pending |
+| TEST-02 | Phase 3 | Pending |
+| INTG-01 | Phase 4 | Pending |
+| INTG-02 | Phase 4 | Pending |
+| INTG-03 | Phase 4 | Pending |
 
 **Coverage:**
 - v1 requirements: 14 total
-- Mapped to phases: 0
-- Unmapped: 14 ⚠️ (filled by roadmap creation)
+- Mapped to phases: 14 ✓
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-10-12*
-*Last updated: 2026-10-12 after initial definition*
+*Last updated: 2026-10-12 — traceability filled by roadmap creation (Phase 1: BSTP-01..03, Phase 2: BSTP-04..05 + TEST-01, Phase 3: GOSS-01..04 + TEST-02, Phase 4: INTG-01..03)*

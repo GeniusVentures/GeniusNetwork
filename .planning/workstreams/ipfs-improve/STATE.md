@@ -2,11 +2,13 @@
 gsd_state_version: "1.0"
 milestone: v1.0
 milestone_name: IPFS P0 Remediation
-status: planning
-last_updated: "2026-10-12T20:22:33.500Z"
+status: ready-to-plan
+current_phase: 1
+current_phase_name: Bitswap Timer Correctness
+last_updated: "2026-10-12T20:50:00.000Z"
 last_activity: 2026-10-12
 progress:
-  total_phases: 0
+  total_phases: 4
   completed_phases: 0
   total_plans: 0
   completed_plans: 0
@@ -15,18 +17,60 @@ progress:
 
 # Project State
 
+## Project Reference
+
+See: .planning/PROJECT.md (updated 2026-10-12)
+
+**Core value:** Close the two non-CI P0 audit findings — Bitswap canceled-timer-as-timeout + callbacks-under-mutex, and unbounded GossipSub remote-driven state — with race regression tests as acceptance evidence, fixed at the actual integrated SHAs and verified through the thirdparty pin chain.
+**Current focus:** Phase 1 — Bitswap Timer Correctness
+
 ## Current Position
 
-Phase: Not started (defining requirements)
-Plan: —
-Status: Defining requirements
-Last activity: 2026-10-12 — Milestone v1.0 started
+Phase: 1 of 4 (Bitswap Timer Correctness)
+Plan: — (phase not yet planned)
+Status: Ready to plan
+Last activity: 2026-10-12 — ROADMAP.md created (4 phases, 14/14 requirements mapped)
+
+Progress: [░░░░░░░░░░] 0%
+
+## Performance Metrics
+
+**Velocity:**
+- Total plans completed: 0
+- Average duration: —
+- Total execution time: —
+
+**By Phase:**
+
+| Phase | Plans | Total | Avg/Plan |
+|-------|-------|-------|----------|
+| - | - | - | - |
+
+## Accumulated Context
+
+### Decisions
+
+Decisions are logged in PROJECT.md Key Decisions table.
+Recent decisions affecting current work:
+
+- Roadmap: 4 phases — Bitswap timer (P1) → Bitswap reentrancy (P2, carries TEST-01 full race suite) → GossipSub bounds (P3, carries TEST-02; parallelizable but sequenced third for design resolution) → repin/verify (P4)
+- Research: workspace pins differ from audit doc — fix at ipfs-bitswap-cpp `d2ec18af`, libp2p `28f6a629`, ipfs-pubsub `b6eb6268`; repin with content-probes, never branch-name trust
+
+### Pending Todos
+
+None yet.
+
+### Blockers/Concerns
+
+- Phase 3 flagged needs-research during planning: Config surface breadth (2-field minimal vs fuller Go-anchored set), parser-side vs receiver-side enforcement, byte-cap default, sustained-overflow threshold K
+- Phase 1 planning must specify the timeout-injection seam (`seconds(5)`/`seconds(30)` are hardcoded constructors)
 
 ## Session Continuity
 
-Last session: —
-Stopped at: Workstream created
+Last session: 2026-10-12
+Stopped at: Roadmap created; Phase 1 awaiting `/gsd-plan-phase 1`
+Resume file: None
 
 ## Operator Next Steps
 
-- Run `/gsd-new-milestone --ws ipfs-improve` to set up the milestone.
+- Run `/gsd-plan-phase 1` to plan Bitswap Timer Correctness.
