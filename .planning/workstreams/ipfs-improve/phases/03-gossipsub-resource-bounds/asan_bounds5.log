@@ -1,0 +1,960 @@
+Running main() from /home/fuu/gnus/GeniusNetwork/thirdparty/GTest/googletest/src/gtest_main.cc
+Note: Google Test filter = GossipPubSubBoundsTest.*
+[==========] Running 5 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 5 tests from GossipPubSubBoundsTest
+[ RUN      ] GossipPubSubBoundsTest.SustainedOverflowClosesStreamAndBlocksPeer
+Current limits: 1024 (soft), 1048576 (hard)
+New limits set successfully: 16384 (soft), 1048576 (hard)
+Initialized relay addresses
+[2026-10-13 19:35:46.267205626][th:1430][info] GossipPubSub /ip4/0.0.0.0/tcp/40301/p2p/12D3KooWJCn84pp5hLGVT4jxTNVaYhFP1rdQ7sXgQjPEQxeq2gTb: Starting PubSub service
+[2026-10-13 19:35:46.268274678][th:1433][info] GossipPubSub Starting address monitoring system for mobile network changes
+[2026-10-13 19:35:46.268299098][th:1433][info] GossipPubSub === CURRENT NETWORK STATE ===
+[2026-10-13 19:35:46.268391370][th:1433][info] GossipPubSub Primary listening address: /ip4/0.0.0.0/tcp/40301/p2p/12D3KooWJCn84pp5hLGVT4jxTNVaYhFP1rdQ7sXgQjPEQxeq2gTb
+[2026-10-13 19:35:46.268402400][th:1433][info] GossipPubSub Host peer info addresses (0):
+[2026-10-13 19:35:46.268409860][th:1433][info] GossipPubSub Additional addresses we track (0):
+[2026-10-13 19:35:46.268418810][th:1433][info] GossipPubSub Listening addresses (1):
+[2026-10-13 19:35:46.268426240][th:1433][info] GossipPubSub   -> /ip4/0.0.0.0/tcp/40301/p2p/12D3KooWJCn84pp5hLGVT4jxTNVaYhFP1rdQ7sXgQjPEQxeq2gTb
+[2026-10-13 19:35:46.268430680][th:1433][info] GossipPubSub Interface addresses (0):
+[2026-10-13 19:35:46.268433980][th:1433][info] GossipPubSub === RAW OBSERVED ADDRESS DEBUG ===
+[2026-10-13 19:35:46.268445891][th:1433][info] GossipPubSub Local address: /ip4/0.0.0.0/tcp/40301/p2p/12D3KooWJCn84pp5hLGVT4jxTNVaYhFP1rdQ7sXgQjPEQxeq2gTb -> 0 raw observed, 0 activated+confirmed
+[2026-10-13 19:35:46.268455321][th:1433][info] GossipPubSub TOTAL: 0 raw observed addresses, 0 activated+confirmed addresses
+[2026-10-13 19:35:46.268458381][th:1433][info] GossipPubSub === END RAW OBSERVED ADDRESS DEBUG ===
+[2026-10-13 19:35:46.268462141][th:1433][info] GossipPubSub Observed addresses - all (0):
+[2026-10-13 19:35:46.268466511][th:1433][info] GossipPubSub Observed addresses - confirmed only (0):
+[2026-10-13 19:35:46.268470261][th:1433][info] GossipPubSub Relay addresses (0):
+[2026-10-13 19:35:46.268479751][th:1433][warning] GossipPubSub Failed to get addresses from peer repository: not found
+[2026-10-13 19:35:46.268783156][th:1433][info] GossipPubSub Found 1 valid network interfaces
+[2026-10-13 19:35:46.268797386][th:1433][info] GossipPubSub Current network interfaces (1):
+[2026-10-13 19:35:46.268803686][th:1433][info] GossipPubSub   -> 172.27.15.215
+[2026-10-13 19:35:46.268810057][th:1433][info] GossipPubSub Active connections: 0
+[2026-10-13 19:35:46.268813107][th:1433][info] GossipPubSub === PEER CONNECTION DETAILS ===
+[2026-10-13 19:35:46.268816407][th:1433][info] GossipPubSub NOTE: Observed addresses need to be seen by 4+ different peer groups to become 'activated'
+[2026-10-13 19:35:46.268822127][th:1433][info] GossipPubSub NOTE: Current connections: 0, so max possible observers: 0
+[2026-10-13 19:35:46.268825077][th:1433][info] GossipPubSub === END PEER CONNECTION DETAILS ===
+[2026-10-13 19:35:46.268827597][th:1433][info] GossipPubSub Connection manager stats:
+[2026-10-13 19:35:46.268832587][th:1433][info] GossipPubSub   -> Max connections: 1000
+[2026-10-13 19:35:46.268836047][th:1433][info] GossipPubSub   -> Current connections: 0
+[2026-10-13 19:35:46.268838497][th:1433][info] GossipPubSub === END NETWORK STATE ===
+26.10.13 19:35:46[38;2;128;128;128m.269152[0m  [38;2;000;000;205m[1mDebug   [0m  [1mTcpListener[0m  [3mEnumerated 1 network interfaces for IPv4[0m
+26.10.13 19:35:46[38;2;128;128;128m.269183[0m  [38;2;000;000;205m[1mDebug   [0m  [1mTcpListener[0m  [3mResolved 0.0.0.0:40301 to 1 interface addresses[0m
+26.10.13 19:35:46[38;2;128;128;128m.269288[0m  [38;2;034;139;034m[1mInfo    [0m  [1mgossip[0m  eq2gTb started[0m
+[2026-10-13 19:35:46.269320645][th:1433][info] GossipPubSub /ip4/0.0.0.0/tcp/40301/p2p/12D3KooWJCn84pp5hLGVT4jxTNVaYhFP1rdQ7sXgQjPEQxeq2gTb : PubSub service started
+26.10.13 19:35:46[38;2;128;128;128m.269511[0m  [38;2;000;000;205m[1mDebug   [0m  [1mgossip[0m  [3meq2gTb created entry for topic gossip_bounds_topic[0m
+26.10.13 19:35:46[38;2;128;128;128m.269532[0m  [38;2;000;000;205m[1mDebug   [0m  [1mgossip[0m  [3meq2gTb self subscribed to gossip_bounds_topic[0m
+[2026-10-13 19:35:46.269588649][th:1433][info] GossipPubSub /ip4/0.0.0.0/tcp/40301/p2p/12D3KooWJCn84pp5hLGVT4jxTNVaYhFP1rdQ7sXgQjPEQxeq2gTb: PubSub subscribed to topic 'gossip_bounds_topic'
+Current limits: 16384 (soft), 1048576 (hard)
+New limits set successfully: 16384 (soft), 1048576 (hard)
+Initialized relay addresses
+26.10.13 19:35:46[38;2;128;128;128m.270956[0m  [38;2;000;000;205m[1mDebug   [0m  [1mroute-helper[0m  [3mGetting best source addresses for both IPv4 and IPv6[0m
+26.10.13 19:35:46[38;2;128;128;128m.271029[0m  [38;2;000;000;205m[1mDebug   [0m  [1mroute-helper[0m  [3mSelected loopback IPv4 source: /ip4/127.0.0.1/tcp/0[0m
+26.10.13 19:35:46[38;2;128;128;128m.271037[0m  [38;2;034;139;034m[1mInfo    [0m  [1mroute-helper[0m  Source addresses selected - IPv4: /ip4/127.0.0.1/tcp/0, IPv6: none[0m
+26.10.13 19:35:46[38;2;128;128;128m.271822[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mSelect a protocol[0m
+26.10.13 19:35:46[38;2;128;128;128m.271829[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mSelect a protocol[0m
+26.10.13 19:35:46[38;2;128;128;128m.271832[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mAssertions pass?[0m
+26.10.13 19:35:46[38;2;128;128;128m.271839[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mContinued[0m
+26.10.13 19:35:46[38;2;128;128;128m.271843[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mAssertions pass?[0m
+26.10.13 19:35:46[38;2;128;128;128m.271852[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mContinued[0m
+26.10.13 19:35:46[38;2;128;128;128m.272138[0m  [38;2;034;139;034m[1mInfo    [0m  [1mNoise[0m  securing inbound connection[0m
+26.10.13 19:35:46[38;2;128;128;128m.272204[0m  [38;2;034;139;034m[1mInfo    [0m  [1mNoise[0m  securing outbound connection to 12D3KooWJCn84pp5hLGVT4jxTNVaYhFP1rdQ7sXgQjPEQxeq2gTb[0m
+26.10.13 19:35:46[38;2;128;128;128m.275828[0m  [38;2;034;139;034m[1mInfo    [0m  [1mNoiseHandshake[0m  Handshake succeeded[0m
+26.10.13 19:35:46[38;2;128;128;128m.275872[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mSelect a protocol[0m
+26.10.13 19:35:46[38;2;128;128;128m.275882[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mAssertions pass?[0m
+26.10.13 19:35:46[38;2;128;128;128m.275893[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mContinued[0m
+26.10.13 19:35:46[38;2;128;128;128m.276757[0m  [38;2;034;139;034m[1mInfo    [0m  [1mNoiseHandshake[0m  Handshake succeeded[0m
+26.10.13 19:35:46[38;2;128;128;128m.276794[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mSelect a protocol[0m
+26.10.13 19:35:46[38;2;128;128;128m.276800[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mAssertions pass?[0m
+26.10.13 19:35:46[38;2;128;128;128m.276807[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mContinued[0m
+26.10.13 19:35:46[38;2;128;128;128m.277971[0m  [38;2;034;139;034m[1mInfo    [0m  [1mListenerManager[0m  Added connection for, 12D3KooWJCn84pp5hLGVT4jxTNVaYhFP1rdQ7sXgQjPEQxeq2gTb[0m
+26.10.13 19:35:46[38;2;128;128;128m.277978[0m  [38;2;034;139;034m[1mInfo    [0m  [1mListenerManager[0m  Added connection for, 12D3KooWJMe181A9uDMdrnNynrAg7RMnxQELaPrczVab5LRsNQjV[0m
+26.10.13 19:35:46[38;2;128;128;128m.278044[0m  [38;2;034;139;034m[1mInfo    [0m  [1mDialerImpl[0m  Checking whether address /ip4/127.0.0.1/tcp/40301 has relay[0m
+26.10.13 19:35:46[38;2;128;128;128m.278053[0m  [38;2;000;000;205m[1mDebug   [0m  [1mroute-helper[0m  [3mGetting best source addresses for both IPv4 and IPv6[0m
+26.10.13 19:35:46[38;2;128;128;128m.278071[0m  [38;2;034;139;034m[1mInfo    [0m  [1mDialerImpl[0m  Completed Dial to 12D3KooWJCn84pp5hLGVT4jxTNVaYhFP1rdQ7sXgQjPEQxeq2gTb[0m
+26.10.13 19:35:46[38;2;128;128;128m.278122[0m  [38;2;000;000;205m[1mDebug   [0m  [1mroute-helper[0m  [3mLooking up preferred route for destination: 8.8.8.8[0m
+26.10.13 19:35:46[38;2;128;128;128m.278201[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mSelect a protocol[0m
+26.10.13 19:35:46[38;2;128;128;128m.278217[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mAssertions pass?[0m
+26.10.13 19:35:46[38;2;128;128;128m.278224[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mContinued[0m
+26.10.13 19:35:46[38;2;128;128;128m.278981[0m  [38;2;000;000;205m[1mDebug   [0m  [1mroute-helper[0m  [3mUsing /proc/net/route for IPv4 route lookup[0m
+26.10.13 19:35:46[38;2;128;128;128m.279293[0m  [38;2;000;000;205m[1mDebug   [0m  [1mroute-helper[0m  [3mLinux IPv4 route found: interface=eth0, source=172.27.15.215, metric=0[0m
+26.10.13 19:35:46[38;2;128;128;128m.279365[0m  [38;2;000;000;205m[1mDebug   [0m  [1mroute-helper[0m  [3mSelected route-based IPv4 source: /ip4/172.27.15.215/tcp/40301[0m
+26.10.13 19:35:46[38;2;128;128;128m.279374[0m  [38;2;034;139;034m[1mInfo    [0m  [1mroute-helper[0m  Source addresses selected - IPv4: /ip4/172.27.15.215/tcp/40301, IPv6: none[0m
+26.10.13 19:35:46[38;2;128;128;128m.279538[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mSelect a protocol[0m
+26.10.13 19:35:46[38;2;128;128;128m.279553[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mAssertions pass?[0m
+26.10.13 19:35:46[38;2;128;128;128m.279560[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mContinued[0m
+26.10.13 19:35:46[38;2;128;128;128m.279605[0m  [38;2;000;000;205m[1mDebug   [0m  [1mYamuxConn[0m  [3mcreating inbound stream 2[0m
+26.10.13 19:35:46[38;2;128;128;128m.279695[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mSelect a protocol[0m
+26.10.13 19:35:46[38;2;128;128;128m.279702[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mAssertions pass?[0m
+26.10.13 19:35:46[38;2;128;128;128m.279706[0m  [38;2;000;000;205m[1mDebug   [0m  [1mYamuxConn[0m  [3mcreating inbound stream 1[0m
+26.10.13 19:35:46[38;2;128;128;128m.279713[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mContinued[0m
+26.10.13 19:35:46[38;2;128;128;128m.279730[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mSelect a protocol[0m
+26.10.13 19:35:46[38;2;128;128;128m.279743[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mAssertions pass?[0m
+26.10.13 19:35:46[38;2;128;128;128m.279749[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mContinued[0m
+26.10.13 19:35:46[38;2;128;128;128m.280832[0m  [38;2;000;000;205m[1mDebug   [0m  [1mYamuxConn[0m  [3mignoring received ACK on existing stream id 2[0m
+26.10.13 19:35:46[38;2;128;128;128m.280832[0m  [38;2;000;000;205m[1mDebug   [0m  [1mYamuxConn[0m  [3mignoring received ACK on existing stream id 1[0m
+26.10.13 19:35:46[38;2;128;128;128m.281033[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3munknown protocol /ipfs/id/1.0.0 proposed by client[0m
+26.10.13 19:35:46[38;2;128;128;128m.281486[0m  [38;2;000;000;205m[1mDebug   [0m  [1mgossip[0m  [3meq2gTb peer RsNQjV connected[0m
+26.10.13 19:35:46[38;2;128;128;128m.281530[0m  [38;2;000;000;205m[1mDebug   [0m  [1mgossip[0m  [3meq2gTb tagged peer RsNQjV for joining gossip network[0m
+26.10.13 19:35:46[38;2;128;128;128m.281668[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mSelect a protocol[0m
+26.10.13 19:35:46[38;2;128;128;128m.281682[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mAssertions pass?[0m
+26.10.13 19:35:46[38;2;128;128;128m.281689[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mContinued[0m
+26.10.13 19:35:46[38;2;128;128;128m.283176[0m  [38;2;000;000;205m[1mDebug   [0m  [1mYamuxConn[0m  [3mcreating inbound stream 4[0m
+26.10.13 19:35:46[38;2;128;128;128m.283245[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mSelect a protocol[0m
+26.10.13 19:35:46[38;2;128;128;128m.283252[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mAssertions pass?[0m
+26.10.13 19:35:46[38;2;128;128;128m.283259[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mContinued[0m
+26.10.13 19:35:46[38;2;128;128;128m.283552[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mprotocol /ipfs/id/1.0.0 was not accepted by peer[0m
+26.10.13 19:35:46[38;2;128;128;128m.283568[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mnone of proposed protocols were accepted by peer[0m
+26.10.13 19:35:46[38;2;128;128;128m.283696[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mFailed to negotiate protocols: /ipfs/id/1.0.0[0m
+26.10.13 19:35:46[38;2;128;128;128m.284675[0m  [38;2;000;000;205m[1mDebug   [0m  [1mgossip[0m  [3meq2gTb peer RsNQjV subscribed, topic gossip_bounds_topic[0m
+26.10.13 19:35:46[38;2;128;128;128m.284699[0m  [38;2;000;000;205m[1mDebug   [0m  [1mgossip[0m  [3meq2gTb peer RsNQjV subscribing to gossip_bounds_topic[0m
+26.10.13 19:35:46[38;2;128;128;128m.284721[0m  [38;2;000;000;205m[1mDebug   [0m  [1mgossip[0m  [3meq2gTb finished dispatching message from peer RsNQjV[0m
+26.10.13 19:35:46[38;2;128;128;128m.284776[0m  [38;2;000;000;205m[1mDebug   [0m  [1mYamuxConn[0m  [3mignoring received ACK on existing stream id 4[0m
+26.10.13 19:35:46[38;2;128;128;128m.294157[0m  [38;2;000;000;205m[1mDebug   [0m  [1mgossip[0m  [3meq2gTb peer RsNQjV added to mesh (size=1) for topic gossip_bounds_topic[0m
+26.10.13 19:35:46[38;2;128;128;128m.408769[0m  [38;2;000;000;205m[1mDebug   [0m  [1mgossip[0m  [3meq2gTb setting fanout period for gossip_bounds_topic, 1471539->1561539[0m
+26.10.13 19:35:46[38;2;128;128;128m.409029[0m  [38;2;000;000;205m[1mDebug   [0m  [1mgossip[0m  [3meq2gTb message forwarded, topic=gossip_bounds_topic, m=1, s=0[0m
+26.10.13 19:35:46[38;2;128;128;128m.419258[0m  [38;2;255;165;000m[1mWarning [0m  [1mgossip[0m  eq2gTb dropping oversized outbound RPC: peer=RsNQjV, incoming_bytes=65618, pending_bytes=0, cap=4096, consecutive_drops=1 (GOSS-04)[0m
+26.10.13 19:35:46[38;2;128;128;128m.485769[0m  [38;2;000;000;205m[1mDebug   [0m  [1mgossip[0m  [3meq2gTb setting fanout period for gossip_bounds_topic, 1471616->1561616[0m
+26.10.13 19:35:46[38;2;128;128;128m.486037[0m  [38;2;000;000;205m[1mDebug   [0m  [1mgossip[0m  [3meq2gTb message forwarded, topic=gossip_bounds_topic, m=1, s=0[0m
+26.10.13 19:35:46[38;2;128;128;128m.494506[0m  [38;2;255;165;000m[1mWarning [0m  [1mgossip[0m  eq2gTb dropping oversized outbound RPC: peer=RsNQjV, incoming_bytes=65618, pending_bytes=0, cap=4096, consecutive_drops=2 (GOSS-04)[0m
+26.10.13 19:35:46[38;2;128;128;128m.562844[0m  [38;2;000;000;205m[1mDebug   [0m  [1mgossip[0m  [3meq2gTb setting fanout period for gossip_bounds_topic, 1471693->1561693[0m
+26.10.13 19:35:46[38;2;128;128;128m.563177[0m  [38;2;000;000;205m[1mDebug   [0m  [1mgossip[0m  [3meq2gTb message forwarded, topic=gossip_bounds_topic, m=1, s=0[0m
+26.10.13 19:35:46[38;2;128;128;128m.569437[0m  [38;2;255;165;000m[1mWarning [0m  [1mgossip[0m  eq2gTb dropping oversized outbound RPC: peer=RsNQjV, incoming_bytes=65618, pending_bytes=0, cap=4096, consecutive_drops=3 (GOSS-04)[0m
+26.10.13 19:35:46[38;2;128;128;128m.569480[0m  [38;2;000;000;205m[1mDebug   [0m  [1mYamuxConn[0m  [3mRST from stream 4[0m
+26.10.13 19:35:46[38;2;128;128;128m.569788[0m  [38;2;000;000;205m[1mDebug   [0m  [1mYamuxConn[0m  [3merasing stream 4[0m
+26.10.13 19:35:46[38;2;128;128;128m.569925[0m  [38;2;000;000;205m[1mDebug   [0m  [1mYamuxConn[0m  [3merasing stream 4[0m
+26.10.13 19:35:46[38;2;128;128;128m.569929[0m  [38;2;000;000;205m[1mDebug   [0m  [1mYamuxConn[0m  [3mRST from stream 1[0m
+26.10.13 19:35:46[38;2;128;128;128m.569936[0m  [38;2;000;000;205m[1mDebug   [0m  [1mYamuxConn[0m  [3merasing stream 1[0m
+26.10.13 19:35:46[38;2;128;128;128m.569984[0m  [38;2;000;000;205m[1mDebug   [0m  [1mYamuxConn[0m  [3mRST from stream 4[0m
+26.10.13 19:35:46[38;2;128;128;128m.570001[0m  [38;2;000;000;205m[1mDebug   [0m  [1mYamuxConn[0m  [3merasing stream 4[0m
+26.10.13 19:35:46[38;2;128;128;128m.570015[0m  [38;2;000;000;205m[1mDebug   [0m  [1mgossip[0m  [3meq2gTb peer RsNQjV disconnected[0m
+26.10.13 19:35:46[38;2;128;128;128m.570030[0m  [38;2;000;000;205m[1mDebug   [0m  [1mgossip[0m  [3meq2gTb peer RsNQjV unsubscribing from gossip_bounds_topic[0m
+26.10.13 19:35:46[38;2;128;128;128m.570366[0m  [38;2;000;000;205m[1mDebug   [0m  [1mYamuxConn[0m  [3merasing stream 1[0m
+26.10.13 19:35:46[38;2;128;128;128m.570673[0m  [38;2;000;000;205m[1mDebug   [0m  [1mYamuxConn[0m  [3mstream 4 no longer exists[0m
+26.10.13 19:35:46[38;2;128;128;128m.639135[0m  [38;2;000;000;205m[1mDebug   [0m  [1mroute-helper[0m  [3mGetting best source addresses for both IPv4 and IPv6[0m
+26.10.13 19:35:46[38;2;128;128;128m.639278[0m  [38;2;000;000;205m[1mDebug   [0m  [1mroute-helper[0m  [3mSelected loopback IPv4 source: /ip4/127.0.0.1/tcp/0[0m
+26.10.13 19:35:46[38;2;128;128;128m.639294[0m  [38;2;034;139;034m[1mInfo    [0m  [1mroute-helper[0m  Source addresses selected - IPv4: /ip4/127.0.0.1/tcp/0, IPv6: none[0m
+26.10.13 19:35:46[38;2;128;128;128m.639602[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mSelect a protocol[0m
+26.10.13 19:35:46[38;2;128;128;128m.639620[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mAssertions pass?[0m
+26.10.13 19:35:46[38;2;128;128;128m.639630[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mContinued[0m
+26.10.13 19:35:46[38;2;128;128;128m.639734[0m  [38;2;000;000;205m[1mDebug   [0m  [1mYamuxConn[0m  [3mcreating inbound stream 3[0m
+26.10.13 19:35:46[38;2;128;128;128m.639877[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mSelect a protocol[0m
+26.10.13 19:35:46[38;2;128;128;128m.639892[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mAssertions pass?[0m
+26.10.13 19:35:46[38;2;128;128;128m.639904[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mContinued[0m
+26.10.13 19:35:46[38;2;128;128;128m.639917[0m  [38;2;000;000;205m[1mDebug   [0m  [1mYamuxConn[0m  [3mignoring received ACK on existing stream id 3[0m
+26.10.13 19:35:46[38;2;128;128;128m.641586[0m  [38;2;000;000;205m[1mDebug   [0m  [1mgossip[0m  [3meq2gTb peer RsNQjV connected[0m
+26.10.13 19:35:46[38;2;128;128;128m.641627[0m  [38;2;000;000;205m[1mDebug   [0m  [1mgossip[0m  [3meq2gTb tagged peer RsNQjV for joining gossip network[0m
+26.10.13 19:35:46[38;2;128;128;128m.641776[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mSelect a protocol[0m
+26.10.13 19:35:46[38;2;128;128;128m.641789[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mAssertions pass?[0m
+26.10.13 19:35:46[38;2;128;128;128m.641796[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mContinued[0m
+26.10.13 19:35:46[38;2;128;128;128m.642014[0m  [38;2;000;000;205m[1mDebug   [0m  [1mYamuxConn[0m  [3mcreating inbound stream 6[0m
+26.10.13 19:35:46[38;2;128;128;128m.642082[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mSelect a protocol[0m
+26.10.13 19:35:46[38;2;128;128;128m.642089[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mAssertions pass?[0m
+26.10.13 19:35:46[38;2;128;128;128m.642097[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mContinued[0m
+26.10.13 19:35:46[38;2;128;128;128m.642497[0m  [38;2;000;000;205m[1mDebug   [0m  [1mgossip[0m  [3meq2gTb peer RsNQjV subscribed, topic gossip_bounds_topic[0m
+26.10.13 19:35:46[38;2;128;128;128m.642524[0m  [38;2;000;000;205m[1mDebug   [0m  [1mgossip[0m  [3meq2gTb peer RsNQjV subscribing to gossip_bounds_topic[0m
+26.10.13 19:35:46[38;2;128;128;128m.642550[0m  [38;2;000;000;205m[1mDebug   [0m  [1mgossip[0m  [3meq2gTb finished dispatching message from peer RsNQjV[0m
+26.10.13 19:35:46[38;2;128;128;128m.642610[0m  [38;2;000;000;205m[1mDebug   [0m  [1mYamuxConn[0m  [3mignoring received ACK on existing stream id 6[0m
+26.10.13 19:35:46[38;2;128;128;128m.644226[0m  [38;2;000;000;205m[1mDebug   [0m  [1mgossip[0m  [3meq2gTb peer RsNQjV added to mesh (size=1) for topic gossip_bounds_topic[0m
+26.10.13 19:35:46[38;2;128;128;128m.768158[0m  [38;2;000;000;205m[1mDebug   [0m  [1mgossip[0m  [3meq2gTb setting fanout period for gossip_bounds_topic, 1471899->1561899[0m
+26.10.13 19:35:46[38;2;128;128;128m.768353[0m  [38;2;000;000;205m[1mDebug   [0m  [1mgossip[0m  [3meq2gTb message forwarded, topic=gossip_bounds_topic, m=1, s=0[0m
+26.10.13 19:35:46[38;2;128;128;128m.769278[0m  [38;2;255;165;000m[1mWarning [0m  [1mgossip[0m  eq2gTb dropping oversized outbound RPC: peer=RsNQjV, incoming_bytes=65618, pending_bytes=0, cap=4096, consecutive_drops=1 (GOSS-04)[0m
+26.10.13 19:35:46[38;2;128;128;128m.844433[0m  [38;2;000;000;205m[1mDebug   [0m  [1mgossip[0m  [3meq2gTb setting fanout period for gossip_bounds_topic, 1471975->1561975[0m
+26.10.13 19:35:46[38;2;128;128;128m.844650[0m  [38;2;000;000;205m[1mDebug   [0m  [1mgossip[0m  [3meq2gTb message forwarded, topic=gossip_bounds_topic, m=1, s=0[0m
+26.10.13 19:35:46[38;2;128;128;128m.869455[0m  [38;2;255;165;000m[1mWarning [0m  [1mgossip[0m  eq2gTb dropping oversized outbound RPC: peer=RsNQjV, incoming_bytes=65618, pending_bytes=0, cap=4096, consecutive_drops=2 (GOSS-04)[0m
+26.10.13 19:35:46[38;2;128;128;128m.920521[0m  [38;2;000;000;205m[1mDebug   [0m  [1mgossip[0m  [3meq2gTb setting fanout period for gossip_bounds_topic, 1472051->1562051[0m
+26.10.13 19:35:46[38;2;128;128;128m.920669[0m  [38;2;000;000;205m[1mDebug   [0m  [1mgossip[0m  [3meq2gTb message forwarded, topic=gossip_bounds_topic, m=1, s=0[0m
+26.10.13 19:35:46[38;2;128;128;128m.944362[0m  [38;2;255;165;000m[1mWarning [0m  [1mgossip[0m  eq2gTb dropping oversized outbound RPC: peer=RsNQjV, incoming_bytes=65618, pending_bytes=0, cap=4096, consecutive_drops=3 (GOSS-04)[0m
+26.10.13 19:35:46[38;2;128;128;128m.944410[0m  [38;2;000;000;205m[1mDebug   [0m  [1mYamuxConn[0m  [3mRST from stream 6[0m
+26.10.13 19:35:46[38;2;128;128;128m.944562[0m  [38;2;000;000;205m[1mDebug   [0m  [1mYamuxConn[0m  [3merasing stream 6[0m
+26.10.13 19:35:46[38;2;128;128;128m.944635[0m  [38;2;000;000;205m[1mDebug   [0m  [1mYamuxConn[0m  [3mRST from stream 3[0m
+26.10.13 19:35:46[38;2;128;128;128m.944644[0m  [38;2;000;000;205m[1mDebug   [0m  [1mYamuxConn[0m  [3merasing stream 3[0m
+26.10.13 19:35:46[38;2;128;128;128m.944663[0m  [38;2;000;000;205m[1mDebug   [0m  [1mYamuxConn[0m  [3merasing stream 6[0m
+26.10.13 19:35:46[38;2;128;128;128m.944665[0m  [38;2;000;000;205m[1mDebug   [0m  [1mYamuxConn[0m  [3mRST from stream 6[0m
+26.10.13 19:35:46[38;2;128;128;128m.944672[0m  [38;2;000;000;205m[1mDebug   [0m  [1mYamuxConn[0m  [3merasing stream 6[0m
+26.10.13 19:35:46[38;2;128;128;128m.944684[0m  [38;2;000;000;205m[1mDebug   [0m  [1mgossip[0m  [3meq2gTb peer RsNQjV disconnected[0m
+26.10.13 19:35:46[38;2;128;128;128m.944698[0m  [38;2;000;000;205m[1mDebug   [0m  [1mgossip[0m  [3meq2gTb peer RsNQjV unsubscribing from gossip_bounds_topic[0m
+[2026-10-13 19:35:46.944747147][th:1433][info] GossipPubSub Connection gater: blocking peer 12D3KooWJMe181A9uDMdrnNynrAg7RMnxQELaPrczVab5LRsNQjV
+26.10.13 19:35:46[38;2;128;128;128m.944956[0m  [38;2;000;000;205m[1mDebug   [0m  [1mYamuxConn[0m  [3merasing stream 3[0m
+26.10.13 19:35:46[38;2;128;128;128m.945129[0m  [38;2;000;000;205m[1mDebug   [0m  [1mYamuxConn[0m  [3mstream 6 no longer exists[0m
+[2026-10-13 19:35:46.996666711][th:1433][error] GossipPubSub Address monitoring timer error: Operation canceled
+26.10.13 19:35:46[38;2;128;128;128m.996853[0m  [38;2;000;000;205m[1mDebug   [0m  [1mYamuxConn[0m  [3mclosing connection, reason: Connection: closed by this host[0m
+26.10.13 19:35:46[38;2;128;128;128m.997129[0m  [38;2;000;000;205m[1mDebug   [0m  [1mYamuxConn[0m  [3mclosed by remote peer, code=0[0m
+26.10.13 19:35:46[38;2;128;128;128m.997132[0m  [38;2;000;000;205m[1mDebug   [0m  [1mConnectionManager[0m  [3mClosed 1 connections to peer 12D3KooWJMe181A9uDMdrnNynrAg7RMnxQELaPrczVab5LRsNQjV, 0 were already closed[0m
+26.10.13 19:35:46[38;2;128;128;128m.997150[0m  [38;2;000;000;205m[1mDebug   [0m  [1mYamuxConn[0m  [3mclosing connection, reason: Connection: closed by remote peer[0m
+26.10.13 19:35:46[38;2;128;128;128m.997183[0m  [38;2;255;165;000m[1mWarning [0m  [1mListenerManager[0m  can not negotiate protocols, Connection: closed by remote peer[0m
+26.10.13 19:35:46[38;2;128;128;128m.997191[0m  [38;2;000;000;205m[1mDebug   [0m  [1mYamuxConn[0m  [3mRST from stream 2[0m
+26.10.13 19:35:46[38;2;128;128;128m.997200[0m  [38;2;255;165;000m[1mWarning [0m  [1mListenerManager[0m  can not accept valid connection, Operation canceled[0m
+26.10.13 19:35:46[38;2;128;128;128m.997235[0m  [38;2;000;000;205m[1mDebug   [0m  [1mYamuxConn[0m  [3merasing stream 2[0m
+[       OK ] GossipPubSubBoundsTest.SustainedOverflowClosesStreamAndBlocksPeer (741 ms)
+[ RUN      ] GossipPubSubBoundsTest.SubscribeCapBoundsRemoteSubscriptions
+Current limits: 16384 (soft), 1048576 (hard)
+New limits set successfully: 16384 (soft), 1048576 (hard)
+26.10.13 19:35:47[38;2;128;128;128m.000638[0m  [38;2;000;000;205m[1mDebug   [0m  [1mAres[0m  [3mC-ares library got initialized more than once[0m
+Initialized relay addresses
+Current limits: 16384 (soft), 1048576 (hard)
+New limits set successfully: 16384 (soft), 1048576 (hard)
+Initialized relay addresses
+[2026-10-13 19:35:47.001854606][th:1430][info] GossipPubSub /ip4/0.0.0.0/tcp/0/p2p/12D3KooWQ2VXrKXsoZ6sQBnmiTb2HnP5YFQ5Sw4Hjy5Wue7nFXZA: Starting PubSub service
+[2026-10-13 19:35:47.002725656][th:1438][info] GossipPubSub Starting address monitoring system for mobile network changes
+[2026-10-13 19:35:47.002747396][th:1438][info] GossipPubSub === CURRENT NETWORK STATE ===
+[2026-10-13 19:35:47.002821127][th:1438][info] GossipPubSub Primary listening address: /ip4/0.0.0.0/tcp/0/p2p/12D3KooWQ2VXrKXsoZ6sQBnmiTb2HnP5YFQ5Sw4Hjy5Wue7nFXZA
+[2026-10-13 19:35:47.002834537][th:1438][info] GossipPubSub Host peer info addresses (0):
+[2026-10-13 19:35:47.002839808][th:1438][info] GossipPubSub Additional addresses we track (0):
+[2026-10-13 19:35:47.002848058][th:1438][info] GossipPubSub Listening addresses (1):
+[2026-10-13 19:35:47.002854418][th:1438][info] GossipPubSub   -> /ip4/0.0.0.0/tcp/0/p2p/12D3KooWQ2VXrKXsoZ6sQBnmiTb2HnP5YFQ5Sw4Hjy5Wue7nFXZA
+[2026-10-13 19:35:47.002859898][th:1438][info] GossipPubSub Interface addresses (0):
+[2026-10-13 19:35:47.002862958][th:1438][info] GossipPubSub === RAW OBSERVED ADDRESS DEBUG ===
+[2026-10-13 19:35:47.002880368][th:1438][info] GossipPubSub Local address: /ip4/0.0.0.0/tcp/0/p2p/12D3KooWQ2VXrKXsoZ6sQBnmiTb2HnP5YFQ5Sw4Hjy5Wue7nFXZA -> 0 raw observed, 0 activated+confirmed
+[2026-10-13 19:35:47.002887788][th:1438][info] GossipPubSub TOTAL: 0 raw observed addresses, 0 activated+confirmed addresses
+[2026-10-13 19:35:47.002890578][th:1438][info] GossipPubSub === END RAW OBSERVED ADDRESS DEBUG ===
+[2026-10-13 19:35:47.002894458][th:1438][info] GossipPubSub Observed addresses - all (0):
+[2026-10-13 19:35:47.002898529][th:1438][info] GossipPubSub Observed addresses - confirmed only (0):
+[2026-10-13 19:35:47.002902479][th:1438][info] GossipPubSub Relay addresses (0):
+[2026-10-13 19:35:47.002911779][th:1438][warning] GossipPubSub Failed to get addresses from peer repository: not found
+[2026-10-13 19:35:47.003109652][th:1438][info] GossipPubSub Found 1 valid network interfaces
+[2026-10-13 19:35:47.003121352][th:1438][info] GossipPubSub Current network interfaces (1):
+[2026-10-13 19:35:47.003127452][th:1438][info] GossipPubSub   -> 172.27.15.215
+[2026-10-13 19:35:47.003139522][th:1438][info] GossipPubSub Active connections: 0
+[2026-10-13 19:35:47.003142583][th:1438][info] GossipPubSub === PEER CONNECTION DETAILS ===
+[2026-10-13 19:35:47.003146253][th:1438][info] GossipPubSub NOTE: Observed addresses need to be seen by 4+ different peer groups to become 'activated'
+[2026-10-13 19:35:47.003151403][th:1438][info] GossipPubSub NOTE: Current connections: 0, so max possible observers: 0
+[2026-10-13 19:35:47.003154253][th:1438][info] GossipPubSub === END PEER CONNECTION DETAILS ===
+[2026-10-13 19:35:47.003156833][th:1438][info] GossipPubSub Connection manager stats:
+[2026-10-13 19:35:47.003161463][th:1438][info] GossipPubSub   -> Max connections: 1000
+[2026-10-13 19:35:47.003164913][th:1438][info] GossipPubSub   -> Current connections: 0
+[2026-10-13 19:35:47.003167363][th:1438][info] GossipPubSub === END NETWORK STATE ===
+26.10.13 19:35:47[38;2;128;128;128m.003449[0m  [38;2;000;000;205m[1mDebug   [0m  [1mTcpListener[0m  [3mEnumerated 1 network interfaces for IPv4[0m
+26.10.13 19:35:47[38;2;128;128;128m.003469[0m  [38;2;000;000;205m[1mDebug   [0m  [1mTcpListener[0m  [3mResolved 0.0.0.0:36079 to 1 interface addresses[0m
+26.10.13 19:35:47[38;2;128;128;128m.003565[0m  [38;2;034;139;034m[1mInfo    [0m  [1mgossip[0m  7nFXZA started[0m
+26.10.13 19:35:47[38;2;128;128;128m.003664[0m  [38;2;000;000;205m[1mDebug   [0m  [1mTcpListener[0m  [3mEnumerated 1 network interfaces for IPv4[0m
+26.10.13 19:35:47[38;2;128;128;128m.003682[0m  [38;2;000;000;205m[1mDebug   [0m  [1mTcpListener[0m  [3mResolved 0.0.0.0:36079 to 1 interface addresses[0m
+[2026-10-13 19:35:47.003721152][th:1438][info] GossipPubSub OS-assigned PubSub address: /ip4/172.27.15.215/tcp/36079/p2p/12D3KooWQ2VXrKXsoZ6sQBnmiTb2HnP5YFQ5Sw4Hjy5Wue7nFXZA
+[2026-10-13 19:35:47.003773083][th:1438][info] GossipPubSub /ip4/172.27.15.215/tcp/36079/p2p/12D3KooWQ2VXrKXsoZ6sQBnmiTb2HnP5YFQ5Sw4Hjy5Wue7nFXZA : PubSub service started
+[2026-10-13 19:35:47.003944095][th:1430][info] GossipPubSub /ip4/0.0.0.0/tcp/0/p2p/12D3KooWNQiuof3naJ5c3spbVdvG5vNwQ44yms3s1NbQgeLTwXvN: Starting PubSub service
+[2026-10-13 19:35:47.004804484][th:1440][info] GossipPubSub Starting address monitoring system for mobile network changes
+[2026-10-13 19:35:47.004854305][th:1440][info] GossipPubSub === CURRENT NETWORK STATE ===
+[2026-10-13 19:35:47.004959327][th:1440][info] GossipPubSub Primary listening address: /ip4/0.0.0.0/tcp/0/p2p/12D3KooWNQiuof3naJ5c3spbVdvG5vNwQ44yms3s1NbQgeLTwXvN
+[2026-10-13 19:35:47.004972817][th:1440][info] GossipPubSub Host peer info addresses (0):
+[2026-10-13 19:35:47.004978737][th:1440][info] GossipPubSub Additional addresses we track (0):
+[2026-10-13 19:35:47.004987857][th:1440][info] GossipPubSub Listening addresses (1):
+[2026-10-13 19:35:47.004995487][th:1440][info] GossipPubSub   -> /ip4/0.0.0.0/tcp/0/p2p/12D3KooWNQiuof3naJ5c3spbVdvG5vNwQ44yms3s1NbQgeLTwXvN
+[2026-10-13 19:35:47.005000947][th:1440][info] GossipPubSub Interface addresses (0):
+[2026-10-13 19:35:47.005003847][th:1440][info] GossipPubSub === RAW OBSERVED ADDRESS DEBUG ===
+[2026-10-13 19:35:47.005016408][th:1440][info] GossipPubSub Local address: /ip4/0.0.0.0/tcp/0/p2p/12D3KooWNQiuof3naJ5c3spbVdvG5vNwQ44yms3s1NbQgeLTwXvN -> 0 raw observed, 0 activated+confirmed
+[2026-10-13 19:35:47.005022968][th:1440][info] GossipPubSub TOTAL: 0 raw observed addresses, 0 activated+confirmed addresses
+[2026-10-13 19:35:47.005025868][th:1440][info] GossipPubSub === END RAW OBSERVED ADDRESS DEBUG ===
+[2026-10-13 19:35:47.005029758][th:1440][info] GossipPubSub Observed addresses - all (0):
+[2026-10-13 19:35:47.005033868][th:1440][info] GossipPubSub Observed addresses - confirmed only (0):
+[2026-10-13 19:35:47.005037888][th:1440][info] GossipPubSub Relay addresses (0):
+[2026-10-13 19:35:47.005047108][th:1440][warning] GossipPubSub Failed to get addresses from peer repository: not found
+[2026-10-13 19:35:47.005273692][th:1440][info] GossipPubSub Found 1 valid network interfaces
+[2026-10-13 19:35:47.005285452][th:1440][info] GossipPubSub Current network interfaces (1):
+[2026-10-13 19:35:47.005297702][th:1440][info] GossipPubSub   -> 172.27.15.215
+[2026-10-13 19:35:47.005303342][th:1440][info] GossipPubSub Active connections: 0
+[2026-10-13 19:35:47.005306322][th:1440][info] GossipPubSub === PEER CONNECTION DETAILS ===
+[2026-10-13 19:35:47.005309732][th:1440][info] GossipPubSub NOTE: Observed addresses need to be seen by 4+ different peer groups to become 'activated'
+[2026-10-13 19:35:47.005315022][th:1440][info] GossipPubSub NOTE: Current connections: 0, so max possible observers: 0
+[2026-10-13 19:35:47.005317773][th:1440][info] GossipPubSub === END PEER CONNECTION DETAILS ===
+[2026-10-13 19:35:47.005320333][th:1440][info] GossipPubSub Connection manager stats:
+[2026-10-13 19:35:47.005325133][th:1440][info] GossipPubSub   -> Max connections: 1000
+[2026-10-13 19:35:47.005328683][th:1440][info] GossipPubSub   -> Current connections: 0
+[2026-10-13 19:35:47.005331193][th:1440][info] GossipPubSub === END NETWORK STATE ===
+26.10.13 19:35:47[38;2;128;128;128m.005567[0m  [38;2;000;000;205m[1mDebug   [0m  [1mTcpListener[0m  [3mEnumerated 1 network interfaces for IPv4[0m
+26.10.13 19:35:47[38;2;128;128;128m.005587[0m  [38;2;000;000;205m[1mDebug   [0m  [1mTcpListener[0m  [3mResolved 0.0.0.0:41737 to 1 interface addresses[0m
+26.10.13 19:35:47[38;2;128;128;128m.005699[0m  [38;2;034;139;034m[1mInfo    [0m  [1mgossip[0m  LTwXvN started[0m
+26.10.13 19:35:47[38;2;128;128;128m.005774[0m  [38;2;000;000;205m[1mDebug   [0m  [1mTcpListener[0m  [3mEnumerated 1 network interfaces for IPv4[0m
+26.10.13 19:35:47[38;2;128;128;128m.005782[0m  [38;2;000;000;205m[1mDebug   [0m  [1mTcpListener[0m  [3mResolved 0.0.0.0:41737 to 1 interface addresses[0m
+[2026-10-13 19:35:47.005816371][th:1440][info] GossipPubSub OS-assigned PubSub address: /ip4/172.27.15.215/tcp/41737/p2p/12D3KooWNQiuof3naJ5c3spbVdvG5vNwQ44yms3s1NbQgeLTwXvN
+[2026-10-13 19:35:47.005840251][th:1440][info] GossipPubSub /ip4/172.27.15.215/tcp/41737/p2p/12D3KooWNQiuof3naJ5c3spbVdvG5vNwQ44yms3s1NbQgeLTwXvN : PubSub service started
+26.10.13 19:35:47[38;2;128;128;128m.006073[0m  [38;2;000;000;205m[1mDebug   [0m  [1mTcpListener[0m  [3mEnumerated 1 network interfaces for IPv4[0m
+26.10.13 19:35:47[38;2;128;128;128m.006093[0m  [38;2;000;000;205m[1mDebug   [0m  [1mTcpListener[0m  [3mResolved 0.0.0.0:36079 to 1 interface addresses[0m
+[2026-10-13 19:35:47.006354059][th:1440][info] GossipPubSub Adding new peer: 12D3KooWQ2VXrKXsoZ6sQBnmiTb2HnP5YFQ5Sw4Hjy5Wue7nFXZA
+26.10.13 19:35:47[38;2;128;128;128m.006399[0m  [38;2;000;000;205m[1mDebug   [0m  [1mConnectionManager[0m  [3mPre-protected peer 12D3KooWQ2VXrKXsoZ6sQBnmiTb2HnP5YFQ5Sw4Hjy5Wue7nFXZA with tag bootstrap-peer (not yet connected)[0m
+26.10.13 19:35:47[38;2;128;128;128m.006409[0m  [38;2;000;000;205m[1mDebug   [0m  [1mTcpListener[0m  [3mEnumerated 1 network interfaces for IPv4[0m
+26.10.13 19:35:47[38;2;128;128;128m.006427[0m  [38;2;000;000;205m[1mDebug   [0m  [1mTcpListener[0m  [3mResolved 0.0.0.0:41737 to 1 interface addresses[0m
+26.10.13 19:35:47[38;2;128;128;128m.006673[0m  [38;2;000;000;205m[1mDebug   [0m  [1mgossip[0m  [3mLTwXvN created entry for topic gossip_sub_cap_t1[0m
+26.10.13 19:35:47[38;2;128;128;128m.006691[0m  [38;2;000;000;205m[1mDebug   [0m  [1mgossip[0m  [3mLTwXvN self subscribed to gossip_sub_cap_t1[0m
+[2026-10-13 19:35:47.006744746][th:1440][info] GossipPubSub /ip4/172.27.15.215/tcp/41737/p2p/12D3KooWNQiuof3naJ5c3spbVdvG5vNwQ44yms3s1NbQgeLTwXvN: PubSub subscribed to topic 'gossip_sub_cap_t1'
+26.10.13 19:35:47[38;2;128;128;128m.006793[0m  [38;2;000;000;205m[1mDebug   [0m  [1mgossip[0m  [3mLTwXvN created entry for topic gossip_sub_cap_t2[0m
+26.10.13 19:35:47[38;2;128;128;128m.006808[0m  [38;2;000;000;205m[1mDebug   [0m  [1mgossip[0m  [3mLTwXvN self subscribed to gossip_sub_cap_t2[0m
+[2026-10-13 19:35:47.006902878][th:1440][info] GossipPubSub /ip4/172.27.15.215/tcp/41737/p2p/12D3KooWNQiuof3naJ5c3spbVdvG5vNwQ44yms3s1NbQgeLTwXvN: PubSub subscribed to topic 'gossip_sub_cap_t2'
+26.10.13 19:35:47[38;2;128;128;128m.006955[0m  [38;2;000;000;205m[1mDebug   [0m  [1mgossip[0m  [3mLTwXvN created entry for topic gossip_sub_cap_t3[0m
+26.10.13 19:35:47[38;2;128;128;128m.006970[0m  [38;2;000;000;205m[1mDebug   [0m  [1mgossip[0m  [3mLTwXvN self subscribed to gossip_sub_cap_t3[0m
+[2026-10-13 19:35:47.007015260][th:1440][info] GossipPubSub /ip4/172.27.15.215/tcp/41737/p2p/12D3KooWNQiuof3naJ5c3spbVdvG5vNwQ44yms3s1NbQgeLTwXvN: PubSub subscribed to topic 'gossip_sub_cap_t3'
+26.10.13 19:35:47[38;2;128;128;128m.007058[0m  [38;2;000;000;205m[1mDebug   [0m  [1mgossip[0m  [3mLTwXvN created entry for topic gossip_sub_cap_t4[0m
+26.10.13 19:35:47[38;2;128;128;128m.007073[0m  [38;2;000;000;205m[1mDebug   [0m  [1mgossip[0m  [3mLTwXvN self subscribed to gossip_sub_cap_t4[0m
+[2026-10-13 19:35:47.007119142][th:1440][info] GossipPubSub /ip4/172.27.15.215/tcp/41737/p2p/12D3KooWNQiuof3naJ5c3spbVdvG5vNwQ44yms3s1NbQgeLTwXvN: PubSub subscribed to topic 'gossip_sub_cap_t4'
+26.10.13 19:35:47[38;2;128;128;128m.030366[0m  [38;2;000;000;205m[1mDebug   [0m  [1mroute-helper[0m  [3mGetting best source addresses for both IPv4 and IPv6[0m
+26.10.13 19:35:47[38;2;128;128;128m.030445[0m  [38;2;000;000;205m[1mDebug   [0m  [1mroute-helper[0m  [3mLooking up preferred route for destination: 8.8.8.8[0m
+26.10.13 19:35:47[38;2;128;128;128m.030548[0m  [38;2;000;000;205m[1mDebug   [0m  [1mroute-helper[0m  [3mUsing /proc/net/route for IPv4 route lookup[0m
+26.10.13 19:35:47[38;2;128;128;128m.030756[0m  [38;2;000;000;205m[1mDebug   [0m  [1mroute-helper[0m  [3mLinux IPv4 route found: interface=eth0, source=172.27.15.215, metric=0[0m
+26.10.13 19:35:47[38;2;128;128;128m.030887[0m  [38;2;000;000;205m[1mDebug   [0m  [1mroute-helper[0m  [3mSelected route-based IPv4 source: /ip4/172.27.15.215/tcp/0[0m
+26.10.13 19:35:47[38;2;128;128;128m.030903[0m  [38;2;034;139;034m[1mInfo    [0m  [1mroute-helper[0m  Source addresses selected - IPv4: /ip4/172.27.15.215/tcp/0, IPv6: none[0m
+26.10.13 19:35:47[38;2;128;128;128m.031896[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mSelect a protocol[0m
+26.10.13 19:35:47[38;2;128;128;128m.031914[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mAssertions pass?[0m
+26.10.13 19:35:47[38;2;128;128;128m.031924[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mContinued[0m
+26.10.13 19:35:47[38;2;128;128;128m.032020[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mSelect a protocol[0m
+26.10.13 19:35:47[38;2;128;128;128m.032036[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mAssertions pass?[0m
+26.10.13 19:35:47[38;2;128;128;128m.032044[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mContinued[0m
+26.10.13 19:35:47[38;2;128;128;128m.032366[0m  [38;2;034;139;034m[1mInfo    [0m  [1mNoise[0m  securing inbound connection[0m
+26.10.13 19:35:47[38;2;128;128;128m.032415[0m  [38;2;034;139;034m[1mInfo    [0m  [1mNoise[0m  securing outbound connection to 12D3KooWQ2VXrKXsoZ6sQBnmiTb2HnP5YFQ5Sw4Hjy5Wue7nFXZA[0m
+26.10.13 19:35:47[38;2;128;128;128m.034854[0m  [38;2;034;139;034m[1mInfo    [0m  [1mNoiseHandshake[0m  Handshake succeeded[0m
+26.10.13 19:35:47[38;2;128;128;128m.034894[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mSelect a protocol[0m
+26.10.13 19:35:47[38;2;128;128;128m.034900[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mAssertions pass?[0m
+26.10.13 19:35:47[38;2;128;128;128m.034907[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mContinued[0m
+26.10.13 19:35:47[38;2;128;128;128m.035305[0m  [38;2;034;139;034m[1mInfo    [0m  [1mNoiseHandshake[0m  Handshake succeeded[0m
+26.10.13 19:35:47[38;2;128;128;128m.035344[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mSelect a protocol[0m
+26.10.13 19:35:47[38;2;128;128;128m.035350[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mAssertions pass?[0m
+26.10.13 19:35:47[38;2;128;128;128m.035357[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mContinued[0m
+26.10.13 19:35:47[38;2;128;128;128m.036190[0m  [38;2;034;139;034m[1mInfo    [0m  [1mListenerManager[0m  Added connection for, 12D3KooWNQiuof3naJ5c3spbVdvG5vNwQ44yms3s1NbQgeLTwXvN[0m
+26.10.13 19:35:47[38;2;128;128;128m.036271[0m  [38;2;000;000;205m[1mDebug   [0m  [1mroute-helper[0m  [3mGetting best source addresses for both IPv4 and IPv6[0m
+26.10.13 19:35:47[38;2;128;128;128m.036330[0m  [38;2;000;000;205m[1mDebug   [0m  [1mroute-helper[0m  [3mLooking up preferred route for destination: 8.8.8.8[0m
+26.10.13 19:35:47[38;2;128;128;128m.036369[0m  [38;2;000;000;205m[1mDebug   [0m  [1mroute-helper[0m  [3mUsing /proc/net/route for IPv4 route lookup[0m
+26.10.13 19:35:47[38;2;128;128;128m.036456[0m  [38;2;000;000;205m[1mDebug   [0m  [1mroute-helper[0m  [3mLinux IPv4 route found: interface=eth0, source=172.27.15.215, metric=0[0m
+26.10.13 19:35:47[38;2;128;128;128m.036507[0m  [38;2;000;000;205m[1mDebug   [0m  [1mroute-helper[0m  [3mSelected route-based IPv4 source: /ip4/172.27.15.215/tcp/0[0m
+26.10.13 19:35:47[38;2;128;128;128m.036539[0m  [38;2;034;139;034m[1mInfo    [0m  [1mroute-helper[0m  Source addresses selected - IPv4: /ip4/172.27.15.215/tcp/0, IPv6: none[0m
+26.10.13 19:35:47[38;2;128;128;128m.036662[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mSelect a protocol[0m
+26.10.13 19:35:47[38;2;128;128;128m.036670[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mAssertions pass?[0m
+26.10.13 19:35:47[38;2;128;128;128m.036676[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mContinued[0m
+26.10.13 19:35:47[38;2;128;128;128m.036732[0m  [38;2;034;139;034m[1mInfo    [0m  [1mListenerManager[0m  Added connection for, 12D3KooWQ2VXrKXsoZ6sQBnmiTb2HnP5YFQ5Sw4Hjy5Wue7nFXZA[0m
+26.10.13 19:35:47[38;2;128;128;128m.036795[0m  [38;2;000;000;205m[1mDebug   [0m  [1mConnectionManager[0m  [3mApplied pre-connection metadata to newly connected peer 12D3KooWQ2VXrKXsoZ6sQBnmiTb2HnP5YFQ5Sw4Hjy5Wue7nFXZA[0m
+26.10.13 19:35:47[38;2;128;128;128m.036826[0m  [38;2;000;000;205m[1mDebug   [0m  [1mroute-helper[0m  [3mGetting best source addresses for both IPv4 and IPv6[0m
+26.10.13 19:35:47[38;2;128;128;128m.036879[0m  [38;2;000;000;205m[1mDebug   [0m  [1mroute-helper[0m  [3mLooking up preferred route for destination: 8.8.8.8[0m
+26.10.13 19:35:47[38;2;128;128;128m.036905[0m  [38;2;000;000;205m[1mDebug   [0m  [1mroute-helper[0m  [3mUsing /proc/net/route for IPv4 route lookup[0m
+26.10.13 19:35:47[38;2;128;128;128m.036988[0m  [38;2;000;000;205m[1mDebug   [0m  [1mroute-helper[0m  [3mLinux IPv4 route found: interface=eth0, source=172.27.15.215, metric=0[0m
+26.10.13 19:35:47[38;2;128;128;128m.037041[0m  [38;2;000;000;205m[1mDebug   [0m  [1mroute-helper[0m  [3mSelected route-based IPv4 source: /ip4/172.27.15.215/tcp/0[0m
+26.10.13 19:35:47[38;2;128;128;128m.037048[0m  [38;2;034;139;034m[1mInfo    [0m  [1mroute-helper[0m  Source addresses selected - IPv4: /ip4/172.27.15.215/tcp/0, IPv6: none[0m
+26.10.13 19:35:47[38;2;128;128;128m.037097[0m  [38;2;034;139;034m[1mInfo    [0m  [1mDialerImpl[0m  Checking whether address /ip4/172.27.15.215/tcp/36079/p2p/12D3KooWQ2VXrKXsoZ6sQBnmiTb2HnP5YFQ5Sw4Hjy5Wue7nFXZA has relay[0m
+26.10.13 19:35:47[38;2;128;128;128m.037122[0m  [38;2;034;139;034m[1mInfo    [0m  [1mDialerImpl[0m  Completed Dial to 12D3KooWQ2VXrKXsoZ6sQBnmiTb2HnP5YFQ5Sw4Hjy5Wue7nFXZA[0m
+26.10.13 19:35:47[38;2;128;128;128m.037279[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mSelect a protocol[0m
+26.10.13 19:35:47[38;2;128;128;128m.037293[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mAssertions pass?[0m
+26.10.13 19:35:47[38;2;128;128;128m.037300[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mContinued[0m
+26.10.13 19:35:47[38;2;128;128;128m.037341[0m  [38;2;000;000;205m[1mDebug   [0m  [1mYamuxConn[0m  [3mcreating inbound stream 1[0m
+26.10.13 19:35:47[38;2;128;128;128m.037381[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mSelect a protocol[0m
+26.10.13 19:35:47[38;2;128;128;128m.037394[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mAssertions pass?[0m
+26.10.13 19:35:47[38;2;128;128;128m.037401[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mContinued[0m
+26.10.13 19:35:47[38;2;128;128;128m.037430[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mSelect a protocol[0m
+26.10.13 19:35:47[38;2;128;128;128m.037438[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mAssertions pass?[0m
+26.10.13 19:35:47[38;2;128;128;128m.037445[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mContinued[0m
+26.10.13 19:35:47[38;2;128;128;128m.037687[0m  [38;2;000;000;205m[1mDebug   [0m  [1mYamuxConn[0m  [3mcreating inbound stream 2[0m
+26.10.13 19:35:47[38;2;128;128;128m.037742[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mSelect a protocol[0m
+26.10.13 19:35:47[38;2;128;128;128m.037790[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mAssertions pass?[0m
+26.10.13 19:35:47[38;2;128;128;128m.037804[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mContinued[0m
+26.10.13 19:35:47[38;2;128;128;128m.038451[0m  [38;2;000;000;205m[1mDebug   [0m  [1mYamuxConn[0m  [3mcreating inbound stream 3[0m
+26.10.13 19:35:47[38;2;128;128;128m.038485[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mSelect a protocol[0m
+26.10.13 19:35:47[38;2;128;128;128m.038491[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mAssertions pass?[0m
+26.10.13 19:35:47[38;2;128;128;128m.038497[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mContinued[0m
+26.10.13 19:35:47[38;2;128;128;128m.038774[0m  [38;2;000;000;205m[1mDebug   [0m  [1mYamuxConn[0m  [3mignoring received ACK on existing stream id 1[0m
+26.10.13 19:35:47[38;2;128;128;128m.039477[0m  [38;2;000;000;205m[1mDebug   [0m  [1mYamuxConn[0m  [3mignoring received ACK on existing stream id 2[0m
+26.10.13 19:35:47[38;2;128;128;128m.039718[0m  [38;2;000;000;205m[1mDebug   [0m  [1mTcpListener[0m  [3mEnumerated 1 network interfaces for IPv4[0m
+26.10.13 19:35:47[38;2;128;128;128m.039736[0m  [38;2;000;000;205m[1mDebug   [0m  [1mTcpListener[0m  [3mResolved 0.0.0.0:36079 to 1 interface addresses[0m
+26.10.13 19:35:47[38;2;128;128;128m.040310[0m  [38;2;000;000;205m[1mDebug   [0m  [1mTcpListener[0m  [3mEnumerated 1 network interfaces for IPv4[0m
+26.10.13 19:35:47[38;2;128;128;128m.040332[0m  [38;2;000;000;205m[1mDebug   [0m  [1mTcpListener[0m  [3mResolved 0.0.0.0:41737 to 1 interface addresses[0m
+26.10.13 19:35:47[38;2;128;128;128m.040608[0m  [38;2;034;139;034m[1mInfo    [0m  [1mIdentifyMsgProcessor[0m  successfully written an identify message to peer 12D3KooWNQiuof3naJ5c3spbVdvG5vNwQ44yms3s1NbQgeLTwXvN, /ip4/172.27.15.215/tcp/37837[0m
+26.10.13 19:35:47[38;2;128;128;128m.040627[0m  [38;2;000;000;205m[1mDebug   [0m  [1mYamuxConn[0m  [3msending FIN to stream 1[0m
+26.10.13 19:35:47[38;2;128;128;128m.040849[0m  [38;2;034;139;034m[1mInfo    [0m  [1mIdentifyMsgProcessor[0m  successfully written an identify message to peer 12D3KooWQ2VXrKXsoZ6sQBnmiTb2HnP5YFQ5Sw4Hjy5Wue7nFXZA, /ip4/172.27.15.215/tcp/36079[0m
+26.10.13 19:35:47[38;2;128;128;128m.040867[0m  [38;2;000;000;205m[1mDebug   [0m  [1mYamuxConn[0m  [3msending FIN to stream 2[0m
+26.10.13 19:35:47[38;2;128;128;128m.040921[0m  [38;2;000;000;205m[1mDebug   [0m  [1mgossip[0m  [3m7nFXZA peer LTwXvN connected[0m
+26.10.13 19:35:47[38;2;128;128;128m.040962[0m  [38;2;000;000;205m[1mDebug   [0m  [1mgossip[0m  [3m7nFXZA tagged peer LTwXvN for joining gossip network[0m
+26.10.13 19:35:47[38;2;128;128;128m.041057[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mSelect a protocol[0m
+26.10.13 19:35:47[38;2;128;128;128m.041071[0m  [38;2;000;000;205m[1mDebug   [0m  [1mYamuxConn[0m  [3mignoring received ACK on existing stream id 3[0m
+26.10.13 19:35:47[38;2;128;128;128m.041071[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mAssertions pass?[0m
+26.10.13 19:35:47[38;2;128;128;128m.041082[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mContinued[0m
+26.10.13 19:35:47[38;2;128;128;128m.043456[0m  [38;2;034;139;034m[1mInfo    [0m  [1mIdentifyMsgProcessor[0m  received an identify message from peer 12D3KooWNQiuof3naJ5c3spbVdvG5vNwQ44yms3s1NbQgeLTwXvN, /ip4/172.27.15.215/tcp/37837[0m
+26.10.13 19:35:47[38;2;128;128;128m.043476[0m  [38;2;000;000;205m[1mDebug   [0m  [1mYamuxConn[0m  [3msending FIN to stream 2[0m
+26.10.13 19:35:47[38;2;128;128;128m.043605[0m  [38;2;000;000;205m[1mDebug   [0m  [1mTcpListener[0m  [3mEnumerated 1 network interfaces for IPv4[0m
+26.10.13 19:35:47[38;2;128;128;128m.043616[0m  [38;2;000;000;205m[1mDebug   [0m  [1mTcpListener[0m  [3mResolved 0.0.0.0:36079 to 1 interface addresses[0m
+26.10.13 19:35:47[38;2;128;128;128m.043670[0m  [38;2;034;139;034m[1mInfo    [0m  [1mIdentifyMsgProcessor[0m  Recording an observed address /ip4/172.27.15.215/tcp/36079 with local addr /ip4/172.27.15.215/tcp/36079[0m
+26.10.13 19:35:47[38;2;128;128;128m.043739[0m  [38;2;000;000;205m[1mDebug   [0m  [1mIdentifyMsgProcessor[0m  [3mcannot update listen addresses of the peer 12D3KooWNQiuof3naJ5c3spbVdvG5vNwQ44yms3s1NbQgeLTwXvN: not found[0m
+26.10.13 19:35:47[38;2;128;128;128m.043765[0m  [38;2;000;000;205m[1mDebug   [0m  [1mIdentifyMsgProcessor[0m  [3mcan not get addresses for peer 12D3KooWNQiuof3naJ5c3spbVdvG5vNwQ44yms3s1NbQgeLTwXvN[0m
+26.10.13 19:35:47[38;2;128;128;128m.043780[0m  [38;2;034;139;034m[1mInfo    [0m  [1mIdentifyMsgProcessor[0m  received an identify message from peer 12D3KooWQ2VXrKXsoZ6sQBnmiTb2HnP5YFQ5Sw4Hjy5Wue7nFXZA, /ip4/172.27.15.215/tcp/36079[0m
+26.10.13 19:35:47[38;2;128;128;128m.043798[0m  [38;2;000;000;205m[1mDebug   [0m  [1mYamuxConn[0m  [3msending FIN to stream 1[0m
+26.10.13 19:35:47[38;2;128;128;128m.043912[0m  [38;2;000;000;205m[1mDebug   [0m  [1mTcpListener[0m  [3mEnumerated 1 network interfaces for IPv4[0m
+26.10.13 19:35:47[38;2;128;128;128m.043923[0m  [38;2;000;000;205m[1mDebug   [0m  [1mTcpListener[0m  [3mResolved 0.0.0.0:41737 to 1 interface addresses[0m
+26.10.13 19:35:47[38;2;128;128;128m.043936[0m  [38;2;255;069;000m[1mError   [0m  [1mIdentifyMsgProcessor[0m  [1mObserved address local address not one of our address /ip4/172.27.15.215/tcp/37837 :: /ip4/172.27.15.215/tcp/37837[0m
+26.10.13 19:35:47[38;2;128;128;128m.044072[0m  [38;2;000;000;205m[1mDebug   [0m  [1mYamuxConn[0m  [3merasing stream 2[0m
+26.10.13 19:35:47[38;2;128;128;128m.044502[0m  [38;2;000;000;205m[1mDebug   [0m  [1mgossip[0m  [3mLTwXvN peer 7nFXZA connected[0m
+26.10.13 19:35:47[38;2;128;128;128m.044543[0m  [38;2;000;000;205m[1mDebug   [0m  [1mgossip[0m  [3mLTwXvN tagged peer 7nFXZA for joining gossip network[0m
+26.10.13 19:35:47[38;2;128;128;128m.045887[0m  [38;2;000;000;205m[1mDebug   [0m  [1mYamuxConn[0m  [3merasing stream 1[0m
+26.10.13 19:35:47[38;2;128;128;128m.046364[0m  [38;2;000;000;205m[1mDebug   [0m  [1mYamuxConn[0m  [3mcreating inbound stream 4[0m
+26.10.13 19:35:47[38;2;128;128;128m.046456[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mSelect a protocol[0m
+26.10.13 19:35:47[38;2;128;128;128m.046470[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mAssertions pass?[0m
+26.10.13 19:35:47[38;2;128;128;128m.046478[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mContinued[0m
+26.10.13 19:35:47[38;2;128;128;128m.048082[0m  [38;2;000;000;205m[1mDebug   [0m  [1mYamuxConn[0m  [3merasing stream 2[0m
+26.10.13 19:35:47[38;2;128;128;128m.089342[0m  [38;2;000;000;205m[1mDebug   [0m  [1mYamuxConn[0m  [3merasing stream 1[0m
+26.10.13 19:35:47[38;2;128;128;128m.090632[0m  [38;2;000;000;205m[1mDebug   [0m  [1mgossip[0m  [3m7nFXZA peer LTwXvN subscribed, topic gossip_sub_cap_t1[0m
+26.10.13 19:35:47[38;2;128;128;128m.090665[0m  [38;2;000;000;205m[1mDebug   [0m  [1mgossip[0m  [3m7nFXZA peer LTwXvN subscribing to gossip_sub_cap_t1[0m
+26.10.13 19:35:47[38;2;128;128;128m.090704[0m  [38;2;000;000;205m[1mDebug   [0m  [1mgossip[0m  [3m7nFXZA created entry for topic gossip_sub_cap_t1[0m
+26.10.13 19:35:47[38;2;128;128;128m.090714[0m  [38;2;000;000;205m[1mDebug   [0m  [1mgossip[0m  [3m7nFXZA peer LTwXvN subscribed, topic gossip_sub_cap_t2[0m
+26.10.13 19:35:47[38;2;128;128;128m.090721[0m  [38;2;000;000;205m[1mDebug   [0m  [1mgossip[0m  [3m7nFXZA peer LTwXvN subscribing to gossip_sub_cap_t2[0m
+26.10.13 19:35:47[38;2;128;128;128m.090731[0m  [38;2;000;000;205m[1mDebug   [0m  [1mgossip[0m  [3m7nFXZA created entry for topic gossip_sub_cap_t2[0m
+26.10.13 19:35:47[38;2;128;128;128m.090737[0m  [38;2;000;000;205m[1mDebug   [0m  [1mgossip[0m  [3m7nFXZA peer LTwXvN subscribed, topic gossip_sub_cap_t3[0m
+26.10.13 19:35:47[38;2;128;128;128m.090770[0m  [38;2;000;000;205m[1mDebug   [0m  [1mgossip[0m  [3m7nFXZA peer LTwXvN subscribing to gossip_sub_cap_t3[0m
+26.10.13 19:35:47[38;2;128;128;128m.090814[0m  [38;2;000;000;205m[1mDebug   [0m  [1mgossip[0m  [3m7nFXZA created entry for topic gossip_sub_cap_t3[0m
+26.10.13 19:35:47[38;2;128;128;128m.090831[0m  [38;2;000;000;205m[1mDebug   [0m  [1mgossip[0m  [3m7nFXZA peer LTwXvN subscribed, topic gossip_sub_cap_t4[0m
+26.10.13 19:35:47[38;2;128;128;128m.090843[0m  [38;2;255;165;000m[1mWarning [0m  [1mgossip[0m  7nFXZA peer LTwXvN exceeded remote subscription cap, ignoring subscribe to gossip_sub_cap_t4 (admitted 3, cap 3)[0m
+26.10.13 19:35:47[38;2;128;128;128m.090855[0m  [38;2;000;000;205m[1mDebug   [0m  [1mgossip[0m  [3m7nFXZA finished dispatching message from peer LTwXvN[0m
+26.10.13 19:35:47[38;2;128;128;128m.090954[0m  [38;2;000;000;205m[1mDebug   [0m  [1mYamuxConn[0m  [3mignoring received ACK on existing stream id 4[0m
+[2026-10-13 19:35:47.307743315][th:1440][info] GossipPubSub /ip4/172.27.15.215/tcp/41737/p2p/12D3KooWNQiuof3naJ5c3spbVdvG5vNwQ44yms3s1NbQgeLTwXvN: PubSub subscribed to topic 'gossip_sub_cap_t1'
+[2026-10-13 19:35:47.357936262][th:1440][info] GossipPubSub /ip4/172.27.15.215/tcp/41737/p2p/12D3KooWNQiuof3naJ5c3spbVdvG5vNwQ44yms3s1NbQgeLTwXvN: PubSub subscribed to topic 'gossip_sub_cap_t1'
+[2026-10-13 19:35:47.408189799][th:1440][info] GossipPubSub /ip4/172.27.15.215/tcp/41737/p2p/12D3KooWNQiuof3naJ5c3spbVdvG5vNwQ44yms3s1NbQgeLTwXvN: PubSub subscribed to topic 'gossip_sub_cap_t1'
+[2026-10-13 19:35:47.558527100][th:1438][error] GossipPubSub Address monitoring timer error: Operation canceled
+26.10.13 19:35:47[38;2;128;128;128m.558585[0m  [38;2;000;000;205m[1mDebug   [0m  [1mYamuxConn[0m  [3mRST from stream 3[0m
+26.10.13 19:35:47[38;2;128;128;128m.558777[0m  [38;2;000;000;205m[1mDebug   [0m  [1mYamuxConn[0m  [3merasing stream 3[0m
+26.10.13 19:35:47[38;2;128;128;128m.558827[0m  [38;2;000;000;205m[1mDebug   [0m  [1mYamuxConn[0m  [3mRST from stream 4[0m
+26.10.13 19:35:47[38;2;128;128;128m.558836[0m  [38;2;000;000;205m[1mDebug   [0m  [1mYamuxConn[0m  [3merasing stream 4[0m
+26.10.13 19:35:47[38;2;128;128;128m.558878[0m  [38;2;000;000;205m[1mDebug   [0m  [1mYamuxConn[0m  [3merasing stream 3[0m
+26.10.13 19:35:47[38;2;128;128;128m.558904[0m  [38;2;000;000;205m[1mDebug   [0m  [1mYamuxConn[0m  [3mclosing connection, reason: Connection: closed by this host[0m
+26.10.13 19:35:47[38;2;128;128;128m.558934[0m  [38;2;000;000;205m[1mDebug   [0m  [1mYamuxConn[0m  [3mRST from stream 4[0m
+26.10.13 19:35:47[38;2;128;128;128m.558968[0m  [38;2;000;000;205m[1mDebug   [0m  [1mConnectionManager[0m  [3mClosed 1 connections to peer 12D3KooWNQiuof3naJ5c3spbVdvG5vNwQ44yms3s1NbQgeLTwXvN, 0 were already closed[0m
+26.10.13 19:35:47[38;2;128;128;128m.558986[0m  [38;2;000;000;205m[1mDebug   [0m  [1mYamuxConn[0m  [3merasing stream 4[0m
+26.10.13 19:35:47[38;2;128;128;128m.559084[0m  [38;2;255;165;000m[1mWarning [0m  [1mListenerManager[0m  can not accept valid connection, Operation canceled[0m
+26.10.13 19:35:47[38;2;128;128;128m.559089[0m  [38;2;000;000;205m[1mDebug   [0m  [1mYamuxConn[0m  [3mRST from stream 3[0m
+26.10.13 19:35:47[38;2;128;128;128m.559095[0m  [38;2;000;000;205m[1mDebug   [0m  [1mYamuxConn[0m  [3merasing stream 3[0m
+26.10.13 19:35:47[38;2;128;128;128m.559109[0m  [38;2;000;000;205m[1mDebug   [0m  [1mgossip[0m  [3mLTwXvN peer 7nFXZA disconnected[0m
+26.10.13 19:35:47[38;2;128;128;128m.559952[0m  [38;2;000;000;205m[1mDebug   [0m  [1mYamuxConn[0m  [3mclosing connection, reason: Connection: closed by remote peer[0m
+[2026-10-13 19:35:47.560190787][th:1440][error] GossipPubSub Address monitoring timer error: Operation canceled
+26.10.13 19:35:47[38;2;128;128;128m.560322[0m  [38;2;255;165;000m[1mWarning [0m  [1mListenerManager[0m  can not accept valid connection, Operation canceled[0m
+[       OK ] GossipPubSubBoundsTest.SubscribeCapBoundsRemoteSubscriptions (562 ms)
+[ RUN      ] GossipPubSubBoundsTest.SweepCollectsTopicAfterUnsubscribeAndResubscribeRelearns
+Current limits: 16384 (soft), 1048576 (hard)
+New limits set successfully: 16384 (soft), 1048576 (hard)
+Initialized relay addresses
+Current limits: 16384 (soft), 1048576 (hard)
+New limits set successfully: 16384 (soft), 1048576 (hard)
+Initialized relay addresses
+[2026-10-13 19:35:47.564684135][th:1430][info] GossipPubSub /ip4/0.0.0.0/tcp/0/p2p/12D3KooW9qq5iKneNTCH8fxBRwuhfrfJq7DwDaG8LYHyD4FNsTfW: Starting PubSub service
+[2026-10-13 19:35:47.565118188][th:1445][info] GossipPubSub Starting address monitoring system for mobile network changes
+[2026-10-13 19:35:47.565137688][th:1445][info] GossipPubSub === CURRENT NETWORK STATE ===
+[2026-10-13 19:35:47.565180069][th:1445][info] GossipPubSub Primary listening address: /ip4/0.0.0.0/tcp/0/p2p/12D3KooW9qq5iKneNTCH8fxBRwuhfrfJq7DwDaG8LYHyD4FNsTfW
+[2026-10-13 19:35:47.565186169][th:1445][info] GossipPubSub Host peer info addresses (0):
+[2026-10-13 19:35:47.565190699][th:1445][info] GossipPubSub Additional addresses we track (0):
+[2026-10-13 19:35:47.565195859][th:1445][info] GossipPubSub Listening addresses (1):
+[2026-10-13 19:35:47.565202009][th:1445][info] GossipPubSub   -> /ip4/0.0.0.0/tcp/0/p2p/12D3KooW9qq5iKneNTCH8fxBRwuhfrfJq7DwDaG8LYHyD4FNsTfW
+[2026-10-13 19:35:47.565205989][th:1445][info] GossipPubSub Interface addresses (0):
+[2026-10-13 19:35:47.565208789][th:1445][info] GossipPubSub === RAW OBSERVED ADDRESS DEBUG ===
+[2026-10-13 19:35:47.565221539][th:1445][info] GossipPubSub Local address: /ip4/0.0.0.0/tcp/0/p2p/12D3KooW9qq5iKneNTCH8fxBRwuhfrfJq7DwDaG8LYHyD4FNsTfW -> 0 raw observed, 0 activated+confirmed
+[2026-10-13 19:35:47.565228319][th:1445][info] GossipPubSub TOTAL: 0 raw observed addresses, 0 activated+confirmed addresses
+[2026-10-13 19:35:47.565231069][th:1445][info] GossipPubSub === END RAW OBSERVED ADDRESS DEBUG ===
+[2026-10-13 19:35:47.565234579][th:1445][info] GossipPubSub Observed addresses - all (0):
+[2026-10-13 19:35:47.565238579][th:1445][info] GossipPubSub Observed addresses - confirmed only (0):
+[2026-10-13 19:35:47.565242320][th:1445][info] GossipPubSub Relay addresses (0):
+[2026-10-13 19:35:47.565250820][th:1445][warning] GossipPubSub Failed to get addresses from peer repository: not found
+[2026-10-13 19:35:47.565321261][th:1445][info] GossipPubSub Found 1 valid network interfaces
+[2026-10-13 19:35:47.565325811][th:1445][info] GossipPubSub Current network interfaces (1):
+[2026-10-13 19:35:47.565330911][th:1445][info] GossipPubSub   -> 172.27.15.215
+[2026-10-13 19:35:47.565335801][th:1445][info] GossipPubSub Active connections: 0
+[2026-10-13 19:35:47.565338631][th:1445][info] GossipPubSub === PEER CONNECTION DETAILS ===
+[2026-10-13 19:35:47.565342021][th:1445][info] GossipPubSub NOTE: Observed addresses need to be seen by 4+ different peer groups to become 'activated'
+[2026-10-13 19:35:47.565346331][th:1445][info] GossipPubSub NOTE: Current connections: 0, so max possible observers: 0
+[2026-10-13 19:35:47.565354971][th:1445][info] GossipPubSub === END PEER CONNECTION DETAILS ===
+[2026-10-13 19:35:47.565357551][th:1445][info] GossipPubSub Connection manager stats:
+[2026-10-13 19:35:47.565362482][th:1445][info] GossipPubSub   -> Max connections: 1000
+[2026-10-13 19:35:47.565366092][th:1445][info] GossipPubSub   -> Current connections: 0
+[2026-10-13 19:35:47.565368512][th:1445][info] GossipPubSub === END NETWORK STATE ===
+26.10.13 19:35:47[38;2;128;128;128m.565494[0m  [38;2;000;000;205m[1mDebug   [0m  [1mTcpListener[0m  [3mEnumerated 1 network interfaces for IPv4[0m
+26.10.13 19:35:47[38;2;128;128;128m.565510[0m  [38;2;000;000;205m[1mDebug   [0m  [1mTcpListener[0m  [3mResolved 0.0.0.0:44367 to 1 interface addresses[0m
+26.10.13 19:35:47[38;2;128;128;128m.565592[0m  [38;2;034;139;034m[1mInfo    [0m  [1mgossip[0m  FNsTfW started[0m
+26.10.13 19:35:47[38;2;128;128;128m.565644[0m  [38;2;000;000;205m[1mDebug   [0m  [1mTcpListener[0m  [3mEnumerated 1 network interfaces for IPv4[0m
+26.10.13 19:35:47[38;2;128;128;128m.565650[0m  [38;2;000;000;205m[1mDebug   [0m  [1mTcpListener[0m  [3mResolved 0.0.0.0:44367 to 1 interface addresses[0m
+[2026-10-13 19:35:47.565681627][th:1445][info] GossipPubSub OS-assigned PubSub address: /ip4/172.27.15.215/tcp/44367/p2p/12D3KooW9qq5iKneNTCH8fxBRwuhfrfJq7DwDaG8LYHyD4FNsTfW
+[2026-10-13 19:35:47.565709037][th:1445][info] GossipPubSub /ip4/172.27.15.215/tcp/44367/p2p/12D3KooW9qq5iKneNTCH8fxBRwuhfrfJq7DwDaG8LYHyD4FNsTfW : PubSub service started
+[2026-10-13 19:35:47.565806344][th:1430][info] GossipPubSub /ip4/0.0.0.0/tcp/0/p2p/12D3KooW9yxeFVikkMMdFSFh9AVUjDp4HY2wRHKJUpPXEZjyLDDQ: Starting PubSub service
+[2026-10-13 19:35:47.566417744][th:1447][info] GossipPubSub Starting address monitoring system for mobile network changes
+[2026-10-13 19:35:47.566451004][th:1447][info] GossipPubSub === CURRENT NETWORK STATE ===
+[2026-10-13 19:35:47.566523655][th:1447][info] GossipPubSub Primary listening address: /ip4/0.0.0.0/tcp/0/p2p/12D3KooW9yxeFVikkMMdFSFh9AVUjDp4HY2wRHKJUpPXEZjyLDDQ
+[2026-10-13 19:35:47.566536856][th:1447][info] GossipPubSub Host peer info addresses (0):
+[2026-10-13 19:35:47.566542146][th:1447][info] GossipPubSub Additional addresses we track (0):
+[2026-10-13 19:35:47.566547806][th:1447][info] GossipPubSub Listening addresses (1):
+[2026-10-13 19:35:47.566553636][th:1447][info] GossipPubSub   -> /ip4/0.0.0.0/tcp/0/p2p/12D3KooW9yxeFVikkMMdFSFh9AVUjDp4HY2wRHKJUpPXEZjyLDDQ
+[2026-10-13 19:35:47.566557816][th:1447][info] GossipPubSub Interface addresses (0):
+[2026-10-13 19:35:47.566560746][th:1447][info] GossipPubSub === RAW OBSERVED ADDRESS DEBUG ===
+[2026-10-13 19:35:47.566572116][th:1447][info] GossipPubSub Local address: /ip4/0.0.0.0/tcp/0/p2p/12D3KooW9yxeFVikkMMdFSFh9AVUjDp4HY2wRHKJUpPXEZjyLDDQ -> 0 raw observed, 0 activated+confirmed
+[2026-10-13 19:35:47.566579046][th:1447][info] GossipPubSub TOTAL: 0 raw observed addresses, 0 activated+confirmed addresses
+[2026-10-13 19:35:47.566581876][th:1447][info] GossipPubSub === END RAW OBSERVED ADDRESS DEBUG ===
+[2026-10-13 19:35:47.566585536][th:1447][info] GossipPubSub Observed addresses - all (0):
+[2026-10-13 19:35:47.566589636][th:1447][info] GossipPubSub Observed addresses - confirmed only (0):
+[2026-10-13 19:35:47.566593287][th:1447][info] GossipPubSub Relay addresses (0):
+[2026-10-13 19:35:47.566600647][th:1447][warning] GossipPubSub Failed to get addresses from peer repository: not found
+[2026-10-13 19:35:47.566743869][th:1447][info] GossipPubSub Found 1 valid network interfaces
+[2026-10-13 19:35:47.566755619][th:1447][info] GossipPubSub Current network interfaces (1):
+[2026-10-13 19:35:47.566761779][th:1447][info] GossipPubSub   -> 172.27.15.215
+[2026-10-13 19:35:47.566767099][th:1447][info] GossipPubSub Active connections: 0
+[2026-10-13 19:35:47.566770099][th:1447][info] GossipPubSub === PEER CONNECTION DETAILS ===
+[2026-10-13 19:35:47.566773189][th:1447][info] GossipPubSub NOTE: Observed addresses need to be seen by 4+ different peer groups to become 'activated'
+[2026-10-13 19:35:47.566805320][th:1447][info] GossipPubSub NOTE: Current connections: 0, so max possible observers: 0
+[2026-10-13 19:35:47.566812830][th:1447][info] GossipPubSub === END PEER CONNECTION DETAILS ===
+[2026-10-13 19:35:47.566815770][th:1447][info] GossipPubSub Connection manager stats:
+[2026-10-13 19:35:47.566820780][th:1447][info] GossipPubSub   -> Max connections: 1000
+[2026-10-13 19:35:47.566824930][th:1447][info] GossipPubSub   -> Current connections: 0
+[2026-10-13 19:35:47.566827480][th:1447][info] GossipPubSub === END NETWORK STATE ===
+26.10.13 19:35:47[38;2;128;128;128m.566959[0m  [38;2;000;000;205m[1mDebug   [0m  [1mTcpListener[0m  [3mEnumerated 1 network interfaces for IPv4[0m
+26.10.13 19:35:47[38;2;128;128;128m.566974[0m  [38;2;000;000;205m[1mDebug   [0m  [1mTcpListener[0m  [3mResolved 0.0.0.0:43131 to 1 interface addresses[0m
+26.10.13 19:35:47[38;2;128;128;128m.567050[0m  [38;2;034;139;034m[1mInfo    [0m  [1mgossip[0m  jyLDDQ started[0m
+26.10.13 19:35:47[38;2;128;128;128m.567094[0m  [38;2;000;000;205m[1mDebug   [0m  [1mTcpListener[0m  [3mEnumerated 1 network interfaces for IPv4[0m
+26.10.13 19:35:47[38;2;128;128;128m.567100[0m  [38;2;000;000;205m[1mDebug   [0m  [1mTcpListener[0m  [3mResolved 0.0.0.0:43131 to 1 interface addresses[0m
+[2026-10-13 19:35:47.567129615][th:1447][info] GossipPubSub OS-assigned PubSub address: /ip4/172.27.15.215/tcp/43131/p2p/12D3KooW9yxeFVikkMMdFSFh9AVUjDp4HY2wRHKJUpPXEZjyLDDQ
+[2026-10-13 19:35:47.567149126][th:1447][info] GossipPubSub /ip4/172.27.15.215/tcp/43131/p2p/12D3KooW9yxeFVikkMMdFSFh9AVUjDp4HY2wRHKJUpPXEZjyLDDQ : PubSub service started
+26.10.13 19:35:47[38;2;128;128;128m.567270[0m  [38;2;000;000;205m[1mDebug   [0m  [1mTcpListener[0m  [3mEnumerated 1 network interfaces for IPv4[0m
+26.10.13 19:35:47[38;2;128;128;128m.567287[0m  [38;2;000;000;205m[1mDebug   [0m  [1mTcpListener[0m  [3mResolved 0.0.0.0:44367 to 1 interface addresses[0m
+[2026-10-13 19:35:47.567544028][th:1447][info] GossipPubSub Adding new peer: 12D3KooW9qq5iKneNTCH8fxBRwuhfrfJq7DwDaG8LYHyD4FNsTfW
+26.10.13 19:35:47[38;2;128;128;128m.567576[0m  [38;2;000;000;205m[1mDebug   [0m  [1mTcpListener[0m  [3mEnumerated 1 network interfaces for IPv4[0m
+26.10.13 19:35:47[38;2;128;128;128m.567591[0m  [38;2;000;000;205m[1mDebug   [0m  [1mTcpListener[0m  [3mResolved 0.0.0.0:43131 to 1 interface addresses[0m
+26.10.13 19:35:47[38;2;128;128;128m.567595[0m  [38;2;000;000;205m[1mDebug   [0m  [1mConnectionManager[0m  [3mPre-protected peer 12D3KooW9qq5iKneNTCH8fxBRwuhfrfJq7DwDaG8LYHyD4FNsTfW with tag bootstrap-peer (not yet connected)[0m
+26.10.13 19:35:47[38;2;128;128;128m.567879[0m  [38;2;000;000;205m[1mDebug   [0m  [1mgossip[0m  [3mjyLDDQ created entry for topic gossip_sweep_topic[0m
+26.10.13 19:35:47[38;2;128;128;128m.567897[0m  [38;2;000;000;205m[1mDebug   [0m  [1mgossip[0m  [3mjyLDDQ self subscribed to gossip_sweep_topic[0m
+[2026-10-13 19:35:47.567949684][th:1447][info] GossipPubSub /ip4/172.27.15.215/tcp/43131/p2p/12D3KooW9yxeFVikkMMdFSFh9AVUjDp4HY2wRHKJUpPXEZjyLDDQ: PubSub subscribed to topic 'gossip_sweep_topic'
+26.10.13 19:35:47[38;2;128;128;128m.591295[0m  [38;2;000;000;205m[1mDebug   [0m  [1mroute-helper[0m  [3mGetting best source addresses for both IPv4 and IPv6[0m
+26.10.13 19:35:47[38;2;128;128;128m.591360[0m  [38;2;000;000;205m[1mDebug   [0m  [1mroute-helper[0m  [3mLooking up preferred route for destination: 8.8.8.8[0m
+26.10.13 19:35:47[38;2;128;128;128m.591434[0m  [38;2;000;000;205m[1mDebug   [0m  [1mroute-helper[0m  [3mUsing /proc/net/route for IPv4 route lookup[0m
+26.10.13 19:35:47[38;2;128;128;128m.591529[0m  [38;2;000;000;205m[1mDebug   [0m  [1mroute-helper[0m  [3mLinux IPv4 route found: interface=eth0, source=172.27.15.215, metric=0[0m
+26.10.13 19:35:47[38;2;128;128;128m.591587[0m  [38;2;000;000;205m[1mDebug   [0m  [1mroute-helper[0m  [3mSelected route-based IPv4 source: /ip4/172.27.15.215/tcp/0[0m
+26.10.13 19:35:47[38;2;128;128;128m.591595[0m  [38;2;034;139;034m[1mInfo    [0m  [1mroute-helper[0m  Source addresses selected - IPv4: /ip4/172.27.15.215/tcp/0, IPv6: none[0m
+26.10.13 19:35:47[38;2;128;128;128m.592407[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mSelect a protocol[0m
+26.10.13 19:35:47[38;2;128;128;128m.592424[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mAssertions pass?[0m
+26.10.13 19:35:47[38;2;128;128;128m.592433[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mContinued[0m
+26.10.13 19:35:47[38;2;128;128;128m.592612[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mSelect a protocol[0m
+26.10.13 19:35:47[38;2;128;128;128m.592642[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mAssertions pass?[0m
+26.10.13 19:35:47[38;2;128;128;128m.592657[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mContinued[0m
+26.10.13 19:35:47[38;2;128;128;128m.593159[0m  [38;2;034;139;034m[1mInfo    [0m  [1mNoise[0m  securing inbound connection[0m
+26.10.13 19:35:47[38;2;128;128;128m.593208[0m  [38;2;034;139;034m[1mInfo    [0m  [1mNoise[0m  securing outbound connection to 12D3KooW9qq5iKneNTCH8fxBRwuhfrfJq7DwDaG8LYHyD4FNsTfW[0m
+26.10.13 19:35:47[38;2;128;128;128m.595642[0m  [38;2;034;139;034m[1mInfo    [0m  [1mNoiseHandshake[0m  Handshake succeeded[0m
+26.10.13 19:35:47[38;2;128;128;128m.595684[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mSelect a protocol[0m
+26.10.13 19:35:47[38;2;128;128;128m.595691[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mAssertions pass?[0m
+26.10.13 19:35:47[38;2;128;128;128m.595697[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mContinued[0m
+26.10.13 19:35:47[38;2;128;128;128m.596152[0m  [38;2;034;139;034m[1mInfo    [0m  [1mNoiseHandshake[0m  Handshake succeeded[0m
+26.10.13 19:35:47[38;2;128;128;128m.596190[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mSelect a protocol[0m
+26.10.13 19:35:47[38;2;128;128;128m.596196[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mAssertions pass?[0m
+26.10.13 19:35:47[38;2;128;128;128m.596203[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mContinued[0m
+26.10.13 19:35:47[38;2;128;128;128m.596858[0m  [38;2;034;139;034m[1mInfo    [0m  [1mListenerManager[0m  Added connection for, 12D3KooW9yxeFVikkMMdFSFh9AVUjDp4HY2wRHKJUpPXEZjyLDDQ[0m
+26.10.13 19:35:47[38;2;128;128;128m.596938[0m  [38;2;034;139;034m[1mInfo    [0m  [1mListenerManager[0m  Added connection for, 12D3KooW9qq5iKneNTCH8fxBRwuhfrfJq7DwDaG8LYHyD4FNsTfW[0m
+26.10.13 19:35:47[38;2;128;128;128m.596940[0m  [38;2;000;000;205m[1mDebug   [0m  [1mroute-helper[0m  [3mGetting best source addresses for both IPv4 and IPv6[0m
+26.10.13 19:35:47[38;2;128;128;128m.596987[0m  [38;2;000;000;205m[1mDebug   [0m  [1mConnectionManager[0m  [3mApplied pre-connection metadata to newly connected peer 12D3KooW9qq5iKneNTCH8fxBRwuhfrfJq7DwDaG8LYHyD4FNsTfW[0m
+26.10.13 19:35:47[38;2;128;128;128m.596993[0m  [38;2;000;000;205m[1mDebug   [0m  [1mroute-helper[0m  [3mLooking up preferred route for destination: 8.8.8.8[0m
+26.10.13 19:35:47[38;2;128;128;128m.597042[0m  [38;2;000;000;205m[1mDebug   [0m  [1mroute-helper[0m  [3mGetting best source addresses for both IPv4 and IPv6[0m
+26.10.13 19:35:47[38;2;128;128;128m.597045[0m  [38;2;000;000;205m[1mDebug   [0m  [1mroute-helper[0m  [3mUsing /proc/net/route for IPv4 route lookup[0m
+26.10.13 19:35:47[38;2;128;128;128m.597093[0m  [38;2;000;000;205m[1mDebug   [0m  [1mroute-helper[0m  [3mLooking up preferred route for destination: 8.8.8.8[0m
+26.10.13 19:35:47[38;2;128;128;128m.597109[0m  [38;2;000;000;205m[1mDebug   [0m  [1mroute-helper[0m  [3mLinux IPv4 route found: interface=eth0, source=172.27.15.215, metric=0[0m
+26.10.13 19:35:47[38;2;128;128;128m.597114[0m  [38;2;000;000;205m[1mDebug   [0m  [1mroute-helper[0m  [3mUsing /proc/net/route for IPv4 route lookup[0m
+26.10.13 19:35:47[38;2;128;128;128m.597153[0m  [38;2;000;000;205m[1mDebug   [0m  [1mroute-helper[0m  [3mLinux IPv4 route found: interface=eth0, source=172.27.15.215, metric=0[0m
+26.10.13 19:35:47[38;2;128;128;128m.597171[0m  [38;2;000;000;205m[1mDebug   [0m  [1mroute-helper[0m  [3mSelected route-based IPv4 source: /ip4/172.27.15.215/tcp/0[0m
+26.10.13 19:35:47[38;2;128;128;128m.597179[0m  [38;2;034;139;034m[1mInfo    [0m  [1mroute-helper[0m  Source addresses selected - IPv4: /ip4/172.27.15.215/tcp/0, IPv6: none[0m
+26.10.13 19:35:47[38;2;128;128;128m.597187[0m  [38;2;000;000;205m[1mDebug   [0m  [1mroute-helper[0m  [3mSelected route-based IPv4 source: /ip4/172.27.15.215/tcp/0[0m
+26.10.13 19:35:47[38;2;128;128;128m.597194[0m  [38;2;034;139;034m[1mInfo    [0m  [1mroute-helper[0m  Source addresses selected - IPv4: /ip4/172.27.15.215/tcp/0, IPv6: none[0m
+26.10.13 19:35:47[38;2;128;128;128m.597235[0m  [38;2;034;139;034m[1mInfo    [0m  [1mDialerImpl[0m  Checking whether address /ip4/172.27.15.215/tcp/44367/p2p/12D3KooW9qq5iKneNTCH8fxBRwuhfrfJq7DwDaG8LYHyD4FNsTfW has relay[0m
+26.10.13 19:35:47[38;2;128;128;128m.597259[0m  [38;2;034;139;034m[1mInfo    [0m  [1mDialerImpl[0m  Completed Dial to 12D3KooW9qq5iKneNTCH8fxBRwuhfrfJq7DwDaG8LYHyD4FNsTfW[0m
+26.10.13 19:35:47[38;2;128;128;128m.597297[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mSelect a protocol[0m
+26.10.13 19:35:47[38;2;128;128;128m.597305[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mAssertions pass?[0m
+26.10.13 19:35:47[38;2;128;128;128m.597312[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mContinued[0m
+26.10.13 19:35:47[38;2;128;128;128m.597342[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mSelect a protocol[0m
+26.10.13 19:35:47[38;2;128;128;128m.597348[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mAssertions pass?[0m
+26.10.13 19:35:47[38;2;128;128;128m.597355[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mContinued[0m
+26.10.13 19:35:47[38;2;128;128;128m.597379[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mSelect a protocol[0m
+26.10.13 19:35:47[38;2;128;128;128m.597383[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mAssertions pass?[0m
+26.10.13 19:35:47[38;2;128;128;128m.597387[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mContinued[0m
+26.10.13 19:35:47[38;2;128;128;128m.597404[0m  [38;2;000;000;205m[1mDebug   [0m  [1mYamuxConn[0m  [3mcreating inbound stream 1[0m
+26.10.13 19:35:47[38;2;128;128;128m.597450[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mSelect a protocol[0m
+26.10.13 19:35:47[38;2;128;128;128m.597455[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mAssertions pass?[0m
+26.10.13 19:35:47[38;2;128;128;128m.597460[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mContinued[0m
+26.10.13 19:35:47[38;2;128;128;128m.597491[0m  [38;2;000;000;205m[1mDebug   [0m  [1mYamuxConn[0m  [3mcreating inbound stream 2[0m
+26.10.13 19:35:47[38;2;128;128;128m.597512[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mSelect a protocol[0m
+26.10.13 19:35:47[38;2;128;128;128m.597554[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mAssertions pass?[0m
+26.10.13 19:35:47[38;2;128;128;128m.597568[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mContinued[0m
+26.10.13 19:35:47[38;2;128;128;128m.598395[0m  [38;2;000;000;205m[1mDebug   [0m  [1mYamuxConn[0m  [3mignoring received ACK on existing stream id 1[0m
+26.10.13 19:35:47[38;2;128;128;128m.598422[0m  [38;2;000;000;205m[1mDebug   [0m  [1mYamuxConn[0m  [3mcreating inbound stream 3[0m
+26.10.13 19:35:47[38;2;128;128;128m.598457[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mSelect a protocol[0m
+26.10.13 19:35:47[38;2;128;128;128m.598463[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mAssertions pass?[0m
+26.10.13 19:35:47[38;2;128;128;128m.598471[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mContinued[0m
+26.10.13 19:35:47[38;2;128;128;128m.599244[0m  [38;2;000;000;205m[1mDebug   [0m  [1mTcpListener[0m  [3mEnumerated 1 network interfaces for IPv4[0m
+26.10.13 19:35:47[38;2;128;128;128m.599262[0m  [38;2;000;000;205m[1mDebug   [0m  [1mTcpListener[0m  [3mResolved 0.0.0.0:43131 to 1 interface addresses[0m
+26.10.13 19:35:47[38;2;128;128;128m.599559[0m  [38;2;000;000;205m[1mDebug   [0m  [1mYamuxConn[0m  [3mignoring received ACK on existing stream id 2[0m
+26.10.13 19:35:47[38;2;128;128;128m.599830[0m  [38;2;034;139;034m[1mInfo    [0m  [1mIdentifyMsgProcessor[0m  successfully written an identify message to peer 12D3KooW9qq5iKneNTCH8fxBRwuhfrfJq7DwDaG8LYHyD4FNsTfW, /ip4/172.27.15.215/tcp/44367[0m
+26.10.13 19:35:47[38;2;128;128;128m.599849[0m  [38;2;000;000;205m[1mDebug   [0m  [1mYamuxConn[0m  [3msending FIN to stream 2[0m
+26.10.13 19:35:47[38;2;128;128;128m.599967[0m  [38;2;000;000;205m[1mDebug   [0m  [1mTcpListener[0m  [3mEnumerated 1 network interfaces for IPv4[0m
+26.10.13 19:35:47[38;2;128;128;128m.599984[0m  [38;2;000;000;205m[1mDebug   [0m  [1mTcpListener[0m  [3mResolved 0.0.0.0:44367 to 1 interface addresses[0m
+26.10.13 19:35:47[38;2;128;128;128m.600359[0m  [38;2;000;000;205m[1mDebug   [0m  [1mYamuxConn[0m  [3mignoring received ACK on existing stream id 3[0m
+26.10.13 19:35:47[38;2;128;128;128m.600956[0m  [38;2;034;139;034m[1mInfo    [0m  [1mIdentifyMsgProcessor[0m  successfully written an identify message to peer 12D3KooW9yxeFVikkMMdFSFh9AVUjDp4HY2wRHKJUpPXEZjyLDDQ, /ip4/172.27.15.215/tcp/41383[0m
+26.10.13 19:35:47[38;2;128;128;128m.600973[0m  [38;2;000;000;205m[1mDebug   [0m  [1mYamuxConn[0m  [3msending FIN to stream 1[0m
+26.10.13 19:35:47[38;2;128;128;128m.601284[0m  [38;2;000;000;205m[1mDebug   [0m  [1mgossip[0m  [3mFNsTfW peer jyLDDQ connected[0m
+26.10.13 19:35:47[38;2;128;128;128m.601324[0m  [38;2;000;000;205m[1mDebug   [0m  [1mgossip[0m  [3mFNsTfW tagged peer jyLDDQ for joining gossip network[0m
+26.10.13 19:35:47[38;2;128;128;128m.601420[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mSelect a protocol[0m
+26.10.13 19:35:47[38;2;128;128;128m.601433[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mAssertions pass?[0m
+26.10.13 19:35:47[38;2;128;128;128m.601441[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mContinued[0m
+26.10.13 19:35:47[38;2;128;128;128m.602844[0m  [38;2;034;139;034m[1mInfo    [0m  [1mIdentifyMsgProcessor[0m  received an identify message from peer 12D3KooW9qq5iKneNTCH8fxBRwuhfrfJq7DwDaG8LYHyD4FNsTfW, /ip4/172.27.15.215/tcp/44367[0m
+26.10.13 19:35:47[38;2;128;128;128m.602864[0m  [38;2;000;000;205m[1mDebug   [0m  [1mYamuxConn[0m  [3msending FIN to stream 1[0m
+26.10.13 19:35:47[38;2;128;128;128m.602980[0m  [38;2;000;000;205m[1mDebug   [0m  [1mTcpListener[0m  [3mEnumerated 1 network interfaces for IPv4[0m
+26.10.13 19:35:47[38;2;128;128;128m.602990[0m  [38;2;000;000;205m[1mDebug   [0m  [1mTcpListener[0m  [3mResolved 0.0.0.0:43131 to 1 interface addresses[0m
+26.10.13 19:35:47[38;2;128;128;128m.603024[0m  [38;2;255;069;000m[1mError   [0m  [1mIdentifyMsgProcessor[0m  [1mObserved address local address not one of our address /ip4/172.27.15.215/tcp/41383 :: /ip4/172.27.15.215/tcp/41383[0m
+26.10.13 19:35:47[38;2;128;128;128m.603711[0m  [38;2;000;000;205m[1mDebug   [0m  [1mgossip[0m  [3mjyLDDQ peer FNsTfW connected[0m
+26.10.13 19:35:47[38;2;128;128;128m.603755[0m  [38;2;000;000;205m[1mDebug   [0m  [1mgossip[0m  [3mjyLDDQ tagged peer FNsTfW for joining gossip network[0m
+26.10.13 19:35:47[38;2;128;128;128m.603867[0m  [38;2;034;139;034m[1mInfo    [0m  [1mIdentifyMsgProcessor[0m  received an identify message from peer 12D3KooW9yxeFVikkMMdFSFh9AVUjDp4HY2wRHKJUpPXEZjyLDDQ, /ip4/172.27.15.215/tcp/41383[0m
+26.10.13 19:35:47[38;2;128;128;128m.603886[0m  [38;2;000;000;205m[1mDebug   [0m  [1mYamuxConn[0m  [3msending FIN to stream 2[0m
+26.10.13 19:35:47[38;2;128;128;128m.604052[0m  [38;2;000;000;205m[1mDebug   [0m  [1mTcpListener[0m  [3mEnumerated 1 network interfaces for IPv4[0m
+26.10.13 19:35:47[38;2;128;128;128m.604067[0m  [38;2;000;000;205m[1mDebug   [0m  [1mTcpListener[0m  [3mResolved 0.0.0.0:44367 to 1 interface addresses[0m
+26.10.13 19:35:47[38;2;128;128;128m.604101[0m  [38;2;034;139;034m[1mInfo    [0m  [1mIdentifyMsgProcessor[0m  Recording an observed address /ip4/172.27.15.215/tcp/44367 with local addr /ip4/172.27.15.215/tcp/44367[0m
+26.10.13 19:35:47[38;2;128;128;128m.604164[0m  [38;2;000;000;205m[1mDebug   [0m  [1mIdentifyMsgProcessor[0m  [3mcannot update listen addresses of the peer 12D3KooW9yxeFVikkMMdFSFh9AVUjDp4HY2wRHKJUpPXEZjyLDDQ: not found[0m
+26.10.13 19:35:47[38;2;128;128;128m.604191[0m  [38;2;000;000;205m[1mDebug   [0m  [1mIdentifyMsgProcessor[0m  [3mcan not get addresses for peer 12D3KooW9yxeFVikkMMdFSFh9AVUjDp4HY2wRHKJUpPXEZjyLDDQ[0m
+26.10.13 19:35:47[38;2;128;128;128m.604475[0m  [38;2;000;000;205m[1mDebug   [0m  [1mYamuxConn[0m  [3merasing stream 2[0m
+26.10.13 19:35:47[38;2;128;128;128m.604481[0m  [38;2;000;000;205m[1mDebug   [0m  [1mYamuxConn[0m  [3merasing stream 1[0m
+26.10.13 19:35:47[38;2;128;128;128m.605298[0m  [38;2;000;000;205m[1mDebug   [0m  [1mYamuxConn[0m  [3mcreating inbound stream 4[0m
+26.10.13 19:35:47[38;2;128;128;128m.605368[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mSelect a protocol[0m
+26.10.13 19:35:47[38;2;128;128;128m.605375[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mAssertions pass?[0m
+26.10.13 19:35:47[38;2;128;128;128m.605382[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mContinued[0m
+26.10.13 19:35:47[38;2;128;128;128m.607165[0m  [38;2;000;000;205m[1mDebug   [0m  [1mYamuxConn[0m  [3merasing stream 1[0m
+26.10.13 19:35:47[38;2;128;128;128m.607953[0m  [38;2;000;000;205m[1mDebug   [0m  [1mYamuxConn[0m  [3merasing stream 2[0m
+26.10.13 19:35:47[38;2;128;128;128m.608432[0m  [38;2;000;000;205m[1mDebug   [0m  [1mgossip[0m  [3mFNsTfW peer jyLDDQ subscribed, topic gossip_sweep_topic[0m
+26.10.13 19:35:47[38;2;128;128;128m.608456[0m  [38;2;000;000;205m[1mDebug   [0m  [1mgossip[0m  [3mFNsTfW peer jyLDDQ subscribing to gossip_sweep_topic[0m
+26.10.13 19:35:47[38;2;128;128;128m.608547[0m  [38;2;000;000;205m[1mDebug   [0m  [1mgossip[0m  [3mFNsTfW created entry for topic gossip_sweep_topic[0m
+26.10.13 19:35:47[38;2;128;128;128m.608568[0m  [38;2;000;000;205m[1mDebug   [0m  [1mgossip[0m  [3mFNsTfW finished dispatching message from peer jyLDDQ[0m
+26.10.13 19:35:47[38;2;128;128;128m.608653[0m  [38;2;000;000;205m[1mDebug   [0m  [1mYamuxConn[0m  [3mignoring received ACK on existing stream id 4[0m
+26.10.13 19:35:47[38;2;128;128;128m.618162[0m  [38;2;000;000;205m[1mDebug   [0m  [1mgossip[0m  [3mjyLDDQ removing mesh for gossip_sweep_topic[0m
+26.10.13 19:35:47[38;2;128;128;128m.618191[0m  [38;2;000;000;205m[1mDebug   [0m  [1mgossip[0m  [3mjyLDDQ self unsubscribed from gossip_sweep_topic[0m
+26.10.13 19:35:47[38;2;128;128;128m.641912[0m  [38;2;000;000;205m[1mDebug   [0m  [1mgossip[0m  [3mFNsTfW peer jyLDDQ unsubscribed, topic gossip_sweep_topic[0m
+26.10.13 19:35:47[38;2;128;128;128m.641950[0m  [38;2;000;000;205m[1mDebug   [0m  [1mgossip[0m  [3mFNsTfW peer jyLDDQ unsubscribing from gossip_sweep_topic[0m
+26.10.13 19:35:47[38;2;128;128;128m.641975[0m  [38;2;000;000;205m[1mDebug   [0m  [1mgossip[0m  [3mFNsTfW finished dispatching message from peer jyLDDQ[0m
+26.10.13 19:35:47[38;2;128;128;128m.643414[0m  [38;2;000;000;205m[1mDebug   [0m  [1mgossip[0m  [3mjyLDDQ created entry for topic gossip_sweep_topic[0m
+26.10.13 19:35:47[38;2;128;128;128m.643440[0m  [38;2;000;000;205m[1mDebug   [0m  [1mgossip[0m  [3mjyLDDQ self subscribed to gossip_sweep_topic[0m
+[2026-10-13 19:35:47.643511813][th:1447][info] GossipPubSub /ip4/172.27.15.215/tcp/43131/p2p/12D3KooW9yxeFVikkMMdFSFh9AVUjDp4HY2wRHKJUpPXEZjyLDDQ: PubSub subscribed to topic 'gossip_sweep_topic'
+26.10.13 19:35:47[38;2;128;128;128m.667057[0m  [38;2;000;000;205m[1mDebug   [0m  [1mgossip[0m  [3mFNsTfW peer jyLDDQ subscribed, topic gossip_sweep_topic[0m
+26.10.13 19:35:47[38;2;128;128;128m.667096[0m  [38;2;000;000;205m[1mDebug   [0m  [1mgossip[0m  [3mFNsTfW peer jyLDDQ subscribing to gossip_sweep_topic[0m
+26.10.13 19:35:47[38;2;128;128;128m.667130[0m  [38;2;000;000;205m[1mDebug   [0m  [1mgossip[0m  [3mFNsTfW created entry for topic gossip_sweep_topic[0m
+26.10.13 19:35:47[38;2;128;128;128m.667143[0m  [38;2;000;000;205m[1mDebug   [0m  [1mgossip[0m  [3mFNsTfW finished dispatching message from peer jyLDDQ[0m
+[2026-10-13 19:35:47.668771009][th:1445][error] GossipPubSub Address monitoring timer error: Operation canceled
+26.10.13 19:35:47[38;2;128;128;128m.668836[0m  [38;2;000;000;205m[1mDebug   [0m  [1mYamuxConn[0m  [3mRST from stream 3[0m
+26.10.13 19:35:47[38;2;128;128;128m.669004[0m  [38;2;000;000;205m[1mDebug   [0m  [1mYamuxConn[0m  [3merasing stream 3[0m
+26.10.13 19:35:47[38;2;128;128;128m.669080[0m  [38;2;000;000;205m[1mDebug   [0m  [1mYamuxConn[0m  [3merasing stream 3[0m
+26.10.13 19:35:47[38;2;128;128;128m.669137[0m  [38;2;000;000;205m[1mDebug   [0m  [1mYamuxConn[0m  [3mRST from stream 4[0m
+26.10.13 19:35:47[38;2;128;128;128m.669152[0m  [38;2;000;000;205m[1mDebug   [0m  [1mYamuxConn[0m  [3mRST from stream 4[0m
+26.10.13 19:35:47[38;2;128;128;128m.669183[0m  [38;2;000;000;205m[1mDebug   [0m  [1mYamuxConn[0m  [3merasing stream 4[0m
+26.10.13 19:35:47[38;2;128;128;128m.669196[0m  [38;2;000;000;205m[1mDebug   [0m  [1mYamuxConn[0m  [3merasing stream 4[0m
+26.10.13 19:35:47[38;2;128;128;128m.669210[0m  [38;2;000;000;205m[1mDebug   [0m  [1mYamuxConn[0m  [3mRST from stream 3[0m
+26.10.13 19:35:47[38;2;128;128;128m.669216[0m  [38;2;000;000;205m[1mDebug   [0m  [1mYamuxConn[0m  [3merasing stream 3[0m
+26.10.13 19:35:47[38;2;128;128;128m.669228[0m  [38;2;000;000;205m[1mDebug   [0m  [1mgossip[0m  [3mjyLDDQ peer FNsTfW disconnected[0m
+26.10.13 19:35:47[38;2;128;128;128m.669276[0m  [38;2;000;000;205m[1mDebug   [0m  [1mYamuxConn[0m  [3mclosing connection, reason: Connection: closed by this host[0m
+26.10.13 19:35:47[38;2;128;128;128m.669390[0m  [38;2;000;000;205m[1mDebug   [0m  [1mConnectionManager[0m  [3mClosed 1 connections to peer 12D3KooW9yxeFVikkMMdFSFh9AVUjDp4HY2wRHKJUpPXEZjyLDDQ, 0 were already closed[0m
+26.10.13 19:35:47[38;2;128;128;128m.669491[0m  [38;2;255;165;000m[1mWarning [0m  [1mListenerManager[0m  can not accept valid connection, Operation canceled[0m
+26.10.13 19:35:47[38;2;128;128;128m.670077[0m  [38;2;000;000;205m[1mDebug   [0m  [1mYamuxConn[0m  [3mclosing connection, reason: Connection: closed by remote peer[0m
+[2026-10-13 19:35:47.670264968][th:1447][error] GossipPubSub Address monitoring timer error: Operation canceled
+26.10.13 19:35:47[38;2;128;128;128m.670394[0m  [38;2;255;165;000m[1mWarning [0m  [1mListenerManager[0m  can not accept valid connection, Operation canceled[0m
+[       OK ] GossipPubSubBoundsTest.SweepCollectsTopicAfterUnsubscribeAndResubscribeRelearns (110 ms)
+[ RUN      ] GossipPubSubBoundsTest.BelowCapAdmittedAboveCapDroppedAtEntry
+Current limits: 16384 (soft), 1048576 (hard)
+New limits set successfully: 16384 (soft), 1048576 (hard)
+Initialized relay addresses
+[2026-10-13 19:35:47.673720094][th:1430][info] GossipPubSub /ip4/0.0.0.0/tcp/40302/p2p/12D3KooWLEr75WWiLrj5KZCHYZ1Pqkbz8JBBmKbLkVth13BbHG8t: Starting PubSub service
+[2026-10-13 19:35:47.674131305][th:1452][info] GossipPubSub Starting address monitoring system for mobile network changes
+[2026-10-13 19:35:47.674149175][th:1452][info] GossipPubSub === CURRENT NETWORK STATE ===
+[2026-10-13 19:35:47.674189386][th:1452][info] GossipPubSub Primary listening address: /ip4/0.0.0.0/tcp/40302/p2p/12D3KooWLEr75WWiLrj5KZCHYZ1Pqkbz8JBBmKbLkVth13BbHG8t
+[2026-10-13 19:35:47.674195586][th:1452][info] GossipPubSub Host peer info addresses (0):
+[2026-10-13 19:35:47.674206496][th:1452][info] GossipPubSub Additional addresses we track (0):
+[2026-10-13 19:35:47.674211526][th:1452][info] GossipPubSub Listening addresses (1):
+[2026-10-13 19:35:47.674217496][th:1452][info] GossipPubSub   -> /ip4/0.0.0.0/tcp/40302/p2p/12D3KooWLEr75WWiLrj5KZCHYZ1Pqkbz8JBBmKbLkVth13BbHG8t
+[2026-10-13 19:35:47.674221657][th:1452][info] GossipPubSub Interface addresses (0):
+[2026-10-13 19:35:47.674224387][th:1452][info] GossipPubSub === RAW OBSERVED ADDRESS DEBUG ===
+[2026-10-13 19:35:47.674236277][th:1452][info] GossipPubSub Local address: /ip4/0.0.0.0/tcp/40302/p2p/12D3KooWLEr75WWiLrj5KZCHYZ1Pqkbz8JBBmKbLkVth13BbHG8t -> 0 raw observed, 0 activated+confirmed
+[2026-10-13 19:35:47.674242977][th:1452][info] GossipPubSub TOTAL: 0 raw observed addresses, 0 activated+confirmed addresses
+[2026-10-13 19:35:47.674245937][th:1452][info] GossipPubSub === END RAW OBSERVED ADDRESS DEBUG ===
+[2026-10-13 19:35:47.674249477][th:1452][info] GossipPubSub Observed addresses - all (0):
+[2026-10-13 19:35:47.674253457][th:1452][info] GossipPubSub Observed addresses - confirmed only (0):
+[2026-10-13 19:35:47.674257197][th:1452][info] GossipPubSub Relay addresses (0):
+[2026-10-13 19:35:47.674265037][th:1452][warning] GossipPubSub Failed to get addresses from peer repository: not found
+[2026-10-13 19:35:47.674357599][th:1452][info] GossipPubSub Found 1 valid network interfaces
+[2026-10-13 19:35:47.674369509][th:1452][info] GossipPubSub Current network interfaces (1):
+[2026-10-13 19:35:47.674375579][th:1452][info] GossipPubSub   -> 172.27.15.215
+[2026-10-13 19:35:47.674380759][th:1452][info] GossipPubSub Active connections: 0
+[2026-10-13 19:35:47.674383539][th:1452][info] GossipPubSub === PEER CONNECTION DETAILS ===
+[2026-10-13 19:35:47.674387049][th:1452][info] GossipPubSub NOTE: Observed addresses need to be seen by 4+ different peer groups to become 'activated'
+[2026-10-13 19:35:47.674392029][th:1452][info] GossipPubSub NOTE: Current connections: 0, so max possible observers: 0
+[2026-10-13 19:35:47.674394839][th:1452][info] GossipPubSub === END PEER CONNECTION DETAILS ===
+[2026-10-13 19:35:47.674397479][th:1452][info] GossipPubSub Connection manager stats:
+[2026-10-13 19:35:47.674402109][th:1452][info] GossipPubSub   -> Max connections: 1000
+[2026-10-13 19:35:47.674405660][th:1452][info] GossipPubSub   -> Current connections: 0
+[2026-10-13 19:35:47.674408070][th:1452][info] GossipPubSub === END NETWORK STATE ===
+26.10.13 19:35:47[38;2;128;128;128m.674591[0m  [38;2;000;000;205m[1mDebug   [0m  [1mTcpListener[0m  [3mEnumerated 1 network interfaces for IPv4[0m
+26.10.13 19:35:47[38;2;128;128;128m.674610[0m  [38;2;000;000;205m[1mDebug   [0m  [1mTcpListener[0m  [3mResolved 0.0.0.0:40302 to 1 interface addresses[0m
+26.10.13 19:35:47[38;2;128;128;128m.674729[0m  [38;2;034;139;034m[1mInfo    [0m  [1mgossip[0m  BbHG8t started[0m
+[2026-10-13 19:35:47.674761345][th:1452][info] GossipPubSub /ip4/0.0.0.0/tcp/40302/p2p/12D3KooWLEr75WWiLrj5KZCHYZ1Pqkbz8JBBmKbLkVth13BbHG8t : PubSub service started
+26.10.13 19:35:47[38;2;128;128;128m.674917[0m  [38;2;000;000;205m[1mDebug   [0m  [1mgossip[0m  [3mBbHG8t created entry for topic gossip_bounds_topic[0m
+26.10.13 19:35:47[38;2;128;128;128m.674937[0m  [38;2;000;000;205m[1mDebug   [0m  [1mgossip[0m  [3mBbHG8t self subscribed to gossip_bounds_topic[0m
+[2026-10-13 19:35:47.674989099][th:1452][info] GossipPubSub /ip4/0.0.0.0/tcp/40302/p2p/12D3KooWLEr75WWiLrj5KZCHYZ1Pqkbz8JBBmKbLkVth13BbHG8t: PubSub subscribed to topic 'gossip_bounds_topic'
+26.10.13 19:35:47[38;2;128;128;128m.675352[0m  [38;2;000;000;205m[1mDebug   [0m  [1mroute-helper[0m  [3mGetting best source addresses for both IPv4 and IPv6[0m
+26.10.13 19:35:47[38;2;128;128;128m.675434[0m  [38;2;000;000;205m[1mDebug   [0m  [1mroute-helper[0m  [3mSelected loopback IPv4 source: /ip4/127.0.0.1/tcp/0[0m
+26.10.13 19:35:47[38;2;128;128;128m.675447[0m  [38;2;034;139;034m[1mInfo    [0m  [1mroute-helper[0m  Source addresses selected - IPv4: /ip4/127.0.0.1/tcp/0, IPv6: none[0m
+26.10.13 19:35:47[38;2;128;128;128m.675960[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mSelect a protocol[0m
+26.10.13 19:35:47[38;2;128;128;128m.675974[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mAssertions pass?[0m
+26.10.13 19:35:47[38;2;128;128;128m.675987[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mContinued[0m
+26.10.13 19:35:47[38;2;128;128;128m.676022[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mSelect a protocol[0m
+26.10.13 19:35:47[38;2;128;128;128m.676037[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mAssertions pass?[0m
+26.10.13 19:35:47[38;2;128;128;128m.676045[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mContinued[0m
+26.10.13 19:35:47[38;2;128;128;128m.676560[0m  [38;2;034;139;034m[1mInfo    [0m  [1mNoise[0m  securing inbound connection[0m
+26.10.13 19:35:47[38;2;128;128;128m.676605[0m  [38;2;034;139;034m[1mInfo    [0m  [1mNoise[0m  securing outbound connection to 12D3KooWLEr75WWiLrj5KZCHYZ1Pqkbz8JBBmKbLkVth13BbHG8t[0m
+26.10.13 19:35:47[38;2;128;128;128m.678804[0m  [38;2;034;139;034m[1mInfo    [0m  [1mNoiseHandshake[0m  Handshake succeeded[0m
+26.10.13 19:35:47[38;2;128;128;128m.678844[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mSelect a protocol[0m
+26.10.13 19:35:47[38;2;128;128;128m.678850[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mAssertions pass?[0m
+26.10.13 19:35:47[38;2;128;128;128m.678857[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mContinued[0m
+26.10.13 19:35:47[38;2;128;128;128m.679267[0m  [38;2;034;139;034m[1mInfo    [0m  [1mNoiseHandshake[0m  Handshake succeeded[0m
+26.10.13 19:35:47[38;2;128;128;128m.679307[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mSelect a protocol[0m
+26.10.13 19:35:47[38;2;128;128;128m.679313[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mAssertions pass?[0m
+26.10.13 19:35:47[38;2;128;128;128m.679320[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mContinued[0m
+26.10.13 19:35:47[38;2;128;128;128m.680710[0m  [38;2;034;139;034m[1mInfo    [0m  [1mListenerManager[0m  Added connection for, 12D3KooWJMe181A9uDMdrnNynrAg7RMnxQELaPrczVab5LRsNQjV[0m
+26.10.13 19:35:47[38;2;128;128;128m.681149[0m  [38;2;000;000;205m[1mDebug   [0m  [1mroute-helper[0m  [3mGetting best source addresses for both IPv4 and IPv6[0m
+26.10.13 19:35:47[38;2;128;128;128m.681170[0m  [38;2;034;139;034m[1mInfo    [0m  [1mListenerManager[0m  Added connection for, 12D3KooWLEr75WWiLrj5KZCHYZ1Pqkbz8JBBmKbLkVth13BbHG8t[0m
+26.10.13 19:35:47[38;2;128;128;128m.681218[0m  [38;2;000;000;205m[1mDebug   [0m  [1mroute-helper[0m  [3mLooking up preferred route for destination: 8.8.8.8[0m
+26.10.13 19:35:47[38;2;128;128;128m.681224[0m  [38;2;034;139;034m[1mInfo    [0m  [1mDialerImpl[0m  Checking whether address /ip4/127.0.0.1/tcp/40302 has relay[0m
+26.10.13 19:35:47[38;2;128;128;128m.681252[0m  [38;2;034;139;034m[1mInfo    [0m  [1mDialerImpl[0m  Completed Dial to 12D3KooWLEr75WWiLrj5KZCHYZ1Pqkbz8JBBmKbLkVth13BbHG8t[0m
+26.10.13 19:35:47[38;2;128;128;128m.681253[0m  [38;2;000;000;205m[1mDebug   [0m  [1mroute-helper[0m  [3mUsing /proc/net/route for IPv4 route lookup[0m
+26.10.13 19:35:47[38;2;128;128;128m.681313[0m  [38;2;000;000;205m[1mDebug   [0m  [1mroute-helper[0m  [3mLinux IPv4 route found: interface=eth0, source=172.27.15.215, metric=0[0m
+26.10.13 19:35:47[38;2;128;128;128m.681348[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mSelect a protocol[0m
+26.10.13 19:35:47[38;2;128;128;128m.681357[0m  [38;2;000;000;205m[1mDebug   [0m  [1mroute-helper[0m  [3mSelected route-based IPv4 source: /ip4/172.27.15.215/tcp/40302[0m
+26.10.13 19:35:47[38;2;128;128;128m.681360[0m  [38;2;034;139;034m[1mInfo    [0m  [1mroute-helper[0m  Source addresses selected - IPv4: /ip4/172.27.15.215/tcp/40302, IPv6: none[0m
+26.10.13 19:35:47[38;2;128;128;128m.681373[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mAssertions pass?[0m
+26.10.13 19:35:47[38;2;128;128;128m.681380[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mContinued[0m
+26.10.13 19:35:47[38;2;128;128;128m.681501[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mSelect a protocol[0m
+26.10.13 19:35:47[38;2;128;128;128m.681514[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mAssertions pass?[0m
+26.10.13 19:35:47[38;2;128;128;128m.681522[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mContinued[0m
+26.10.13 19:35:47[38;2;128;128;128m.681546[0m  [38;2;000;000;205m[1mDebug   [0m  [1mYamuxConn[0m  [3mcreating inbound stream 2[0m
+26.10.13 19:35:47[38;2;128;128;128m.681631[0m  [38;2;000;000;205m[1mDebug   [0m  [1mYamuxConn[0m  [3mcreating inbound stream 1[0m
+26.10.13 19:35:47[38;2;128;128;128m.681658[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mSelect a protocol[0m
+26.10.13 19:35:47[38;2;128;128;128m.681663[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mAssertions pass?[0m
+26.10.13 19:35:47[38;2;128;128;128m.681668[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mContinued[0m
+26.10.13 19:35:47[38;2;128;128;128m.681681[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mSelect a protocol[0m
+26.10.13 19:35:47[38;2;128;128;128m.681694[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mAssertions pass?[0m
+26.10.13 19:35:47[38;2;128;128;128m.681701[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mContinued[0m
+26.10.13 19:35:47[38;2;128;128;128m.682555[0m  [38;2;000;000;205m[1mDebug   [0m  [1mYamuxConn[0m  [3mignoring received ACK on existing stream id 1[0m
+26.10.13 19:35:47[38;2;128;128;128m.682962[0m  [38;2;000;000;205m[1mDebug   [0m  [1mYamuxConn[0m  [3mignoring received ACK on existing stream id 2[0m
+26.10.13 19:35:47[38;2;128;128;128m.683026[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3munknown protocol /ipfs/id/1.0.0 proposed by client[0m
+26.10.13 19:35:47[38;2;128;128;128m.684140[0m  [38;2;000;000;205m[1mDebug   [0m  [1mgossip[0m  [3mBbHG8t peer RsNQjV connected[0m
+26.10.13 19:35:47[38;2;128;128;128m.684185[0m  [38;2;000;000;205m[1mDebug   [0m  [1mgossip[0m  [3mBbHG8t tagged peer RsNQjV for joining gossip network[0m
+26.10.13 19:35:47[38;2;128;128;128m.684277[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mSelect a protocol[0m
+26.10.13 19:35:47[38;2;128;128;128m.684284[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mAssertions pass?[0m
+26.10.13 19:35:47[38;2;128;128;128m.684290[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mContinued[0m
+26.10.13 19:35:47[38;2;128;128;128m.685916[0m  [38;2;000;000;205m[1mDebug   [0m  [1mYamuxConn[0m  [3mcreating inbound stream 4[0m
+26.10.13 19:35:47[38;2;128;128;128m.685995[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mSelect a protocol[0m
+26.10.13 19:35:47[38;2;128;128;128m.686002[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mAssertions pass?[0m
+26.10.13 19:35:47[38;2;128;128;128m.686008[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mContinued[0m
+26.10.13 19:35:47[38;2;128;128;128m.686382[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mprotocol /ipfs/id/1.0.0 was not accepted by peer[0m
+26.10.13 19:35:47[38;2;128;128;128m.686411[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mnone of proposed protocols were accepted by peer[0m
+26.10.13 19:35:47[38;2;128;128;128m.686451[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mFailed to negotiate protocols: /ipfs/id/1.0.0[0m
+26.10.13 19:35:47[38;2;128;128;128m.687905[0m  [38;2;000;000;205m[1mDebug   [0m  [1mgossip[0m  [3mBbHG8t peer RsNQjV subscribed, topic gossip_bounds_topic[0m
+26.10.13 19:35:47[38;2;128;128;128m.687930[0m  [38;2;000;000;205m[1mDebug   [0m  [1mgossip[0m  [3mBbHG8t peer RsNQjV subscribing to gossip_bounds_topic[0m
+26.10.13 19:35:47[38;2;128;128;128m.687949[0m  [38;2;000;000;205m[1mDebug   [0m  [1mgossip[0m  [3mBbHG8t finished dispatching message from peer RsNQjV[0m
+26.10.13 19:35:47[38;2;128;128;128m.688180[0m  [38;2;000;000;205m[1mDebug   [0m  [1mYamuxConn[0m  [3mignoring received ACK on existing stream id 4[0m
+26.10.13 19:35:47[38;2;128;128;128m.699150[0m  [38;2;000;000;205m[1mDebug   [0m  [1mgossip[0m  [3mBbHG8t peer RsNQjV added to mesh (size=1) for topic gossip_bounds_topic[0m
+26.10.13 19:35:47[38;2;128;128;128m.810826[0m  [38;2;000;000;205m[1mDebug   [0m  [1mgossip[0m  [3mBbHG8t setting fanout period for gossip_bounds_topic, 1472941->1562941[0m
+26.10.13 19:35:47[38;2;128;128;128m.810908[0m  [38;2;000;000;205m[1mDebug   [0m  [1mgossip[0m  [3mBbHG8t message forwarded, topic=gossip_bounds_topic, m=1, s=0[0m
+26.10.13 19:35:47[38;2;128;128;128m.886247[0m  [38;2;000;000;205m[1mDebug   [0m  [1mgossip[0m  [3mBbHG8t setting fanout period for gossip_bounds_topic, 1473017->1563017[0m
+26.10.13 19:35:47[38;2;128;128;128m.886315[0m  [38;2;000;000;205m[1mDebug   [0m  [1mgossip[0m  [3mBbHG8t message forwarded, topic=gossip_bounds_topic, m=1, s=0[0m
+26.10.13 19:35:47[38;2;128;128;128m.961646[0m  [38;2;000;000;205m[1mDebug   [0m  [1mgossip[0m  [3mBbHG8t setting fanout period for gossip_bounds_topic, 1473092->1563092[0m
+26.10.13 19:35:47[38;2;128;128;128m.961714[0m  [38;2;000;000;205m[1mDebug   [0m  [1mgossip[0m  [3mBbHG8t message forwarded, topic=gossip_bounds_topic, m=1, s=0[0m
+26.10.13 19:35:48[38;2;128;128;128m.037156[0m  [38;2;000;000;205m[1mDebug   [0m  [1mgossip[0m  [3mBbHG8t setting fanout period for gossip_bounds_topic, 1473168->1563168[0m
+26.10.13 19:35:48[38;2;128;128;128m.037231[0m  [38;2;000;000;205m[1mDebug   [0m  [1mgossip[0m  [3mBbHG8t message forwarded, topic=gossip_bounds_topic, m=1, s=0[0m
+26.10.13 19:35:48[38;2;128;128;128m.112624[0m  [38;2;000;000;205m[1mDebug   [0m  [1mgossip[0m  [3mBbHG8t setting fanout period for gossip_bounds_topic, 1473243->1563243[0m
+26.10.13 19:35:48[38;2;128;128;128m.112699[0m  [38;2;000;000;205m[1mDebug   [0m  [1mgossip[0m  [3mBbHG8t message forwarded, topic=gossip_bounds_topic, m=1, s=0[0m
+26.10.13 19:35:48[38;2;128;128;128m.188075[0m  [38;2;000;000;205m[1mDebug   [0m  [1mgossip[0m  [3mBbHG8t setting fanout period for gossip_bounds_topic, 1473319->1563319[0m
+26.10.13 19:35:48[38;2;128;128;128m.188187[0m  [38;2;000;000;205m[1mDebug   [0m  [1mgossip[0m  [3mBbHG8t message forwarded, topic=gossip_bounds_topic, m=1, s=0[0m
+26.10.13 19:35:48[38;2;128;128;128m.263553[0m  [38;2;000;000;205m[1mDebug   [0m  [1mgossip[0m  [3mBbHG8t setting fanout period for gossip_bounds_topic, 1473394->1563394[0m
+26.10.13 19:35:48[38;2;128;128;128m.263627[0m  [38;2;000;000;205m[1mDebug   [0m  [1mgossip[0m  [3mBbHG8t message forwarded, topic=gossip_bounds_topic, m=1, s=0[0m
+26.10.13 19:35:48[38;2;128;128;128m.338990[0m  [38;2;000;000;205m[1mDebug   [0m  [1mgossip[0m  [3mBbHG8t setting fanout period for gossip_bounds_topic, 1473469->1563469[0m
+26.10.13 19:35:48[38;2;128;128;128m.339089[0m  [38;2;000;000;205m[1mDebug   [0m  [1mgossip[0m  [3mBbHG8t message forwarded, topic=gossip_bounds_topic, m=1, s=0[0m
+26.10.13 19:35:48[38;2;128;128;128m.414556[0m  [38;2;000;000;205m[1mDebug   [0m  [1mgossip[0m  [3mBbHG8t setting fanout period for gossip_bounds_topic, 1473545->1563545[0m
+26.10.13 19:35:48[38;2;128;128;128m.414723[0m  [38;2;000;000;205m[1mDebug   [0m  [1mgossip[0m  [3mBbHG8t message forwarded, topic=gossip_bounds_topic, m=1, s=0[0m
+26.10.13 19:35:48[38;2;128;128;128m.490067[0m  [38;2;000;000;205m[1mDebug   [0m  [1mgossip[0m  [3mBbHG8t setting fanout period for gossip_bounds_topic, 1473621->1563621[0m
+26.10.13 19:35:48[38;2;128;128;128m.490135[0m  [38;2;000;000;205m[1mDebug   [0m  [1mgossip[0m  [3mBbHG8t message forwarded, topic=gossip_bounds_topic, m=1, s=0[0m
+26.10.13 19:35:48[38;2;128;128;128m.566489[0m  [38;2;000;000;205m[1mDebug   [0m  [1mgossip[0m  [3mBbHG8t setting fanout period for gossip_bounds_topic, 1473697->1563697[0m
+26.10.13 19:35:48[38;2;128;128;128m.566752[0m  [38;2;000;000;205m[1mDebug   [0m  [1mgossip[0m  [3mBbHG8t message forwarded, topic=gossip_bounds_topic, m=1, s=0[0m
+26.10.13 19:35:48[38;2;128;128;128m.574399[0m  [38;2;255;165;000m[1mWarning [0m  [1mgossip[0m  BbHG8t dropping oversized outbound RPC: peer=RsNQjV, incoming_bytes=65618, pending_bytes=0, cap=4096, consecutive_drops=1 (GOSS-04)[0m
+26.10.13 19:35:48[38;2;128;128;128m.642358[0m  [38;2;000;000;205m[1mDebug   [0m  [1mgossip[0m  [3mBbHG8t setting fanout period for gossip_bounds_topic, 1473773->1563773[0m
+26.10.13 19:35:48[38;2;128;128;128m.642465[0m  [38;2;000;000;205m[1mDebug   [0m  [1mgossip[0m  [3mBbHG8t message forwarded, topic=gossip_bounds_topic, m=1, s=0[0m
+26.10.13 19:35:48[38;2;128;128;128m.649307[0m  [38;2;255;165;000m[1mWarning [0m  [1mgossip[0m  BbHG8t dropping oversized outbound RPC: peer=RsNQjV, incoming_bytes=65618, pending_bytes=0, cap=4096, consecutive_drops=2 (GOSS-04)[0m
+26.10.13 19:35:48[38;2;128;128;128m.718091[0m  [38;2;000;000;205m[1mDebug   [0m  [1mgossip[0m  [3mBbHG8t setting fanout period for gossip_bounds_topic, 1473849->1563849[0m
+26.10.13 19:35:48[38;2;128;128;128m.718197[0m  [38;2;000;000;205m[1mDebug   [0m  [1mgossip[0m  [3mBbHG8t message forwarded, topic=gossip_bounds_topic, m=1, s=0[0m
+26.10.13 19:35:48[38;2;128;128;128m.724241[0m  [38;2;255;165;000m[1mWarning [0m  [1mgossip[0m  BbHG8t dropping oversized outbound RPC: peer=RsNQjV, incoming_bytes=65618, pending_bytes=0, cap=4096, consecutive_drops=3 (GOSS-04)[0m
+26.10.13 19:35:48[38;2;128;128;128m.724288[0m  [38;2;000;000;205m[1mDebug   [0m  [1mYamuxConn[0m  [3mRST from stream 4[0m
+26.10.13 19:35:48[38;2;128;128;128m.724443[0m  [38;2;000;000;205m[1mDebug   [0m  [1mYamuxConn[0m  [3merasing stream 4[0m
+26.10.13 19:35:48[38;2;128;128;128m.724517[0m  [38;2;000;000;205m[1mDebug   [0m  [1mYamuxConn[0m  [3mRST from stream 1[0m
+26.10.13 19:35:48[38;2;128;128;128m.724525[0m  [38;2;000;000;205m[1mDebug   [0m  [1mYamuxConn[0m  [3merasing stream 1[0m
+26.10.13 19:35:48[38;2;128;128;128m.724527[0m  [38;2;000;000;205m[1mDebug   [0m  [1mYamuxConn[0m  [3merasing stream 4[0m
+26.10.13 19:35:48[38;2;128;128;128m.724549[0m  [38;2;000;000;205m[1mDebug   [0m  [1mYamuxConn[0m  [3mRST from stream 4[0m
+26.10.13 19:35:48[38;2;128;128;128m.724555[0m  [38;2;000;000;205m[1mDebug   [0m  [1mYamuxConn[0m  [3merasing stream 4[0m
+26.10.13 19:35:48[38;2;128;128;128m.724569[0m  [38;2;000;000;205m[1mDebug   [0m  [1mgossip[0m  [3mBbHG8t peer RsNQjV disconnected[0m
+26.10.13 19:35:48[38;2;128;128;128m.724582[0m  [38;2;000;000;205m[1mDebug   [0m  [1mgossip[0m  [3mBbHG8t peer RsNQjV unsubscribing from gossip_bounds_topic[0m
+26.10.13 19:35:48[38;2;128;128;128m.724833[0m  [38;2;000;000;205m[1mDebug   [0m  [1mYamuxConn[0m  [3merasing stream 1[0m
+26.10.13 19:35:48[38;2;128;128;128m.724924[0m  [38;2;000;000;205m[1mDebug   [0m  [1mYamuxConn[0m  [3mstream 4 no longer exists[0m
+[2026-10-13 19:35:48.793679192][th:1452][error] GossipPubSub Address monitoring timer error: Operation canceled
+26.10.13 19:35:48[38;2;128;128;128m.793832[0m  [38;2;000;000;205m[1mDebug   [0m  [1mYamuxConn[0m  [3mclosing connection, reason: Connection: closed by this host[0m
+26.10.13 19:35:48[38;2;128;128;128m.794090[0m  [38;2;000;000;205m[1mDebug   [0m  [1mConnectionManager[0m  [3mClosed 1 connections to peer 12D3KooWJMe181A9uDMdrnNynrAg7RMnxQELaPrczVab5LRsNQjV, 0 were already closed[0m
+26.10.13 19:35:48[38;2;128;128;128m.794120[0m  [38;2;000;000;205m[1mDebug   [0m  [1mYamuxConn[0m  [3mclosed by remote peer, code=0[0m
+26.10.13 19:35:48[38;2;128;128;128m.794139[0m  [38;2;000;000;205m[1mDebug   [0m  [1mYamuxConn[0m  [3mclosing connection, reason: Connection: closed by remote peer[0m
+26.10.13 19:35:48[38;2;128;128;128m.794174[0m  [38;2;255;165;000m[1mWarning [0m  [1mListenerManager[0m  can not negotiate protocols, Connection: closed by remote peer[0m
+26.10.13 19:35:48[38;2;128;128;128m.794182[0m  [38;2;000;000;205m[1mDebug   [0m  [1mYamuxConn[0m  [3mRST from stream 2[0m
+26.10.13 19:35:48[38;2;128;128;128m.794213[0m  [38;2;255;165;000m[1mWarning [0m  [1mListenerManager[0m  can not accept valid connection, Operation canceled[0m
+26.10.13 19:35:48[38;2;128;128;128m.794232[0m  [38;2;000;000;205m[1mDebug   [0m  [1mYamuxConn[0m  [3merasing stream 2[0m
+[       OK ] GossipPubSubBoundsTest.BelowCapAdmittedAboveCapDroppedAtEntry (1123 ms)
+[ RUN      ] GossipPubSubBoundsTest.BlockedPeerRedialRejected
+Current limits: 16384 (soft), 1048576 (hard)
+New limits set successfully: 16384 (soft), 1048576 (hard)
+Initialized relay addresses
+[2026-10-13 19:35:48.797061498][th:1430][info] GossipPubSub /ip4/0.0.0.0/tcp/40303/p2p/12D3KooWKwmMZF3zoFKi2BgmyreA222NGSqcWJiDAiV76oEmLuX3: Starting PubSub service
+[2026-10-13 19:35:48.797782348][th:1455][info] GossipPubSub Starting address monitoring system for mobile network changes
+[2026-10-13 19:35:48.797827649][th:1455][info] GossipPubSub === CURRENT NETWORK STATE ===
+[2026-10-13 19:35:48.797892690][th:1455][info] GossipPubSub Primary listening address: /ip4/0.0.0.0/tcp/40303/p2p/12D3KooWKwmMZF3zoFKi2BgmyreA222NGSqcWJiDAiV76oEmLuX3
+[2026-10-13 19:35:48.797899910][th:1455][info] GossipPubSub Host peer info addresses (0):
+[2026-10-13 19:35:48.797904470][th:1455][info] GossipPubSub Additional addresses we track (0):
+[2026-10-13 19:35:48.797909970][th:1455][info] GossipPubSub Listening addresses (1):
+[2026-10-13 19:35:48.797916711][th:1455][info] GossipPubSub   -> /ip4/0.0.0.0/tcp/40303/p2p/12D3KooWKwmMZF3zoFKi2BgmyreA222NGSqcWJiDAiV76oEmLuX3
+[2026-10-13 19:35:48.797920721][th:1455][info] GossipPubSub Interface addresses (0):
+[2026-10-13 19:35:48.797923461][th:1455][info] GossipPubSub === RAW OBSERVED ADDRESS DEBUG ===
+[2026-10-13 19:35:48.797935851][th:1455][info] GossipPubSub Local address: /ip4/0.0.0.0/tcp/40303/p2p/12D3KooWKwmMZF3zoFKi2BgmyreA222NGSqcWJiDAiV76oEmLuX3 -> 0 raw observed, 0 activated+confirmed
+[2026-10-13 19:35:48.797943051][th:1455][info] GossipPubSub TOTAL: 0 raw observed addresses, 0 activated+confirmed addresses
+[2026-10-13 19:35:48.797945841][th:1455][info] GossipPubSub === END RAW OBSERVED ADDRESS DEBUG ===
+[2026-10-13 19:35:48.797949331][th:1455][info] GossipPubSub Observed addresses - all (0):
+[2026-10-13 19:35:48.797953451][th:1455][info] GossipPubSub Observed addresses - confirmed only (0):
+[2026-10-13 19:35:48.797957211][th:1455][info] GossipPubSub Relay addresses (0):
+[2026-10-13 19:35:48.797967761][th:1455][warning] GossipPubSub Failed to get addresses from peer repository: not found
+[2026-10-13 19:35:48.798051583][th:1455][info] GossipPubSub Found 1 valid network interfaces
+[2026-10-13 19:35:48.798056283][th:1455][info] GossipPubSub Current network interfaces (1):
+[2026-10-13 19:35:48.798061643][th:1455][info] GossipPubSub   -> 172.27.15.215
+[2026-10-13 19:35:48.798067713][th:1455][info] GossipPubSub Active connections: 0
+[2026-10-13 19:35:48.798070433][th:1455][info] GossipPubSub === PEER CONNECTION DETAILS ===
+[2026-10-13 19:35:48.798073743][th:1455][info] GossipPubSub NOTE: Observed addresses need to be seen by 4+ different peer groups to become 'activated'
+[2026-10-13 19:35:48.798078073][th:1455][info] GossipPubSub NOTE: Current connections: 0, so max possible observers: 0
+[2026-10-13 19:35:48.798080833][th:1455][info] GossipPubSub === END PEER CONNECTION DETAILS ===
+[2026-10-13 19:35:48.798083443][th:1455][info] GossipPubSub Connection manager stats:
+[2026-10-13 19:35:48.798088273][th:1455][info] GossipPubSub   -> Max connections: 1000
+[2026-10-13 19:35:48.798092103][th:1455][info] GossipPubSub   -> Current connections: 0
+[2026-10-13 19:35:48.798094583][th:1455][info] GossipPubSub === END NETWORK STATE ===
+26.10.13 19:35:48[38;2;128;128;128m.798337[0m  [38;2;000;000;205m[1mDebug   [0m  [1mTcpListener[0m  [3mEnumerated 1 network interfaces for IPv4[0m
+26.10.13 19:35:48[38;2;128;128;128m.798365[0m  [38;2;000;000;205m[1mDebug   [0m  [1mTcpListener[0m  [3mResolved 0.0.0.0:40303 to 1 interface addresses[0m
+26.10.13 19:35:48[38;2;128;128;128m.798464[0m  [38;2;034;139;034m[1mInfo    [0m  [1mgossip[0m  EmLuX3 started[0m
+[2026-10-13 19:35:48.798542226][th:1455][info] GossipPubSub /ip4/0.0.0.0/tcp/40303/p2p/12D3KooWKwmMZF3zoFKi2BgmyreA222NGSqcWJiDAiV76oEmLuX3 : PubSub service started
+26.10.13 19:35:48[38;2;128;128;128m.798720[0m  [38;2;000;000;205m[1mDebug   [0m  [1mgossip[0m  [3mEmLuX3 created entry for topic gossip_bounds_topic[0m
+26.10.13 19:35:48[38;2;128;128;128m.798740[0m  [38;2;000;000;205m[1mDebug   [0m  [1mgossip[0m  [3mEmLuX3 self subscribed to gossip_bounds_topic[0m
+[2026-10-13 19:35:48.798799391][th:1455][info] GossipPubSub /ip4/0.0.0.0/tcp/40303/p2p/12D3KooWKwmMZF3zoFKi2BgmyreA222NGSqcWJiDAiV76oEmLuX3: PubSub subscribed to topic 'gossip_bounds_topic'
+26.10.13 19:35:48[38;2;128;128;128m.798975[0m  [38;2;000;000;205m[1mDebug   [0m  [1mroute-helper[0m  [3mGetting best source addresses for both IPv4 and IPv6[0m
+26.10.13 19:35:48[38;2;128;128;128m.799024[0m  [38;2;000;000;205m[1mDebug   [0m  [1mroute-helper[0m  [3mSelected loopback IPv4 source: /ip4/127.0.0.1/tcp/0[0m
+26.10.13 19:35:48[38;2;128;128;128m.799033[0m  [38;2;034;139;034m[1mInfo    [0m  [1mroute-helper[0m  Source addresses selected - IPv4: /ip4/127.0.0.1/tcp/0, IPv6: none[0m
+26.10.13 19:35:48[38;2;128;128;128m.799659[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mSelect a protocol[0m
+26.10.13 19:35:48[38;2;128;128;128m.799674[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mAssertions pass?[0m
+26.10.13 19:35:48[38;2;128;128;128m.799688[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mContinued[0m
+26.10.13 19:35:48[38;2;128;128;128m.799689[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mSelect a protocol[0m
+26.10.13 19:35:48[38;2;128;128;128m.799692[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mAssertions pass?[0m
+26.10.13 19:35:48[38;2;128;128;128m.799695[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mContinued[0m
+26.10.13 19:35:48[38;2;128;128;128m.799835[0m  [38;2;034;139;034m[1mInfo    [0m  [1mNoise[0m  securing inbound connection[0m
+26.10.13 19:35:48[38;2;128;128;128m.799877[0m  [38;2;034;139;034m[1mInfo    [0m  [1mNoise[0m  securing outbound connection to 12D3KooWKwmMZF3zoFKi2BgmyreA222NGSqcWJiDAiV76oEmLuX3[0m
+26.10.13 19:35:48[38;2;128;128;128m.801785[0m  [38;2;034;139;034m[1mInfo    [0m  [1mNoiseHandshake[0m  Handshake succeeded[0m
+26.10.13 19:35:48[38;2;128;128;128m.801830[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mSelect a protocol[0m
+26.10.13 19:35:48[38;2;128;128;128m.801836[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mAssertions pass?[0m
+26.10.13 19:35:48[38;2;128;128;128m.801843[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mContinued[0m
+26.10.13 19:35:48[38;2;128;128;128m.802259[0m  [38;2;034;139;034m[1mInfo    [0m  [1mNoiseHandshake[0m  Handshake succeeded[0m
+26.10.13 19:35:48[38;2;128;128;128m.802291[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mSelect a protocol[0m
+26.10.13 19:35:48[38;2;128;128;128m.802297[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mAssertions pass?[0m
+26.10.13 19:35:48[38;2;128;128;128m.802304[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mContinued[0m
+26.10.13 19:35:48[38;2;128;128;128m.802800[0m  [38;2;034;139;034m[1mInfo    [0m  [1mListenerManager[0m  Added connection for, 12D3KooWJMe181A9uDMdrnNynrAg7RMnxQELaPrczVab5LRsNQjV[0m
+26.10.13 19:35:48[38;2;128;128;128m.802847[0m  [38;2;034;139;034m[1mInfo    [0m  [1mListenerManager[0m  Added connection for, 12D3KooWKwmMZF3zoFKi2BgmyreA222NGSqcWJiDAiV76oEmLuX3[0m
+26.10.13 19:35:48[38;2;128;128;128m.802876[0m  [38;2;000;000;205m[1mDebug   [0m  [1mroute-helper[0m  [3mGetting best source addresses for both IPv4 and IPv6[0m
+26.10.13 19:35:48[38;2;128;128;128m.802896[0m  [38;2;034;139;034m[1mInfo    [0m  [1mDialerImpl[0m  Checking whether address /ip4/127.0.0.1/tcp/40303 has relay[0m
+26.10.13 19:35:48[38;2;128;128;128m.802922[0m  [38;2;034;139;034m[1mInfo    [0m  [1mDialerImpl[0m  Completed Dial to 12D3KooWKwmMZF3zoFKi2BgmyreA222NGSqcWJiDAiV76oEmLuX3[0m
+26.10.13 19:35:48[38;2;128;128;128m.802927[0m  [38;2;000;000;205m[1mDebug   [0m  [1mroute-helper[0m  [3mLooking up preferred route for destination: 8.8.8.8[0m
+26.10.13 19:35:48[38;2;128;128;128m.802976[0m  [38;2;000;000;205m[1mDebug   [0m  [1mroute-helper[0m  [3mUsing /proc/net/route for IPv4 route lookup[0m
+26.10.13 19:35:48[38;2;128;128;128m.803007[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mSelect a protocol[0m
+26.10.13 19:35:48[38;2;128;128;128m.803014[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mAssertions pass?[0m
+26.10.13 19:35:48[38;2;128;128;128m.803036[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mContinued[0m
+26.10.13 19:35:48[38;2;128;128;128m.803081[0m  [38;2;000;000;205m[1mDebug   [0m  [1mroute-helper[0m  [3mLinux IPv4 route found: interface=eth0, source=172.27.15.215, metric=0[0m
+26.10.13 19:35:48[38;2;128;128;128m.803142[0m  [38;2;000;000;205m[1mDebug   [0m  [1mroute-helper[0m  [3mSelected route-based IPv4 source: /ip4/172.27.15.215/tcp/40303[0m
+26.10.13 19:35:48[38;2;128;128;128m.803150[0m  [38;2;034;139;034m[1mInfo    [0m  [1mroute-helper[0m  Source addresses selected - IPv4: /ip4/172.27.15.215/tcp/40303, IPv6: none[0m
+26.10.13 19:35:48[38;2;128;128;128m.803287[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mSelect a protocol[0m
+26.10.13 19:35:48[38;2;128;128;128m.803300[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mAssertions pass?[0m
+26.10.13 19:35:48[38;2;128;128;128m.803308[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mContinued[0m
+26.10.13 19:35:48[38;2;128;128;128m.803336[0m  [38;2;000;000;205m[1mDebug   [0m  [1mYamuxConn[0m  [3mcreating inbound stream 2[0m
+26.10.13 19:35:48[38;2;128;128;128m.803421[0m  [38;2;000;000;205m[1mDebug   [0m  [1mYamuxConn[0m  [3mcreating inbound stream 1[0m
+26.10.13 19:35:48[38;2;128;128;128m.803428[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mSelect a protocol[0m
+26.10.13 19:35:48[38;2;128;128;128m.803430[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mAssertions pass?[0m
+26.10.13 19:35:48[38;2;128;128;128m.803435[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mContinued[0m
+26.10.13 19:35:48[38;2;128;128;128m.803448[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mSelect a protocol[0m
+26.10.13 19:35:48[38;2;128;128;128m.803453[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mAssertions pass?[0m
+26.10.13 19:35:48[38;2;128;128;128m.803458[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mContinued[0m
+26.10.13 19:35:48[38;2;128;128;128m.803774[0m  [38;2;000;000;205m[1mDebug   [0m  [1mYamuxConn[0m  [3mignoring received ACK on existing stream id 1[0m
+26.10.13 19:35:48[38;2;128;128;128m.803794[0m  [38;2;000;000;205m[1mDebug   [0m  [1mYamuxConn[0m  [3mignoring received ACK on existing stream id 2[0m
+26.10.13 19:35:48[38;2;128;128;128m.803838[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3munknown protocol /ipfs/id/1.0.0 proposed by client[0m
+26.10.13 19:35:48[38;2;128;128;128m.804132[0m  [38;2;000;000;205m[1mDebug   [0m  [1mgossip[0m  [3mEmLuX3 peer RsNQjV connected[0m
+26.10.13 19:35:48[38;2;128;128;128m.804175[0m  [38;2;000;000;205m[1mDebug   [0m  [1mgossip[0m  [3mEmLuX3 tagged peer RsNQjV for joining gossip network[0m
+26.10.13 19:35:48[38;2;128;128;128m.804267[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mSelect a protocol[0m
+26.10.13 19:35:48[38;2;128;128;128m.804273[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mAssertions pass?[0m
+26.10.13 19:35:48[38;2;128;128;128m.804280[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mContinued[0m
+26.10.13 19:35:48[38;2;128;128;128m.804664[0m  [38;2;000;000;205m[1mDebug   [0m  [1mYamuxConn[0m  [3mcreating inbound stream 4[0m
+26.10.13 19:35:48[38;2;128;128;128m.804730[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mSelect a protocol[0m
+26.10.13 19:35:48[38;2;128;128;128m.804738[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mAssertions pass?[0m
+26.10.13 19:35:48[38;2;128;128;128m.804745[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mContinued[0m
+26.10.13 19:35:48[38;2;128;128;128m.804828[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mprotocol /ipfs/id/1.0.0 was not accepted by peer[0m
+26.10.13 19:35:48[38;2;128;128;128m.804844[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mnone of proposed protocols were accepted by peer[0m
+26.10.13 19:35:48[38;2;128;128;128m.804865[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mFailed to negotiate protocols: /ipfs/id/1.0.0[0m
+26.10.13 19:35:48[38;2;128;128;128m.805333[0m  [38;2;000;000;205m[1mDebug   [0m  [1mgossip[0m  [3mEmLuX3 peer RsNQjV subscribed, topic gossip_bounds_topic[0m
+26.10.13 19:35:48[38;2;128;128;128m.805359[0m  [38;2;000;000;205m[1mDebug   [0m  [1mgossip[0m  [3mEmLuX3 peer RsNQjV subscribing to gossip_bounds_topic[0m
+26.10.13 19:35:48[38;2;128;128;128m.805377[0m  [38;2;000;000;205m[1mDebug   [0m  [1mgossip[0m  [3mEmLuX3 finished dispatching message from peer RsNQjV[0m
+26.10.13 19:35:48[38;2;128;128;128m.805427[0m  [38;2;000;000;205m[1mDebug   [0m  [1mYamuxConn[0m  [3mignoring received ACK on existing stream id 4[0m
+26.10.13 19:35:48[38;2;128;128;128m.823171[0m  [38;2;000;000;205m[1mDebug   [0m  [1mgossip[0m  [3mEmLuX3 peer RsNQjV added to mesh (size=1) for topic gossip_bounds_topic[0m
+26.10.13 19:35:48[38;2;128;128;128m.929842[0m  [38;2;000;000;205m[1mDebug   [0m  [1mgossip[0m  [3mEmLuX3 setting fanout period for gossip_bounds_topic, 1474060->1564060[0m
+26.10.13 19:35:48[38;2;128;128;128m.929938[0m  [38;2;000;000;205m[1mDebug   [0m  [1mgossip[0m  [3mEmLuX3 message forwarded, topic=gossip_bounds_topic, m=1, s=0[0m
+26.10.13 19:35:48[38;2;128;128;128m.948238[0m  [38;2;255;165;000m[1mWarning [0m  [1mgossip[0m  EmLuX3 dropping oversized outbound RPC: peer=RsNQjV, incoming_bytes=65618, pending_bytes=0, cap=4096, consecutive_drops=1 (GOSS-04)[0m
+26.10.13 19:35:49[38;2;128;128;128m.005402[0m  [38;2;000;000;205m[1mDebug   [0m  [1mgossip[0m  [3mEmLuX3 setting fanout period for gossip_bounds_topic, 1474136->1564136[0m
+26.10.13 19:35:49[38;2;128;128;128m.005496[0m  [38;2;000;000;205m[1mDebug   [0m  [1mgossip[0m  [3mEmLuX3 message forwarded, topic=gossip_bounds_topic, m=1, s=0[0m
+26.10.13 19:35:49[38;2;128;128;128m.023248[0m  [38;2;255;165;000m[1mWarning [0m  [1mgossip[0m  EmLuX3 dropping oversized outbound RPC: peer=RsNQjV, incoming_bytes=65618, pending_bytes=0, cap=4096, consecutive_drops=2 (GOSS-04)[0m
+26.10.13 19:35:49[38;2;128;128;128m.080931[0m  [38;2;000;000;205m[1mDebug   [0m  [1mgossip[0m  [3mEmLuX3 setting fanout period for gossip_bounds_topic, 1474211->1564211[0m
+26.10.13 19:35:49[38;2;128;128;128m.081023[0m  [38;2;000;000;205m[1mDebug   [0m  [1mgossip[0m  [3mEmLuX3 message forwarded, topic=gossip_bounds_topic, m=1, s=0[0m
+26.10.13 19:35:49[38;2;128;128;128m.098244[0m  [38;2;255;165;000m[1mWarning [0m  [1mgossip[0m  EmLuX3 dropping oversized outbound RPC: peer=RsNQjV, incoming_bytes=65618, pending_bytes=0, cap=4096, consecutive_drops=3 (GOSS-04)[0m
+26.10.13 19:35:49[38;2;128;128;128m.098293[0m  [38;2;000;000;205m[1mDebug   [0m  [1mYamuxConn[0m  [3mRST from stream 4[0m
+26.10.13 19:35:49[38;2;128;128;128m.098456[0m  [38;2;000;000;205m[1mDebug   [0m  [1mYamuxConn[0m  [3merasing stream 4[0m
+26.10.13 19:35:49[38;2;128;128;128m.098531[0m  [38;2;000;000;205m[1mDebug   [0m  [1mYamuxConn[0m  [3mRST from stream 1[0m
+26.10.13 19:35:49[38;2;128;128;128m.098539[0m  [38;2;000;000;205m[1mDebug   [0m  [1mYamuxConn[0m  [3merasing stream 1[0m
+26.10.13 19:35:49[38;2;128;128;128m.098556[0m  [38;2;000;000;205m[1mDebug   [0m  [1mYamuxConn[0m  [3merasing stream 4[0m
+26.10.13 19:35:49[38;2;128;128;128m.098565[0m  [38;2;000;000;205m[1mDebug   [0m  [1mYamuxConn[0m  [3mRST from stream 4[0m
+26.10.13 19:35:49[38;2;128;128;128m.098567[0m  [38;2;000;000;205m[1mDebug   [0m  [1mYamuxConn[0m  [3merasing stream 4[0m
+26.10.13 19:35:49[38;2;128;128;128m.098576[0m  [38;2;000;000;205m[1mDebug   [0m  [1mgossip[0m  [3mEmLuX3 peer RsNQjV disconnected[0m
+26.10.13 19:35:49[38;2;128;128;128m.098589[0m  [38;2;000;000;205m[1mDebug   [0m  [1mgossip[0m  [3mEmLuX3 peer RsNQjV unsubscribing from gossip_bounds_topic[0m
+26.10.13 19:35:49[38;2;128;128;128m.098795[0m  [38;2;000;000;205m[1mDebug   [0m  [1mYamuxConn[0m  [3merasing stream 1[0m
+26.10.13 19:35:49[38;2;128;128;128m.098870[0m  [38;2;000;000;205m[1mDebug   [0m  [1mYamuxConn[0m  [3mstream 4 no longer exists[0m
+26.10.13 19:35:49[38;2;128;128;128m.156614[0m  [38;2;000;000;205m[1mDebug   [0m  [1mroute-helper[0m  [3mGetting best source addresses for both IPv4 and IPv6[0m
+26.10.13 19:35:49[38;2;128;128;128m.156699[0m  [38;2;000;000;205m[1mDebug   [0m  [1mroute-helper[0m  [3mSelected loopback IPv4 source: /ip4/127.0.0.1/tcp/0[0m
+26.10.13 19:35:49[38;2;128;128;128m.156707[0m  [38;2;034;139;034m[1mInfo    [0m  [1mroute-helper[0m  Source addresses selected - IPv4: /ip4/127.0.0.1/tcp/0, IPv6: none[0m
+26.10.13 19:35:49[38;2;128;128;128m.156964[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mSelect a protocol[0m
+26.10.13 19:35:49[38;2;128;128;128m.156984[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mAssertions pass?[0m
+26.10.13 19:35:49[38;2;128;128;128m.156996[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mContinued[0m
+26.10.13 19:35:49[38;2;128;128;128m.157044[0m  [38;2;000;000;205m[1mDebug   [0m  [1mYamuxConn[0m  [3mcreating inbound stream 3[0m
+26.10.13 19:35:49[38;2;128;128;128m.157151[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mSelect a protocol[0m
+26.10.13 19:35:49[38;2;128;128;128m.157167[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mAssertions pass?[0m
+26.10.13 19:35:49[38;2;128;128;128m.157178[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mContinued[0m
+26.10.13 19:35:49[38;2;128;128;128m.157213[0m  [38;2;000;000;205m[1mDebug   [0m  [1mYamuxConn[0m  [3mignoring received ACK on existing stream id 3[0m
+26.10.13 19:35:49[38;2;128;128;128m.157981[0m  [38;2;000;000;205m[1mDebug   [0m  [1mgossip[0m  [3mEmLuX3 peer RsNQjV connected[0m
+26.10.13 19:35:49[38;2;128;128;128m.158024[0m  [38;2;000;000;205m[1mDebug   [0m  [1mgossip[0m  [3mEmLuX3 tagged peer RsNQjV for joining gossip network[0m
+26.10.13 19:35:49[38;2;128;128;128m.158136[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mSelect a protocol[0m
+26.10.13 19:35:49[38;2;128;128;128m.158144[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mAssertions pass?[0m
+26.10.13 19:35:49[38;2;128;128;128m.158150[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mContinued[0m
+26.10.13 19:35:49[38;2;128;128;128m.158376[0m  [38;2;000;000;205m[1mDebug   [0m  [1mYamuxConn[0m  [3mcreating inbound stream 6[0m
+26.10.13 19:35:49[38;2;128;128;128m.158448[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mSelect a protocol[0m
+26.10.13 19:35:49[38;2;128;128;128m.158457[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mAssertions pass?[0m
+26.10.13 19:35:49[38;2;128;128;128m.158464[0m  [38;2;000;000;205m[1mDebug   [0m  [1mmultiselect[0m  [3mContinued[0m
+26.10.13 19:35:49[38;2;128;128;128m.158678[0m  [38;2;000;000;205m[1mDebug   [0m  [1mgossip[0m  [3mEmLuX3 peer RsNQjV subscribed, topic gossip_bounds_topic[0m
+26.10.13 19:35:49[38;2;128;128;128m.158703[0m  [38;2;000;000;205m[1mDebug   [0m  [1mgossip[0m  [3mEmLuX3 peer RsNQjV subscribing to gossip_bounds_topic[0m
+26.10.13 19:35:49[38;2;128;128;128m.158727[0m  [38;2;000;000;205m[1mDebug   [0m  [1mgossip[0m  [3mEmLuX3 finished dispatching message from peer RsNQjV[0m
+26.10.13 19:35:49[38;2;128;128;128m.158775[0m  [38;2;000;000;205m[1mDebug   [0m  [1mYamuxConn[0m  [3mignoring received ACK on existing stream id 6[0m
+26.10.13 19:35:49[38;2;128;128;128m.173146[0m  [38;2;000;000;205m[1mDebug   [0m  [1mgossip[0m  [3mEmLuX3 peer RsNQjV added to mesh (size=1) for topic gossip_bounds_topic[0m
+26.10.13 19:35:49[38;2;128;128;128m.283558[0m  [38;2;000;000;205m[1mDebug   [0m  [1mgossip[0m  [3mEmLuX3 setting fanout period for gossip_bounds_topic, 1474414->1564414[0m
+26.10.13 19:35:49[38;2;128;128;128m.283670[0m  [38;2;000;000;205m[1mDebug   [0m  [1mgossip[0m  [3mEmLuX3 message forwarded, topic=gossip_bounds_topic, m=1, s=0[0m
+26.10.13 19:35:49[38;2;128;128;128m.298244[0m  [38;2;255;165;000m[1mWarning [0m  [1mgossip[0m  EmLuX3 dropping oversized outbound RPC: peer=RsNQjV, incoming_bytes=65618, pending_bytes=0, cap=4096, consecutive_drops=1 (GOSS-04)[0m
+26.10.13 19:35:49[38;2;128;128;128m.359522[0m  [38;2;000;000;205m[1mDebug   [0m  [1mgossip[0m  [3mEmLuX3 setting fanout period for gossip_bounds_topic, 1474490->1564490[0m
+26.10.13 19:35:49[38;2;128;128;128m.359610[0m  [38;2;000;000;205m[1mDebug   [0m  [1mgossip[0m  [3mEmLuX3 message forwarded, topic=gossip_bounds_topic, m=1, s=0[0m
+26.10.13 19:35:49[38;2;128;128;128m.373246[0m  [38;2;255;165;000m[1mWarning [0m  [1mgossip[0m  EmLuX3 dropping oversized outbound RPC: peer=RsNQjV, incoming_bytes=65618, pending_bytes=0, cap=4096, consecutive_drops=2 (GOSS-04)[0m
+26.10.13 19:35:49[38;2;128;128;128m.435226[0m  [38;2;000;000;205m[1mDebug   [0m  [1mgossip[0m  [3mEmLuX3 setting fanout period for gossip_bounds_topic, 1474566->1564566[0m
+26.10.13 19:35:49[38;2;128;128;128m.435327[0m  [38;2;000;000;205m[1mDebug   [0m  [1mgossip[0m  [3mEmLuX3 message forwarded, topic=gossip_bounds_topic, m=1, s=0[0m
+26.10.13 19:35:49[38;2;128;128;128m.448251[0m  [38;2;255;165;000m[1mWarning [0m  [1mgossip[0m  EmLuX3 dropping oversized outbound RPC: peer=RsNQjV, incoming_bytes=65618, pending_bytes=0, cap=4096, consecutive_drops=3 (GOSS-04)[0m
+26.10.13 19:35:49[38;2;128;128;128m.448300[0m  [38;2;000;000;205m[1mDebug   [0m  [1mYamuxConn[0m  [3mRST from stream 6[0m
+26.10.13 19:35:49[38;2;128;128;128m.448459[0m  [38;2;000;000;205m[1mDebug   [0m  [1mYamuxConn[0m  [3merasing stream 6[0m
+26.10.13 19:35:49[38;2;128;128;128m.448535[0m  [38;2;000;000;205m[1mDebug   [0m  [1mYamuxConn[0m  [3mRST from stream 3[0m
+26.10.13 19:35:49[38;2;128;128;128m.448543[0m  [38;2;000;000;205m[1mDebug   [0m  [1mYamuxConn[0m  [3merasing stream 3[0m
+26.10.13 19:35:49[38;2;128;128;128m.448554[0m  [38;2;000;000;205m[1mDebug   [0m  [1mYamuxConn[0m  [3merasing stream 6[0m
+26.10.13 19:35:49[38;2;128;128;128m.448565[0m  [38;2;000;000;205m[1mDebug   [0m  [1mYamuxConn[0m  [3mRST from stream 6[0m
+26.10.13 19:35:49[38;2;128;128;128m.448567[0m  [38;2;000;000;205m[1mDebug   [0m  [1mYamuxConn[0m  [3merasing stream 6[0m
+26.10.13 19:35:49[38;2;128;128;128m.448576[0m  [38;2;000;000;205m[1mDebug   [0m  [1mgossip[0m  [3mEmLuX3 peer RsNQjV disconnected[0m
+26.10.13 19:35:49[38;2;128;128;128m.448589[0m  [38;2;000;000;205m[1mDebug   [0m  [1mgossip[0m  [3mEmLuX3 peer RsNQjV unsubscribing from gossip_bounds_topic[0m
+[2026-10-13 19:35:49.448641047][th:1455][info] GossipPubSub Connection gater: blocking peer 12D3KooWJMe181A9uDMdrnNynrAg7RMnxQELaPrczVab5LRsNQjV
+pubsub_asan: /home/fuu/gnus/GeniusNetwork/thirdparty/libp2p/src/transport/impl/upgrader_session.cpp:88: void libp2p::transport::UpgraderSession::onSecured(outcome::result<std::shared_ptr<connection::SecureConnection>>): Assertion `close_res' failed.
+timeout: the monitored command dumped core
