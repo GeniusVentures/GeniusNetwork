@@ -1,20 +1,20 @@
 ---
 gsd_state_version: "1.0"
 milestone: v1.0
-current_phase: 2
-current_phase_name: Bitswap Callback Reentrancy
+current_phase: 3
 status: executing
-stopped_at: Phase 2 context gathered
-last_updated: "2026-10-13T03:29:52.972Z"
-last_activity: 2026-10-12
-last_activity_desc: Phase 01 complete, transitioned to Phase 2
-state_head: d7ee4938a2988eab2d4ac619036ea1632a8923d7
+stopped_at: Phase 2 complete, transitioned to Phase 3
+last_updated: "2026-10-13T17:10:48.927Z"
+last_activity: 2026-10-13
+last_activity_desc: Phase 2 marked complete
+state_head: b0c9ada61769574bed6020b14d2843eab7c8d528
 progress:
   total_phases: 4
-  completed_phases: 1
+  completed_phases: 2
   total_plans: 2
-  completed_plans: 1
+  completed_plans: 2
 milestone_name: IPFS P0 Remediation
+current_phase_name: GossipSub Resource Bounds
 ---
 
 # Project State
@@ -24,21 +24,21 @@ milestone_name: IPFS P0 Remediation
 See: .planning/PROJECT.md (updated 2026-10-12)
 
 **Core value:** Close the two non-CI P0 audit findings — Bitswap canceled-timer-as-timeout + callbacks-under-mutex, and unbounded GossipSub remote-driven state — with race regression tests as acceptance evidence, fixed at the actual integrated SHAs and verified through the thirdparty pin chain.
-**Current focus:** Phase 01 — Bitswap Timer Correctness
+**Current focus:** Phase 03 — GossipSub Resource Bounds
 
 ## Current Position
 
-Phase: 2 (Bitswap Callback Reentrancy) — READY TO EXECUTE
+Phase: 3 (GossipSub Resource Bounds) — READY TO PLAN
 Plan: Not started
-Status: Ready to execute
-Last activity: 2026-10-12 — Phase 01 complete, transitioned to Phase 2
+Status: Ready to plan
+Last activity: 2026-10-13 — Phase 2 complete, transitioned to Phase 3
 
-Progress: [███░░░░░░░] 25%
+Progress: [█████░░░░░] 50%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 1
+- Total plans completed: 2
 - Average duration: —
 - Total execution time: —
 
@@ -47,6 +47,7 @@ Progress: [███░░░░░░░] 25%
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 01 | 1 | - | - |
+| 02 | 1 | ~32 min | ~32 min |
 
 ## Accumulated Context
 
@@ -65,13 +66,12 @@ None yet.
 ### Blockers/Concerns
 
 - Phase 3 flagged needs-research during planning: Config surface breadth (2-field minimal vs fuller Go-anchored set), parser-side vs receiver-side enforcement, byte-cap default, sustained-overflow threshold K
-- Phase 1 planning must specify the timeout-injection seam (`seconds(5)`/`seconds(30)` are hardcoded constructors)
 
 ## Session Continuity
 
-Last session: 2026-10-13T02:16:51.459Z
-Stopped at: Phase 2 context gathered
-Resume file: .planning/workstreams/ipfs-improve/phases/02-bitswap-callback-reentrancy/02-CONTEXT.md
+Last session: 2026-10-13T17:10:48.927Z
+Stopped at: Phase 2 complete, transitioned to Phase 3
+Resume file: .planning/workstreams/ipfs-improve/ROADMAP.md
 
 ## Operator Next Steps
 

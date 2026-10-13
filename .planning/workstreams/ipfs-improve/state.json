@@ -11,7 +11,7 @@
     {
       "number": "2",
       "name": "Bitswap Callback Reentrancy",
-      "status": "pending"
+      "status": "complete"
     },
     {
       "number": "3",
@@ -25,9 +25,9 @@
     }
   ],
   "next": {
-    "command": "/gsd:progress --next",
-    "label": "Advance to the next step",
-    "reason": "Phase 2 of 4 · executing"
+    "command": "/gsd:progress",
+    "label": "Show progress",
+    "reason": "Unsure of state — showing progress"
   },
-  "updated_at": "2026-10-13T03:29:53.015Z"
+  "updated_at": "2026-10-13T17:10:48.968Z"
 }

@@ -13,7 +13,7 @@ Milestone v1.0 closes the two non-CI P0 findings from the `gnus_libp2p_compariso
 Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Bitswap Timer Correctness** - Canceled timers never fire the failure path; each request yields exactly one terminal result (completed 2026-10-12)
-- [ ] **Phase 2: Bitswap Callback Reentrancy** - Callbacks dispatched outside all mutexes; full race-ordering regression suite green
+- [x] **Phase 2: Bitswap Callback Reentrancy** - Callbacks dispatched outside all mutexes; full race-ordering regression suite green (completed 2026-10-13)
 - [ ] **Phase 3: GossipSub Resource Bounds** - Per-peer subscription table and outbound queue bounded, observable, with existing-path escalation
 - [ ] **Phase 4: Repin & Cross-Repo Verification** - Content-probed thirdparty pin bumps proven through SuperGenius focus suites and GeniusSDK build
 
@@ -45,9 +45,9 @@ Plans:
   3. A callback registered on an already-completed request receives the terminal result immediately (or fails fast) — no fresh timer is armed on a completed request
   4. The full race-ordering regression suite exists and passes: cancel raced with expiry (both orders), response-then-canceled-timer-fires (no failure after success), timeout-then-late-response (no double callback), and reentrant callback canceling its own request without deadlock
 
-**Plans**: 1 plan
+**Plans**: 1/1 plans complete
 Plans:
-- [ ] 02-01-PLAN.md — Tracer: the three BSTP-04 seams (terminal-result replay store in AddCallback per D-01/D-02, registration hoisted outside the outer lock with find-or-replace per D-04, map-erase deleted so the completion flag selects the winner) proven by the late-registration replay case + server-client regression; expansion: five reentrancy/replay/cancel-drop race cases completing TEST-01 at 13 deterministic cases; WSL ASan supplementary run (D-07) + content probes + scope-confinement evidence
+- [x] 02-01-PLAN.md — Tracer: the three BSTP-04 seams (terminal-result replay store in AddCallback per D-01/D-02, registration hoisted outside the outer lock with find-or-replace per D-04, map-erase deleted so the completion flag selects the winner) proven by the late-registration replay case + server-client regression; expansion: five reentrancy/replay/cancel-drop race cases completing TEST-01 at 13 deterministic cases; WSL ASan supplementary run (D-07) + content probes + scope-confinement evidence
 
 ### Phase 3: GossipSub Resource Bounds
 
@@ -84,6 +84,6 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 (Phase 3 is technically par
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Bitswap Timer Correctness | 1/1 | Complete    | 2026-10-12 |
-| 2. Bitswap Callback Reentrancy | 0/1 | Not started | - |
+| 2. Bitswap Callback Reentrancy | 1/1 | Complete    | 2026-10-13 |
 | 3. GossipSub Resource Bounds | 0/? | Not started | - |
 | 4. Repin & Cross-Repo Verification | 0/? | Not started | - |
