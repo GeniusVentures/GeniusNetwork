@@ -20,15 +20,15 @@ Requirements for milestone v1.0 (ipfs-improve workstream). Each maps to roadmap 
 
 ### GossipSub Resource Bounds
 
-- [ ] **GOSS-01**: The per-peer remote subscription table is bounded — a configurable cap in `Gossip::Config` (gossip.hpp); excess subscribe entries in an RPC are ignored, and the heartbeat sweep prunes non-live entries without ever evicting state a live remote subscriber depends on (Graft/Prune/IHAVE)
-- [ ] **GOSS-02**: The outbound per-peer pending queue is bounded by bytes at `write()` entry with a configurable knob in `Gossip::Config` — on cap hit the RPC is dropped (logged), not silently buffered; sustained overflow beyond a distinct higher threshold closes the slow stream
-- [ ] **GOSS-03**: A peer that persistently violates bounds is escalated through the existing `DenyListConnectionGater::BlockPeer()` path — no new policy machinery
-- [ ] **GOSS-04**: Every bound-enforcement event is observable — logged (peer, topic/count, bytes) via the existing `log::SubLogger`; no silent drops
+- [x] **GOSS-01**: The per-peer remote subscription table is bounded — a configurable cap in `Gossip::Config` (gossip.hpp); excess subscribe entries in an RPC are ignored, and the heartbeat sweep prunes non-live entries without ever evicting state a live remote subscriber depends on (Graft/Prune/IHAVE)
+- [x] **GOSS-02**: The outbound per-peer pending queue is bounded by bytes at `write()` entry with a configurable knob in `Gossip::Config` — on cap hit the RPC is dropped (logged), not silently buffered; sustained overflow beyond a distinct higher threshold closes the slow stream
+- [x] **GOSS-03**: A peer that persistently violates bounds is escalated through the existing `DenyListConnectionGater::BlockPeer()` path — no new policy machinery
+- [x] **GOSS-04**: Every bound-enforcement event is observable — logged (peer, topic/count, bytes) via the existing `log::SubLogger`; no silent drops
 
 ### Regression Evidence
 
 - [ ] **TEST-01**: Race-ordering regression tests exist and pass for the Bitswap fixes — cancel raced with expiry (both orders), response-then-canceled-timer-fires (no failure after success), timeout-then-late-response (no double callback), and reentrant callback canceling its own request without deadlock
-- [ ] **TEST-02**: Bound-enforcement tests exist and pass for the GossipSub fixes — subscription cap enforced per peer, outbound queue cap drops (not buffers, not disconnects) at the configured threshold, sustained overflow closes the stream, and violations reach the peer-block escalation path
+- [x] **TEST-02**: Bound-enforcement tests exist and pass for the GossipSub fixes — subscription cap enforced per peer, outbound queue cap drops (not buffers, not disconnects) at the configured threshold, sustained overflow closes the stream, and violations reach the peer-block escalation path
 
 ### Integration
 
@@ -77,12 +77,12 @@ Which phases cover which requirements. Updated during roadmap creation.
 | BSTP-03 | Phase 1 | Complete |
 | BSTP-04 | Phase 2 | Pending |
 | BSTP-05 | Phase 2 | Pending |
-| GOSS-01 | Phase 3 | Pending |
-| GOSS-02 | Phase 3 | Pending |
-| GOSS-03 | Phase 3 | Pending |
-| GOSS-04 | Phase 3 | Pending |
+| GOSS-01 | Phase 3 | Complete |
+| GOSS-02 | Phase 3 | Complete |
+| GOSS-03 | Phase 3 | Complete |
+| GOSS-04 | Phase 3 | Complete |
 | TEST-01 | Phase 2 | Pending |
-| TEST-02 | Phase 3 | Pending |
+| TEST-02 | Phase 3 | Complete |
 | INTG-01 | Phase 4 | Pending |
 | INTG-02 | Phase 4 | Pending |
 | INTG-03 | Phase 4 | Pending |

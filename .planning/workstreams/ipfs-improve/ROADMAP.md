@@ -14,7 +14,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Bitswap Timer Correctness** - Canceled timers never fire the failure path; each request yields exactly one terminal result (completed 2026-10-12)
 - [x] **Phase 2: Bitswap Callback Reentrancy** - Callbacks dispatched outside all mutexes; full race-ordering regression suite green (completed 2026-10-13)
-- [ ] **Phase 3: GossipSub Resource Bounds** - Per-peer subscription table and outbound queue bounded, observable, with existing-path escalation
+- [x] **Phase 3: GossipSub Resource Bounds** - Per-peer subscription table and outbound queue bounded, observable, with existing-path escalation (completed 2026-10-13)
 - [ ] **Phase 4: Repin & Cross-Repo Verification** - Content-probed thirdparty pin bumps proven through SuperGenius focus suites and GeniusSDK build
 
 ## Phase Details
@@ -61,7 +61,7 @@ Plans:
   4. Every bound-enforcement event is observable — logged with peer, topic/count, and bytes via the existing `log::SubLogger`; there are no silent drops
   5. Bound-enforcement tests pass deterministically (mock scheduler): subscription cap enforced per peer, outbound cap drops at the configured threshold (not buffers, not disconnects), sustained overflow closes the stream, and violations reach the peer-block escalation path
 
-**Plans**: 2/2 plans executed
+**Plans**: 2/2 plans complete
 Plans:
 **Wave 1**
 - [x] 03-01-PLAN.md — Tracer: outbound-bound spine end-to-end (3 Config knobs per D-01/D-02, Stream::write admission + K-drops close per D-05..D-07 through the existing error funnel, setViolationHandler seam per D-08, 2nd-close BlockPeer escalation per D-09/D-10) + TEST-02(b) raw-fixture cases (SustainedOverflowClosesStreamAndBlocksPeer, egress boundary pair); expansion: blocked-redial + below/above-cap boundary cases
@@ -91,5 +91,5 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 (Phase 3 is technically par
 |-------|----------------|--------|-----------|
 | 1. Bitswap Timer Correctness | 1/1 | Complete    | 2026-10-12 |
 | 2. Bitswap Callback Reentrancy | 1/1 | Complete    | 2026-10-13 |
-| 3. GossipSub Resource Bounds | 2/2 | In Progress|  |
+| 3. GossipSub Resource Bounds | 2/2 | Complete    | 2026-10-13 |
 | 4. Repin & Cross-Repo Verification | 0/? | Not started | - |

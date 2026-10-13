@@ -16,7 +16,7 @@
     {
       "number": "3",
       "name": "GossipSub Resource Bounds",
-      "status": "pending"
+      "status": "complete"
     },
     {
       "number": "4",
@@ -26,8 +26,8 @@
   ],
   "next": {
     "command": "/gsd:progress --next",
-    "label": "Advance to the next step",
-    "reason": "Phase 03 of 4 · executing"
+    "label": "Advance to the next step (plan phase 4)",
+    "reason": "Phase 4 of 4 — needs a plan"
   },
-  "updated_at": "2026-10-13T21:48:54.736Z"
+  "updated_at": "2026-10-13T23:56:36.121Z"
 }
