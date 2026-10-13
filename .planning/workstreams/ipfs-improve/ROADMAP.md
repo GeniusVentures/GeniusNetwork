@@ -45,7 +45,9 @@ Plans:
   3. A callback registered on an already-completed request receives the terminal result immediately (or fails fast) — no fresh timer is armed on a completed request
   4. The full race-ordering regression suite exists and passes: cancel raced with expiry (both orders), response-then-canceled-timer-fires (no failure after success), timeout-then-late-response (no double callback), and reentrant callback canceling its own request without deadlock
 
-**Plans**: TBD
+**Plans**: 1 plan
+Plans:
+- [ ] 02-01-PLAN.md — Tracer: the three BSTP-04 seams (terminal-result replay store in AddCallback per D-01/D-02, registration hoisted outside the outer lock with find-or-replace per D-04, map-erase deleted so the completion flag selects the winner) proven by the late-registration replay case + server-client regression; expansion: five reentrancy/replay/cancel-drop race cases completing TEST-01 at 13 deterministic cases; WSL ASan supplementary run (D-07) + content probes + scope-confinement evidence
 
 ### Phase 3: GossipSub Resource Bounds
 
@@ -82,6 +84,6 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 (Phase 3 is technically par
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Bitswap Timer Correctness | 1/1 | Complete    | 2026-10-12 |
-| 2. Bitswap Callback Reentrancy | 0/? | Not started | - |
+| 2. Bitswap Callback Reentrancy | 0/1 | Not started | - |
 | 3. GossipSub Resource Bounds | 0/? | Not started | - |
 | 4. Repin & Cross-Repo Verification | 0/? | Not started | - |
