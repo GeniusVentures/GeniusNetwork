@@ -6,7 +6,7 @@
     {
       "number": "1",
       "name": "Bitswap Timer Correctness",
-      "status": "pending"
+      "status": "complete"
     },
     {
       "number": "2",
@@ -26,8 +26,8 @@
   ],
   "next": {
     "command": "/gsd:progress --next",
-    "label": "Advance to the next step",
-    "reason": "Phase 01 of 4 · executing"
+    "label": "Advance to the next step (plan phase 2)",
+    "reason": "Phase 2 of 4 — needs a plan"
   },
-  "updated_at": "2026-10-12T23:36:17.141Z"
+  "updated_at": "2026-10-13T00:25:18.120Z"
 }

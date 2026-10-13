@@ -9,9 +9,9 @@ Requirements for milestone v1.0 (ipfs-improve workstream). Each maps to roadmap 
 
 ### Bitswap Timer Correctness
 
-- [ ] **BSTP-01**: A canceled Bitswap request timer never fires the failure path — the `async_wait` handler checks `ec` and returns on `operation_aborted` (port of the in-file C-5 pattern from `ContentRequestContext` to `BitswapRequestContext`, `thirdparty/ipfs-bitswap-cpp/src/bitswap.cpp`)
-- [ ] **BSTP-02**: Each Bitswap block request yields exactly one terminal result — a completion flag checked under the mutex makes success and timeout paths mutually exclusive even when an already-expired handler fires with success after cancel
-- [ ] **BSTP-03**: Consumer-initiated cancellation or success produces no error callback; only a genuine timeout produces exactly one failure callback (`REQUEST_TIMEOUT`-class)
+- [x] **BSTP-01**: A canceled Bitswap request timer never fires the failure path — the `async_wait` handler checks `ec` and returns on `operation_aborted` (port of the in-file C-5 pattern from `ContentRequestContext` to `BitswapRequestContext`, `thirdparty/ipfs-bitswap-cpp/src/bitswap.cpp`)
+- [x] **BSTP-02**: Each Bitswap block request yields exactly one terminal result — a completion flag checked under the mutex makes success and timeout paths mutually exclusive even when an already-expired handler fires with success after cancel
+- [x] **BSTP-03**: Consumer-initiated cancellation or success produces no error callback; only a genuine timeout produces exactly one failure callback (`REQUEST_TIMEOUT`-class)
 
 ### Bitswap Reentrancy
 
@@ -72,9 +72,9 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| BSTP-01 | Phase 1 | Pending |
-| BSTP-02 | Phase 1 | Pending |
-| BSTP-03 | Phase 1 | Pending |
+| BSTP-01 | Phase 1 | Complete |
+| BSTP-02 | Phase 1 | Complete |
+| BSTP-03 | Phase 1 | Complete |
 | BSTP-04 | Phase 2 | Pending |
 | BSTP-05 | Phase 2 | Pending |
 | GOSS-01 | Phase 3 | Pending |

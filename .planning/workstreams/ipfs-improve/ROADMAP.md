@@ -12,7 +12,7 @@ Milestone v1.0 closes the two non-CI P0 findings from the `gnus_libp2p_compariso
 
 Decimal phases appear between their surrounding integers in numeric order.
 
-- [ ] **Phase 1: Bitswap Timer Correctness** - Canceled timers never fire the failure path; each request yields exactly one terminal result
+- [x] **Phase 1: Bitswap Timer Correctness** - Canceled timers never fire the failure path; each request yields exactly one terminal result (completed 2026-10-12)
 - [ ] **Phase 2: Bitswap Callback Reentrancy** - Callbacks dispatched outside all mutexes; full race-ordering regression suite green
 - [ ] **Phase 3: GossipSub Resource Bounds** - Per-peer subscription table and outbound queue bounded, observable, with existing-path escalation
 - [ ] **Phase 4: Repin & Cross-Repo Verification** - Content-probed thirdparty pin bumps proven through SuperGenius focus suites and GeniusSDK build
@@ -30,7 +30,7 @@ Decimal phases appear between their surrounding integers in numeric order.
   3. Consumer-initiated cancellation and success produce no error callback; only a genuine timeout produces exactly one failure callback (`REQUEST_TIMEOUT`-class)
   4. Race tests for the timer orderings (cancel-vs-expiry in both orders, response-then-canceled-timer-fires, timeout-then-late-response) pass deterministically on a single-threaded `io_context` with injected timeouts and no sleeps — establishing the harness Phase 2 extends
 
-**Plans**: 1/1 plans executed
+**Plans**: 1/1 plans complete
 Plans:
 - [x] 01-01-PLAN.md — Disk-space gate (W: vs C: build tree), tracer: fix branch from `d2ec18af` + full C-5/C-7 port + first race ordering green through the verified Windows harness; expansion: remaining orderings + consumer `Cancel()` + regression + content-probe self-check
 
@@ -81,7 +81,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 (Phase 3 is technically par
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Bitswap Timer Correctness | 1/1 | In Progress|  |
+| 1. Bitswap Timer Correctness | 1/1 | Complete    | 2026-10-12 |
 | 2. Bitswap Callback Reentrancy | 0/? | Not started | - |
 | 3. GossipSub Resource Bounds | 0/? | Not started | - |
 | 4. Repin & Cross-Repo Verification | 0/? | Not started | - |
