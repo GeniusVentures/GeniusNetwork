@@ -1,12 +1,33 @@
 {
   "contract": "1.0.0",
   "flavor": "core",
-  "milestone": null,
-  "phases": [],
+  "milestone": "v1.0",
+  "phases": [
+    {
+      "number": "1",
+      "name": "Bitswap Timer Correctness",
+      "status": "pending"
+    },
+    {
+      "number": "2",
+      "name": "Bitswap Callback Reentrancy",
+      "status": "pending"
+    },
+    {
+      "number": "3",
+      "name": "GossipSub Resource Bounds",
+      "status": "pending"
+    },
+    {
+      "number": "4",
+      "name": "Repin & Cross-Repo Verification",
+      "status": "pending"
+    }
+  ],
   "next": {
-    "command": "/gsd-discuss-phase",
-    "label": "Discuss the first phase",
-    "reason": "Project initialized — plan your first phase"
+    "command": "/gsd:progress --next",
+    "label": "Advance to the next step",
+    "reason": "Phase 01 of 4 · executing"
   },
-  "updated_at": "2026-10-12T20:22:33.511Z"
+  "updated_at": "2026-10-12T23:36:17.141Z"
 }
