@@ -61,7 +61,13 @@ Plans:
   4. Every bound-enforcement event is observable — logged with peer, topic/count, and bytes via the existing `log::SubLogger`; there are no silent drops
   5. Bound-enforcement tests pass deterministically (mock scheduler): subscription cap enforced per peer, outbound cap drops at the configured threshold (not buffers, not disconnects), sustained overflow closes the stream, and violations reach the peer-block escalation path
 
-**Plans**: TBD
+**Plans**: 0/2 plans complete
+Plans:
+**Wave 1**
+- [ ] 03-01-PLAN.md — Tracer: outbound-bound spine end-to-end (3 Config knobs per D-01/D-02, Stream::write admission + K-drops close per D-05..D-07 through the existing error funnel, setViolationHandler seam per D-08, 2nd-close BlockPeer escalation per D-09/D-10) + TEST-02(b) raw-fixture cases (SustainedOverflowClosesStreamAndBlocksPeer, egress boundary pair); expansion: blocked-redial + below/above-cap boundary cases
+
+**Wave 2** *(blocked on Wave 1 completion)*
+- [ ] 03-02-PLAN.md — GOSS-01 receiver-side per-peer subscription cap (check-then-insert in onPeerSubscribed per D-03) + D-04 sweep composition marker + TEST-02(a)/(c) (subscribe-cap boundary/duplicates, sweep/liveness); phase evidence: D-12 WSL ASan run, double-run determinism, GOSS-01..04/TEST-02 content probes, branch/scope confinement
 
 ### Phase 4: Repin & Cross-Repo Verification
 
@@ -85,5 +91,5 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 (Phase 3 is technically par
 |-------|----------------|--------|-----------|
 | 1. Bitswap Timer Correctness | 1/1 | Complete    | 2026-10-12 |
 | 2. Bitswap Callback Reentrancy | 1/1 | Complete    | 2026-10-13 |
-| 3. GossipSub Resource Bounds | 0/? | Not started | - |
+| 3. GossipSub Resource Bounds | 0/2 | Not started | - |
 | 4. Repin & Cross-Repo Verification | 0/? | Not started | - |
