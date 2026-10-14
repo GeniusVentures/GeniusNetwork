@@ -449,16 +449,19 @@ Not applicable in the library sense — this phase uses only the workspace's est
 | A5 | 17.6 GB free figure drifts by execution time | Environment | Re-check before starting; cheap guard |
 | A6 | `TransactionManager.cpp`'s owning project falls inside the 5-project set's closure (not individually pinned this session) | Rebuild breadth | A sixth lib project needs clean rebuild — same one-line vcxproj grep used in research resolves it in seconds at plan/execute time |
 
-## Open Questions
+## Open Questions (RESOLVED at planning — dispositions inline)
 
 1. **Origin of the Oct-13 13:36 rollback** — evidence gathered (mtimes 13:36, content == `e2dc906` exactly, no stash, no checkout in reflog since Oct 12 19:49, standalone-tree rebuild 19:51 from rolled-back source). Attribution (WSL-sync residue vs manual restore vs probe) remains undetermined; because the worktree contains zero bytes not present in committed history, this is non-blocking. D-05 requires the investigation be bounded and documented — recommend recording exactly the evidence above in VERIFICATION.md and proceeding.
    - What we know: rollback shape is a clean revert to Phase-1 HEAD content, unstaged (index untouched).
    - What's unclear: which actor wrote the files at 13:36.
    - Recommendation: document evidence; restore; move on.
+   - **[RESOLVED — bounded per D-05: evidence recorded in `d05-rollback-evidence.txt` (04-01 Task 1); the diff-vs-e2dc906 emptiness proof is the safety gate; attribution intentionally not required]**
 2. **Pre-existing reds in the focus suites** — unknown until the D-11 baseline runs (transaction_sync-family exes are 161 MB node-level tests; some may have existing failures or long runtimes). The no-new-failures bar handles either; capture per-case results, not just exit codes.
    - Recommendation: run baseline with per-test output (`--gtest_filter` default full run; parse `[  FAILED  ]` lines) so the repinned comparison is per-case.
+   - **[RESOLVED — per-case capture at baseline: per-target `baseline-*.log` + pre-existing-red ledger in `baseline-summary.md` (04-01 Task 2); the D-11 zero-new-failures comparison (04-03) measures against it]**
 3. **Whether to include `genius_node_bootstrap_reconnect_test`** — planner discretion (D-10); it consumes all three libs (tlog-verified) but duplicates `transaction_sync_test`'s AccountMessenger coverage at higher runtime cost.
    - Recommendation: include only if baseline shows `transaction_sync_test` cannot run to completion.
+   - **[RESOLVED — conditional substitute only: `genius_node_bootstrap_reconnect_test` enters the set ONLY if `transaction_sync_test` cannot run to completion (the A3 contingency rule, 04-01 Task 2; D-10 discretion) — otherwise never included]**
 
 ## Environment Availability
 

@@ -80,7 +80,16 @@ Plans:
   3. SuperGenius focus suites pass on the repinned tree — the CRDT/PubSub, DAG-syncer, and AccountMessenger paths that consume bitswap/gossip
   4. GeniusSDK builds and links cleanly against the repinned tree (build-only; no source change expected)
 
-**Plans**: TBD
+**Plans**: 3/3 planned
+Plans:
+**Wave 1**
+- [ ] 04-01-PLAN.md — Tracer: D-05 bitswap rollback reconciliation (bounded evidence, restore to f899393, standalone rebuild, 13-case re-verify, contamination tripwire); expansion: D-11 pre-repin baseline of the four Sep-15 focus exes with per-case logs + pre-existing-red ledger
+
+**Wave 2** *(blocked on Wave 1 completion)*
+- [ ] 04-02-PLAN.md — D-01/D-02/D-03 pin chain commits (dev_ipfs_p0 branch from 1cbf85a, three surgical gitlink bumps, root gitlink on dev_persisprocresults) + D-04 SHA-level content probes (six markers, zero-match = UNVERIFIED) + D-12 pin-time TEST-01/TEST-02 re-runs + never-push proof
+
+**Wave 3** *(blocked on Wave 2 completion)*
+- [ ] 04-03-PLAN.md — D-06/D-07 deployed-tree ABI refresh (ordered inner-vcxproj rebuilds + INSTALL + MD5 hash audits + deployed-lib marker flips); D-09 bounded SuperGenius rebuild (libs then tests) + D-08 exe marker probes + D-11 repinned focus runs vs baseline (zero new failures, D-13 retry-once); D-14..D-17 GeniusSDK build-only proof with tlog audit + 04-VERIFICATION.md evidence assembly
 
 ## Progress
 
@@ -92,4 +101,4 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 (Phase 3 is technically par
 | 1. Bitswap Timer Correctness | 1/1 | Complete    | 2026-10-12 |
 | 2. Bitswap Callback Reentrancy | 1/1 | Complete    | 2026-10-13 |
 | 3. GossipSub Resource Bounds | 2/2 | Complete    | 2026-10-13 |
-| 4. Repin & Cross-Repo Verification | 0/? | Not started | - |
+| 4. Repin & Cross-Repo Verification | 0/3 | Ready to execute | - |
