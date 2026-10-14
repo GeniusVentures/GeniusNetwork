@@ -26,8 +26,8 @@
   ],
   "next": {
     "command": "/gsd:progress --next",
-    "label": "Advance to the next step (plan phase 4)",
-    "reason": "Phase 4 of 4 — needs a plan"
+    "label": "Advance to the next step",
+    "reason": "Phase 4 of 4 · executing"
   },
-  "updated_at": "2026-10-13T23:56:36.121Z"
+  "updated_at": "2026-10-14T21:49:06.712Z"
 }
