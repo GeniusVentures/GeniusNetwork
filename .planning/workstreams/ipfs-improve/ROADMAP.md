@@ -15,7 +15,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 1: Bitswap Timer Correctness** - Canceled timers never fire the failure path; each request yields exactly one terminal result (completed 2026-10-12)
 - [x] **Phase 2: Bitswap Callback Reentrancy** - Callbacks dispatched outside all mutexes; full race-ordering regression suite green (completed 2026-10-13)
 - [x] **Phase 3: GossipSub Resource Bounds** - Per-peer subscription table and outbound queue bounded, observable, with existing-path escalation (completed 2026-10-13)
-- [ ] **Phase 4: Repin & Cross-Repo Verification** - Content-probed thirdparty pin bumps proven through SuperGenius focus suites and GeniusSDK build
+- [x] **Phase 4: Repin & Cross-Repo Verification** - Content-probed thirdparty pin bumps proven through SuperGenius focus suites and GeniusSDK build (completed 2026-10-14)
 
 ## Phase Details
 
@@ -83,13 +83,13 @@ Plans:
 **Plans**: 3/3 planned
 Plans:
 **Wave 1**
-- [ ] 04-01-PLAN.md — Tracer: D-05 bitswap rollback reconciliation (bounded evidence, restore to f899393, standalone rebuild, 13-case re-verify, contamination tripwire); expansion: D-11 pre-repin baseline of the four Sep-15 focus exes with per-case logs + pre-existing-red ledger
+- [x] 04-01-PLAN.md — Tracer: D-05 bitswap rollback reconciliation (bounded evidence, restore to f899393, standalone rebuild, 13-case re-verify, contamination tripwire); expansion: D-11 pre-repin baseline of the four Sep-15 focus exes with per-case logs + pre-existing-red ledger
 
 **Wave 2** *(blocked on Wave 1 completion)*
-- [ ] 04-02-PLAN.md — D-01/D-02/D-03 pin chain commits (dev_ipfs_p0 branch from 1cbf85a, three surgical gitlink bumps, root gitlink on dev_persisprocresults) + D-04 SHA-level content probes (six markers, zero-match = UNVERIFIED) + D-12 pin-time TEST-01/TEST-02 re-runs + never-push proof
+- [x] 04-02-PLAN.md — D-01/D-02/D-03 pin chain commits (dev_ipfs_p0 branch from 1cbf85a, three surgical gitlink bumps, root gitlink on dev_persisprocresults) + D-04 SHA-level content probes (six markers, zero-match = UNVERIFIED) + D-12 pin-time TEST-01/TEST-02 re-runs + never-push proof
 
 **Wave 3** *(blocked on Wave 2 completion)*
-- [ ] 04-03-PLAN.md — D-06/D-07 deployed-tree ABI refresh (ordered inner-vcxproj rebuilds + INSTALL + MD5 hash audits + deployed-lib marker flips); D-09 bounded SuperGenius rebuild (libs then tests) + D-08 exe marker probes + D-11 repinned focus runs vs baseline (zero new failures, D-13 retry-once); D-14..D-17 GeniusSDK build-only proof with tlog audit + 04-VERIFICATION.md evidence assembly
+- [x] 04-03-PLAN.md — D-06/D-07 deployed-tree ABI refresh (ordered inner-vcxproj rebuilds + INSTALL + MD5 hash audits + deployed-lib marker flips); D-09 bounded SuperGenius rebuild (libs then tests) + D-08 exe marker probes + D-11 repinned focus runs vs baseline (zero new failures, D-13 retry-once); D-14..D-17 GeniusSDK build-only proof with tlog audit + 04-VERIFICATION.md evidence assembly
 
 ## Progress
 
@@ -101,4 +101,4 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 (Phase 3 is technically par
 | 1. Bitswap Timer Correctness | 1/1 | Complete    | 2026-10-12 |
 | 2. Bitswap Callback Reentrancy | 1/1 | Complete    | 2026-10-13 |
 | 3. GossipSub Resource Bounds | 2/2 | Complete    | 2026-10-13 |
-| 4. Repin & Cross-Repo Verification | 0/3 | Ready to execute | - |
+| 4. Repin & Cross-Repo Verification | 3/3 | Complete    | 2026-10-14 |

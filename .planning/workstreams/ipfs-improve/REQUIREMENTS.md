@@ -32,9 +32,9 @@ Requirements for milestone v1.0 (ipfs-improve workstream). Each maps to roadmap 
 
 ### Integration
 
-- [ ] **INTG-01**: Fixes land on the actual integrated submodule SHAs (ipfs-bitswap-cpp, libp2p, ipfs-pubsub as needed) and are verified against those SHAs — not branch tips — before pinning
-- [ ] **INTG-02**: The `thirdparty` pins are updated with content-probed verification (fix markers confirmed present at the pinned commit, not trusted by branch name)
-- [ ] **INTG-03**: SuperGenius focus suites pass on the repinned tree (CRDT/PubSub, DAG-syncer, AccountMessenger paths that consume bitswap/gossip), and GeniusSDK builds cleanly against the repinned tree
+- [x] **INTG-01**: Fixes land on the actual integrated submodule SHAs (ipfs-bitswap-cpp, libp2p, ipfs-pubsub as needed) and are verified against those SHAs — not branch tips — before pinning
+- [x] **INTG-02**: The `thirdparty` pins are updated with content-probed verification (fix markers confirmed present at the pinned commit, not trusted by branch name)
+- [x] **INTG-03**: SuperGenius focus suites pass on the repinned tree (CRDT/PubSub, DAG-syncer, AccountMessenger paths that consume bitswap/gossip), and GeniusSDK builds cleanly against the repinned tree
 
 ## v2 Requirements
 
@@ -83,9 +83,9 @@ Which phases cover which requirements. Updated during roadmap creation.
 | GOSS-04 | Phase 3 | Complete |
 | TEST-01 | Phase 2 | Pending |
 | TEST-02 | Phase 3 | Complete |
-| INTG-01 | Phase 4 | Pending |
-| INTG-02 | Phase 4 | Pending |
-| INTG-03 | Phase 4 | Pending |
+| INTG-01 | Phase 4 | Complete |
+| INTG-02 | Phase 4 | Complete |
+| INTG-03 | Phase 4 | Complete |
 
 **Coverage:**
 - v1 requirements: 14 total
