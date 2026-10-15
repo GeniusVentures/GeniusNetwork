@@ -10,10 +10,9 @@ covered_files:
   - .planning/workstreams/ipfs-improve/phases/04-repin-cross-repo-verification/04-01-SUMMARY.md
   - .planning/workstreams/ipfs-improve/phases/04-repin-cross-repo-verification/04-02-SUMMARY.md
   - .planning/workstreams/ipfs-improve/phases/04-repin-cross-repo-verification/04-03-SUMMARY.md
-  - thirdparty (gitlink 1cbf85a -> 97b648a via root commit 2e46a2f on dev_persisprocresults)
-  - thirdparty/ipfs-bitswap-cpp (gitlink d2ec18af -> f899393 via thirdparty commit 97b648a)
-  - thirdparty/libp2p (gitlink 28f6a629 -> a54f5c4 via thirdparty commit 97b648a)
-  - thirdparty/ipfs-pubsub (gitlink b6eb6268 -> 5c6653c via thirdparty commit 97b648a)
+  # Gitlink transitions (not files; hashed via the pinned submodule SHAs quoted in Observable Truths/Required Artifacts):
+  # thirdparty/ipfs-bitswap-cpp d2ec18af -> f899393; thirdparty/libp2p 28f6a629 -> a54f5c4; thirdparty/ipfs-pubsub b6eb6268 -> 5c6653c (thirdparty commit 97b648a on dev_ipfs_p0)
+  # thirdparty 1cbf85a -> 97b648a (root commit 2e46a2f on dev_persisprocresults)
   - .planning/workstreams/ipfs-improve/phases/04-repin-cross-repo-verification/d05-rollback-evidence.txt
   - .planning/workstreams/ipfs-improve/phases/04-repin-cross-repo-verification/baseline-summary.md
   - .planning/workstreams/ipfs-improve/phases/04-repin-cross-repo-verification/baseline-pubsub_counts_test.log
