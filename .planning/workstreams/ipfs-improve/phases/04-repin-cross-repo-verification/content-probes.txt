@@ -1,0 +1,104 @@
+D-04 Content Probes + D-12 Pin-Time Re-runs + Never-Push Proof (Phase 4 / Plan 04-02 / Task 2)
+Captured: 2026-10-14 (execute-phase 4 session), AFTER the pin commits
+(thirdparty dev_ipfs_p0 @ 97b648a, root dev_persisprocresults @ 2e46a2f).
+Trust rule (INTG-02/D-04): branch names below are provenance notes only; every marker is
+verified by exact-string git grep at the exact pinned SHA. Zero-match = UNVERIFIED = abort.
+
+PINNED SHAS AND LINEAGE (all three merge-base --is-ancestor assertions exited 0):
+  ipfs-bitswap-cpp : d2ec18af -> f899393  (descendant verified)
+  libp2p           : 28f6a629 -> a54f5c4  (descendant verified)
+  ipfs-pubsub      : b6eb6268 -> 5c6653c  (descendant verified)
+
+=== CONTENT PROBES (run from thirdparty/; verbatim outputs) ===
+
+[P1] git -C ipfs-bitswap-cpp grep -c "terminalResult_" f899393 -- src
+  f899393:src/bitswap.cpp:2
+  f899393:src/bitswap.hpp:2
+  exit=0                    (expected 2+2 across cpp/hpp - MATCH)
+
+[P2] git -C ipfs-bitswap-cpp grep -c "TEST( RequestContextRaceTest" f899393 -- test/bitswap_request_timer_race_test.cpp
+  f899393:test/bitswap_request_timer_race_test.cpp:13
+  exit=0                    (expected 13 race cases - MATCH)
+
+[P3] git -C libp2p grep -c "max_remote_subscriptions_per_peer" a54f5c4 -- include/libp2p/protocol/gossip/gossip.hpp
+  a54f5c4:include/libp2p/protocol/gossip/gossip.hpp:1
+  exit=0                    (expected 1 - MATCH)
+
+[P4a] git -C libp2p grep -l "setViolationHandler" a54f5c4 -- src
+  a54f5c4:src/protocol/gossip/impl/connectivity.hpp
+  a54f5c4:src/protocol/gossip/impl/gossip_core.cpp
+  a54f5c4:src/protocol/gossip/impl/gossip_core.hpp
+  exit=0
+[P4b] git -C libp2p grep -l "asyncPostViolation" a54f5c4 -- src
+  a54f5c4:src/protocol/gossip/impl/stream.cpp
+  a54f5c4:src/protocol/gossip/impl/stream.hpp
+  exit=0                    (combined unique file set = 5 - the recorded violation-seam set - MATCH)
+
+[P5] git -C ipfs-pubsub grep -c "BlockPeer" 5c6653c -- src/ipfs_pubsub/gossip_pubsub.cpp
+  5c6653c:src/ipfs_pubsub/gossip_pubsub.cpp:8
+  exit=0                    (expected 8 - MATCH)
+
+[P6] git -C ipfs-pubsub grep -c "kSustainedOverflowClosesToBlock" 5c6653c -- src
+  5c6653c:src/ipfs_pubsub/gossip_pubsub.cpp:2
+  5c6653c:src/ipfs_pubsub/gossip_pubsub.hpp:1
+  exit=0                    (expected 3 lines across cpp/hpp - MATCH)
+
+DEGENERATE RULE: no probe returned empty output, a zero count, or a non-zero exit.
+All six probes verified; the pin is content-proven.
+
+=== D-12 PIN-TIME SUITE RE-RUNS ===
+
+TEST-01: bitswap_request_timer_race_test.exe (the exe 04-01 rebuilt from restored f899393 source)
+  [==========] Running 13 tests from 1 test suite.
+  [  PASSED  ] 13 tests.
+  exit=0                     (13/13 PASSED - MATCH)
+
+TEST-02: ipfs-pubsub-test.exe (full run)
+  [==========] Running 17 tests from 3 test suites.
+  [ DISABLED ] GossipPubSubTest.DISABLED_SecondStartFailed
+  [==========] 17 tests from 3 test suites ran. (21189 ms total)
+  [  PASSED  ] 16 tests.
+  [  FAILED  ] 1 test, listed below:
+  [  FAILED  ] GossipPubSubTest.MutipleGossipSubObjectsOnSingleChannel
+  YOU HAVE 1 DISABLED TEST
+  GossipPubSubBoundsTest (all 5 cases green):
+    SustainedOverflowClosesStreamAndBlocksPeer  OK (779 ms)
+    SubscribeCapBoundsRemoteSubscriptions       OK (611 ms)
+    SweepCollectsTopicAfterUnsubscribeAndResubscribeRelearns OK (174 ms)
+    BelowCapAdmittedAboveCapDroppedAtEntry      OK (1174 ms)
+    BlockedPeerRedialRejected                   OK (11411 ms)
+  => 17 ran / 16 passed / exactly 1 failed (MutipleGossipSubObjectsOnSingleChannel,
+     pre-existing since Phase 3, untouched) / 1 disabled - the exact Phase-03 final state.
+  (Process exhibits the known post-summary exit-hang (deferred item 3); summary lines
+   above were captured from the full transcript before the terminal was killed.)
+  Note: full-suite exit code 1 is the expected pre-existing baseline, not the signal.
+
+=== NEVER-PUSH PROOF (no push command was issued at any point) ===
+
+git -C thirdparty branch -r
+    origin/HEAD -> origin/main
+    origin/MNN_Ultra
+    origin/asan-fixes
+    origin/dev_almadocker
+    origin/dev_elmruntime
+    origin/dev_persisprocresults
+    origin/dev_phase3.43
+    origin/dev_phase3.5x
+    origin/dev_rendering
+    origin/dev_tokenprice
+    origin/develop
+    origin/fix/osx-build-toolchain-fixes
+    origin/main
+  => dev_ipfs_p0 NOT listed; upstream tracking empty (refs/heads/dev_ipfs_p0 -> )
+
+git branch -r  (root)
+    origin/HEAD -> origin/main
+    origin/boost-for-mobile
+    origin/dev_persisprocresults
+    origin/develop
+    origin/docs/master-platform-architecture
+    origin/docs/master-platform-architecture-develop
+    origin/main
+    origin/main-release
+  => unchanged found-state set; no new remote branch. The entire chain
+     (fix branches -> dev_ipfs_p0 -> root gitlink) exists only in local git.

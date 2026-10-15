@@ -1,0 +1,70 @@
+D-05 Rollback Reconciliation Evidence (Phase 4 / Plan 04-01 / Task 1)
+Collected: 2026-10-14 (execute-phase 4 session) - bounded investigation per CONTEXT D-05;
+conclusion recorded BEFORE any restore, per the D-05 sequencing rule.
+Working tree: thirdparty/ipfs-bitswap-cpp (branch dev_timer_correctness, HEAD f899393)
+
+[1] Found-state assertions (precondition gate) - ALL PASS
+    PS> git rev-parse --short HEAD
+    f899393
+    PS> git branch --show-current
+    dev_timer_correctness
+    PS> git status --short
+     M src/bitswap.cpp
+     M src/bitswap.hpp
+     M test/bitswap_request_timer_race_test.cpp
+    (exactly the three recorded ' M' lines; index untouched => unstaged working-tree write)
+
+[2] Rollback shape
+    PS> git diff --stat
+     src/bitswap.cpp                          | 102 +++------
+     src/bitswap.hpp                          |  35 +--
+     test/bitswap_request_timer_race_test.cpp | 358 -------------------------------
+     3 files changed, 32 insertions(+), 463 deletions(-)
+    Matches the RESEARCH Found-State expectation (~3 files, 32 insertions, 463 deletions).
+
+[3] Stash inventory - EMPTY
+    PS> git stash list
+    (no output)
+
+[4] Reflog tail (last 5 events, --date=iso)
+    PS> git reflog --date=iso -5
+    f899393 (HEAD -> dev_timer_correctness) HEAD@{2026-10-13 12:49:36 -0400}: commit: test(02-01): extend race suite to thirteen cases - reentrancy both flavors (D-05a/D-05b), replay both outcomes (D-03), D-08 inline collision, canceled drop (A2)
+    93eb335 HEAD@{2026-10-13 12:47:54 -0400}: commit: test(02-01): add late-registration race case - synchronous replay of stored success, no fresh timer (D-02/SC3 clause 2)
+    3e88b9f HEAD@{2026-10-13 12:47:54 -0400}: commit (amend): feat(02-01): close BSTP-04 - synchronous terminal-result replay in AddCallback (D-01..D-03), registration hoisted outside request-map lock, retention-until-replaced map policy (D-04)
+    2eb5431 HEAD@{2026-10-13 12:47:54 -0400}: reset: moving to HEAD~1
+    c1fabdb HEAD@{2026-10-13 12:47:01 -0400}: commit: test(02-01): add late-registration race case - synchronous replay of stored success, no fresh timer (D-02/SC3 clause 2)
+    => Last ref event is the Oct-13 12:49 commit; NO checkout event after Oct-12 19:49.
+       The rollback was a bare working-tree write at 13:36, not a checkout.
+
+[5] File mtimes (LastWriteTime)
+    PS> Get-Item src/bitswap.cpp, src/bitswap.hpp, test/bitswap_request_timer_race_test.cpp | Select Name,LastWriteTime
+    bitswap.cpp                         10/13/2026 1:36:00 PM
+    bitswap.hpp                         10/13/2026 1:36:00 PM
+    bitswap_request_timer_race_test.cpp 10/13/2026 1:36:00 PM
+    => Single uniform write at 13:36, ~47 minutes after the last commit (12:49).
+       Consistent with the RESEARCH OQ1 evidence set (post-verification write).
+
+[6] DECISIVE SAFETY GATE - diff vs Phase-1 HEAD e2dc906
+    PS> git diff e2dc906 --stat -- src/bitswap.cpp src/bitswap.hpp test/bitswap_request_timer_race_test.cpp
+    (EMPTY output)
+    => The dirty worktree content is byte-identical to Phase-1 HEAD e2dc906.
+       Zero novel uncommitted content hides in the worktree.
+       git restore --source=f899393 is unconditionally safe (D-05 gate passed).
+
+[7] Delta excerpt (seen, not assumed) - src/bitswap.hpp rolled-back state
+    The dirty header LACKS the Phase-2 additions present at f899393:
+      - removed: the advisory completed-check accessor `bool IsCompleted() const;`
+        (+ its TOCTOU documentation block)
+      - removed: the Phase-2 mutex_ documentation block (terminalResult_ replay store,
+        AddCallback invoked OUTSIDE the outer mutexRequestCallbacks_ scope, callbacks
+        moved out under the lock)
+    i.e. the worktree regressed to the pre-Phase-2 header content exactly.
+
+CONCLUSION (bounded per D-05; attribution intentionally not required per RESEARCH OQ1 [RESOLVED]):
+The Oct-13 13:36 rollback wrote Phase-1-HEAD-identical content over three files of the f899393
+worktree: unstaged, index untouched, no stash, no checkout in the reflog since Oct-12, actor
+undetermined. Because the [6] diff-vs-e2dc906 emptiness proof shows every dirty byte is already
+present in committed history, no uncommitted-and-valuable content can be lost by restoring.
+The restore to f899393 content proceeded immediately after this transcript was written; the
+restore proof (clean status + standalone rebuild + 13-case suite + Phase-2 case-name byte-greps)
+is recorded in 04-01-SUMMARY.md.

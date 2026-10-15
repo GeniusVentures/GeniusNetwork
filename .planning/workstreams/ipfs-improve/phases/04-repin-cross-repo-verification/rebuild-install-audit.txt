@@ -1,0 +1,47 @@
+=== D-06/D-07 Thirdparty Deployed-Tree Refresh Audit (Phase 4 / 04-03 / Task 1) ===
+START=2026-10-14 18:28:14
+LIBP2P REBUILD: p2p.vcxproj (umbrella, 1 TU in 1.25s - wrapper-trap observed) RETARGETED to protocol\gossip\impl\p2p_gossip.vcxproj (the fix-carrying target; deviation from RESEARCH Pattern 2 recorded).
+p2p_gossip.vcxproj /t:Rebuild exit=0 TUs=42
+libp2p INSTALL.vcxproj exit=0 (deployed include/ + lib/ refreshed)
+HASH gossip.hpp src=F244B5B3DFFDF473037681928D249BA0 deployed=F244B5B3DFFDF473037681928D249BA0 match=True
+p2p_gossip.lib mtime=2026-10-14 18:29:21 egress=True ingress=True
+ipfs-bitswap-cpp.vcxproj /t:Rebuild exit=0 TUs=5
+ipfs-bitswap-cpp INSTALL.vcxproj exit=0
+HASH bitswap.hpp (flat deploy) src=B595B857970DEB24F120821F34DD181D deployed=B595B857970DEB24F120821F34DD181D match=True
+ipfs-bitswap-cpp.lib mtime=2026-10-14 18:31:30 Cancel=True AddCallback=True
+ipfs-pubsub.vcxproj /t:Rebuild exit=0 TUs=3
+ipfs-pubsub INSTALL.vcxproj exit=0
+HASH gossip_pubsub.hpp deployed=W:\gnus\GeniusNetwork\thirdparty\build\Windows\Debug\ipfs-pubsub\include\ipfs_pubsub\gossip_pubsub.hpp src=320F16B1A3E834FFD873129B4DCCB5BE deployed=320F16B1A3E834FFD873129B4DCCB5BE match=True
+ipfs-pubsub.lib mtime=2026-10-14 18:32:01
+TASK1 SUMMARY: 3 packages rebuilt+installed in order (libp2p via gossip retarget, bitswap, pubsub); 3/3 hash pairs EQUAL; deployed libs fresh (18:29/18:31/18:32 vs START 18:28:14); Cancel=True (flipped) AddCallback=True control; egress=True ingress=True; Debug only; ipfs-lite-cpp untouched.
+A6 RESOLUTION: TransactionManager.cpp is owned by src\account\genius_node_objs.vcxproj, which IS inside the 5-project closure (genius_node.vcxproj ProjectReferences it) - no sixth project added.
+SG LIB sgns_genius_account.vcxproj /t:Rebuild exit=0 TUs=31 errors=0
+SG LIB genius_node.vcxproj /t:Rebuild exit=1 TUs=160 errors=8
+D-18 ADAPTATION: coinprices (in genius_node ProjectReference closure, current SuperGenius checkout dev_ipfsrework) failed C1083 HTTPTypes.hpp - the Debug AsyncIOManager deployment was stale (22/24 headers; tokenprice deployed Release only). Fix: AsyncIOManager Debug INSTALL.vcxproj run (build-tree redeploy, NO source change). Post-fix include count=24, HTTPTypes.hpp present=True.
+SG LIB genius_node.vcxproj /t:Rebuild exit=1 TUs=179 errors=28 (post AsyncIOManager redeploy)
+D-18 ADAPTATION 2: GeniusNode.cpp C2039 UPNP::New/GetIGD - deployed gnus_upnp Debug headers stale vs the checked-out gnus_upnp worktree (8bb78b8, the pre-existing ' M gnus_upnp' drift). Fix: gnus_upnp Debug INSTALL.vcxproj (build-tree redeploy; the gitlink drift itself stays uncommitted per D-03). upnp.hpp match=True.
+SG LIB genius_node.vcxproj /t:Rebuild exit=1 TUs=179 errors=28 (round 3, post gnus_upnp redeploy)
+D-18 ADAPTATION 3 (operator-approved in-session): gnus_upnp worktree advanced 8bb78b8 -> 5aec637 (origin/main, adds the UPNP New factory SuperGenius develop requires); Debug INSTALL re-run; upnp_match=True deployed_New=True. Worktree move stays uncommitted drift (D-03); reversible via checkout 8bb78b8.
+SG LIB genius_node.vcxproj /t:Rebuild exit=0 TUs=179 errors=0 (round 4, post gnus_upnp 5aec637)
+SG LIB blockchain_genesis.vcxproj /t:Rebuild exit=0 TUs=35 errors=0 (round 4, post gnus_upnp 5aec637)
+SG LIB crdt_globaldb.vcxproj /t:Rebuild exit=0 TUs=21 errors=0 (round 4, post gnus_upnp 5aec637)
+SG LIB processing_service.vcxproj /t:Rebuild exit=0 TUs=73 errors=0 (round 4, post gnus_upnp 5aec637)
+SG TEST pubsub_counts_test.vcxproj /t:Rebuild exit=0 TUs=2 errors=0
+SG TEST globaldb_integration_test.vcxproj /t:Rebuild exit=0 TUs=22 errors=0
+SG TEST pubsub_graphsync_test.vcxproj /t:Rebuild exit=0 TUs=180 errors=0
+SG TEST transaction_sync_test.vcxproj /t:Rebuild exit=0 TUs=180 errors=0
+D-08 MARKER pubsub_counts_test.exe egress=True ingress=True overflow=True
+D-08 MARKER globaldb_integration_test.exe egress=True ingress=True overflow=True
+D-08 MARKER pubsub_graphsync_test.exe egress=True ingress=True overflow=True
+D-08 MARKER transaction_sync_test.exe egress=True ingress=True overflow=True
+D-11 COMPARE pubsub_counts_test new_failures=0
+D-11 COMPARE globaldb_integration_test new_failures=0
+D-11 COMPARE pubsub_graphsync_test new_failures=0
+D-11 COMPARE transaction_sync_test new_failures=0
+D-11 SUMMARY: repinned runs 3/3+11/11+1/1+6/6 PASSED (counts grew vs baseline 1/9/1/6 - new cases added to the source since Sep-15; all pass); zero FAILED lines in any repin log; new_failures=0 x4. No D-13 retries needed.
+D-18 ADAPTATION 4 (operator-directed in-session): GeniusSDK worktree was on dev_price_validation 9f2e955 whose GetProcessCost().minions refactor needs a SuperGenius ProcessCost API present in NO local checkout (develop and dev_tokenprice both declare uint64_t). Fix: derived purpose-built branch dev_ipfs_p0_sdkverify from GeniusSDK develop ce92a16 (call sites verified compatible). Reversible via switch dev_price_validation; uncommitted drift; no push.
+D-18 ADAPTATION 4 (amended per operator): GeniusSDK stays derived from develop (ce92a16). The SuperGenius Debug DEPLOYMENT (build\Windows\Debug\SuperGenius\include+lib, Sep-2) is stale vs develop (old GetProcessCost signature, no DevConfig::DevFraction). Operator: full SuperGenius rebuild is ~10min - cmake --build . --parallel 8 --config Debug, then INSTALL refreshes the deployment. ABI note: the changed-header-affected projects were already /t:Rebuilt clean (D-06); the remaining projects are unaffected by the three changed headers (include-grep verified) so incremental is ABI-safe for them.
+SUPERGENIUS FULL DEBUG BUILD exit=0 (cmake --build . --parallel 8 --config Debug) + INSTALL exit=0 - deployment SuperGenius\include+lib refreshed; deployed genius_node.lib mtime=2026-10-14 20:09:14; deployed GetProcessCost signature now matches source (const-ref).
+SDK: after SuperGenius deployment refresh, link needed networkregistry.lib (new SuperGenius component absent from the Sep-2 SDK link set) - D-17 in-place cmake reconfigure (exit=0) picked it up from the reinstalled supergeniusTargets.cmake; final GeniusSDKService /t:Rebuild exit=1 succeeded=False. NOTHING from the SDK tree was executed (D-15).
+DISK RECOVERY (Pitfall 8 remedy): full-tree build left 2.03GB free; SDK link hit LNK1180. Deleted the 131 NON-focus test exes built tonight by the full build (9.58GB reclaimed; reproducible outputs; the four focus evidence exes untouched). Post-free space recorded in transcript.
+D-16 TLOG AUDIT: GeniusSDKService link.read.1.tlog P2P_GOSSIP=True IPFS-PUBSUB=True IPFS-BITSWAP-CPP=True (all must be True; deployed lib mtimes 18:29/18:31/18:32 from Task 1). SDK binary deliberately NOT marker-grepped (D-16 rejects it: static linking omits unreferenced objects). NOTHING from the SDK tree executed (D-15). GeniusSDK.lib mtime=20:16:14 GeniusSDKService.exe mtime=20:16:22.
