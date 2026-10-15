@@ -21,13 +21,13 @@
     {
       "number": "4",
       "name": "Repin & Cross-Repo Verification",
-      "status": "pending"
+      "status": "complete"
     }
   ],
   "next": {
-    "command": "/gsd:progress --next",
-    "label": "Advance to the next step",
-    "reason": "Phase 4 of 4 · executing"
+    "command": "/gsd:new-milestone",
+    "label": "Start a new milestone",
+    "reason": "All phases complete — start a new milestone"
   },
-  "updated_at": "2026-10-14T21:49:06.712Z"
+  "updated_at": "2026-10-15T00:23:39.654Z"
 }
