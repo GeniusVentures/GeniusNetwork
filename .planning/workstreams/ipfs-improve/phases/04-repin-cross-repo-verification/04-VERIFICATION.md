@@ -26,7 +26,7 @@ covered_files:
   - .planning/workstreams/ipfs-improve/phases/04-repin-cross-repo-verification/repin-globaldb_integration_test.log
   - .planning/workstreams/ipfs-improve/phases/04-repin-cross-repo-verification/repin-pubsub_graphsync_test.log
   - .planning/workstreams/ipfs-improve/phases/04-repin-cross-repo-verification/repin-transaction_sync_test.log
-covered_digest: "v2:sha256:pending-first-commit"
+covered_digest: "v2:sha256:2db8577c09b208826f3a9d7466134d7a28ea06ad148bbe1297737d8f325090c9"
 behavior_unverified: 0
 overrides_applied: 0
 re_verification:
