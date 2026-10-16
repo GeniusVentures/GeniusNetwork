@@ -48,6 +48,37 @@ function Install-WingetPackage {
     & winget @args
 }
 
+function Ensure-Chocolatey {
+    if (Get-Command choco -ErrorAction SilentlyContinue) {
+        Write-Host ""
+        Write-Host "==> Chocolatey already installed" -ForegroundColor DarkGreen
+        return
+    }
+
+    Write-Host ""
+    Write-Host "==> Installing Chocolatey" -ForegroundColor Cyan
+
+    # Official installer script from community.chocolatey.org (requires elevation).
+    # Run it in a child process so its state changes cannot pollute this script,
+    # then rebuild this session's PATH from the machine PATH it updated
+    # (choco.exe lands in C:\ProgramData\chocolatey\bin).
+    $chocoInstallScript = Join-Path $env:TEMP "chocolatey-install.ps1"
+    $ProgressPreference = 'SilentlyContinue'
+    try {
+        Invoke-WebRequest -Uri "https://community.chocolatey.org/install.ps1" `
+            -OutFile $chocoInstallScript -UseBasicParsing
+    } finally {
+        $ProgressPreference = 'Continue'
+    }
+
+    & powershell.exe -NoProfile -ExecutionPolicy Bypass -File $chocoInstallScript
+    if ($LASTEXITCODE -ne 0) {
+        throw "Chocolatey installer exited with code $LASTEXITCODE."
+    }
+
+    $env:Path = [Environment]::GetEnvironmentVariable("Path", "Machine")
+}
+
 function Normalize-PathEntry {
     param([string]$PathEntry)
 
@@ -246,6 +277,9 @@ Install-WingetPackage -Id "GitHub.cli"
 $vsOverride = "--passive --wait --norestart --add Microsoft.VisualStudio.Workload.VCTools;includeRecommended"
 Install-WingetPackage -Id "Microsoft.VisualStudio.2022.BuildTools" -Override $vsOverride
 
+# CI build scripts use "choco install ..."
+Ensure-Chocolatey
+
 # Keep CMake ahead of Strawberry Perl's bundled tools
 Set-MachinePathOrder `
     -PriorityPaths @(
@@ -273,10 +307,12 @@ Show-CommandResolution -CommandName "cargo"
 Show-CommandResolution -CommandName "jq"
 Show-CommandResolution -CommandName "git"
 Show-CommandResolution -CommandName "gh"
+Show-CommandResolution -CommandName "choco"
 
 Write-Host ""
 Write-Host "Done." -ForegroundColor Green
 Write-Host "Recommended checks:" -ForegroundColor Cyan
+Write-Host "  choco --version"
 Write-Host "  where.exe cmake"
 Write-Host "  cmake --version"
 Write-Host "  rustup --version"
