@@ -49,34 +49,43 @@ function Install-WingetPackage {
 }
 
 function Ensure-Chocolatey {
-    if (Get-Command choco -ErrorAction SilentlyContinue) {
+    $choco = Get-Command choco -ErrorAction SilentlyContinue
+
+    if ($choco) {
         Write-Host ""
         Write-Host "==> Chocolatey already installed" -ForegroundColor DarkGreen
-        return
+    } else {
+        Write-Host ""
+        Write-Host "==> Installing Chocolatey" -ForegroundColor Cyan
+
+        # Official installer script from community.chocolatey.org (requires elevation).
+        # Run it in a child process so its state changes cannot pollute this script,
+        # then rebuild this session's PATH from the machine PATH it updated
+        # (choco.exe lands in C:\ProgramData\chocolatey\bin).
+        $chocoInstallScript = Join-Path $env:TEMP "chocolatey-install.ps1"
+        $ProgressPreference = 'SilentlyContinue'
+        try {
+            Invoke-WebRequest -Uri "https://community.chocolatey.org/install.ps1" `
+                -OutFile $chocoInstallScript -UseBasicParsing
+        } finally {
+            $ProgressPreference = 'Continue'
+        }
+
+        & powershell.exe -NoProfile -ExecutionPolicy Bypass -File $chocoInstallScript
+        if ($LASTEXITCODE -ne 0) {
+            throw "Chocolatey installer exited with code $LASTEXITCODE."
+        }
+
+        $env:Path = [Environment]::GetEnvironmentVariable("Path", "Machine")
     }
 
-    Write-Host ""
-    Write-Host "==> Installing Chocolatey" -ForegroundColor Cyan
-
-    # Official installer script from community.chocolatey.org (requires elevation).
-    # Run it in a child process so its state changes cannot pollute this script,
-    # then rebuild this session's PATH from the machine PATH it updated
-    # (choco.exe lands in C:\ProgramData\chocolatey\bin).
-    $chocoInstallScript = Join-Path $env:TEMP "chocolatey-install.ps1"
-    $ProgressPreference = 'SilentlyContinue'
-    try {
-        Invoke-WebRequest -Uri "https://community.chocolatey.org/install.ps1" `
-            -OutFile $chocoInstallScript -UseBasicParsing
-    } finally {
-        $ProgressPreference = 'Continue'
-    }
-
-    & powershell.exe -NoProfile -ExecutionPolicy Bypass -File $chocoInstallScript
+    # Auto-confirm every choco operation (equivalent of always passing -y).
+    # Runs on reruns too, so an existing install converges to the same state.
+    & choco feature enable -n allowGlobalConfirmation | Out-Null
     if ($LASTEXITCODE -ne 0) {
-        throw "Chocolatey installer exited with code $LASTEXITCODE."
+        throw "Failed to enable choco feature allowGlobalConfirmation (exit $LASTEXITCODE)."
     }
-
-    $env:Path = [Environment]::GetEnvironmentVariable("Path", "Machine")
+    Write-Host "==> choco allowGlobalConfirmation enabled" -ForegroundColor DarkGreen
 }
 
 function Normalize-PathEntry {
