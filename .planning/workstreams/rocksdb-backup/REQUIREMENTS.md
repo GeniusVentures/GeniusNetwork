@@ -31,7 +31,7 @@
 
 ### Thirdparty Integration (BUILD)
 
-- [ ] **BUILD-01**: `sgns-blockstore` exists as a new `thirdparty/` submodule with a CMake static-library target and installed public headers
+- [x] **BUILD-01**: `sgns-blockstore` exists as a new `thirdparty/` submodule with a CMake static-library target and installed public headers
 - [ ] **BUILD-02**: minio-cpp integrated at upstream tag as a submodule, shaderc-style — its own dependency mechanism fetches/bundles nested deps (pugixml/cpp-httplib/inih) inside the ExternalProject step, statically linked and non-exported; pinning enforced per its mechanism (or a small patch step mirroring the shaderc `git-sync-deps` precedent at `CommonTargets.cmake:438`); no GNUS fork, no separate dep submodules
 - [ ] **BUILD-03**: `sgns-blockstore` and minio-cpp wired into `thirdparty/build/CommonTargets.cmake` ExternalProject orchestration across all five platform builds
 
@@ -83,7 +83,7 @@ Deferred (with reconsideration triggers, per research):
 | CORE-06 | Phase 1 | Pending |
 | BACK-01 | Phase 1 | Pending |
 | BACK-02 | Phase 1 | Pending |
-| BUILD-01 | Phase 1 | Pending |
+| BUILD-01 | Phase 1 | Complete |
 | BACK-03 | Phase 2 | Pending |
 | BACK-04 | Phase 2 | Pending |
 | BUILD-02 | Phase 3 | Pending |

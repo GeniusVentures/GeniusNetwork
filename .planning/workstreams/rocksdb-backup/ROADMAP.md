@@ -26,10 +26,10 @@
   4. `BlockStoreConformanceTests` is a reusable suite any backend can instantiate in one step, and it runs green against `MemoryBlockStore` in CI (hermetic, no network)
   5. The API shape is verifiably safe: no delete-shaped method exists (`EvictLocal` is local-only, asserted by a guard test) and enumeration is exposed only on a separate tooling/audit interface, never on `BlockStore` itself
 
-**Plans**: 3 plans
+**Plans**: 1/3 plans executed
 Plans:
 **Wave 1**
-- [ ] 01-01-PLAN.md — Repo bootstrap, superbuild entry & C1 CID spike (tracer: repo → CommonTargets → install tree → green spike; BUILD-01, p2p_cid adoption per D-05/D-06)
+- [x] 01-01-PLAN.md — Repo bootstrap, superbuild entry & C1 CID spike (tracer: repo → CommonTargets → install tree → green spike; BUILD-01, p2p_cid adoption per D-05/D-06)
 
 **Wave 2** *(blocked on Wave 1 completion)*
 - [ ] 01-02-PLAN.md — Frozen v1 contract headers (taxonomy, DurabilityLevel, options, capabilities, List-free interface, tooling seam, FaultController) & MemoryBlockStore reference backend
@@ -104,7 +104,7 @@ Plans:
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. BlockStore Contract, Memory Backend & Conformance Kit | 0/TBD | Not started | - |
+| 1. BlockStore Contract, Memory Backend & Conformance Kit | 1/3 | In Progress|  |
 | 2. LocalBlockStore (RocksDB Cold Tier) | 0/TBD | Not started | - |
 | 3. minio-cpp Integration & S3Client Adapter | 0/TBD | Not started | - |
 | 4. S3BlockStore & Sia s3d Roundtrip | 0/TBD | Not started | - |
