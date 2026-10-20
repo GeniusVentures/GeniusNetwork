@@ -12,17 +12,17 @@
 
 ### Core Contract (CORE)
 
-- [ ] **CORE-01**: `BlockStore` public interface exposes core operations (`Put`, `Get`, `Has`, `GetSize`) with structured result types; installed headers carry only CID/bytes/strings — no SDK types, no SuperGenius types
+- [x] **CORE-01**: `BlockStore` public interface exposes core operations (`Put`, `Get`, `Has`, `GetSize`) with structured result types; installed headers carry only CID/bytes/strings — no SDK types, no SuperGenius types
 - [x] **CORE-02**: Status taxonomy distinguishes `Found` / `NotFound` / `TemporarilyUnavailable` / `Corrupt` / `Unauthorized`; transport failures, timeouts, and backend outages never surface as `NotFound`
 - [x] **CORE-03**: `DurabilityLevel` enum and capability struct ship in the v1 API (anchors future eviction work; retrofit would be an API break)
 - [x] **CORE-04**: CID verification happens at the facade boundary — every fetched byte is verified against the requested CID; corrupt results are rejected and attributed to their source
-- [ ] **CORE-05**: No delete-shaped API — local eviction (`EvictLocal`) only; nothing in the API can remove remote blocks or CRDT history
-- [ ] **CORE-06**: Enumeration is exposed via a separate tooling/audit interface; the core `BlockStore` interface stays List-free
+- [x] **CORE-05**: No delete-shaped API — local eviction (`EvictLocal`) only; nothing in the API can remove remote blocks or CRDT history
+- [x] **CORE-06**: Enumeration is exposed via a separate tooling/audit interface; the core `BlockStore` interface stays List-free
 
 ### Backends (BACK)
 
 - [x] **BACK-01**: `MemoryBlockStore` hermetic reference implementation
-- [ ] **BACK-02**: Reusable `BlockStoreConformanceTests` kit runs against every backend implementation
+- [x] **BACK-02**: Reusable `BlockStoreConformanceTests` kit runs against every backend implementation
 - [ ] **BACK-03**: `LocalBlockStore` opens its own RocksDB instance (consumer-provided; API-compatible with both RocksDB 9.4 and 11.1), never the GlobalDB handle; writes are atomic (temp + fsync + rename)
 - [ ] **BACK-04**: `LocalBlockStore` maintains a durable upload journal recording pending remote uploads, recoverable after crash
 - [ ] **BACK-05**: Internal `S3Client` adapter interface (~5 ops: put/get/head/delete + config) with an `InMemoryS3Client` fake for hermetic tests
@@ -75,14 +75,14 @@ Deferred (with reconsideration triggers, per research):
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| CORE-01 | Phase 1 | Pending |
+| CORE-01 | Phase 1 | Complete |
 | CORE-02 | Phase 1 | Complete |
 | CORE-03 | Phase 1 | Complete |
 | CORE-04 | Phase 1 | Complete |
-| CORE-05 | Phase 1 | Pending |
-| CORE-06 | Phase 1 | Pending |
+| CORE-05 | Phase 1 | Complete |
+| CORE-06 | Phase 1 | Complete |
 | BACK-01 | Phase 1 | Complete |
-| BACK-02 | Phase 1 | Pending |
+| BACK-02 | Phase 1 | Complete |
 | BUILD-01 | Phase 1 | Complete |
 | BACK-03 | Phase 2 | Pending |
 | BACK-04 | Phase 2 | Pending |
