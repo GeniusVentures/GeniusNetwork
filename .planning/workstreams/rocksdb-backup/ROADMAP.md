@@ -6,7 +6,7 @@
 
 ## Phases
 
-- [ ] **Phase 1: BlockStore Contract, Memory Backend & Conformance Kit** - `sgns-blockstore` skeleton with the frozen type system (status taxonomy, DurabilityLevel, eviction-safe List-free API), MemoryBlockStore reference implementation, and the reusable conformance kit
+- [x] **Phase 1: BlockStore Contract, Memory Backend & Conformance Kit** - `sgns-blockstore` skeleton with the frozen type system (status taxonomy, DurabilityLevel, eviction-safe List-free API), MemoryBlockStore reference implementation, and the reusable conformance kit (completed 2026-10-20)
 - [ ] **Phase 2: LocalBlockStore (RocksDB Cold Tier)** - Durable local persistence through its own RocksDB instance: atomic writes, crash-recoverable upload journal, verify-on-read
 - [ ] **Phase 3: minio-cpp Integration & S3Client Adapter** - The one genuinely new external surface: minio-cpp at the pinned tag built shaderc-style through the superbuild, isolated behind an internal adapter with an in-memory fake
 - [ ] **Phase 4: S3BlockStore & Sia s3d Roundtrip** - The terminal cold tier: `v1/blocks/` codec-preserving layout, conditional create-only PUTs, opt-in MinIO-binary tests, dev-gated live s3d E2E, durability-signal discovery
@@ -26,7 +26,7 @@
   4. `BlockStoreConformanceTests` is a reusable suite any backend can instantiate in one step, and it runs green against `MemoryBlockStore` in CI (hermetic, no network)
   5. The API shape is verifiably safe: no delete-shaped method exists (`EvictLocal` is local-only, asserted by a guard test) and enumeration is exposed only on a separate tooling/audit interface, never on `BlockStore` itself
 
-**Plans**: 2/3 plans executed
+**Plans**: 3/3 plans complete
 Plans:
 **Wave 1**
 - [x] 01-01-PLAN.md — Repo bootstrap, superbuild entry & C1 CID spike (tracer: repo → CommonTargets → install tree → green spike; BUILD-01, p2p_cid adoption per D-05/D-06)
@@ -35,7 +35,7 @@ Plans:
 - [x] 01-02-PLAN.md — Frozen v1 contract headers (taxonomy, DurabilityLevel, options, capabilities, List-free interface, tooling seam, FaultController) & MemoryBlockStore reference backend
 
 **Wave 3** *(blocked on Wave 2 completion)*
-- [ ] 01-03-PLAN.md — Conformance kit (one-macro instantiation + fault seam), API-shape guard tests (SFINAE + include hygiene) & CI ctest lane
+- [x] 01-03-PLAN.md — Conformance kit (one-macro instantiation + fault seam), API-shape guard tests (SFINAE + include hygiene) & CI ctest lane
 
 **Research note**: Resolve conflict C1 (CID dependency: libp2p `p2p_cid` vs ipfs-lite-cpp granular `cid` target) as a day-one spike — p2p_cid round-trip + `CidOf` helper; fallback = granular-target linking. C3/C4 decisions (no Remove/Delete; List-free core) are frozen here with the guard test.
 
@@ -104,7 +104,7 @@ Plans:
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. BlockStore Contract, Memory Backend & Conformance Kit | 2/3 | In Progress|  |
+| 1. BlockStore Contract, Memory Backend & Conformance Kit | 3/3 | Complete    | 2026-10-20 |
 | 2. LocalBlockStore (RocksDB Cold Tier) | 0/TBD | Not started | - |
 | 3. minio-cpp Integration & S3Client Adapter | 0/TBD | Not started | - |
 | 4. S3BlockStore & Sia s3d Roundtrip | 0/TBD | Not started | - |
