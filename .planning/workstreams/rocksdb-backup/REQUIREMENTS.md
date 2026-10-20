@@ -75,27 +75,27 @@ Deferred (with reconsideration triggers, per research):
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| CORE-01 | TBD | Pending |
-| CORE-02 | TBD | Pending |
-| CORE-03 | TBD | Pending |
-| CORE-04 | TBD | Pending |
-| CORE-05 | TBD | Pending |
-| CORE-06 | TBD | Pending |
-| BACK-01 | TBD | Pending |
-| BACK-02 | TBD | Pending |
-| BACK-03 | TBD | Pending |
-| BACK-04 | TBD | Pending |
-| BACK-05 | TBD | Pending |
-| BACK-06 | TBD | Pending |
-| BACK-07 | TBD | Pending |
-| BUILD-01 | TBD | Pending |
-| BUILD-02 | TBD | Pending |
-| BUILD-03 | TBD | Pending |
-| S3D-01 | TBD | Pending |
-| S3D-02 | TBD | Pending |
-| S3D-03 | TBD | Pending |
-| TEST-01 | TBD | Pending |
-| TEST-02 | TBD | Pending |
+| CORE-01 | Phase 1 | Pending |
+| CORE-02 | Phase 1 | Pending |
+| CORE-03 | Phase 1 | Pending |
+| CORE-04 | Phase 1 | Pending |
+| CORE-05 | Phase 1 | Pending |
+| CORE-06 | Phase 1 | Pending |
+| BACK-01 | Phase 1 | Pending |
+| BACK-02 | Phase 1 | Pending |
+| BUILD-01 | Phase 1 | Pending |
+| BACK-03 | Phase 2 | Pending |
+| BACK-04 | Phase 2 | Pending |
+| BUILD-02 | Phase 3 | Pending |
+| BUILD-03 | Phase 3 | Pending |
+| BACK-05 | Phase 3 | Pending |
+| BACK-06 | Phase 3 | Pending |
+| BACK-07 | Phase 4 | Pending |
+| S3D-01 | Phase 4 | Pending |
+| S3D-02 | Phase 4 | Pending |
+| S3D-03 | Phase 4 | Pending |
+| TEST-01 | Phase 5 | Pending |
+| TEST-02 | Phase 5 | Pending |
 
 ---
 *Requirements defined: 2026-10-19 — rocksdb-backup workstream, milestone v1.0*
