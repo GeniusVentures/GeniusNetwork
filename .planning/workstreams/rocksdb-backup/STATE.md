@@ -4,13 +4,13 @@ milestone: v1.0
 milestone_name: CRDT Cold-Storage BlockStore Library (Sia s3d backend)
 current_phase: 01
 current_phase_name: BlockStore Contract, Memory Backend & Conformance Kit
-current_plan: 2
+current_plan: 3
 status: executing
-stopped_at: Completed 01-01-PLAN.md
-last_updated: "2026-10-20T21:25:48.752Z"
+stopped_at: Completed 01-02-PLAN.md
+last_updated: "2026-10-20T21:38:08.193Z"
 last_activity: 2026-10-20
 last_activity_desc: Phase 01 execution started
-state_head: 00528d7793cd3240ec8a3e5882d207ab6f9a337a
+state_head: 6953d519c64c00d653c61adda4910a3ec5c78c41
 progress:
   total_phases: 5
   completed_phases: 0
@@ -31,14 +31,14 @@ See: `.planning/PROJECT.md`, workstream sections; `.planning/workstreams/rocksdb
 ## Current Position
 
 Phase: 01 (BlockStore Contract, Memory Backend & Conformance Kit) — EXECUTING
-Plan: 2 of 3
+Plan: 3 of 3
 Status: Ready to execute
 Last activity: 2026-10-20 — Phase 01 execution started
 
 ## Progress
 
 **Phases Complete:** 0/5
-**Current Plan:** 2
+**Current Plan:** 3
 
 | Phase | Plans | Status |
 |-------|-------|--------|
@@ -64,9 +64,9 @@ Last activity: 2026-10-20 — Phase 01 execution started
 
 ## Session Continuity
 
-**Last session:** 2026-10-20T21:25:40.235Z
+**Last session:** 2026-10-20T21:38:08.176Z
 
-**Stopped At:** Completed 01-01-PLAN.md
+**Stopped At:** Completed 01-02-PLAN.md
 **Resume File:** None
 
 ## Performance Metrics
@@ -74,7 +74,9 @@ Last activity: 2026-10-20 — Phase 01 execution started
 | Plan | Duration | Tasks | Files |
 |------|----------|-------|-------|
 | Phase 01 P01 | 22min | 3 tasks | 11 files |
+| Phase 01 P02 | 15min | 2 tasks | 14 files |
 
 ## Decisions
 
 - [Phase 01]: C1 resolved day-one: p2p_cid ADOPTED per D-05/D-06 (spike 3/3 green in 01-01); ipfs-lite-cpp fallback not exercised. Known-vector correction: sha256 CIDv1 RAW of 'hello world' ends ...72ysco7... ('y' at pos 33, not 'w') - verified by independent base32 computation.
+- [Phase 01]: Contract frozen: library-local result<T,BlockStatus> alias carries policy::terminate - boost default_policy resolves exception_ptr_rethrow observers for struct error types, which cannot instantiate; D-01 envelope shape preserved (result<T,BlockStatus>), headers document the deviation.
