@@ -15,6 +15,7 @@
 ## Phase Details
 
 ### Phase 1: BlockStore Contract, Memory Backend & Conformance Kit
+
 **Goal**: The `sgns-blockstore` library exists as a buildable/installable thirdparty target whose public contract is frozen and proven — the retrofit-brutal type-system and API-shape decisions land before any real backend exists
 **Depends on**: Nothing (first phase)
 **Requirements**: CORE-01, CORE-02, CORE-03, CORE-04, CORE-05, CORE-06, BACK-01, BACK-02, BUILD-01
@@ -24,10 +25,22 @@
   3. A block whose bytes do not hash to the requested CID is rejected as `Corrupt` with source attribution — proven by the conformance kit's corruption test passing against `MemoryBlockStore`
   4. `BlockStoreConformanceTests` is a reusable suite any backend can instantiate in one step, and it runs green against `MemoryBlockStore` in CI (hermetic, no network)
   5. The API shape is verifiably safe: no delete-shaped method exists (`EvictLocal` is local-only, asserted by a guard test) and enumeration is exposed only on a separate tooling/audit interface, never on `BlockStore` itself
-**Plans**: TBD
+
+**Plans**: 3 plans
+Plans:
+**Wave 1**
+- [ ] 01-01-PLAN.md — Repo bootstrap, superbuild entry & C1 CID spike (tracer: repo → CommonTargets → install tree → green spike; BUILD-01, p2p_cid adoption per D-05/D-06)
+
+**Wave 2** *(blocked on Wave 1 completion)*
+- [ ] 01-02-PLAN.md — Frozen v1 contract headers (taxonomy, DurabilityLevel, options, capabilities, List-free interface, tooling seam, FaultController) & MemoryBlockStore reference backend
+
+**Wave 3** *(blocked on Wave 2 completion)*
+- [ ] 01-03-PLAN.md — Conformance kit (one-macro instantiation + fault seam), API-shape guard tests (SFINAE + include hygiene) & CI ctest lane
+
 **Research note**: Resolve conflict C1 (CID dependency: libp2p `p2p_cid` vs ipfs-lite-cpp granular `cid` target) as a day-one spike — p2p_cid round-trip + `CidOf` helper; fallback = granular-target linking. C3/C4 decisions (no Remove/Delete; List-free core) are frozen here with the guard test.
 
 ### Phase 2: LocalBlockStore (RocksDB Cold Tier)
+
 **Goal**: Blocks persist durably on local disk through `LocalBlockStore`'s own RocksDB instance — atomic writes and a crash-recoverable upload journal establish the LocalCommitted tier and the crash-safety machinery the S3 tier reuses
 **Depends on**: Phase 1
 **Requirements**: BACK-03, BACK-04
@@ -36,9 +49,11 @@
   2. The Phase-1 conformance kit runs green against `LocalBlockStore`
   3. An interrupted write never leaves a torn block visible: after a simulated mid-write crash, Get returns either the complete verified block or `NotFound` — never partial or corrupt bytes
   4. After a crash, restart reconciles the durable upload journal (pending remote uploads recorded before the crash are recoverable) and sweeps stale temp files
+
 **Plans**: TBD
 
 ### Phase 3: minio-cpp Integration & S3Client Adapter
+
 **Goal**: S3 client capability exists behind an internal adapter — minio-cpp at the pinned upstream tag builds through the superbuild on all five platforms, and the adapter interface plus in-memory fake make S3 behavior testable hermetically
 **Depends on**: Phase 1 (library repo skeleton + CommonTargets orchestration entry)
 **Requirements**: BUILD-02, BUILD-03, BACK-05, BACK-06
@@ -47,10 +62,12 @@
   2. All library S3 traffic goes through the internal `S3Client` adapter interface (~5 ops: put/get/head/delete + config); no minio-cpp/SDK type appears in any installed public header (compile-time check)
   3. `InMemoryS3Client` fake drives hermetic tests for every adapter op including 200/404/error paths — no network, no live endpoint, no Docker
   4. `MinioS3Client` performs put/get/head/delete against a local endpoint and maps every failure to the Phase-1 status taxonomy in exactly one place — unknown failures map to Unknown/`TemporarilyUnavailable`, never `NotFound`
+
 **Plans**: TBD
 **Research note**: `--research-phase` recommended — minio-cpp v1.0.0 header-level API surface at the pinned tag (BaseUrl config, path-style, conditional-header exposure, error codes; hosted doxygen is stale), hermeticity patch shape, inih GNUS fork (CMakeLists for meson-only upstream), Windows source build, ExternalProject wiring. Entrance criteria: conditional `If-None-Match:*` sendable at the pinned tag.
 
 ### Phase 4: S3BlockStore & Sia s3d Roundtrip
+
 **Goal**: The terminal cold-storage tier ships — `S3BlockStore` composed over the adapter with the codec-preserving key layout and conditional writes, accepted end-to-end against real MinIO (opt-in) and live Sia s3d (dev-gated), with s3d's staged-vs-durable semantics characterized
 **Depends on**: Phase 2 (local tier + upload journal interplay), Phase 3
 **Requirements**: BACK-07, S3D-01, S3D-02, S3D-03
@@ -60,10 +77,12 @@
   3. Opt-in MinIO-binary integration tests (env-gated local server process, no Docker-in-CI dependency) exercise the real MinioS3Client→S3BlockStore roundtrip: Put → Get → CID-verify
   4. The dev-gated live s3d E2E passes: a fresh library instance retrieves a block previously uploaded to Sia s3d and verifies its CID; the evidence artifact is committed; it never runs in CI
   5. s3d's staged-vs-durable semantics are characterized from the pinned version's admin API (`/stats/uploads`) and `openapi.yml`, with a documented finding — a per-object durability signal exists, or the accepted-is-max-provable fallback is documented
+
 **Plans**: TBD
 **Research note**: In-phase discovery task — s3d durability-signal field semantics at pinned v0.2.1 (staged-read headers, metric names); design the fallback if no per-object signal exists. Polling implementation is fast-follow, not this milestone.
 
 ### Phase 5: Fault Injection & Three-Tier Hardening
+
 **Goal**: The library's trust claims hold under induced failure — taxonomy honesty, crash safety, and corruption rejection are proven, and the three-tier test strategy is complete with CI fully hermetic
 **Depends on**: Phase 2 (upload journal), Phase 4 (S3 tier)
 **Requirements**: TEST-01, TEST-02
@@ -71,6 +90,7 @@
   1. A loopback-stub fault matrix — connection-refused, 5xx, truncated bodies, garbage responses — surfaces each failure as the correct taxonomy class with no sticky negative caching: a subsequent good fetch succeeds
   2. Crash injection (kill between local commit and remote upload, mid-temp-write, post-upload) always recovers cleanly via journal reconciliation; byte-flipped local and remote blocks are rejected as `Corrupt` with source attribution
   3. The three-tier strategy is enforced and inspectable: Tier 1 hermetic fakes run in CI with no live endpoints and no fixed sleeps; Tier 2 MinIO-binary tests are opt-in; Tier 3 s3d tests are dev-only with committed evidence — verifiable from CI/test configuration
+
 **Plans**: TBD
 
 ## Phase Ordering Rationale
