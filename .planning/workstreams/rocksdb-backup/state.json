@@ -1,0 +1,38 @@
+{
+  "contract": "1.0.0",
+  "flavor": "core",
+  "milestone": "v1.0 — CRDT Cold-Storage BlockStore Library (Sia s3d backend)",
+  "phases": [
+    {
+      "number": "1",
+      "name": "BlockStore Contract, Memory Backend & Conformance Kit",
+      "status": "complete"
+    },
+    {
+      "number": "2",
+      "name": "LocalBlockStore (RocksDB Cold Tier)",
+      "status": "pending"
+    },
+    {
+      "number": "3",
+      "name": "minio-cpp Integration & S3Client Adapter",
+      "status": "pending"
+    },
+    {
+      "number": "4",
+      "name": "S3BlockStore & Sia s3d Roundtrip",
+      "status": "pending"
+    },
+    {
+      "number": "5",
+      "name": "Fault Injection & Three-Tier Hardening",
+      "status": "pending"
+    }
+  ],
+  "next": {
+    "command": "/gsd:progress --next",
+    "label": "Advance to the next step",
+    "reason": "Phase 2 of 5 · executing"
+  },
+  "updated_at": "2026-10-21T00:30:13.784Z"
+}
