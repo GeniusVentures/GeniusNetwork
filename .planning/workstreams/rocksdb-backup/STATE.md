@@ -43,7 +43,7 @@ Last activity: 2026-10-20 — Phase 01 complete, transitioned to Phase 2
 | Phase | Plans | Status |
 |-------|-------|--------|
 | 01 — BlockStore Contract, Memory Backend & Conformance Kit | 0/TBD | Not started |
-| 02 — LocalBlockStore (RocksDB Cold Tier) | 0/TBD | Not started |
+| 02 — LocalBlockStore (RocksDB Cold Tier) | 0/3 | Not started |
 | 03 — minio-cpp Integration & S3Client Adapter | 0/TBD | Not started (--research-phase flagged) |
 | 04 — S3BlockStore & Sia s3d Roundtrip | 0/TBD | Not started |
 | 05 — Fault Injection & Three-Tier Hardening | 0/TBD | Not started |
