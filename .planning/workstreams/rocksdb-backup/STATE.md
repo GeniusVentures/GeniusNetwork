@@ -6,15 +6,15 @@ current_phase: 3
 current_phase_name: minio-cpp Integration & S3Client Adapter
 current_plan: 3
 status: verifying
-stopped_at: "Phase 3 all 3 plans complete (D-11 MET, SC2/SC3/SC4-mapping green); next: phase gates (aggregate, code review, regression, verify)"
-last_updated: "2026-10-21T20:07:01.447Z"
+stopped_at: "03-04 Task 1 complete (TDD, in-process cert gen); Task 2 BLOCKED at watch-for #3 - replan needed for TLS-aware health probe"
+last_updated: "2026-10-21T23:08:33.295Z"
 last_activity: 2026-10-21
 last_activity_desc: Phase 3 execution started
-state_head: 76594149ce23f0cba4b6196384ab1391a3471bb9
+state_head: 2942a176e13abc8dd20696351006bd1a651443c5
 progress:
   total_phases: 5
   completed_phases: 2
-  total_plans: 9
+  total_plans: 10
   completed_plans: 9
 ---
 
@@ -64,10 +64,10 @@ Last activity: 2026-10-21 — Phase 3 execution started
 
 ## Session Continuity
 
-**Last session:** 2026-10-21T20:07:01.190Z
+**Last session:** 2026-10-21T23:08:32.953Z
 
-**Stopped At:** Phase 3 all 3 plans complete (D-11 MET, SC2/SC3/SC4-mapping green); next: phase gates (aggregate, code review, regression, verify)
-**Resume File:** None
+**Stopped At:** 03-04 Task 1 complete (TDD, in-process cert gen); Task 2 BLOCKED at watch-for #3 - replan needed for TLS-aware health probe
+**Resume File:** .planning/workstreams/rocksdb-backup/phases/03-minio-cpp-integration-s3client-adapter/03-04-SUMMARY.md
 
 ## Performance Metrics
 
@@ -88,3 +88,7 @@ Last activity: 2026-10-21 — Phase 3 execution started
 - [Phase 01]: C1 resolved day-one: p2p_cid ADOPTED per D-05/D-06 (spike 3/3 green in 01-01); ipfs-lite-cpp fallback not exercised. Known-vector correction: sha256 CIDv1 RAW of 'hello world' ends ...72ysco7... ('y' at pos 33, not 'w') - verified by independent base32 computation.
 - [Phase 01]: Contract frozen: library-local result<T,BlockStatus> alias carries policy::terminate - boost default_policy resolves exception_ptr_rethrow observers for struct error types, which cannot instantiate; D-01 envelope shape preserved (result<T,BlockStatus>), headers document the deviation.
 - [Phase 03]: D-11 MET @ minio-cpp v1.0.0: if-none-match:* on the wire via PutObjectArgs.headers (extra_headers dropped on single-part path); THIRD 412 error shape discovered (invalid response received; status code: 412) alongside PreconditionFailed:/HTTP status code 412 - 03-03 mapper must classify all three — D-11 MET @ minio-cpp v1.0.0: if-none-match:* on the wire via PutObjectArgs.headers (extra_headers dropped on single-part path); THIRD 412 error shape discovered (invalid response received; status code: 412) alongside PreconditionFailed:/HTTP status code 412 - 03-03 mapper must classify all three
+
+### Blockers
+
+- 03-04 watch-for #3 fired: MinIO RELEASE.2025-04-22 serves TLS-only on the API port (first-byte-sniffing assumption falsified) - WaitUntilHealthy plaintext probe blocks Start(tls=true); EnvGatedTlsOnSmoke still cannot execute live (cert-gen mechanism itself proven live). Replan needed (options a/b/c in 03-04-SUMMARY.md).
