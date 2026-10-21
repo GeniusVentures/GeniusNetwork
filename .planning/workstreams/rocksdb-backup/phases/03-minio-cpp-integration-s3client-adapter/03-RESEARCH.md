@@ -452,19 +452,19 @@ set(_FINDPACKAGE_MINIOCPP_CONFIG_DIR "${CMAKE_CURRENT_BINARY_DIR}/minio-cpp/lib/
 | A4 | A TLS-on smoke is achievable day-one against a locally generated self-signed cert (openssl available in the thirdparty build tree) with `IgnoreCertCheck`/`SetSslCertFile` | D-11 trio | TLS-on half of spike needs a different fixture (e.g. MinIO certs-dir); TLS-off (plain HTTP loopback) is trivially covered either way |
 | A5 | Configure-time `git clone` works inside ExternalProject configure steps on all five platform lanes (host-side tool; verified present on Windows dev box; CI lanes presumed to carry git — all existing submodules already require it) | Pitfall 6 | A network-isolated lane fails at configure — loud, surfaced per D-12; no pre-solution |
 
-## Open Questions
+## Open Questions (RESOLVED 2026-10-21 — resolutions below; details in 03-CONTEXT.md ## Amendments and the PLAN files)
 
-1. **Pugixml provision — SC1's letter vs the mechanism's reality (plan-level decision, likely checkpoint)**
+1. **Pugixml provision — SC1's letter vs the mechanism's reality** — **RESOLVED: option (a), pugixml as its own upstream submodule** (`thirdparty/pugixml` @ v1.16) — user-selected 2026-10-21 during plan-phase; recorded in 03-CONTEXT.md `## Amendments` (which also corrects this file's original dep-inventory assumption) and PLAN 03-01 must_haves. Original framing:
    - What we know: `miniocpp-deps.cmake` cannot fetch pugixml (hard error without a package) [VERIFIED]. BUILD-02's parenthetical blesses "a small patch step mirroring the shaderc git-sync-deps precedent" for pinning; SC1 says "no separate dep submodules."
    - What's unclear: which provision shape the user wants, given the phase description assumed all three deps arrive via upstream's mechanism.
    - Recommendation: **(a) pugixml as its own upstream submodule + ExternalProject** (`thirdparty/pugixml` @ v1.16, `DEPENDS` + `-Dpugixml_DIR`, exporting `_FINDPACKAGE_PUGIXML_CONFIG_DIR`) — standard repo pattern, offline-friendly at configure time (submodule = no clone), cross-compile handled by `_CMAKE_COMMON_CACHE_ARGS` like every other lib; it technically adds a "dep submodule" (SC1 letter) but is upstream-not-fork (BUILD-02's actual red line). Alternative **(b)**: shaderc-style `PATCH_COMMAND` on the minio-cpp entry that fetches + builds + installs pugixml into minio-cpp's prefix before configure — honors SC1's letter, but must forward the full cross-compile cache args inside the patch step and adds configure-time network to a second place. Present both to the user at planning; default (a).
 
-2. **TLS-on smoke fixture (D-11, part 3)**
+2. **TLS-on smoke fixture (D-11, part 3)** — **RESOLVED: as recommended** — self-signed cert generated in the day-one spike (openssl from the thirdparty tree), MinIO started with TLS, client connects `https=true` + `IgnoreCertCheck(true)`, asserts handshake + one op; TLS-off plain-HTTP loopback stays the primary lane everywhere (PLAN 03-01, env-gated behind `SGNS_BLOCKSTORE_TEST_MINIO_BIN`). Original framing:
    - What we know: `BaseUrl.https` + `IgnoreCertCheck`/`SetSslCertFile` are the verified client-side controls.
    - What's unclear: cheapest server-side fixture for a real TLS handshake day-one (MinIO with a generated self-signed pair vs. an openssl s_server one-shot vs. deferring TLS-on to the stub with a TLS wrapper).
    - Recommendation: generate a self-signed cert in the spike (openssl from the thirdparty tree), start MinIO with it, connect with `https=true` + `IgnoreCertCheck(true)`; assert handshake + one op. Keep TLS-off (plain HTTP loopback) as the primary lane everywhere else.
 
-3. **Which CI lanes produce SC1 evidence, and who installs the MinIO binary where (D-07/D-09)**
+3. **Which CI lanes produce SC1 evidence, and who installs the MinIO binary where (D-07/D-09)** — **RESOLVED: per-platform build-log evidence from the existing five lanes** (Windows/MSVC = in-phase proof lane; four non-Windows lanes carried as a backstop truth in PLAN 03-01 per Q3's agent-discretion); MinIO-binary tier = dev-machine opt-in via env var, loud skip in CI (PLAN 03-03 Task 3). Original framing:
    - What we know: repo CI = self-hosted, no Docker (foundational research C2); env-gated tier never runs by default.
    - What's unclear: per-lane evidence artifacts for the five-platform build claim (BUILD-03/SC1) — e.g. Windows local + Linux CI + macOS/iOS/Android cross lanes.
    - Recommendation: planner treats SC1 evidence as per-platform build logs from the existing lanes (the agent's discretion per CONTEXT); MinIO-binary tier documented as dev-machine opt-in with the env var, skipped loudly in CI.

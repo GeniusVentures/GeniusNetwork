@@ -141,7 +141,17 @@ None — discussion stayed within phase scope.
 
 </deferred>
 
+<amendments>
+## Amendments
+
+### 2026-10-21 — Q1: pugixml provision route (post-discussion, user-selected during plan-phase)
+
+- **Decision:** pugixml is provisioned as its own upstream submodule `thirdparty/pugixml` @ tag v1.16 (zeux/pugixml, absolute URL — not a fork) with its own `ExternalProject_Add(pugixml)` exporting `_FINDPACKAGE_PUGIXML_CONFIG_DIR`, consumed by the minio-cpp entry via `DEPENDS pugixml` + `-Dpugixml_DIR`. Selected by the user on 2026-10-21 during plan-phase (both options presented per RESEARCH.md Open Question Q1).
+- **D-12 inventory correction (supersedes the original dep list):** the verified pinned-tag read (03-RESEARCH.md, pitfall 1) shows `miniocpp-deps.cmake` fetches only **cpp-httplib v0.53.1** and **inih r58** (built as upstream's own manual CMake target — the meson-only concern is dissolved), and **hard-errors (`FATAL_ERROR`) when no pugixml CMake package/pkg-config is present — there is NO git-clone fallback for pugixml**. D-12's original inventory ("pugixml v1.16 / cpp-httplib v0.62.0 / inih r62") was wrong on versions and completeness. D-12's operative rule is unchanged: upstream mechanism as-is for the deps it governs, no GNUS forks, no pin overrides, no pre-committed hermeticity patch.
+- **BUILD-02/SC1 letter amendment:** this decision knowingly bends the letter of BUILD-02/SC1 ("no separate dep submodules") — one upstream dep submodule is added. The operative red lines hold unchanged: no GNUS fork (upstream-not-fork URLs), statically linked, non-exported. Recorded here and in PLAN 03-01 (must_haves truth) so phase-complete audits and future gates reading REQUIREMENTS/ROADMAP can trace the amendment.
+</amendments>
+
 ---
 
 *Phase: 3-minio-cpp Integration & S3Client Adapter*
-*Context gathered: 2026-10-21*
+*Context gathered: 2026-10-21 (amended 2026-10-21)*
