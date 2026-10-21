@@ -50,10 +50,10 @@ Plans:
   3. An interrupted write never leaves a torn block visible: after a simulated mid-write crash, Get returns either the complete verified block or `NotFound` — never partial or corrupt bytes
   4. After a crash, restart reconciles the durable upload journal (pending remote uploads recorded before the crash are recoverable) and sweeps stale temp files (CONTEXT D-02: vacuous by design — no temp files exist; startup sweep = journal reconciliation only; headers document this mapping)
 
-**Plans**: 3 plans
+**Plans**: 1/3 plans executed
 Plans:
 **Wave 1**
-- [ ] 02-01-PLAN.md — LocalBlockStore durable tracer: own RocksDB instance, one-batch Put+journal, restart proof, all build wiring (BACK-03/BACK-04; D-01..D-05, pimpl + no-version find_package + superbuild DEPENDS rocksdb)
+- [x] 02-01-PLAN.md — LocalBlockStore durable tracer: own RocksDB instance, one-batch Put+journal, restart proof, all build wiring (BACK-03/BACK-04; D-01..D-05, pimpl + no-version find_package + superbuild DEPENDS rocksdb)
 
 **Wave 2** *(blocked on Wave 1 completion)*
 - [ ] 02-02-PLAN.md — Journal lifecycle (D-06 transitions + state reader), unconditional EvictLocal (D-10) & conformance kit green (BACK-03/BACK-04; SC 2)
@@ -114,7 +114,7 @@ Plans:
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. BlockStore Contract, Memory Backend & Conformance Kit | 3/3 | Complete    | 2026-10-20 |
-| 2. LocalBlockStore (RocksDB Cold Tier) | 0/3 | Not started | - |
+| 2. LocalBlockStore (RocksDB Cold Tier) | 1/3 | In Progress|  |
 | 3. minio-cpp Integration & S3Client Adapter | 0/TBD | Not started | - |
 | 4. S3BlockStore & Sia s3d Roundtrip | 0/TBD | Not started | - |
 | 5. Fault Injection & Three-Tier Hardening | 0/TBD | Not started | - |
