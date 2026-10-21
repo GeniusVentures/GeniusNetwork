@@ -471,18 +471,23 @@ SGNS_BLOCKSTORE_CONFORMANCE_TESTS(LocalBlockStoreTest, MakeFreshLocalStore())
 | A5 | RocksDB's default WAL recovery replays committed batches into memtables on reopen such that both CFs of one batch appear atomically (single-record WAL framing); the atomicity contract itself is header-verified (`write_batch.h:9`), the framing mechanism is training knowledge | Crash model | Core crash-after-commit test would fail immediately — cheap to discover in Wave 0 of the crash test |
 | A6 | Journal value schema `[version-byte][state-byte]` with unknown-state records conservatively treated as `PendingUpload` (idempotent re-upload is safe; undecodable never silently dropped from the pending set) is the right fail-safe direction | Journal schema | Wrong direction would either lose pending uploads (treat-as-acked) or wedge uploads (treat-as-corrupt); planner may flip with Phase-4 input |
 
-## Open Questions
+## Open Questions (RESOLVED)
+
+All three questions were closed during Phase-2 planning — every recommendation below was adopted and is pinned in the phase plans; the inline **RESOLVED — ADOPTED** markers name the adopting plan.
 
 1. **Should `GetPendingUploads()` be a pure virtual on `BlockStoreTooling` or carry a default "not supported" body?**
    - What we know: D-05 mandates the surface land on the tooling interface; no backend implements `BlockStoreTooling` yet (header says "no backend implements it yet" `[VERIFIED: BlockStoreTooling.hpp:41-42]`), so either shape breaks nothing today.
    - What's unclear: whether Phase 4's S3 backend will ever implement tooling.
    - Recommendation: pure virtual `= 0` (matches `ForEach`'s shape; only LocalBlockStore implements it in v1).
+   - **RESOLVED — ADOPTED:** pure virtual `= 0` on `BlockStoreTooling`, per 02-01 Task 1 (the header gains `GetPendingUploads() = 0`; LocalBlockStore is the v1 implementer).
 2. **Where does the `UploadState` enum live?**
    - What we know: D-06 puts transition methods on the concrete type; the tooling pending-set returns CIDs only (state is redundant in the pending set), so frozen headers need no new type beyond the D-05 method.
    - Recommendation: `LocalBlockStore.hpp` (concrete backend's header) — zero churn in frozen Phase-1 headers beyond the mandated tooling method.
+   - **RESOLVED — ADOPTED:** `UploadState` lives in `LocalBlockStore.hpp` (namespace `sgns::blockstore`, beside the CF-name constants), per 02-01 Task 1 — frozen Phase-1 headers carry no new type.
 3. **Re-Put journal behavior (no-regression recommendation) — confirm with Phase-4 expectations**
    - What we know: content-addressing makes re-Put bytes identical, so prior journal state stays valid (Pitfall 6).
    - Recommendation: adopt no-regression; revisit only if Phase 4's uploader wants an explicit "re-pin" primitive (additive later).
+   - **RESOLVED — ADOPTED:** no-regression is pinned by 02-02 Task 1 Test 6 (`RePutDoesNotRegressJournalState`) plus the 02-02 re-Put must-have truth; a "re-pin" primitive stays additive-future if Phase 4 wants it.
 
 ## Environment Availability
 
