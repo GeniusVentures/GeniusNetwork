@@ -4,18 +4,18 @@ milestone: v1.0
 milestone_name: CRDT Cold-Storage BlockStore Library (Sia s3d backend)
 current_phase: 3
 current_phase_name: minio-cpp Integration & S3Client Adapter
-current_plan: 3
+current_plan: 2
 status: executing
-stopped_at: Phase 3 planned (3 plans, checker verification passed)
-last_updated: "2026-10-21T18:47:37.801Z"
-last_activity: 2026-10-20
-last_activity_desc: Phase 2 complete, transitioned to Phase 3
-state_head: c7153db9896245f65da3bf3caaf6dc5a71dbd842
+stopped_at: "Completed 03-01 (D-11 MET); next: 03-02 S3Client interface + InMemoryS3Client fake"
+last_updated: "2026-10-21T19:50:02.659Z"
+last_activity: 2026-10-21
+last_activity_desc: Phase 3 execution started
+state_head: e60e8cfa8f58ef481ce3661c6ae8a590b83a9d3e
 progress:
   total_phases: 5
   completed_phases: 2
   total_plans: 9
-  completed_plans: 6
+  completed_plans: 7
 ---
 
 # Project State
@@ -26,19 +26,19 @@ See: `.planning/PROJECT.md`, workstream sections; `.planning/workstreams/rocksdb
 
 **Core value:** Older CRDT/IPLD blocks can spill from RocksDB hot state to durable, CID-verified object storage through a shared thirdparty static library (`sgns-blockstore`) consumable by both SuperGenius and genius-tube — no RocksDB remote-FS integration, no SDK/SuperGenius types in the public API, and local eviction is never a CRDT deletion.
 
-**Current focus:** Phase 2 — LocalBlockStore (RocksDB Cold Tier)
+**Current focus:** Phase 3 — minio-cpp Integration & S3Client Adapter
 
 ## Current Position
 
-Phase: 3 — READY TO EXECUTE
-Plan: Not started
+Phase: 3 (minio-cpp Integration & S3Client Adapter) — EXECUTING
+Plan: 2 of 3
 Status: Ready to execute
-Last activity: 2026-10-20 — Phase 2 complete, transitioned to Phase 3
+Last activity: 2026-10-21 — Phase 3 execution started
 
 ## Progress
 
 **Phases Complete:** 0/5
-**Current Plan:** 3
+**Current Plan:** 2
 
 | Phase | Plans | Status |
 |-------|-------|--------|
@@ -64,10 +64,10 @@ Last activity: 2026-10-20 — Phase 2 complete, transitioned to Phase 3
 
 ## Session Continuity
 
-**Last session:** 2026-10-21T18:47:37.579Z
+**Last session:** 2026-10-21T19:49:42.574Z
 
-**Stopped At:** Phase 3 planned (3 plans, checker verification passed)
-**Resume File:** .planning/workstreams/rocksdb-backup/phases/03-minio-cpp-integration-s3client-adapter/03-01-PLAN.md
+**Stopped At:** Completed 03-01 (D-11 MET); next: 03-02 S3Client interface + InMemoryS3Client fake
+**Resume File:** .planning/workstreams/rocksdb-backup/phases/03-minio-cpp-integration-s3client-adapter/03-02-PLAN.md
 
 ## Performance Metrics
 
@@ -79,8 +79,10 @@ Last activity: 2026-10-20 — Phase 2 complete, transitioned to Phase 3
 | Phase 2 P1 | 35 min | 2 tasks | 10 files |
 | Phase 2 P2 | 25 min | 2 tasks | 4 files |
 | Phase 2 P3 | 25 min | 2 tasks | 4 files |
+| Phase 03 P01 | 55 min | 3 tasks | 13 files |
 
 ## Decisions
 
 - [Phase 01]: C1 resolved day-one: p2p_cid ADOPTED per D-05/D-06 (spike 3/3 green in 01-01); ipfs-lite-cpp fallback not exercised. Known-vector correction: sha256 CIDv1 RAW of 'hello world' ends ...72ysco7... ('y' at pos 33, not 'w') - verified by independent base32 computation.
 - [Phase 01]: Contract frozen: library-local result<T,BlockStatus> alias carries policy::terminate - boost default_policy resolves exception_ptr_rethrow observers for struct error types, which cannot instantiate; D-01 envelope shape preserved (result<T,BlockStatus>), headers document the deviation.
+- [Phase 03]: D-11 MET @ minio-cpp v1.0.0: if-none-match:* on the wire via PutObjectArgs.headers (extra_headers dropped on single-part path); THIRD 412 error shape discovered (invalid response received; status code: 412) alongside PreconditionFailed:/HTTP status code 412 - 03-03 mapper must classify all three — D-11 MET @ minio-cpp v1.0.0: if-none-match:* on the wire via PutObjectArgs.headers (extra_headers dropped on single-part path); THIRD 412 error shape discovered (invalid response received; status code: 412) alongside PreconditionFailed:/HTTP status code 412 - 03-03 mapper must classify all three
