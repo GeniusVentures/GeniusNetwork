@@ -7,7 +7,7 @@
 ## Phases
 
 - [x] **Phase 1: BlockStore Contract, Memory Backend & Conformance Kit** - `sgns-blockstore` skeleton with the frozen type system (status taxonomy, DurabilityLevel, eviction-safe List-free API), MemoryBlockStore reference implementation, and the reusable conformance kit (completed 2026-10-20)
-- [ ] **Phase 2: LocalBlockStore (RocksDB Cold Tier)** - Durable local persistence through its own RocksDB instance: atomic writes, crash-recoverable upload journal, verify-on-read
+- [x] **Phase 2: LocalBlockStore (RocksDB Cold Tier)** - Durable local persistence through its own RocksDB instance: atomic writes, crash-recoverable upload journal, verify-on-read (completed 2026-10-20)
 - [ ] **Phase 3: minio-cpp Integration & S3Client Adapter** - The one genuinely new external surface: minio-cpp at the pinned tag built shaderc-style through the superbuild, isolated behind an internal adapter with an in-memory fake
 - [ ] **Phase 4: S3BlockStore & Sia s3d Roundtrip** - The terminal cold tier: `v1/blocks/` codec-preserving layout, conditional create-only PUTs, opt-in MinIO-binary tests, dev-gated live s3d E2E, durability-signal discovery
 - [ ] **Phase 5: Fault Injection & Three-Tier Hardening** - Prove the trust claims under induced failure: taxonomy honesty, crash recovery, corruption rejection; CI stays fully hermetic
@@ -50,7 +50,7 @@ Plans:
   3. An interrupted write never leaves a torn block visible: after a simulated mid-write crash, Get returns either the complete verified block or `NotFound` — never partial or corrupt bytes
   4. After a crash, restart reconciles the durable upload journal (pending remote uploads recorded before the crash are recoverable) and sweeps stale temp files (CONTEXT D-02: vacuous by design — no temp files exist; startup sweep = journal reconciliation only; headers document this mapping)
 
-**Plans**: 3/3 plans executed
+**Plans**: 3/3 plans complete
 Plans:
 **Wave 1**
 - [x] 02-01-PLAN.md — LocalBlockStore durable tracer: own RocksDB instance, one-batch Put+journal, restart proof, all build wiring (BACK-03/BACK-04; D-01..D-05, pimpl + no-version find_package + superbuild DEPENDS rocksdb)
@@ -114,7 +114,7 @@ Plans:
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. BlockStore Contract, Memory Backend & Conformance Kit | 3/3 | Complete    | 2026-10-20 |
-| 2. LocalBlockStore (RocksDB Cold Tier) | 3/3 | In Progress|  |
+| 2. LocalBlockStore (RocksDB Cold Tier) | 3/3 | Complete    | 2026-10-20 |
 | 3. minio-cpp Integration & S3Client Adapter | 0/TBD | Not started | - |
 | 4. S3BlockStore & Sia s3d Roundtrip | 0/TBD | Not started | - |
 | 5. Fault Injection & Three-Tier Hardening | 0/TBD | Not started | - |
