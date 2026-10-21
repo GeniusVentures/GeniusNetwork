@@ -8,7 +8,7 @@
 
 - [x] **Phase 1: BlockStore Contract, Memory Backend & Conformance Kit** - `sgns-blockstore` skeleton with the frozen type system (status taxonomy, DurabilityLevel, eviction-safe List-free API), MemoryBlockStore reference implementation, and the reusable conformance kit (completed 2026-10-20)
 - [x] **Phase 2: LocalBlockStore (RocksDB Cold Tier)** - Durable local persistence through its own RocksDB instance: atomic writes, crash-recoverable upload journal, verify-on-read (completed 2026-10-20)
-- [ ] **Phase 3: minio-cpp Integration & S3Client Adapter** - The one genuinely new external surface: minio-cpp at the pinned tag built shaderc-style through the superbuild, isolated behind an internal adapter with an in-memory fake
+- [x] **Phase 3: minio-cpp Integration & S3Client Adapter** - The one genuinely new external surface: minio-cpp at the pinned tag built shaderc-style through the superbuild, isolated behind an internal adapter with an in-memory fake (completed 2026-10-21)
 - [ ] **Phase 4: S3BlockStore & Sia s3d Roundtrip** - The terminal cold tier: `v1/blocks/` codec-preserving layout, conditional create-only PUTs, opt-in MinIO-binary tests, dev-gated live s3d E2E, durability-signal discovery
 - [ ] **Phase 5: Fault Injection & Three-Tier Hardening** - Prove the trust claims under induced failure: taxonomy honesty, crash recovery, corruption rejection; CI stays fully hermetic
 
@@ -72,7 +72,7 @@ Plans:
   3. `InMemoryS3Client` fake drives hermetic tests for every adapter op including 200/404/error paths — no network, no live endpoint, no Docker
   4. `MinioS3Client` performs put/get/head/delete against a local endpoint and maps every failure to the Phase-1 status taxonomy in exactly one place — unknown failures map to Unknown/`TemporarilyUnavailable`, never `NotFound`
 
-**Plans**: 4/4 plans executed (3 executed + 1 gap closure planned)
+**Plans**: 4/4 plans complete (3 executed + 1 gap closure planned)
 Plans:
 **Wave 1**
 - [x] 03-01-PLAN.md — minio-cpp/pugixml submodules + superbuild wiring + D-11 entrance-criterion spike (tracer: submodule → CommonTargets → build green → trio proof; BUILD-02/BUILD-03; Q1 pugixml amendment, D-12, stub + harness utilities)
@@ -128,7 +128,7 @@ Plans:
 |-------|----------------|--------|-----------|
 | 1. BlockStore Contract, Memory Backend & Conformance Kit | 3/3 | Complete    | 2026-10-20 |
 | 2. LocalBlockStore (RocksDB Cold Tier) | 3/3 | Complete    | 2026-10-20 |
-| 3. minio-cpp Integration & S3Client Adapter | 4/4 | In Progress|  |
+| 3. minio-cpp Integration & S3Client Adapter | 4/4 | Complete    | 2026-10-21 |
 | 4. S3BlockStore & Sia s3d Roundtrip | 0/TBD | Not started | - |
 | 5. Fault Injection & Three-Tier Hardening | 0/TBD | Not started | - |
 
