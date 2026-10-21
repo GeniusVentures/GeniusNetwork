@@ -7,13 +7,16 @@ requires: [03-01 MinioServerHarness + spike, 03-UAT G-3-1 binding fix direction]
 provides:
   - "MinioServerHarness::GenerateSelfSignedCert — public static, in-process OpenSSL C API (no binary/env/config/subprocess)"
   - "SelfSignedCertGeneratedHermetically — hermetic per-platform cert-gen proof (default CI lane)"
-  - "explicit OpenSSL::Crypto link on both harness-compiling test targets"
+  - "TLS-capable readiness probe (TlsHealthExchange, OpenSSL::SSL) — Start(tls=true) works against this release's TLS-only API listener"
+  - "explicit OpenSSL::Crypto + OpenSSL::SSL links on both harness-compiling test targets"
 affects: [thirdparty/sgns-blockstore test targets only; TLS-off lane byte-identical]
 tech-stack:
   added:
     - "OpenSSL 3.0 C API: EVP_RSA_gen, X509 v3 build, X509V3_EXT_conf_nid (SAN), X509_sign(EVP_sha256), PEM_write_bio_* (OpenSSL::Crypto)"
+    - "OpenSSL SSL API: TLS_client_method + SSL_connect/SSL_write/SSL_read readiness probe with SSL_VERIFY_NONE (OpenSSL::SSL)"
   patterns:
     - "in-process fixture generation instead of subprocess shelling (kills Windows UCRT/cmd quote mangling by construction)"
+    - "probe speaking the protocol the server actually serves (TLS-only API port when --certs-dir is set)"
 key-files:
   created: []
   modified:
@@ -25,23 +28,24 @@ key-decisions:
   - "GenerateSelfSignedCert exposed as public static on the harness (hermetic lane exercises cert generation with no MinIO binary; internal call sites unchanged)"
   - "Random positive serial from std::random_device bytes via ASN1_INTEGER_set_uint64 (no BIGNUM lifecycle); -300s notBefore clock-skew margin; 24h validity matching the old '-days 1' fixture"
   - "Explicit find_package(OpenSSL REQUIRED) + OpenSSL::Crypto on minio_cpp_spike_test AND minio_s3_client_test — never miniocpp's transitive surface (binding fix direction)"
-  - "BLOCKING FINDING: community MinIO RELEASE.2025-04-22T22-12-26Z serves TLS-ONLY on the API port when --certs-dir is configured; the plan's first-byte-sniffing assumption is falsified, so WaitUntilHealthy's plaintext probe can never pass and Start(tls=true) times out. Stopped per the plan's watch-for #3 (no pre-emptive change to WaitUntilHealthy)."
-requirements-completed: [] # BACK-06 stays open: EnvGatedTlsOnSmoke not yet executed live
-duration: 16 min
-completed: 2026-10-21T23:30:00Z
-status: blocked
-plan_head_before: 806e939e2e0b1a2f0ecb6f8da52ee1f0f1b39c46
-plan_head_after: 2942a17
-commits: 1
+  - "USER DECISION (2026-10-21) option (a), recorded as an approved Task-2 amendment: TLS-wrap the readiness probe when tls=true — TlsHealthExchange over OpenSSL::SSL with SSL_VERIFY_NONE (mirrors IgnoreCertCheck(true)); plaintext probe path unchanged"
+  - "First live execution of the smoke exposed a bucket-name mismatch (created 'spike-tls', MakePutArgs targets the shared 'spike-bucket' → NoSuchBucket) — Rule 1 inline fix: create spike-bucket"
+requirements-completed: [BACK-06]
+duration: 16 min + 40 min resumption
+completed: 2026-10-21T23:26:00Z
+status: complete
+plan_head_before: 806e9396dc67faa4e9f29bdd047b06b4b38d6b93
+plan_head_after: 4e7ca9527b3c23594d3d9d016508803186615363
+commits: 3
 actuals:
-  tokens: 4041      # chars/4 over thirdparty/sgns-blockstore e4b45e7..639ccce (16,163 chars)
-  tasks: 1          # of 2 (Task 2 verification-only, blocked at watch-for #3)
-  commits: 1        # root-repo commits (chore pointer bump); code commits live in sub-repos below
+  tokens: 8800      # chars/4: session 1 measured 4041 over sgns-blockstore e4b45e7..639ccce + session 2 ~4750 over sgns-blockstore 639ccce..b1240b0 and the planning record edits
+  tasks: 2          # of 2 (Task 2 spanned two sessions: blocked run + option-(a) resumption)
+  commits: 3        # root-repo commits measured from the ledger (2942a17, f4ccbe1, 4e7ca95); code commits live in sub-repos below
 ---
 
 # Phase 03 Plan 04: In-process self-signed cert generation (G-3-1) Summary
 
-**One-liner:** Cert generation rewritten in-process on the OpenSSL C API (binary machinery deleted, hygiene gate green, hermetic case passing on MSVC) — but the live TLS smoke remains blocked because this MinIO release serves TLS-only, so the harness's plaintext health probe times out (plan watch-for #3; replan required).
+**One-liner:** G-3-1 closed — in-process cert generation (OpenSSL C API) plus a TLS-wrapped readiness probe (user-approved option (a)); EnvGatedTlsOnSmoke executed live and passed (1343 ms) with only the MinIO gate set, minio_s3_client_test 11/11, zero skips, hygiene gate green.
 
 ## What Was Completed
 
@@ -94,9 +98,10 @@ GREP_EXIT=1   (no matches — machinery fully deleted)
 **Build:** `cmake --build ...sgns-blockstore-build --target minio_cpp_spike_test
 minio_s3_client_test --config Debug` → reconfigure OK, both exes linked, EXIT=0.
 
-### Task 2 — BLOCKED at watch-for #3 (verification-only; no code changes made)
+### Task 2 — COMPLETE (blocked session + option-(a) resumption)
 
-Live closure run with ONLY `SGNS_BLOCKSTORE_TEST_MINIO_BIN=W:\gnus\minio-community.exe`
+**Session 1 (stopped at the plan's watch-for #3):** live closure run with
+ONLY `SGNS_BLOCKSTORE_TEST_MINIO_BIN=W:\gnus\minio-community.exe`
 set (`SGNS_BLOCKSTORE_TEST_OPENSSL_BIN` and `OPENSSL_CONF` explicitly removed;
 `OPENSSL_BIN_TEST=False OPENSSL_CONF_TEST=False` confirmed in-run):
 
@@ -142,9 +147,42 @@ plaintext `GET /minio/health/live` can never yield ` 200 ` → `Start(tls=true)`
 times out → the smoke skips loudly. The harness, the `--certs-dir` contract, and the
 cert bytes are all fine — the server came up healthy on https.
 
-Per the plan's binding step 3, NO pre-emptive change was made to `WaitUntilHealthy`;
-stopped for replan. Full -VV log preserved at
+Per the plan's binding step 3, NO pre-emptive change was made to
+`WaitUntilHealthy`; stopped for replan. Session-1 -VV preserved in
 `03-04-live-run-evidence.log` (phase dir).
+
+**Session 2 (resumption — USER DECISION option (a), 2026-10-21):** the probe
+now speaks the protocol the server actually serves. `TlsHealthExchange`
+(OpenSSL::SSL; `TLS_client_method`, `SSL_set_fd`, `SSL_connect`,
+`SSL_write`/`SSL_read`, `SSL_shutdown`, `SSL_free`, `SSL_CTX_free`;
+`SSL_VERIFY_NONE` mirroring the client-side `IgnoreCertCheck(true)`
+posture) wraps the SAME `GET /minio/health/live` + ` 200 ` check when
+`tls=true`; the `(void)tls` cast is gone; the plaintext path is unchanged;
+`OpenSSL::SSL` was linked beside `OpenSSL::Crypto` on both harness targets
+(sgns-blockstore `b1240b0`). Amendment constraints honored: every
+SSL/SSL_CTX handle freed on every path (the probe loops every 250 ms for
+up to 30 s — no leaks), Ullman braces, PascalCase, Doxygen on the new
+helper, no exceptions, loud-skip semantics untouched.
+
+**Closure run (same gate posture — only the MinIO binary set,
+`OPENSSL_BIN_TEST=False` / `OPENSSL_CONF_TEST=False`):**
+
+```
+6: [ RUN      ] MinioCppSpikeTest.EnvGatedTlsOnSmoke
+6: [       OK ] MinioCppSpikeTest.EnvGatedTlsOnSmoke (1343 ms)
+6: [  PASSED  ] 4 tests.
+1/2 Test #6: minio_cpp_spike_test .............   Passed    2.35 sec
+8: [  PASSED  ] 11 tests.
+2/2 Test #8: minio_s3_client_test .............   Passed    3.79 sec
+100% tests passed, 0 tests failed out of 2
+CTEST_EXIT=0
+```
+
+`EnvGatedTlsOnSmoke` **EXECUTED** (an `[ OK ]` line, NOT `[  SKIPPED ]`):
+TLS handshake + MakeBucket + PutObject over the in-process self-signed
+cert with `IgnoreCertCheck`. Zero skips across both suites (binary gate
+satisfied). Hygiene gate re-verified post-amendment: exits 1 (no matches).
+Evidence appended to `03-04-live-run-evidence.log`.
 
 ## Commits (innermost-first)
 
@@ -154,13 +192,35 @@ stopped for replan. Full -VV log preserved at
 | thirdparty/sgns-blockstore | `639ccce` | feat(03-04): generate self-signed cert in-process via OpenSSL C API |
 | thirdparty (root of sgns-blockstore) | `092e582` | chore(03-04): bump sgns-blockstore - in-process self-signed cert generation (G-3-1) |
 | GeniusNetwork (root) | `2942a17` | chore(03-04): bump thirdparty - in-process cert generation; TLS smoke blocked on health probe (replan pending) |
+| GeniusNetwork (root) | `f4ccbe1` | docs(03-04): session-1 blocked-state record (superseded by this summary) |
+| thirdparty/sgns-blockstore | `b1240b0` | fix(03-04): TLS-wrap the readiness probe when the server runs TLS-on |
+| thirdparty (root of sgns-blockstore) | `957afe2` | chore(03-04): bump sgns-blockstore - TLS health probe closes G-3-1 |
+| GeniusNetwork (root) | `4e7ca95` | chore(03-04): bump thirdparty - TLS health probe; EnvGatedTlsOnSmoke green live (G-3-1 closed) |
 
 ## Deviations from Plan
 
-None. The blocker is the plan's own pre-declared watch-for #3 (Task 2, step 3),
-which mandates capture-and-stop rather than scope widening. No rules 1–4 fixes were
-applicable: the failing component (`WaitUntilHealthy`) is exactly the one the plan
-forbade touching without a replan.
+### User-Approved Amendment (recorded, not scope creep)
+
+**Option (a) — OpenSSL::SSL readiness probe** (approved 2026-10-21 after
+session 1 stopped at the plan's watch-for #3). `WaitUntilHealthy` now
+TLS-wraps the health exchange when `tls=true` (`TlsHealthExchange`);
+plaintext path unchanged; `OpenSSL::SSL` linked on both harness targets.
+All five amendment constraints from the decision were honored (TLS probe
+semantics, byte-identical plaintext path, link wiring, coding standard +
+RAII-style cleanup, unchanged loud-skip semantics).
+
+### Auto-fixed Issues
+
+**1. [Rule 1 - Bug] EnvGatedTlsOnSmoke bucket-name mismatch**
+- **Found during:** Task 2 closure run — the smoke's first-ever live execution
+- **Issue:** the test created bucket `spike-tls` via `harness.MakeBucket` but
+  `PutObject` (via the shared `MakePutArgs`) targets the hardcoded
+  `spike-bucket` fixture — the real server correctly returned `NoSuchBucket`
+- **Fix:** the smoke now creates `spike-bucket` (the shared fixture name;
+  the hermetic stub lane never enforces bucket existence, the real server
+  does)
+- **Files modified:** `thirdparty/sgns-blockstore/test/minio_cpp_spike_test.cpp`
+- **Commit:** `b1240b0` (same commit as the approved amendment)
 
 ## Threat Register
 
@@ -168,19 +228,20 @@ forbade touching without a replan.
   CSPRNG), written only into the per-test temp dir `Stop()` removes; child-process
   exposure of the generation step eliminated (in-process now). No new surface beyond
   the plan's register.
+- **T-3-07 note (option (a)):** the TLS probe uses `SSL_VERIFY_NONE` against the
+  loopback self-signed fixture — the same trust posture as the minio-cpp client's
+  `IgnoreCertCheck(true)` (Q2); test-surface-only, no production code path.
 
-## Remaining Work (replan input)
+## G-3-1 Disposition
 
-G-3-1 truth after this plan: cert generation needs **nothing but the library**; the
-only blocker is the readiness probe. Options for the planner/user:
-
-| Option | Change | Notes |
-|--------|--------|-------|
-| a | Link `OpenSSL::SSL` and make `WaitUntilHealthy`'s probe do `SSL_connect` + write/read when `tls=true` | mirrors existing raw-socket style; superbuild has libssl (only Crypto linked today) |
-| b | Probe with the already-linked minio-cpp client + `IgnoreCertCheck(true)` in a deadline-bounded retry | no new link deps; heavier probe |
-| c | Equivalent that keeps the TLS-off lane byte-identical | planner's discretion |
+**CLOSED.** The plan's truth — "EnvGatedTlsOnSmoke executes live (TLS handshake +
+one op over a self-signed cert) when a MinIO binary is provided" — is restored
+and strengthened: nothing but the MinIO binary gate is needed (no openssl binary,
+no `OPENSSL_CONF`, no config file, no subprocess). BACK-06 live evidence complete;
+see `03-UAT.md` (both tests pass, gap closed) and `03-04-live-run-evidence.log`.
 
 ## Self-Check: PASSED
 
-All 6 files FOUND; all 4 commits FOUND (1ba0742 + 639ccce in sgns-blockstore,
-092e582 in thirdparty, 2942a17 in root).
+All 7 files FOUND; all 8 commits FOUND (sgns-blockstore 1ba0742 + 639ccce + b1240b0;
+thirdparty 092e582 + 957afe2; root 2942a17 + f4ccbe1 + 4e7ca95). Root commit count
+from the plan ledger (806e939..4e7ca95) = 3, matching the frontmatter.

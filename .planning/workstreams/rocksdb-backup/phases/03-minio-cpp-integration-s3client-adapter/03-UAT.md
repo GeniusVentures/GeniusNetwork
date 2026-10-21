@@ -1,9 +1,9 @@
 ---
-status: testing
+status: passed
 phase: 03-minio-cpp-integration-s3client-adapter
 source: [03-VERIFICATION.md]
 started: 2026-10-21T21:05:00Z
-updated: 2026-10-21T23:25:00Z
+updated: 2026-10-21T23:26:00Z
 ---
 
 ## Current Test
@@ -20,14 +20,14 @@ expected: |
   alreadyPresent=true), and minio_cpp_spike_test's EnvGatedTlsOnSmoke (TLS
   handshake + one op over a self-signed cert; needs a resolvable openssl —
   the superbuild's install tree is picked up automatically).
-awaiting: replan for 03-04 watch-for #3 (TLS-only MinIO health probe); in-process cert mechanism itself PROVEN live
+awaiting: nothing - G-3-1 CLOSED 2026-10-21 (user-approved option (a): OpenSSL::SSL TLS health probe); all four [SGNS_BLOCKSTORE][MINIO-TIER] live cases executed green
 
 ## Tests
 
 ### 1. Live MinIO tier run (SC4a)
 expected: see Current Test above
-result: issue
-reported: "Partial pass. minio_s3_client_test 11/11 GREEN live (LivePutGetHeadDeleteRoundtrip, LiveCreateOnlyDuplicateReportsAlreadyPresent, LiveTlsOffIsPrimaryLane all executed against community MinIO RELEASE.2025-04-22T22-12-26Z). EnvGatedTlsOnSmoke cannot run on Windows: harness std::system() quoting bug. Initial failure was environmental: user's W:\gnus\minio.exe is the 2026 AIStor build which denies ALL S3 ops without a license."
+result: pass
+reported: "PASS (final state, 2026-10-21 resumption run): all four [SGNS_BLOCKSTORE][MINIO-TIER] live cases execute green against community MinIO RELEASE.2025-04-22T22-12-26Z (W:\gnus\minio-community.exe): LivePutGetHeadDeleteRoundtrip, LiveCreateOnlyDuplicateReportsAlreadyPresent, LiveTlsOffIsPrimaryLane (minio_s3_client_test 11/11) and EnvGatedTlsOnSmoke (1343 ms - TLS handshake + MakeBucket + PutObject over the in-process self-signed cert, only SGNS_BLOCKSTORE_TEST_MINIO_BIN set). Historical partial-pass entries preserved in diagnosis below (std::system() quoting bug -> in-process cert gen -> TLS-only health probe -> option (a) closure)."
 severity: minor
 diagnosis: |
   (1) ENVIRONMENT (resolved): W:\gnus\minio.exe = RELEASE.2026-09-19 AIStor - "No valid
@@ -61,8 +61,8 @@ expected: |
   (SGNS_BLOCKSTORE_TEST_OPENSSL_BIN and OPENSSL_CONF deliberately unset),
   EnvGatedTlsOnSmoke executes live (TLS handshake + MakeBucket + PutObject
   over the in-process self-signed cert) and minio_s3_client_test stays 11/11.
-result: issue
-reported: "Partial. minio_s3_client_test 11/11 GREEN live (all three MinioS3ClientLiveTest cases OK). In-process cert generation WORKS live: MinIO loaded the generated public.crt/private.key and brought its API up on https://127.0.0.1:<port>. But EnvGatedTlsOnSmoke still cannot execute: Start(tls=true) reports 'MinIO did not become healthy within 30s' and the test skips loudly."
+result: pass
+reported: "PASS. With ONLY SGNS_BLOCKSTORE_TEST_MINIO_BIN=W:\gnus\minio-community.exe set (SGNS_BLOCKSTORE_TEST_OPENSSL_BIN and OPENSSL_CONF proven unset in-session: OPENSSL_BIN_TEST=False OPENSSL_CONF_TEST=False), EnvGatedTlsOnSmoke EXECUTED live and passed (1343 ms): MinioCppSpikeTest 4/4, minio_s3_client_test 11/11, 100% tests passed, 0 failed out of 2, zero skips. First-ever execution surfaced one test-body bug (fixed inline, Rule 1): the smoke created bucket 'spike-tls' while MakePutArgs targets the shared 'spike-bucket' fixture -> NoSuchBucket; now creates spike-bucket."
 severity: minor
 diagnosis: |
   PLAN WATCH-FOR #3 FIRED (03-04-PLAN.md Task 2 step 3). Direct run with
@@ -77,13 +77,17 @@ diagnosis: |
   --certs-dir contract, and the cert bytes are all fine (server came up).
   Per the plan's binding instruction, NO pre-emptive code change was made
   to WaitUntilHealthy; stopped for replan.
-evidence: 03-04-live-run-evidence.log (full ctest -VV); banner excerpt above captured 2026-10-21.
+  RESOLVED 2026-10-21 (USER DECISION, option (a)): TlsHealthExchange
+  (OpenSSL::SSL, SSL_VERIFY_NONE mirroring IgnoreCertCheck(true))
+  TLS-wraps the health exchange when tls=true; plaintext probe path
+  unchanged. Live proof: EnvGatedTlsOnSmoke OK (1343 ms).
+evidence: 03-04-live-run-evidence.log (full ctest -VV of BOTH runs - the blocked run AND the G-3-1 closure resumption run).
 
 ## Summary
 
 total: 2
-passed: 0
-issues: 2
+passed: 2
+issues: 0
 pending: 0
 skipped: 0
 blocked: 0
@@ -91,13 +95,15 @@ blocked: 0
 ## Gaps
 
 - gap_id: G-3-1
-  truth: "EnvGatedTlsOnSmoke executes live (TLS handshake + one op over a self-signed cert) when a MinIO binary and a resolvable openssl are provided"
-  status: in_progress
-  reason: "03-04 closed the MECHANISM half: cert generation is in-process (OpenSSL C API), no openssl binary/env/config anywhere (hygiene gate exits 1), and MinIO loads the generated cert live. The EXECUTION half remains blocked: the plaintext health probe in WaitUntilHealthy can never pass against this release's TLS-only API listener (watch-for #3), so Start(tls=true) times out and the smoke skips loudly. Truth restated for the new reality: no openssl is needed at all; only the health probe is in the way."
+  truth: "EnvGatedTlsOnSmoke executes live (TLS handshake + one op over an in-process self-signed cert) when a MinIO binary is provided - nothing else set, on Windows"
+  status: closed
+  reason: "CLOSED 2026-10-21. Mechanism half: in-process cert generation (OpenSSL C API; no binary/env/config anywhere; hygiene gate exits 1). Execution half: user-approved option (a) added TlsHealthExchange (OpenSSL::SSL) so WaitUntilHealthy speaks TLS when the API port is TLS-only; plaintext path unchanged. Live proof with ONLY the MinIO gate set (OPENSSL_BIN_TEST=False, OPENSSL_CONF_TEST=False): EnvGatedTlsOnSmoke EXECUTED and passed (1343 ms), MinioCppSpikeTest 4/4, minio_s3_client_test 11/11, 100% tests passed 0 failed of 2, zero skips. One test-body bug surfaced on first live execution, fixed inline: bucket 'spike-tls' vs the shared 'spike-bucket' fixture (NoSuchBucket)."
   severity: minor
   test: 2
   artifacts:
-    - thirdparty/sgns-blockstore/test/MinioServerHarness.cpp (in-process GenerateSelfSignedCert DONE; WaitUntilHealthy plaintext probe is the remaining blocker)
+    - thirdparty/sgns-blockstore/test/MinioServerHarness.cpp (in-process GenerateSelfSignedCert + TlsHealthExchange TLS readiness probe)
+    - thirdparty/sgns-blockstore/test/CMakeLists.txt (OpenSSL::Crypto + OpenSSL::SSL on both harness targets)
+    - thirdparty/sgns-blockstore/test/minio_cpp_spike_test.cpp (bucket-name fix on first live execution)
   missing: []
   fix_direction: |
     TASK 1 OF 03-04 IS DONE AND COMMITTED (sgns-blockstore 1ba0742 RED,
@@ -110,6 +116,8 @@ blocked: 0
     deadline-bounded retry; (c) any equivalent that keeps the TLS-off lane
     byte-identical. The 03-04 plan explicitly forbade doing this without a
     replan, so the choice is the planner's/user's.
+    RESOLVED 2026-10-21: user chose option (a); executed and verified
+    same day (sgns-blockstore b1240b0, thirdparty 957afe2, root 4e7ca95).
   fix_direction: |
     USER DECISION (2026-10-21): generate the self-signed cert IN-PROCESS via the
     OpenSSL C API instead of shelling out to openssl.exe. The test targets already
