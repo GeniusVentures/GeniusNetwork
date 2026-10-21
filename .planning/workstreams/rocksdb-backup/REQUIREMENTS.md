@@ -23,8 +23,8 @@
 
 - [x] **BACK-01**: `MemoryBlockStore` hermetic reference implementation
 - [x] **BACK-02**: Reusable `BlockStoreConformanceTests` kit runs against every backend implementation
-- [ ] **BACK-03**: `LocalBlockStore` opens its own RocksDB instance (consumer-provided; API-compatible with both RocksDB 9.4 and 11.1), never the GlobalDB handle; writes are atomic (temp + fsync + rename)
-- [ ] **BACK-04**: `LocalBlockStore` maintains a durable upload journal recording pending remote uploads, recoverable after crash
+- [x] **BACK-03**: `LocalBlockStore` opens its own RocksDB instance (consumer-provided; API-compatible with both RocksDB 9.4 and 11.1), never the GlobalDB handle; writes are atomic (temp + fsync + rename)
+- [x] **BACK-04**: `LocalBlockStore` maintains a durable upload journal recording pending remote uploads, recoverable after crash
 - [ ] **BACK-05**: Internal `S3Client` adapter interface (~5 ops: put/get/head/delete + config) with an `InMemoryS3Client` fake for hermetic tests
 - [ ] **BACK-06**: `MinioS3Client` implementation via minio-cpp; SDK types never leak past the adapter
 - [ ] **BACK-07**: `S3BlockStore` uses the `v1/blocks/` full-CID (codec-preserving) key layout, conditional create-only PUTs, and HEAD→exists mapping (200/404→bool, everything else→`TemporarilyUnavailable`)
@@ -84,8 +84,8 @@ Deferred (with reconsideration triggers, per research):
 | BACK-01 | Phase 1 | Complete |
 | BACK-02 | Phase 1 | Complete |
 | BUILD-01 | Phase 1 | Complete |
-| BACK-03 | Phase 2 | Pending |
-| BACK-04 | Phase 2 | Pending |
+| BACK-03 | Phase 2 | Complete |
+| BACK-04 | Phase 2 | Complete |
 | BUILD-02 | Phase 3 | Pending |
 | BUILD-03 | Phase 3 | Pending |
 | BACK-05 | Phase 3 | Pending |
