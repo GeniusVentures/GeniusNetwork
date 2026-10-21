@@ -72,7 +72,17 @@ Plans:
   3. `InMemoryS3Client` fake drives hermetic tests for every adapter op including 200/404/error paths — no network, no live endpoint, no Docker
   4. `MinioS3Client` performs put/get/head/delete against a local endpoint and maps every failure to the Phase-1 status taxonomy in exactly one place — unknown failures map to Unknown/`TemporarilyUnavailable`, never `NotFound`
 
-**Plans**: TBD
+**Plans**: 3 plans
+Plans:
+**Wave 1**
+- [ ] 03-01-PLAN.md — minio-cpp/pugixml submodules + superbuild wiring + D-11 entrance-criterion spike (tracer: submodule → CommonTargets → build green → trio proof; BUILD-02/BUILD-03; Q1 pugixml amendment, D-12, stub + harness utilities)
+
+**Wave 2** *(blocked on Wave 1 completion)*
+- [ ] 03-02-PLAN.md — Internal S3Client interface (5 ops + config) + InMemoryS3Client fake + hermetic op tests (BACK-05/SC3; D-01..D-05)
+
+**Wave 3** *(blocked on Wave 2 completion)*
+- [ ] 03-03-PLAN.md — MinioS3Client one-place taxonomy mapping + D-08 stub fault matrix + env-gated MinIO live tier + SC2 hygiene guards (BACK-06/SC2/SC4; D-06..D-09)
+
 **Research note**: `--research-phase` recommended — minio-cpp v1.0.0 header-level API surface at the pinned tag (BaseUrl config, path-style, conditional-header exposure, error codes; hosted doxygen is stale), hermeticity patch shape, inih GNUS fork (CMakeLists for meson-only upstream), Windows source build, ExternalProject wiring. Entrance criteria: conditional `If-None-Match:*` sendable at the pinned tag.
 
 ### Phase 4: S3BlockStore & Sia s3d Roundtrip
@@ -115,7 +125,7 @@ Plans:
 |-------|----------------|--------|-----------|
 | 1. BlockStore Contract, Memory Backend & Conformance Kit | 3/3 | Complete    | 2026-10-20 |
 | 2. LocalBlockStore (RocksDB Cold Tier) | 3/3 | Complete    | 2026-10-20 |
-| 3. minio-cpp Integration & S3Client Adapter | 0/TBD | Not started | - |
+| 3. minio-cpp Integration & S3Client Adapter | 0/3 | Planned | - |
 | 4. S3BlockStore & Sia s3d Roundtrip | 0/TBD | Not started | - |
 | 5. Fault Injection & Three-Tier Hardening | 0/TBD | Not started | - |
 
