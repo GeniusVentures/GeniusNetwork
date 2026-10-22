@@ -38,7 +38,7 @@ key-files:
     - thirdparty/sgns-blockstore/test/s3_block_store_test.cpp
     - thirdparty/sgns-blockstore/test/upload_drainer_test.cpp
   modified:
-    - thirdparty/sgns-blockstore/include/sgns-blockstore/S3Client.hpp (git mv from src/, banner rewritten)
+    - thirdparty/sgns-blockstore/include/sgns-blockstore/S3Client.hpp (git-mv promotion of the former src header, banner rewritten)
     - thirdparty/sgns-blockstore/src/InMemoryS3Client.hpp/.cpp (include swap + ObjectKeys seam)
     - thirdparty/sgns-blockstore/src/MinioS3Client.hpp (include swap)
     - thirdparty/sgns-blockstore/src/CMakeLists.txt (two new sources)
@@ -121,7 +121,7 @@ status: complete
 
 ## Accomplishments
 
-- git mv promotion `src/S3Client.hpp` -> `include/sgns-blockstore/S3Client.hpp` (rename detected at 82%); banner rewritten with the promotion reality + CORE-05/03-D-03 Delete reconciliation + rejected-alternative note (costly-not-one-way)
+- git-mv promotion of the adapter header from its former src location to the installed include tree (rename detected at 82%); banner rewritten with the promotion reality + CORE-05/03-D-03 Delete reconciliation + rejected-alternative note (costly-not-one-way)
 - S3BlockStore: entry gate throws on non-sha256; verify-at-facade (CidOf explicit mapping, never OUTCOME_TRY); DeriveKey in one place (prefix/codec-token/digest-byte-hex/toString); Put always createOnly -> PutOutcome{ObjectStoreAccepted, alreadyPresent}; Get re-verifies with Corrupt+Remote attribution; Has maps Head exists; GetSize maps exists=false -> NotFound; PutMany per-element loop
 - UploadDrainer: installed header + impl; snapshot -> per-CID local.Get -> remote.Put -> MarkUploadedAccepted only on success slots; per-item record-and-continue; wholesale envelope only on GetPendingUploads failure
 - api_hygiene: 14 installed headers in the include-everything TU; !HasHead<!HasDelete negative traits for S3BlockStore; stale internal-seam comment rewritten
