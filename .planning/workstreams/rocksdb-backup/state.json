@@ -26,13 +26,13 @@
     {
       "number": "5",
       "name": "Fault Injection & Three-Tier Hardening",
-      "status": "pending"
+      "status": "complete"
     }
   ],
   "next": {
-    "command": "/gsd-progress --next",
-    "label": "Advance to the next step",
-    "reason": "Phase 5 of 5 · executing"
+    "command": "/gsd-new-milestone",
+    "label": "Start a new milestone",
+    "reason": "All phases complete — start a new milestone"
   },
-  "updated_at": "2026-10-22T20:49:09.616Z"
+  "updated_at": "2026-10-22T21:27:17.406Z"
 }

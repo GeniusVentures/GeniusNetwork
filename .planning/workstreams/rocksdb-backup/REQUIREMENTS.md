@@ -43,8 +43,8 @@
 
 ### Testing & Hardening (TEST)
 
-- [ ] **TEST-01**: Three-tier test strategy — Tier 1 hermetic fakes in CI, Tier 2 MinIO-binary opt-in, Tier 3 s3d dev-only; no live endpoints in CI, no fixed sleeps
-- [ ] **TEST-02**: Fault/crash injection — partial uploads, crash between local commit and remote upload, journal recovery, corrupt-response rejection
+- [x] **TEST-01**: Three-tier test strategy — Tier 1 hermetic fakes in CI, Tier 2 MinIO-binary opt-in, Tier 3 s3d dev-only; no live endpoints in CI, no fixed sleeps
+- [x] **TEST-02**: Fault/crash injection — partial uploads, crash between local commit and remote upload, journal recovery, corrupt-response rejection
 
 ## Future Requirements
 
@@ -94,8 +94,8 @@ Deferred (with reconsideration triggers, per research):
 | S3D-01 | Phase 4 | Complete |
 | S3D-02 | Phase 4 | Complete |
 | S3D-03 | Phase 4 | Complete |
-| TEST-01 | Phase 5 | Pending |
-| TEST-02 | Phase 5 | Pending |
+| TEST-01 | Phase 5 | Complete |
+| TEST-02 | Phase 5 | Complete |
 
 ---
 *Requirements defined: 2026-10-19 — rocksdb-backup workstream, milestone v1.0*

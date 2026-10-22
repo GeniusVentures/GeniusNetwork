@@ -10,7 +10,7 @@
 - [x] **Phase 2: LocalBlockStore (RocksDB Cold Tier)** - Durable local persistence through its own RocksDB instance: atomic writes, crash-recoverable upload journal, verify-on-read (completed 2026-10-20)
 - [x] **Phase 3: minio-cpp Integration & S3Client Adapter** - The one genuinely new external surface: minio-cpp at the pinned tag built shaderc-style through the superbuild, isolated behind an internal adapter with an in-memory fake (completed 2026-10-21)
 - [x] **Phase 4: S3BlockStore & Sia s3d Roundtrip** - The terminal cold tier: `v1/blocks/` codec-preserving layout, conditional create-only PUTs, opt-in MinIO-binary tests, dev-gated live s3d E2E, durability-signal discovery (completed 2026-10-22)
-- [ ] **Phase 5: Fault Injection & Three-Tier Hardening** - Prove the trust claims under induced failure: taxonomy honesty, crash recovery, corruption rejection; CI stays fully hermetic
+- [x] **Phase 5: Fault Injection & Three-Tier Hardening** - Prove the trust claims under induced failure: taxonomy honesty, crash recovery, corruption rejection; CI stays fully hermetic (completed 2026-10-22)
 
 ## Phase Details
 
@@ -123,7 +123,7 @@ Plans:
   2. Crash injection (kill between local commit and remote upload, mid-temp-write, post-upload) always recovers cleanly via journal reconciliation; byte-flipped local and remote blocks are rejected as `Corrupt` with source attribution
   3. The three-tier strategy is enforced and inspectable: Tier 1 hermetic fakes run in CI with no live endpoints and no fixed sleeps; Tier 2 MinIO-binary tests are opt-in; Tier 3 s3d tests are dev-only with committed evidence — verifiable from CI/test configuration
 
-**Plans**: 3/3 plans executed
+**Plans**: 3/3 plans complete
 Plans:
 **Wave 1**
 - [x] 05-01-PLAN.md — Tier enforcement end-to-end (tracer: LABELS on all 15 registrations + tier1_static_audit ctest + fail-closed CI lane `-L Tier1 --no-tests=error`) + docs/testing-tiers.md + Readme.md (TEST-01/SC3; D-13..D-17)
@@ -149,7 +149,7 @@ Plans:
 | 2. LocalBlockStore (RocksDB Cold Tier) | 3/3 | Complete    | 2026-10-20 |
 | 3. minio-cpp Integration & S3Client Adapter | 4/4 | Complete    | 2026-10-21 |
 | 4. S3BlockStore & Sia s3d Roundtrip | 3/3 | Complete    | 2026-10-22 |
-| 5. Fault Injection & Three-Tier Hardening | 3/3 | In Progress|  |
+| 5. Fault Injection & Three-Tier Hardening | 3/3 | Complete    | 2026-10-22 |
 
 ---
 *Roadmap created: 2026-10-19 — rocksdb-backup workstream, milestone v1.0 (21/21 requirements mapped)*
