@@ -10,6 +10,35 @@ covered_files:
   - .planning/workstreams/rocksdb-backup/phases/04-s3blockstore-sia-s3d-roundtrip/04-02-SUMMARY.md
   - .planning/workstreams/rocksdb-backup/phases/04-s3blockstore-sia-s3d-roundtrip/04-03-PLAN.md
   - .planning/workstreams/rocksdb-backup/phases/04-s3blockstore-sia-s3d-roundtrip/04-03-SUMMARY.md
+  - .planning/workstreams/rocksdb-backup/phases/04-s3blockstore-sia-s3d-roundtrip/04-03-live-run-evidence.log
+  - thirdparty/sgns-blockstore/include/sgns-blockstore/S3Client.hpp
+  - thirdparty/sgns-blockstore/include/sgns-blockstore/S3BlockStore.hpp
+  - thirdparty/sgns-blockstore/include/sgns-blockstore/UploadDrainer.hpp
+  - thirdparty/sgns-blockstore/include/sgns-blockstore/Durability.hpp
+  - thirdparty/sgns-blockstore/src/S3BlockStore.cpp
+  - thirdparty/sgns-blockstore/src/UploadDrainer.cpp
+  - thirdparty/sgns-blockstore/src/InMemoryS3Client.hpp
+  - thirdparty/sgns-blockstore/src/InMemoryS3Client.cpp
+  - thirdparty/sgns-blockstore/src/MinioS3Client.hpp
+  - thirdparty/sgns-blockstore/src/CMakeLists.txt
+  - thirdparty/sgns-blockstore/test/s3_block_store_test.cpp
+  - thirdparty/sgns-blockstore/test/upload_drainer_test.cpp
+  - thirdparty/sgns-blockstore/test/s3d_spike_test.cpp
+  - thirdparty/sgns-blockstore/test/s3_block_store_minio_test.cpp
+  - thirdparty/sgns-blockstore/test/s3d_roundtrip_e2e.cpp
+  - thirdparty/sgns-blockstore/test/api_hygiene_test.cpp
+  - thirdparty/sgns-blockstore/test/in_memory_s3_client_test.cpp
+  - thirdparty/sgns-blockstore/test/minio_s3_client_test.cpp
+  - thirdparty/sgns-blockstore/test/CMakeLists.txt
+  - thirdparty/sgns-blockstore/docs/s3d-durability.md
+  - thirdparty/sgns-blockstore/docs/evidence/s3d-spike/README.md
+  - thirdparty/sgns-blockstore/docs/evidence/s3d-spike/stats-before-put.txt
+  - thirdparty/sgns-blockstore/docs/evidence/s3d-spike/stats-after-put.txt
+  - thirdparty/sgns-blockstore/docs/evidence/s3d-spike/stats-after-flush.txt
+  - thirdparty/sgns-blockstore/docs/evidence/s3d-spike/staged-read-headers.txt
+  - thirdparty/sgns-blockstore/docs/evidence/s3d-spike/sdk-error-shapes.txt
+  - thirdparty/sgns-blockstore/docs/evidence/s3d-spike/e2e-stats-captures.txt
+covered_digest: "v2:sha256:f5d9cfdcb8838244f5c380838ababe63b0a84869be5d3d5b32b5e87691ee7637"
 ---
 
 # Phase 4 Verification: S3BlockStore & Sia s3d Roundtrip
