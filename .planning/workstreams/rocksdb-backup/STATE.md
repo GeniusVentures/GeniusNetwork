@@ -2,51 +2,50 @@
 gsd_state_version: "1.0"
 milestone: v1.0
 milestone_name: CRDT Cold-Storage BlockStore Library (Sia s3d backend)
-current_phase: 5
 current_plan: 1
-status: completed
+status: Awaiting next milestone
 stopped_at: Phase 5 complete — all phases complete
-last_updated: "2026-10-22T21:27:17.363Z"
+last_updated: "2026-10-22T22:06:10.721Z"
 last_activity: 2026-10-22
-last_activity_desc: Phase 5 complete
-state_head: 91a5fef72c957a2abd0cea3c1a746a4e39080033
+last_activity_desc: Milestone v1.0 completed and archived
+state_head: dec6c134ba4ddc6e376402940ba0f72a55dfefc9
 progress:
   total_phases: 5
   completed_phases: 5
   total_plans: 16
   completed_plans: 16
-  percent: 100
+current_phase: 5
 ---
 
 # Project State
 
 ## Project Reference
 
-See: `.planning/PROJECT.md`, workstream sections; `.planning/workstreams/rocksdb-backup/REQUIREMENTS.md`; `.planning/workstreams/rocksdb-backup/ROADMAP.md`
+See: `.planning/PROJECT.md` (workstream sections); `.planning/workstreams/rocksdb-backup/ROADMAP.md`; v1.0 archive: `.planning/workstreams/rocksdb-backup/milestones/` (ROADMAP, REQUIREMENTS, MILESTONE-AUDIT, phase artifacts)
 
 **Core value:** Older CRDT/IPLD blocks can spill from RocksDB hot state to durable, CID-verified object storage through a shared thirdparty static library (`sgns-blockstore`) consumable by both SuperGenius and genius-tube — no RocksDB remote-FS integration, no SDK/SuperGenius types in the public API, and local eviction is never a CRDT deletion.
 
-**Current focus:** Phase 5 — Fault Injection & Three-Tier Hardening
+**Current focus:** v1.0 shipped 2026-10-22 — awaiting next milestone (`/gsd-new-milestone`)
 
 ## Current Position
 
-Phase: 5
-Plan: Not started
-Status: All phases complete
-Last activity: 2026-10-22 — Phase 5 complete
+Phase: Milestone v1.0 complete
+Plan: —
+Status: Awaiting next milestone
+Last activity: 2026-10-22 — Milestone v1.0 completed and archived
 
 ## Progress
 
-**Phases Complete:** 0/5
-**Current Plan:** 1
+**Phases Complete:** 5/5 (v1.0 archived 2026-10-22)
+**Current Plan:** —
 
 | Phase | Plans | Status |
 |-------|-------|--------|
-| 01 — BlockStore Contract, Memory Backend & Conformance Kit | 0/TBD | Not started |
-| 02 — LocalBlockStore (RocksDB Cold Tier) | 0/3 | Not started |
-| 03 — minio-cpp Integration & S3Client Adapter | 0/TBD | Not started (--research-phase flagged) |
-| 04 — S3BlockStore & Sia s3d Roundtrip | 0/TBD | Not started |
-| 05 — Fault Injection & Three-Tier Hardening | 0/TBD | Not started |
+| 01 — BlockStore Contract, Memory Backend & Conformance Kit | 3/3 | Complete (2026-10-20) |
+| 02 — LocalBlockStore (RocksDB Cold Tier) | 3/3 | Complete (2026-10-20) |
+| 03 — minio-cpp Integration & S3Client Adapter | 4/4 | Complete (2026-10-21) |
+| 04 — S3BlockStore & Sia s3d Roundtrip | 3/3 | Complete (2026-10-22) |
+| 05 — Fault Injection & Three-Tier Hardening | 3/3 | Complete (2026-10-22) |
 
 ## Accumulated Context
 
@@ -57,8 +56,7 @@ Last activity: 2026-10-22 — Phase 5 complete
 - C2 CI S3 endpoint: MinIO server binary as child process (repo CI runners have no Docker); s3d stays dev-gated only
 - s3d 200-OK ≠ durable (staged on local disk) → 4-value DurabilityLevel + honest ObjectStoreAccepted semantics in Phase 1; durability-signal discovery pinned in Phase 4
 
-**Todos:**
-- Run `/gsd-plan-phase 1` (C1 CID spike is the entrance criterion)
+**Todos:** None
 
 **Blockers:** None
 
@@ -66,8 +64,8 @@ Last activity: 2026-10-22 — Phase 5 complete
 
 **Last session:** 2026-10-22T19:48:07.134Z
 
-**Stopped At:** Phase 5 complete — all phases complete
-**Resume File:** .planning/workstreams/rocksdb-backup/phases/05-fault-injection-three-tier-hardening/05-CONTEXT.md
+**Stopped At:** v1.0 milestone archived
+**Resume File:** — (phase artifacts archived under `milestones/v1.0-phases/`)
 
 ## Performance Metrics
 
@@ -89,15 +87,7 @@ Last activity: 2026-10-22 — Phase 5 complete
 
 ## Decisions
 
-- [Phase 01]: C1 resolved day-one: p2p_cid ADOPTED per D-05/D-06 (spike 3/3 green in 01-01); ipfs-lite-cpp fallback not exercised. Known-vector correction: sha256 CIDv1 RAW of 'hello world' ends ...72ysco7... ('y' at pos 33, not 'w') - verified by independent base32 computation.
-- [Phase 01]: Contract frozen: library-local result<T,BlockStatus> alias carries policy::terminate - boost default_policy resolves exception_ptr_rethrow observers for struct error types, which cannot instantiate; D-01 envelope shape preserved (result<T,BlockStatus>), headers document the deviation.
-- [Phase 03]: D-11 MET @ minio-cpp v1.0.0: if-none-match:* on the wire via PutObjectArgs.headers (extra_headers dropped on single-part path); THIRD 412 error shape discovered (invalid response received; status code: 412) alongside PreconditionFailed:/HTTP status code 412 - 03-03 mapper must classify all three — D-11 MET @ minio-cpp v1.0.0: if-none-match:* on the wire via PutObjectArgs.headers (extra_headers dropped on single-part path); THIRD 412 error shape discovered (invalid response received; status code: 412) alongside PreconditionFailed:/HTTP status code 412 - 03-03 mapper must classify all three
-- [Phase 03]: G-3-1 option (a) executed (user-approved 2026-10-21): TlsHealthExchange TLS-wraps the MinIO health probe when tls=true (OpenSSL::SSL, SSL_VERIFY_NONE mirroring IgnoreCertCheck); plaintext path unchanged; OpenSSL::SSL linked on both harness targets
-- [Phase 03]: EnvGatedTlsOnSmoke first live execution exposed bucket mismatch (spike-tls vs shared spike-bucket fixture) - Rule 1 inline fix in b1240b0
-
-### Blockers
-
-- 03-04 watch-for #3 fired: MinIO RELEASE.2025-04-22 serves TLS-only on the API port (first-byte-sniffing assumption falsified) - WaitUntilHealthy plaintext probe blocks Start(tls=true); EnvGatedTlsOnSmoke still cannot execute live (cert-gen mechanism itself proven live). Replan needed (options a/b/c in 03-04-SUMMARY.md).
+Decision log archived with v1.0 (`milestones/v1.0-ROADMAP.md` + `milestones/v1.0-phases/*/` SUMMARYs). Notable outcomes: `p2p_cid` adopted (D-05/D-06); library-local `result<T,BlockStatus>` alias with `policy::terminate` (D-01 shape preserved); D-11 three-shape 412 classification; G-3-1 closed via in-process OpenSSL cert gen + TLS health probe; s3d accepted-is-max-provable durability ceiling documented.
 
 ## Deferred Items
 
@@ -106,3 +96,7 @@ Items acknowledged and deferred at milestone close, most recent first:
 | Category | Item | Status | Deferred At | Milestone |
 |----------|------|--------|-------------|-----------|
 | uat_gaps | 03/03-UAT.md | passed | 2026-10-22 | v1.0 |
+
+## Operator Next Steps
+
+- Start the next milestone with /gsd-new-milestone

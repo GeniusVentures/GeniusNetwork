@@ -101,10 +101,22 @@ This project now runs parallel workstreams (see `.planning/workstreams/`). Each 
 - E2E proof — single node with empty cache completes an assigned ELM subtask by downloading a small MNN causal-LM (e.g. Qwen-0.5B-class) as part of the job
 
 **Branches:** `dev_elmruntime` (SuperGenius + SGProcessingManager, already checked out). Tracking: SuperGenius#369, SGProcessingManager#17 (this workstream owns its own roadmap — SuperGenius `.planning` Phase 13/14 labels not carried over).
+### Workstream: rocksdb-backup
 
+**Goal:** Older CRDT/IPLD blocks can spill from RocksDB hot state to durable, CID-verified object storage through a shared thirdparty static library (`sgns-blockstore`) consumable by both SuperGenius and genius-tube — no RocksDB remote-FS integration, no SDK/SuperGenius types in the public API, and local eviction is never a CRDT deletion.
+
+**Shipped: v1.0 CRDT Cold-Storage BlockStore Library (Sia s3d backend) — 2026-10-22** (5 phases, 16 plans, 40 tasks): frozen v1 BlockStore contract (status taxonomy, DurabilityLevel, eviction-safe List-free API, one-macro conformance kit, compiling API-shape guards) + MemoryBlockStore reference backend; LocalBlockStore RocksDB cold tier (own instance, atomic one-batch Put + crash-recoverable upload journal, corruption self-heal); minio-cpp v1.0.0 integrated shaderc-style through the thirdparty superbuild behind an internal S3Client adapter (in-memory fake, one-place taxonomy mapping incl. three 412 shapes, TLS-capable MinIO live tier); S3BlockStore terminal tier (`v1/blocks/` codec-preserving layout, conditional create-only PUTs, UploadDrainer, live two-run fresh-process s3d E2E with committed evidence, no-per-object-durability-signal finding documented); three-tier test strategy (fail-closed Tier-1 CI lane via `ctest -L Tier1 --no-tests=error`, self-inspecting label audit) + fault/crash injection hardening. 21/21 requirements shipped; milestone audit passed. Full archive: `.planning/workstreams/rocksdb-backup/milestones/`.
+
+**Deferred candidates (fast-follow, per v1.0 REQUIREMENTS Future Requirements):** s3d durability-signal polling; metrics surface (corruption counters, fetch latency, backend attribution); scale/measurement probe (metadata growth, PUT/GET throughput → CARv2 decision); tiered retrieval / peer racing; path-based sharding; eviction-policy enforcement (consumes CORE-03 types); SuperGenius-side `BlockStoreBackedIpfsDatastore` consumer wiring; CRDT-history GC (needs a formal causal-stability spec first).
 ## Requirements
 
 ### Validated
+
+- ✓ sgns-blockstore frozen v1 contract + MemoryBlockStore + one-macro conformance kit + compiling API-shape guards — rocksdb-backup v1.0 (CORE-01..06, BACK-01/02, BUILD-01)
+- ✓ LocalBlockStore: own RocksDB instance, atomic one-batch Put+journal, crash reconciliation, corruption self-heal — rocksdb-backup v1.0 (BACK-03/04)
+- ✓ minio-cpp v1.0.0 superbuild integration (shaderc-style, no fork) + internal S3Client adapter with fake and one-place taxonomy mapping — rocksdb-backup v1.0 (BUILD-02/03, BACK-05/06)
+- ✓ S3BlockStore `v1/blocks/` codec-preserving layout, conditional create-only PUTs, UploadDrainer, live two-run s3d E2E, documented durability finding — rocksdb-backup v1.0 (BACK-07, S3D-01..03)
+- ✓ Three-tier test strategy (fail-closed Tier-1 CI) + fault/crash injection hardening — rocksdb-backup v1.0 (TEST-01/02)
 
 - ✓ Child-wallet identity model (emergent identity, independent keypair) — v2.0
 - ✓ RegistrationTransaction — proto schema, C++ class, CRDT filter with 4 gates — v2.0
