@@ -9,7 +9,7 @@
 - [x] **Phase 1: BlockStore Contract, Memory Backend & Conformance Kit** - `sgns-blockstore` skeleton with the frozen type system (status taxonomy, DurabilityLevel, eviction-safe List-free API), MemoryBlockStore reference implementation, and the reusable conformance kit (completed 2026-10-20)
 - [x] **Phase 2: LocalBlockStore (RocksDB Cold Tier)** - Durable local persistence through its own RocksDB instance: atomic writes, crash-recoverable upload journal, verify-on-read (completed 2026-10-20)
 - [x] **Phase 3: minio-cpp Integration & S3Client Adapter** - The one genuinely new external surface: minio-cpp at the pinned tag built shaderc-style through the superbuild, isolated behind an internal adapter with an in-memory fake (completed 2026-10-21)
-- [ ] **Phase 4: S3BlockStore & Sia s3d Roundtrip** - The terminal cold tier: `v1/blocks/` codec-preserving layout, conditional create-only PUTs, opt-in MinIO-binary tests, dev-gated live s3d E2E, durability-signal discovery
+- [x] **Phase 4: S3BlockStore & Sia s3d Roundtrip** - The terminal cold tier: `v1/blocks/` codec-preserving layout, conditional create-only PUTs, opt-in MinIO-binary tests, dev-gated live s3d E2E, durability-signal discovery (completed 2026-10-22)
 - [ ] **Phase 5: Fault Injection & Three-Tier Hardening** - Prove the trust claims under induced failure: taxonomy honesty, crash recovery, corruption rejection; CI stays fully hermetic
 
 ## Phase Details
@@ -100,7 +100,7 @@ Plans:
   4. The dev-gated live s3d E2E passes: a fresh library instance retrieves a block previously uploaded to Sia s3d and verifies its CID; the evidence artifact is committed; it never runs in CI
   5. s3d's staged-vs-durable semantics are characterized from the pinned version's admin API (`/stats/uploads`) and `openapi.yml`, with a documented finding — a per-object durability signal exists, or the accepted-is-max-provable fallback is documented
 
-**Plans**: 3/3 plans executed (pending execution)
+**Plans**: 3/3 plans complete (pending execution)
 Plans:
 **Wave 1**
 - [x] 04-01-PLAN.md — Hermetic core: S3Client.hpp promotion + api_hygiene extension + S3BlockStore (v1/blocks/ layout, conditional create-only, taxonomy) + conformance/key-layout tests + UploadDrainer installed API (BACK-07/SC1+SC2 hermetic, D-01..D-04, 03 D-04; S3D-02 drainer path)
@@ -139,7 +139,7 @@ Plans:
 | 1. BlockStore Contract, Memory Backend & Conformance Kit | 3/3 | Complete    | 2026-10-20 |
 | 2. LocalBlockStore (RocksDB Cold Tier) | 3/3 | Complete    | 2026-10-20 |
 | 3. minio-cpp Integration & S3Client Adapter | 4/4 | Complete    | 2026-10-21 |
-| 4. S3BlockStore & Sia s3d Roundtrip | 3/3 | In Progress|  |
+| 4. S3BlockStore & Sia s3d Roundtrip | 3/3 | Complete    | 2026-10-22 |
 | 5. Fault Injection & Three-Tier Hardening | 0/TBD | Not started | - |
 
 ---
