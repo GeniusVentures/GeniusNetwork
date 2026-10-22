@@ -2,9 +2,15 @@
 phase: 05-fault-injection-three-tier-hardening
 verified: 2026-10-22T21:24:25Z
 status: passed
-score: 3/3
+score: 3/3 success criteria verified
 requirements: TEST-01, TEST-02
 covered_files:
+  - .planning/workstreams/rocksdb-backup/phases/05-fault-injection-three-tier-hardening/05-01-PLAN.md
+  - .planning/workstreams/rocksdb-backup/phases/05-fault-injection-three-tier-hardening/05-01-SUMMARY.md
+  - .planning/workstreams/rocksdb-backup/phases/05-fault-injection-three-tier-hardening/05-02-PLAN.md
+  - .planning/workstreams/rocksdb-backup/phases/05-fault-injection-three-tier-hardening/05-02-SUMMARY.md
+  - .planning/workstreams/rocksdb-backup/phases/05-fault-injection-three-tier-hardening/05-03-PLAN.md
+  - .planning/workstreams/rocksdb-backup/phases/05-fault-injection-three-tier-hardening/05-03-SUMMARY.md
   - thirdparty/sgns-blockstore/test/CMakeLists.txt
   - thirdparty/sgns-blockstore/test/tier1_audit_check.cmake
   - thirdparty/sgns-blockstore/docs/testing-tiers.md
@@ -20,7 +26,7 @@ covered_files:
   - thirdparty/sgns-blockstore/test/upload_drainer_test.cpp
   - thirdparty/sgns-blockstore/test/minio_s3_client_test.cpp
   - thirdparty/sgns-blockstore/test/conformance/BlockStoreConformanceTests.hpp
-covered_digest: v2:sha256:644903270d91ab7e86dfea1981df710016d8f90de1371ee36ec999dede2856d2
+covered_digest: v2:sha256:834d558781018e808955e638a072fae1bdd243e34a4438d645ab914d9e9cd601
 ---
 
 # Phase 5 Verification — Fault Injection & Three-Tier Hardening
