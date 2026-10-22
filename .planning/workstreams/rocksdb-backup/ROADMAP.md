@@ -123,7 +123,7 @@ Plans:
   2. Crash injection (kill between local commit and remote upload, mid-temp-write, post-upload) always recovers cleanly via journal reconciliation; byte-flipped local and remote blocks are rejected as `Corrupt` with source attribution
   3. The three-tier strategy is enforced and inspectable: Tier 1 hermetic fakes run in CI with no live endpoints and no fixed sleeps; Tier 2 MinIO-binary tests are opt-in; Tier 3 s3d tests are dev-only with committed evidence — verifiable from CI/test configuration
 
-**Plans**: 2/3 plans executed
+**Plans**: 3/3 plans executed
 Plans:
 **Wave 1**
 - [x] 05-01-PLAN.md — Tier enforcement end-to-end (tracer: LABELS on all 15 registrations + tier1_static_audit ctest + fail-closed CI lane `-L Tier1 --no-tests=error`) + docs/testing-tiers.md + Readme.md (TEST-01/SC3; D-13..D-17)
@@ -132,7 +132,7 @@ Plans:
 - [x] 05-02-PLAN.md — D-09 corrupt-after-commit hook (API-only, FaultController frozen) + four-state crash matrix (states 3/4, uploaded-but-unmarked re-drain payoff, accepted no-op) + D-02 banner window model + RocksDB second-handle retirement (TEST-02/SC2; D-01..D-04, D-09)
 
 **Wave 3** *(blocked on 05-02 — both rebuild the shared sgns-blockstore library target in the one Windows build tree; sequential waves are the workstream precedent)*
-- [ ] 05-03-PLAN.md — Fault-matrix breadth: fake per-key + flip-in-success-slot seams, store corruption matrix (D-10/D-11/D-12), drainer key-scoped partial failure (D-05c/D-06), systematic stub 5xx/truncation/garbage matrix (D-05a/D-08 transport), kit fault-section extension (D-07) (TEST-02/SC1; D-05..D-12)
+- [x] 05-03-PLAN.md — Fault-matrix breadth: fake per-key + flip-in-success-slot seams, store corruption matrix (D-10/D-11/D-12), drainer key-scoped partial failure (D-05c/D-06), systematic stub 5xx/truncation/garbage matrix (D-05a/D-08 transport), kit fault-section extension (D-07) (TEST-02/SC1; D-05..D-12)
 
 ## Phase Ordering Rationale
 
@@ -149,7 +149,7 @@ Plans:
 | 2. LocalBlockStore (RocksDB Cold Tier) | 3/3 | Complete    | 2026-10-20 |
 | 3. minio-cpp Integration & S3Client Adapter | 4/4 | Complete    | 2026-10-21 |
 | 4. S3BlockStore & Sia s3d Roundtrip | 3/3 | Complete    | 2026-10-22 |
-| 5. Fault Injection & Three-Tier Hardening | 2/3 | In Progress|  |
+| 5. Fault Injection & Three-Tier Hardening | 3/3 | In Progress|  |
 
 ---
 *Roadmap created: 2026-10-19 — rocksdb-backup workstream, milestone v1.0 (21/21 requirements mapped)*
