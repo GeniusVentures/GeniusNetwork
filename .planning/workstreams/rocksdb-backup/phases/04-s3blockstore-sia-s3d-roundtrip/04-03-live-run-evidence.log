@@ -1,0 +1,52 @@
+== sgns-blockstore s3d two-run E2E evidence ==
+Captured: 2026-10-22 14:45:06 -04:00 (dev session, live endpoint host: 127.0.0.1 - plain-HTTP loopback)
+Binary: W:\gnus\GeniusNetwork\thirdparty\build\Windows\Debug\sgns-blockstore\src\sgns-blockstore-build\test_bin\Debug\s3d_roundtrip_e2e.exe
+
+== s3d version ==
+s3d v0.2.1
+Commit: 312789a
+Build Date: 2026-10-06 15:03:38 -0400 EDT
+
+== RUN A (fresh process): S3dE2E.UploadRun ==
+Running main() from W:\gnus\GeniusNetwork\thirdparty\GTest\googletest\src\gtest_main.cc
+Note: Google Test filter = S3dE2E.UploadRun
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from S3dE2E
+[ RUN      ] S3dE2E.UploadRun
+[SGNS_BLOCKSTORE][S3D-TIER][E2E-A] run A complete: journal=UploadedAccepted pending=0
+[SGNS_BLOCKSTORE][S3D-TIER][E2E-A] cid=bafkreifatptmaotqv4ut2e227edbqh54fet3ewfj5fblncmgxputqsujui
+[SGNS_BLOCKSTORE][S3D-TIER][E2E-A] key=v1/blocks/raw/a0/bafkreifatptmaotqv4ut2e227edbqh54fet3ewfj5fblncmgxputqsujui
+[SGNS_BLOCKSTORE][S3D-TIER][E2E-A] size=48 digest=a09be6c03a70af293d135af906181fbc2927b258a9e942b68986bbe9384a89a2
+[       OK ] S3dE2E.UploadRun (83 ms)
+[----------] 1 test from S3dE2E (83 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (83 ms total)
+[  PASSED  ] 1 test.
+
+== RUN B (fresh process): S3dE2E.VerifyRun ==
+Running main() from W:\gnus\GeniusNetwork\thirdparty\GTest\googletest\src\gtest_main.cc
+Note: Google Test filter = S3dE2E.VerifyRun
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from S3dE2E
+[ RUN      ] S3dE2E.VerifyRun
+[SGNS_BLOCKSTORE][S3D-TIER][E2E-B] run B complete: cold retrieval CID-verified, byte-identical
+[SGNS_BLOCKSTORE][S3D-TIER][E2E-B] cid=bafkreifatptmaotqv4ut2e227edbqh54fet3ewfj5fblncmgxputqsujui size=48
+[SGNS_BLOCKSTORE][S3D-TIER][E2E-B] key=v1/blocks/raw/a0/bafkreifatptmaotqv4ut2e227edbqh54fet3ewfj5fblncmgxputqsujui
+[SGNS_BLOCKSTORE][S3D-TIER][E2E-B] verdict=IDENTITY_PROVEN_TWO_FRESH_PROCESSES
+[       OK ] S3dE2E.VerifyRun (15 ms)
+[----------] 1 test from S3dE2E (15 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (15 ms total)
+[  PASSED  ] 1 test.
+
+== run-state file contents (run A -> run B handoff) ==
+cid=bafkreifatptmaotqv4ut2e227edbqh54fet3ewfj5fblncmgxputqsujui
+key=v1/blocks/raw/a0/bafkreifatptmaotqv4ut2e227edbqh54fet3ewfj5fblncmgxputqsujui
+size=48
+timestamp=2026-10-22T14:45:06
+digest=a09be6c03a70af293d135af906181fbc2927b258a9e942b68986bbe9384a89a2
+
