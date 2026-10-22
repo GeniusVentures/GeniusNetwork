@@ -123,10 +123,10 @@ Plans:
   2. Crash injection (kill between local commit and remote upload, mid-temp-write, post-upload) always recovers cleanly via journal reconciliation; byte-flipped local and remote blocks are rejected as `Corrupt` with source attribution
   3. The three-tier strategy is enforced and inspectable: Tier 1 hermetic fakes run in CI with no live endpoints and no fixed sleeps; Tier 2 MinIO-binary tests are opt-in; Tier 3 s3d tests are dev-only with committed evidence — verifiable from CI/test configuration
 
-**Plans**: 3 plans
+**Plans**: 1/3 plans executed
 Plans:
 **Wave 1**
-- [ ] 05-01-PLAN.md — Tier enforcement end-to-end (tracer: LABELS on all 15 registrations + tier1_static_audit ctest + fail-closed CI lane `-L Tier1 --no-tests=error`) + docs/testing-tiers.md + Readme.md (TEST-01/SC3; D-13..D-17)
+- [x] 05-01-PLAN.md — Tier enforcement end-to-end (tracer: LABELS on all 15 registrations + tier1_static_audit ctest + fail-closed CI lane `-L Tier1 --no-tests=error`) + docs/testing-tiers.md + Readme.md (TEST-01/SC3; D-13..D-17)
 
 **Wave 2** *(blocked on 05-01 — test/CMakeLists.txt overlap)*
 - [ ] 05-02-PLAN.md — D-09 corrupt-after-commit hook (API-only, FaultController frozen) + four-state crash matrix (states 3/4, uploaded-but-unmarked re-drain payoff, accepted no-op) + D-02 banner window model + RocksDB second-handle retirement (TEST-02/SC2; D-01..D-04, D-09)
@@ -149,7 +149,7 @@ Plans:
 | 2. LocalBlockStore (RocksDB Cold Tier) | 3/3 | Complete    | 2026-10-20 |
 | 3. minio-cpp Integration & S3Client Adapter | 4/4 | Complete    | 2026-10-21 |
 | 4. S3BlockStore & Sia s3d Roundtrip | 3/3 | Complete    | 2026-10-22 |
-| 5. Fault Injection & Three-Tier Hardening | 0/TBD | Not started | - |
+| 5. Fault Injection & Three-Tier Hardening | 1/3 | In Progress|  |
 
 ---
 *Roadmap created: 2026-10-19 — rocksdb-backup workstream, milestone v1.0 (21/21 requirements mapped)*
