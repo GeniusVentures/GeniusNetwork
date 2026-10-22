@@ -21,7 +21,7 @@
     {
       "number": "4",
       "name": "S3BlockStore & Sia s3d Roundtrip",
-      "status": "pending"
+      "status": "in_progress"
     },
     {
       "number": "5",
@@ -34,5 +34,5 @@
     "label": "Advance to the next step",
     "reason": "Phase 4 of 5 · executing"
   },
-  "updated_at": "2026-10-22T03:20:20.967Z"
+  "updated_at": "2026-10-22T18:38:33.540Z"
 }

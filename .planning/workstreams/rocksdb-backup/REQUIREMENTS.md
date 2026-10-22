@@ -39,7 +39,7 @@
 
 - [ ] **S3D-01**: S3 integration tests run against a local MinIO binary (opt-in; no Docker-in-CI dependency)
 - [ ] **S3D-02**: Live Sia `s3d` end-to-end roundtrip acceptance test — dev-gated (requires Sia account), evidence artifact committed, never in CI
-- [ ] **S3D-03**: Durability-signal discovery — probe s3d's admin API (`/stats/uploads` + `openapi.yml`) to characterize staged-vs-durable semantics; documented finding (polling implementation is fast-follow work)
+- [x] **S3D-03**: Durability-signal discovery — probe s3d's admin API (`/stats/uploads` + `openapi.yml`) to characterize staged-vs-durable semantics; documented finding (polling implementation is fast-follow work)
 
 ### Testing & Hardening (TEST)
 
@@ -93,7 +93,7 @@ Deferred (with reconsideration triggers, per research):
 | BACK-07 | Phase 4 | Complete |
 | S3D-01 | Phase 4 | Pending |
 | S3D-02 | Phase 4 | Pending |
-| S3D-03 | Phase 4 | Pending |
+| S3D-03 | Phase 4 | Complete |
 | TEST-01 | Phase 5 | Pending |
 | TEST-02 | Phase 5 | Pending |
 
