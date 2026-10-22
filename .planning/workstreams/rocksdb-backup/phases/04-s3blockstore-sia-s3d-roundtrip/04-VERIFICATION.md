@@ -1,6 +1,6 @@
 ﻿---
 phase: 04-s3blockstore-sia-s3d-roundtrip
-verified: 2026-10-22T18:50:01Z
+verified: 2026-10-22T18:52:29Z
 status: passed
 score: 5/5 success criteria verified
 covered_files:
@@ -38,7 +38,7 @@ covered_files:
   - thirdparty/sgns-blockstore/docs/evidence/s3d-spike/staged-read-headers.txt
   - thirdparty/sgns-blockstore/docs/evidence/s3d-spike/sdk-error-shapes.txt
   - thirdparty/sgns-blockstore/docs/evidence/s3d-spike/e2e-stats-captures.txt
-covered_digest: "v2:sha256:f5d9cfdcb8838244f5c380838ababe63b0a84869be5d3d5b32b5e87691ee7637"
+covered_digest: "v2:sha256:bd9267cee027a98e8bc57b27c32f6b52d0a4585265633ca7b4baf491930b76c7"
 ---
 
 # Phase 4 Verification: S3BlockStore & Sia s3d Roundtrip
