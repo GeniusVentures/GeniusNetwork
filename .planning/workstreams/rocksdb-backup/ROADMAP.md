@@ -100,7 +100,7 @@ Plans:
   4. The dev-gated live s3d E2E passes: a fresh library instance retrieves a block previously uploaded to Sia s3d and verifies its CID; the evidence artifact is committed; it never runs in CI
   5. s3d's staged-vs-durable semantics are characterized from the pinned version's admin API (`/stats/uploads`) and `openapi.yml`, with a documented finding — a per-object durability signal exists, or the accepted-is-max-provable fallback is documented
 
-**Plans**: 2/3 plans executed (pending execution)
+**Plans**: 3/3 plans executed (pending execution)
 Plans:
 **Wave 1**
 - [x] 04-01-PLAN.md — Hermetic core: S3Client.hpp promotion + api_hygiene extension + S3BlockStore (v1/blocks/ layout, conditional create-only, taxonomy) + conformance/key-layout tests + UploadDrainer installed API (BACK-07/SC1+SC2 hermetic, D-01..D-04, 03 D-04; S3D-02 drainer path)
@@ -109,7 +109,7 @@ Plans:
 - [x] 04-02-PLAN.md — Day-one live s3d spike (D-05..D-07 hard gate: 412 shape, HEAD absence, /stats/uploads trio) + evidence artifacts + docs/s3d-durability.md finding + Durability.hpp citation (S3D-03/SC5, D-12/D-13; human checkpoint for the live session)
 
 **Wave 3** *(blocked on 04-01 store/drainer + 04-02 spike gate per D-07)*
-- [ ] 04-03-PLAN.md — Opt-in MinIO-binary store roundtrip (S3D-01/SC3, executor-runnable) + dev-gated two-run fresh-process s3d E2E with committed evidence log (S3D-02/SC4, D-08..D-11; human checkpoint for the live session)
+- [x] 04-03-PLAN.md — Opt-in MinIO-binary store roundtrip (S3D-01/SC3, executor-runnable) + dev-gated two-run fresh-process s3d E2E with committed evidence log (S3D-02/SC4, D-08..D-11; human checkpoint for the live session)
 
 **Research note**: In-phase discovery task — s3d durability-signal field semantics at pinned v0.2.1 (staged-read headers, metric names); design the fallback if no per-object signal exists. Polling implementation is fast-follow, not this milestone.
 
@@ -139,7 +139,7 @@ Plans:
 | 1. BlockStore Contract, Memory Backend & Conformance Kit | 3/3 | Complete    | 2026-10-20 |
 | 2. LocalBlockStore (RocksDB Cold Tier) | 3/3 | Complete    | 2026-10-20 |
 | 3. minio-cpp Integration & S3Client Adapter | 4/4 | Complete    | 2026-10-21 |
-| 4. S3BlockStore & Sia s3d Roundtrip | 2/3 | In Progress|  |
+| 4. S3BlockStore & Sia s3d Roundtrip | 3/3 | In Progress|  |
 | 5. Fault Injection & Three-Tier Hardening | 0/TBD | Not started | - |
 
 ---
