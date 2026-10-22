@@ -368,15 +368,19 @@ Complete table (research output — the doc's content): [VERIFIED: `test/CMakeLi
 | A3 | GitHub-hosted/ Actions expression context: the `build.yml` lane runs under bash for all three desktop targets, so the one-line `-L Tier1` edit is lane-uniform | Q4 | If any lane used pwsh quoting differently, the flag string might need quoting — cosmetic |
 | A4 | `S3BlockStore` surfaces adapter-success-slot bytes unmodified for CID verification (verification-at-boundary per CORE-04) — read from Phase-1 frozen contract + kit assertions, `S3BlockStore.cpp` itself not re-read this session | Q6/Pitfall 4 | LOW: frozen since Phase 1, conformance-proven; executor should re-verify Get's verify branch when writing the byte-flip case |
 
-## Open Questions
+## Open Questions (RESOLVED)
 
 1. **Hook placement — installed `FaultController.hpp` vs concrete `LocalBlockStore` surface**
    - What we know: D-09's text says "the hook joins the installed FaultController.hpp seam"; the in-repo precedent (`CrashPoint`, `LocalBlockStore.hpp:63-66,260`) put crash seams on the concrete type precisely to keep FaultController frozen.
    - What's unclear: whether widening the installed `FaultController` interface is desired or contradicts the "frozen FaultKind enum" note.
    - Recommendation: concrete `SetCorruptAfterCommitForTesting` on `LocalBlockStore` (CrashPoint precedent); kit-level genericity is preserved because the corruption matrix is LocalBlockStore-specific anyway (D-07 sends generic cases to the kit, this one stays backend-specific).
+   - RESOLVED — concrete seam: `SetCorruptAfterCommitForTesting(bool)` + `corrupt_after_commit_` on `LocalBlockStore` per the CrashPoint precedent; the installed `FaultController.hpp` stays frozen (05-02 Task 1 — its automated verify gate fails the task if `FaultController.hpp` gains any `CorruptAfterCommit` symbol). This resolves the D-09 literal-text tension ("the hook joins the installed FaultController.hpp seam") in favor of the in-repo concrete-seam precedent; the exact fault-point shape is CONTEXT's Discretion item ("FaultController hook naming/granularity — the corrupt-after-commit fault point's exact shape"), and every binding half of D-09 (tests API-only, no second RocksDB handle, no CF-name coupling, five-platform portable) is preserved, so no locked decision is contradicted.
 2. **Audit scope mechanics** (Tier-1 source list vs allowlist) — see Q5; both viable, planner picks per maintenance taste.
+   - RESOLVED — recursive source glob over `test/*.cpp`, `test/*.hpp`, and `test/conformance/*.hpp` (never `*.cmake`, never outside `test/`) with an inline allowlist naming `MinioServerHarness.cpp` (the sole sleep, bounded WaitUntilHealthy poll) plus a registration-count guard (addtest/add_test count vs LABELS-bearing lines); registered as the Tier-1 ctest `tier1_static_audit` (05-01 Task 1).
 3. **README stub for D-16** — create minimal `Readme.md` in sgns-blockstore vs cross-reference from existing docs only.
+   - RESOLVED — create the minimal repo-root `Readme.md`: one-paragraph library description + link to `docs/testing-tiers.md` + link to `docs/s3d-durability.md` + one-line superbuild build pointer (05-01 Task 2).
 4. **Whether `kBlocksColumnFamilyName`/`kUploadJournalColumnFamilyName` publication survives** once no test consumes it (D-09) — removing published constants is an API change; keeping them is harmless. Default: keep (additive posture).
+   - RESOLVED — keep-default adopted: the constants stay published in `LocalBlockStore.hpp` (additive posture); 05-02 Task 1 removes only the test-side consumer (the `CorruptStoredBlock` helper, the `<rocksdb/db.h>` includes, and the `RocksDB::rocksdb` link), and no Phase-5 plan task touches the constants (verified against 05-02 and 05-03).
 
 ## Environment Availability
 
