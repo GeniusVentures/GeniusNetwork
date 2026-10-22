@@ -6,9 +6,9 @@ status: planning
 last_updated: "2026-10-22T22:46:16.134Z"
 last_activity: 2026-10-22
 progress:
-  total_phases: 0
+  total_phases: 7
   completed_phases: 0
-  total_plans: 0
+  total_plans: 20
   completed_plans: 0
   percent: 0
 ---
@@ -21,38 +21,44 @@ See: `.planning/PROJECT.md` (workstream sections); `.planning/workstreams/rocksd
 
 **Core value:** Older CRDT/IPLD blocks can spill from RocksDB hot state to durable, CID-verified object storage through a shared thirdparty static library (`sgns-blockstore`) consumable by both SuperGenius and genius-tube — no RocksDB remote-FS integration, no SDK/SuperGenius types in the public API, and local eviction is never a CRDT deletion.
 
-**Current focus:** v1.0 shipped 2026-10-22 — awaiting next milestone (`/gsd-new-milestone`)
+**Current focus:** v1.1 — SuperGenius Cold-Storage Integration & CRDT Garbage Collection (roadmap ready; Phase 6 next)
 
 ## Current Position
 
-Phase: Not started (defining requirements)
+Phase: 6 (not started)
 Plan: —
-Status: Defining requirements
-Last activity: 2026-10-22 — Milestone v1.1 started
+Status: Roadmap ready — `/gsd-discuss-phase 6` next
+Last activity: 2026-10-22 — Milestone v1.1 requirements + roadmap created
 
 ## Progress
 
-**Phases Complete:** 5/5 (v1.0 archived 2026-10-22)
+**Phases Complete:** 0/7 (v1.1) · v1.0 archived 2026-10-22
 **Current Plan:** —
 
 | Phase | Plans | Status |
 |-------|-------|--------|
-| 01 — BlockStore Contract, Memory Backend & Conformance Kit | 3/3 | Complete (2026-10-20) |
-| 02 — LocalBlockStore (RocksDB Cold Tier) | 3/3 | Complete (2026-10-20) |
-| 03 — minio-cpp Integration & S3Client Adapter | 4/4 | Complete (2026-10-21) |
-| 04 — S3BlockStore & Sia s3d Roundtrip | 3/3 | Complete (2026-10-22) |
-| 05 — Fault Injection & Three-Tier Hardening | 3/3 | Complete (2026-10-22) |
+| 06 — sgns-blockstore Library Prerequisites (blake2b CIDs, installed S3 factory) | 0/2 | Not started |
+| 07 — SuperGenius Build Wiring & Config Gate | 0/3 | Not started |
+| 08 — Spill-on-Write & Background Drainer | 0/3 | Not started |
+| 09 — Cold Read Fallback (Local + Graphsync) | 0/3 | Not started |
+| 10 — Flush-Gated Durability Advancement | 0/2 | Not started |
+| 11 — Retention GC of Cold-Eligible CRDT Data | 0/4 | Not started |
+| 12 — Integration Hardening & Fresh-Clone Proof | 0/3 | Not started |
 
 ## Accumulated Context
 
-**Key decisions (from research SUMMARY, 2026-10-19):**
-- Phase order follows dependency facts: CORE-* type-system decisions are retrofit-brutal → Phase 1; minio-cpp build risk isolated → Phase 3; TEST-02 fault injection depends on Phase 2's upload journal → Phase 5
-- C1 CID-dependency conflict (libp2p `p2p_cid` vs ipfs-lite-cpp granular `cid` target) → day-one Phase-1 spike; record the decision before planning starts
-- C3/C4 interface shape: no Remove/Delete in the v1 core API; enumeration only on a separate tooling/audit interface — frozen Phase-1 decisions with a guard test
-- C2 CI S3 endpoint: MinIO server binary as child process (repo CI runners have no Docker); s3d stays dev-gated only
-- s3d 200-OK ≠ durable (staged on local disk) → 4-value DurabilityLevel + honest ObjectStoreAccepted semantics in Phase 1; durability-signal discovery pinned in Phase 4
+**Key decisions (from v1.1 research SUMMARY, 2026-10-22):**
+- BLOCKING: CRDT DAG blocks are CIDv1/DAG_CBOR/blake2b-256 but the v1.0 library gates on sha-256 → Phase 6 widens additively (blake2b widening preferred over dual-CID mapping; conformance kit + guards extended)
+- Second library gap: MinioS3Client not installed → installed `OpenMinioS3Client` factory (Phase 6)
+- Single integration seam: the IpfsDatastore at globaldb.cpp:329 — one decorator delivers spill + fallback + serving with zero changes to GraphsyncDAGSyncer/CrdtDatastore/ipfs-lite
+- Spill discipline: journal-then-drain — never inline S3 on the dagMutex_-held write path; drainer on its own thread mirroring the backup-loop pattern
+- GC shape: local-tombstone/eviction-only for v1.1 (dispose bytes past retention, bounded disposed-CID markers, tombstones/metadata never purged; epoch-based deletion compaction is v2+)
+- Durability bar: flush-gated (s3d /objects/flush + pendingObjects==0) before local bytes are evictable; ObjectStoreAccepted alone leaves the only copy in s3d staging
+- Config: crdt_config.json blockstore section canonical + SGNS_BLOCKSTORE_S3_* env overrides; blank = disabled = today's behavior; malformed = loud failure
+- Open planner decisions carried in ROADMAP research notes: config section naming, backpressure policy, retention age evidence (priority-height vs wall-clock), cold-serve latency budget, mobile superbuild leg coverage, GlobalDB backup vs cold-store dir
 
-**Todos:** None
+**Todos:**
+- Run `/gsd-discuss-phase 6` (blake2b widening scope is the entrance decision)
 
 **Blockers:** None
 

@@ -72,21 +72,21 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| LIB-01 | TBD | |
-| LIB-02 | TBD | |
-| INTG-01 | TBD | |
-| INTG-02 | TBD | |
-| SPILL-01 | TBD | |
-| SPILL-02 | TBD | |
-| READ-01 | TBD | |
-| READ-02 | TBD | |
-| DUR-01 | TBD | |
-| GC-01 | TBD | |
-| GC-02 | TBD | |
-| GC-03 | TBD | |
-| TEST-01 | TBD | |
-| TEST-02 | TBD | |
-| TEST-03 | TBD | |
+| LIB-01 | Phase 6 | |
+| LIB-02 | Phase 6 | |
+| INTG-01 | Phase 7 | |
+| INTG-02 | Phase 7 | |
+| SPILL-01 | Phase 8 | |
+| SPILL-02 | Phase 8 | |
+| READ-01 | Phase 9 | |
+| READ-02 | Phase 9 | |
+| DUR-01 | Phase 10 | |
+| GC-01 | Phase 11 | |
+| GC-02 | Phase 11 | |
+| GC-03 | Phase 11 | |
+| TEST-01 | Phase 7 | |
+| TEST-02 | Phase 12 | |
+| TEST-03 | Phase 11 | |
 
 ---
 *Requirements defined: 2026-10-22 — rocksdb-backup workstream, milestone v1.1*
