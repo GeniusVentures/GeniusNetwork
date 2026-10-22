@@ -4,6 +4,10 @@ phase: 03-minio-cpp-integration-s3client-adapter
 source: [03-VERIFICATION.md]
 started: 2026-10-21T21:05:00Z
 updated: 2026-10-21T23:26:00Z
+audit_acknowledged:
+  milestone: v1.0
+  at: 2026-10-22
+  gap_snapshot: "passed::scenarios=0"
 ---
 
 ## Current Test
@@ -25,6 +29,7 @@ awaiting: nothing - G-3-1 CLOSED 2026-10-21 (user-approved option (a): OpenSSL::
 ## Tests
 
 ### 1. Live MinIO tier run (SC4a)
+
 expected: see Current Test above
 result: pass
 reported: "PASS (final state, 2026-10-21 resumption run): all four [SGNS_BLOCKSTORE][MINIO-TIER] live cases execute green against community MinIO RELEASE.2025-04-22T22-12-26Z (W:\gnus\minio-community.exe): LivePutGetHeadDeleteRoundtrip, LiveCreateOnlyDuplicateReportsAlreadyPresent, LiveTlsOffIsPrimaryLane (minio_s3_client_test 11/11) and EnvGatedTlsOnSmoke (1343 ms - TLS handshake + MakeBucket + PutObject over the in-process self-signed cert, only SGNS_BLOCKSTORE_TEST_MINIO_BIN set). Historical partial-pass entries preserved in diagnosis below (std::system() quoting bug -> in-process cert gen -> TLS-only health probe -> option (a) closure)."
@@ -56,6 +61,7 @@ environment_notes: |
     ctest --test-dir thirdparty/build/Windows/Debug/sgns-blockstore/src/sgns-blockstore-build -C Debug -R "minio_s3_client_test|minio_cpp_spike_test" --output-on-failure -VV
 
 ### 2. Gap-closure live run (G-3-1, plan 03-04 Task 2)
+
 expected: |
   With ONLY SGNS_BLOCKSTORE_TEST_MINIO_BIN=W:\gnus\minio-community.exe set
   (SGNS_BLOCKSTORE_TEST_OPENSSL_BIN and OPENSSL_CONF deliberately unset),

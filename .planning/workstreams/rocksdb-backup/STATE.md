@@ -98,3 +98,11 @@ Last activity: 2026-10-22 — Phase 5 complete
 ### Blockers
 
 - 03-04 watch-for #3 fired: MinIO RELEASE.2025-04-22 serves TLS-only on the API port (first-byte-sniffing assumption falsified) - WaitUntilHealthy plaintext probe blocks Start(tls=true); EnvGatedTlsOnSmoke still cannot execute live (cert-gen mechanism itself proven live). Replan needed (options a/b/c in 03-04-SUMMARY.md).
+
+## Deferred Items
+
+Items acknowledged and deferred at milestone close, most recent first:
+
+| Category | Item | Status | Deferred At | Milestone |
+|----------|------|--------|-------------|-----------|
+| uat_gaps | 03/03-UAT.md | passed | 2026-10-22 | v1.0 |
