@@ -1,20 +1,16 @@
 ---
 gsd_state_version: "1.0"
-milestone: v1.0
-milestone_name: CRDT Cold-Storage BlockStore Library (Sia s3d backend)
-current_plan: 1
-status: Awaiting next milestone
-stopped_at: Phase 5 complete — all phases complete
-last_updated: "2026-10-22T22:06:10.721Z"
+milestone: v1.1
+milestone_name: SuperGenius Cold-Storage Integration & CRDT Garbage Collection
+status: planning
+last_updated: "2026-10-22T22:46:16.134Z"
 last_activity: 2026-10-22
-last_activity_desc: Milestone v1.0 completed and archived
-state_head: dec6c134ba4ddc6e376402940ba0f72a55dfefc9
 progress:
-  total_phases: 5
-  completed_phases: 5
-  total_plans: 16
-  completed_plans: 16
-current_phase: 5
+  total_phases: 0
+  completed_phases: 0
+  total_plans: 0
+  completed_plans: 0
+  percent: 0
 ---
 
 # Project State
@@ -29,10 +25,10 @@ See: `.planning/PROJECT.md` (workstream sections); `.planning/workstreams/rocksd
 
 ## Current Position
 
-Phase: Milestone v1.0 complete
+Phase: Not started (defining requirements)
 Plan: —
-Status: Awaiting next milestone
-Last activity: 2026-10-22 — Milestone v1.0 completed and archived
+Status: Defining requirements
+Last activity: 2026-10-22 — Milestone v1.1 started
 
 ## Progress
 
