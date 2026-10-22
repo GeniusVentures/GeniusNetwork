@@ -514,21 +514,21 @@ result<UploadState, BlockStatus> GetUploadState(const Cid& cid);    // accessor 
 | A6 | `shared_ptr<S3Client>` injection is the right ownership for S3BlockStore (fake-inspection ergonomics) | Pattern 1 | LOW — `unique_ptr` + raw test handle is equivalent |
 | A7 | s3d 503 SlowDown (disk-wait timeout) surfaces through the SDK as an unrecognized string → mapper default bucket `TemporarilyUnavailable` | Pattern 6 table | LOW — default bucket is exactly the correct class by design |
 
-## Open Questions
+## Open Questions (RESOLVED 2026-10-21 — resolutions below; details in the PLAN files)
 
-1. **s3d error-body shapes as minio-cpp renders them (spike items 1–2)**
+1. **s3d error-body shapes as minio-cpp renders them (spike items 1–2)** — **RESOLVED: spike-resolved-by-design (D-05/D-07)** — no dependent artifact precedes the spike: 04-02 is the hard entrance gate for all s3d-dependent work, and 04-01 (the only earlier plan) is hermetic and inherits the classifier as-is against the fake. The live captures settle both items inside 04-02 (Task 1 cases ConditionalRePutShape/HeadMissingShape; Task 2 transcribes the raw SDK strings into `sdk-error-shapes.txt`); the only permitted mapper change is the D-05 evidence-gated contingency (one-line `IsPreconditionFailure`/`IsAuthoritativeAbsence` extension, 04-02 Task 2 step 6 — no pre-committed fallback ladder). Original framing:
    - What we know: the three MinIO-side 412 shapes and the `"NoSuchKey:"` absence prefixes are classified today; s3d's bodies are AWS-wording-conformant per its changelog ("Match the AWS wording..." fix history).
    - What's unclear: exact strings at the SDK boundary against s3d.
    - Recommendation: D-05 day-one spike captures them; contingency per D-05 posture (extend `IsPreconditionFailure`/`IsAuthoritativeAbsence` only with captured evidence).
-2. **Staged-read headers (spike item 3)**
+2. **Staged-read headers (spike item 3)** — **RESOLVED: spike-resolved-by-design (D-05/D-07), expected negative** — 04-02 Task 2 captures the staged object's GET/HEAD response headers before flush (`staged-read-headers.txt`, runbook capture step) as the committed proof of absence, and 04-02 Task 3's finding doc documents the no-distinguishing-header conclusion citing that artifact (S3D-03, D-13). Original framing:
    - What we know: no distinguishing header is documented at the tag; repo search found none.
    - What's unclear: whether GET/HEAD responses carry ANY signal correlated with staging.
    - Recommendation: capture real response headers before/after PUT and after flush; expected negative — the finding documents the absence with the captures as proof.
-3. **Promotion guard-story wording (Pattern 4, item 5)**
+3. **Promotion guard-story wording (Pattern 4, item 5)** — **RESOLVED: whole-header promotion + banner reconciliation, no user checkpoint raised** — 04-CONTEXT's phase boundary locks the promotion itself (boundary item 3, honoring 03 D-04), and CORE-05's delete-free letter governs the BlockStore data-path family (guard-test-enforced store surface), not composition seams — the tension reconciles by scope, so nothing letter-breaking remained to surface to the user. 04-01 Task 1 implements it: the promoted banner carries the CORE-05/03-D-03 reconciliation, names the delete-free split header as the rejected alternative, and rates the promotion costly-not-one-way; the new `!HasHead<S3BlockStore>` / `!HasDelete<S3BlockStore>` negative traits pin the store surface. Original framing:
    - What we know: CORE-05's letter vs 03 D-04's promotion lock is a real textual tension.
    - What's unclear: whether the user wants the delete-free split instead of whole-header promotion.
    - Recommendation: whole-header promotion + doc-comment reconciliation (planner may surface to user as a checkpoint if they consider it letter-breaking).
-4. **Drainer result-type final shape**
+4. **Drainer result-type final shape** — **RESOLVED: per-item struct with both fields, as recommended** — locked as `DrainItem{ cid; upload; journal; }` with `journal` defaulting to success when no mark ran; shipped in 04-01 Task 3 (UploadDrainer.hpp) with the D-03 continue-on-failure and D-04 Accepted-only semantics pinned by `upload_drainer_test`. Original framing:
    - What we know: D-03 locks per-item vector + continue-on-failure; PutMany precedent locks the envelope pattern.
    - What's unclear: whether `journal` belongs in the per-item payload or a parallel vector.
    - Recommendation: per-item struct with both fields (self-describing evidence per block).
