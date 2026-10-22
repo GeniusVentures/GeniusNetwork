@@ -27,7 +27,7 @@
 - [x] **BACK-04**: `LocalBlockStore` maintains a durable upload journal recording pending remote uploads, recoverable after crash
 - [x] **BACK-05**: Internal `S3Client` adapter interface (~5 ops: put/get/head/delete + config) with an `InMemoryS3Client` fake for hermetic tests
 - [x] **BACK-06**: `MinioS3Client` implementation via minio-cpp; SDK types never leak past the adapter
-- [ ] **BACK-07**: `S3BlockStore` uses the `v1/blocks/` full-CID (codec-preserving) key layout, conditional create-only PUTs, and HEAD→exists mapping (200/404→bool, everything else→`TemporarilyUnavailable`)
+- [x] **BACK-07**: `S3BlockStore` uses the `v1/blocks/` full-CID (codec-preserving) key layout, conditional create-only PUTs, and HEAD→exists mapping (200/404→bool, everything else→`TemporarilyUnavailable`)
 
 ### Thirdparty Integration (BUILD)
 
@@ -90,7 +90,7 @@ Deferred (with reconsideration triggers, per research):
 | BUILD-03 | Phase 3 | Complete |
 | BACK-05 | Phase 3 | Complete |
 | BACK-06 | Phase 3 | Complete |
-| BACK-07 | Phase 4 | Pending |
+| BACK-07 | Phase 4 | Complete |
 | S3D-01 | Phase 4 | Pending |
 | S3D-02 | Phase 4 | Pending |
 | S3D-03 | Phase 4 | Pending |
