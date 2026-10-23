@@ -67,10 +67,10 @@ Plans:
   3. A present-but-malformed section fails startup loudly with a precise message (never a silent disable); `SGNS_BLOCKSTORE_S3_ACCESS_KEY`/`_SECRET_KEY` env vars take precedence over config values; a log-scan test proves credentials are never printed (endpoint/bucket logged, keys redacted)
   4. TEST-01 anchor: hermetic Tier-1 SuperGenius-side tests (InMemoryS3Client fake; config-gate cases first) run under `ctest -L Tier1 --no-tests=error` fail-closed on all platforms — no Docker, no live endpoints — and every subsequent phase lands its tests in this lane
 
-**Plans**: 3 plans
+**Plans**: 1/3 plans executed
 Plans:
 **Wave 1**
-- [ ] 07-01-PLAN.md — Gated CMake consumption block in both `CommonBuildParameters.cmake` files (`SGNS_COLD_STORAGE` default OFF, FORCE-off on iOS/Android, hints + httplib→miniocpp→sgns-blockstore finds outside the PREFER_CONFIG window) + Windows ON-build one-binary link proof + dual-RocksDB no-pin/no-second-archive evidence + thirdparty-tarball CI-readiness verdict (INTG-01)
+- [x] 07-01-PLAN.md — Gated CMake consumption block in both `CommonBuildParameters.cmake` files (`SGNS_COLD_STORAGE` default OFF, FORCE-off on iOS/Android, hints + httplib→miniocpp→sgns-blockstore finds outside the PREFER_CONFIG window) + Windows ON-build one-binary link proof + dual-RocksDB no-pin/no-second-archive evidence + thirdparty-tarball CI-readiness verdict (INTG-01)
 
 **Wave 2** *(blocked on Wave 1)*
 - [ ] 07-02-PLAN.md — `ColdStorageOptions` + strict tri-state `blockstore` parser on the crdt layer (file-intent activation rule; required-field check after env resolution per D-04/D-07/D-08) + loud `std::runtime_error` surfacing + credentials-never-logged summary + threading through `GlobalDB::New` as a trailing defaulted parameter (INTG-02)
@@ -218,7 +218,7 @@ Plans:
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 6. sgns-blockstore v1.1 Library Prerequisites | 3/3 | In Progress|  |
-| 7. SuperGenius Build Wiring & Config Gate | 0/3 | Not started | - |
+| 7. SuperGenius Build Wiring & Config Gate | 1/3 | In Progress|  |
 | 8. Spill-on-Write & Background Drainer | 0/3 | Not started | - |
 | 9. Cold Read Fallback | 0/3 | Not started | - |
 | 10. Flush-Gated Durability Advancement | 0/2 | Not started | - |
