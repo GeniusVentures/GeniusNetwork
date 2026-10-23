@@ -43,13 +43,13 @@ Milestone audit (passed): [milestones/v1.0-MILESTONE-AUDIT.md](milestones/v1.0-M
   3. No public-API break: all v1.0 sha-256 conformance, guard, and hygiene tests pass unchanged, and no installed header gains a minio-cpp/SDK type (existing compile-time checks stay green)
   4. `OpenMinioS3Client(const S3ClientConfig&)` is declared in installed `S3Client.hpp`, and an out-of-tree consumer TU constructs the production client linking only `sgns-blockstore::sgns-blockstore` from the install tree (compile+link proof)
 
-**Plans**: 1/3 plans executed
+**Plans**: 2/3 plans executed
 Plans:
 **Wave 1**
 - [x] 06-01-PLAN.md — blake2 build wiring (ipfs-lite-cpp::blake2 link + superbuild entry) + 3-arg `CidOf` overload with pinned known vectors and committed `getCidOf` cross-check evidence (LIB-01)
 
 **Wave 2** *(blocked on Wave 1 completion)*
-- [ ] 06-02-PLAN.md — blake2b-256 hash-gate widening in the three backends (gates to exactly {sha-256, blake2b-256}, verify against the CID's own multihash on put/get, `dag-cbor` S3 key codec token, conformance-kit + guard-test extension/retarget) (LIB-01)
+- [x] 06-02-PLAN.md — blake2b-256 hash-gate widening in the three backends (gates to exactly {sha-256, blake2b-256}, verify against the CID's own multihash on put/get, `dag-cbor` S3 key codec token, conformance-kit + guard-test extension/retarget) (LIB-01)
 
 **Wave 3** *(blocked on Wave 2 completion)*
 - [ ] 06-03-PLAN.md — Installed `OpenMinioS3Client` factory in `S3Client.hpp` + install-tree out-of-tree consumer compile/link/construct proof (Tier-1 hermetic ctest) + `config.cmake.in` find_dependency hardening exactly as the proof forces (LIB-02)
@@ -217,7 +217,7 @@ Plans:
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 6. sgns-blockstore v1.1 Library Prerequisites | 1/3 | In Progress|  |
+| 6. sgns-blockstore v1.1 Library Prerequisites | 2/3 | In Progress|  |
 | 7. SuperGenius Build Wiring & Config Gate | 0/3 | Not started | - |
 | 8. Spill-on-Write & Background Drainer | 0/3 | Not started | - |
 | 9. Cold Read Fallback | 0/3 | Not started | - |
