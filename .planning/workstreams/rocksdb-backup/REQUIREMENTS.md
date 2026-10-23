@@ -18,7 +18,7 @@
 
 ### Build & Config (INTG)
 
-- [ ] **INTG-01**: SuperGenius and GeniusSDK resolve sgns-blockstore via `find_package(sgns-blockstore CONFIG REQUIRED)` against the superbuild install tree in both `CommonBuildParameters.cmake` files (ordered after the miniocpp dependency chain), linking `sgns-blockstore::sgns-blockstore` on all desktop platforms
+- [x] **INTG-01**: SuperGenius and GeniusSDK resolve sgns-blockstore via `find_package(sgns-blockstore CONFIG REQUIRED)` against the superbuild install tree in both `CommonBuildParameters.cmake` files (ordered after the miniocpp dependency chain), linking `sgns-blockstore::sgns-blockstore` on all desktop platforms
 - [ ] **INTG-02**: `crdt_config.json` gains a blockstore section (endpoint, access key, secret key, bucket; optional prefix/path-style/tls) — blank or absent ⇒ blockstore not constructed, behavior byte-identical to today; malformed ⇒ loud startup failure (never silent disable); `SGNS_BLOCKSTORE_S3_ACCESS_KEY`/`_SECRET_KEY` env vars take precedence; credentials never logged
 
 ### Spill-on-Write (SPILL)
@@ -74,7 +74,7 @@
 |-------------|-------|--------|
 | LIB-01 | Phase 6 | |
 | LIB-02 | Phase 6 | |
-| INTG-01 | Phase 7 | |
+| INTG-01 | Phase 7 | Complete (07-01; Windows local evidence; Linux/macOS via CI on push) |
 | INTG-02 | Phase 7 | |
 | SPILL-01 | Phase 8 | |
 | SPILL-02 | Phase 8 | |
