@@ -22,7 +22,7 @@ Milestone audit (passed): [milestones/v1.0-MILESTONE-AUDIT.md](milestones/v1.0-M
 
 ## Phases (v1.1 — active)
 
-- [ ] **Phase 6: sgns-blockstore v1.1 Library Prerequisites — blake2b-256 CIDs & Installed S3 Client Factory** - Remove the two hard blockers additively: the CID hash gate widened to accept blake2b-256 (the shape of every CRDT DAG block) and an installed `OpenMinioS3Client` factory
+- [x] **Phase 6: sgns-blockstore v1.1 Library Prerequisites — blake2b-256 CIDs & Installed S3 Client Factory** - Remove the two hard blockers additively: the CID hash gate widened to accept blake2b-256 (the shape of every CRDT DAG block) and an installed `OpenMinioS3Client` factory (completed 2026-10-22)
 - [ ] **Phase 7: SuperGenius Build Wiring & Config Gate** - Both `CommonBuildParameters.cmake` files resolve sgns-blockstore from the install tree; the `crdt_config.json` blockstore section defines the blank=disabled / malformed=loud contract; hermetic Tier-1 CI lane from day one
 - [ ] **Phase 8: Spill-on-Write & Background Drainer** - Every CRDT block Put journals locally at the `IpfsDatastore` seam (no remote I/O under `dagMutex_`); a dedicated drainer thread uploads to S3 with crash-resume and an explicit backpressure policy
 - [ ] **Phase 9: Cold Read Fallback — Local Reads & Graphsync Serving** - Hot-store misses fetch Local→S3 with CID-verify and re-cache; graphsync serves cold CIDs asynchronously off the responder's inline path; transport failure never surfaces as NotFound
@@ -43,7 +43,7 @@ Milestone audit (passed): [milestones/v1.0-MILESTONE-AUDIT.md](milestones/v1.0-M
   3. No public-API break: all v1.0 sha-256 conformance, guard, and hygiene tests pass unchanged, and no installed header gains a minio-cpp/SDK type (existing compile-time checks stay green)
   4. `OpenMinioS3Client(const S3ClientConfig&)` is declared in installed `S3Client.hpp`, and an out-of-tree consumer TU constructs the production client linking only `sgns-blockstore::sgns-blockstore` from the install tree (compile+link proof)
 
-**Plans**: 3/3 plans executed
+**Plans**: 3/3 plans complete
 Plans:
 **Wave 1**
 - [x] 06-01-PLAN.md — blake2 build wiring (ipfs-lite-cpp::blake2 link + superbuild entry) + 3-arg `CidOf` overload with pinned known vectors and committed `getCidOf` cross-check evidence (LIB-01)
