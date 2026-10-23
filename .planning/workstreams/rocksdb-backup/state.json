@@ -11,7 +11,7 @@
     {
       "number": "7",
       "name": "SuperGenius Build Wiring & Config Gate",
-      "status": "pending"
+      "status": "in_progress"
     },
     {
       "number": "8",
@@ -41,8 +41,8 @@
   ],
   "next": {
     "command": "/gsd:progress --next",
-    "label": "Advance to the next step",
-    "reason": "Phase 7 of 7 · 14% · executing"
+    "label": "Advance to the next step (plan phase 8)",
+    "reason": "Phase 8 of 7 — needs a plan"
   },
-  "updated_at": "2026-10-23T19:40:08.490Z"
+  "updated_at": "2026-10-23T21:04:18.726Z"
 }
