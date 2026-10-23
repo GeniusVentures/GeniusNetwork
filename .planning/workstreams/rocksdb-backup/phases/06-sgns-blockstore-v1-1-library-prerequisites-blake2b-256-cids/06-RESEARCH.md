@@ -479,12 +479,16 @@ ctest --test-dir thirdparty/build/Windows/Debug/sgns-blockstore/src/sgns-blockst
 | A5 | minio `Client` construction performs no network I/O (lazy connect) | Q7/D-06 | If false, factory construction would touch network; the SC4 consumer's construct-against-dead-endpoint check exposes it immediately |
 | A6 | `header_hygiene` stays green with no new includes in installed headers | Q7/Q10 | None realistically — both additions need only already-visible types (verified includes) |
 
-## Open Questions
+## Open Questions (all RESOLVED — dispositions cite the post-split plan locations)
 
 1. **Consolidation of the three gates** — discretion, planner's call; evidence says trivial (identical bodies). Recommend consolidating (one message to update, one place the accepted set lives).
+   **(RESOLVED)** No consolidation — one gate copy per backend, per the v1.0 convention (06-02-PLAN.md, Task 1, step 1).
 2. **`OpenMinioS3Client` error style for bad config** — evidence (S3BlockStore::Open, MinioS3Client::Open) says throw `invalid_argument` for programmer error; D-05/D-06 letters don't force `result`-slot config errors. Recommend keep-throw, document in Doxygen.
+   **(RESOLVED)** Keep-throw + Doxygen-documented contract (06-03-PLAN.md, Task 1).
 3. **Consumer-project mechanics under `test/`** — standalone CMake project driven by an outer `add_test` (cmake -S/-B + build + run in one script) is the shape D-08 names; exact glue is planner discretion. The `sgns-blockstore-smoke` dir in the Debug tree [VERIFIED: listing] shows a prior ad-hoc out-of-tree build existed — inspect it for prior art before choosing.
+   **(RESOLVED)** Script-mode ctest driver + standalone project under test/out_of_tree_consumer (06-03-PLAN.md, Task 2).
 4. **Journal-tooling gates** (`MarkUploadedDurable`/`GetUploadState` on blake2b CIDs, local_block_store_test.cpp:490-492) — they ride the store gate, so they widen automatically; confirm the re-targeted tests assert sha-512 throws there too.
+   **(RESOLVED)** sha-512 retarget + blake2b journal-tooling acceptance asserted (06-02-PLAN.md, Task 1, step 5); blake2b spike pins at 06-01-PLAN.md, Task 2.
 
 ## Sources
 

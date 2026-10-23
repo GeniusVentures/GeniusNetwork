@@ -42,10 +42,11 @@ Milestone audit (passed): [milestones/v1.0-MILESTONE-AUDIT.md](milestones/v1.0-M
   2. Verify-on-put/get checks bytes against the CID's own multihash for both sha-256 and blake2b-256 — a byte-flipped blake2b block is rejected as `Corrupt` with source attribution — and the S3 key layout gains the `dag-cbor` codec token, observable by inspecting stored object keys
   3. No public-API break: all v1.0 sha-256 conformance, guard, and hygiene tests pass unchanged, and no installed header gains a minio-cpp/SDK type (existing compile-time checks stay green)
   4. `OpenMinioS3Client(const S3ClientConfig&)` is declared in installed `S3Client.hpp`, and an out-of-tree consumer TU constructs the production client linking only `sgns-blockstore::sgns-blockstore` from the install tree (compile+link proof)
-**Plans**: 2 plans
+**Plans**: 3 plans
 Plans:
-- [ ] 06-01-PLAN.md — blake2b-256 hash-gate widening (3-arg `CidOf`, verify against the CID's own multihash on put/get, `dag-cbor` S3 key codec token, conformance-kit + guard-test extension with pinned known vectors + committed `getCidOf` cross-check evidence) (LIB-01)
-- [ ] 06-02-PLAN.md — Installed `OpenMinioS3Client` factory in `S3Client.hpp` + install-tree out-of-tree consumer compile/link/construct proof (Tier-1 hermetic ctest) + `config.cmake.in` find_dependency hardening exactly as the proof forces (LIB-02)
+- [ ] 06-01-PLAN.md — blake2 build wiring (ipfs-lite-cpp::blake2 link + superbuild entry) + 3-arg `CidOf` overload with pinned known vectors and committed `getCidOf` cross-check evidence (LIB-01)
+- [ ] 06-02-PLAN.md — blake2b-256 hash-gate widening in the three backends (gates to exactly {sha-256, blake2b-256}, verify against the CID's own multihash on put/get, `dag-cbor` S3 key codec token, conformance-kit + guard-test extension/retarget) (LIB-01)
+- [ ] 06-03-PLAN.md — Installed `OpenMinioS3Client` factory in `S3Client.hpp` + install-tree out-of-tree consumer compile/link/construct proof (Tier-1 hermetic ctest) + `config.cmake.in` find_dependency hardening exactly as the proof forces (LIB-02)
 
 **Research note**: standard pattern — the library's own conformance kit and decision framework specify how additive widening is tested; no research-phase needed. Planner decisions: widen to exactly blake2b-256 vs a general multihash set; the S3 key-layout token change is free (no sha-256 production objects exist yet).
 
