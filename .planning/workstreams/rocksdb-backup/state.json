@@ -1,12 +1,48 @@
 {
   "contract": "1.0.0",
   "flavor": "core",
-  "milestone": "v1.1",
-  "phases": [],
+  "milestone": "v1.1 — SuperGenius Cold-Storage Integration & CRDT Garbage Collection",
+  "phases": [
+    {
+      "number": "6",
+      "name": "sgns-blockstore v1.1 Library Prerequisites",
+      "status": "pending"
+    },
+    {
+      "number": "7",
+      "name": "SuperGenius Build Wiring & Config Gate",
+      "status": "pending"
+    },
+    {
+      "number": "8",
+      "name": "Spill-on-Write & Background Drainer",
+      "status": "pending"
+    },
+    {
+      "number": "9",
+      "name": "Cold Read Fallback",
+      "status": "pending"
+    },
+    {
+      "number": "10",
+      "name": "Flush-Gated Durability Advancement",
+      "status": "pending"
+    },
+    {
+      "number": "11",
+      "name": "Retention GC of Cold-Eligible CRDT Data",
+      "status": "pending"
+    },
+    {
+      "number": "12",
+      "name": "Integration Hardening, Fault Races & Fresh-Clone Proof",
+      "status": "pending"
+    }
+  ],
   "next": {
-    "command": "/gsd-discuss-phase",
-    "label": "Discuss the first phase",
-    "reason": "Project initialized — plan your first phase"
+    "command": "/gsd-progress --next",
+    "label": "Advance to the next step (plan phase 06)",
+    "reason": "Phase 06 of 7 — needs a plan"
   },
-  "updated_at": "2026-10-22T22:46:16.137Z"
+  "updated_at": "2026-10-23T01:47:47.313Z"
 }
