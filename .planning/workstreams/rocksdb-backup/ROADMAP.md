@@ -23,7 +23,7 @@ Milestone audit (passed): [milestones/v1.0-MILESTONE-AUDIT.md](milestones/v1.0-M
 ## Phases (v1.1 — active)
 
 - [x] **Phase 6: sgns-blockstore v1.1 Library Prerequisites — blake2b-256 CIDs & Installed S3 Client Factory** - Remove the two hard blockers additively: the CID hash gate widened to accept blake2b-256 (the shape of every CRDT DAG block) and an installed `OpenMinioS3Client` factory (completed 2026-10-22)
-- [ ] **Phase 7: SuperGenius Build Wiring & Config Gate** - Both `CommonBuildParameters.cmake` files resolve sgns-blockstore from the install tree; the `crdt_config.json` blockstore section defines the blank=disabled / malformed=loud contract; hermetic Tier-1 CI lane from day one
+- [x] **Phase 7: SuperGenius Build Wiring & Config Gate** - Both `CommonBuildParameters.cmake` files resolve sgns-blockstore from the install tree; the `crdt_config.json` blockstore section defines the blank=disabled / malformed=loud contract; hermetic Tier-1 CI lane from day one (completed 2026-10-23)
 - [ ] **Phase 8: Spill-on-Write & Background Drainer** - Every CRDT block Put journals locally at the `IpfsDatastore` seam (no remote I/O under `dagMutex_`); a dedicated drainer thread uploads to S3 with crash-resume and an explicit backpressure policy
 - [ ] **Phase 9: Cold Read Fallback — Local Reads & Graphsync Serving** - Hot-store misses fetch Local→S3 with CID-verify and re-cache; graphsync serves cold CIDs asynchronously off the responder's inline path; transport failure never surfaces as NotFound
 - [ ] **Phase 10: Flush-Gated Durability Advancement** - `Durable` becomes an evidence-backed state (s3d `/objects/flush` + `pendingObjects==0` → `MarkUploadedDurable`), making the eviction durability gate real before anything deletes
@@ -67,7 +67,7 @@ Plans:
   3. A present-but-malformed section fails startup loudly with a precise message (never a silent disable); `SGNS_BLOCKSTORE_S3_ACCESS_KEY`/`_SECRET_KEY` env vars take precedence over config values; a log-scan test proves credentials are never printed (endpoint/bucket logged, keys redacted)
   4. TEST-01 anchor: hermetic Tier-1 SuperGenius-side tests (InMemoryS3Client fake; config-gate cases first) run under `ctest -L Tier1 --no-tests=error` fail-closed on all platforms — no Docker, no live endpoints — and every subsequent phase lands its tests in this lane
 
-**Plans**: 3/3 plans executed
+**Plans**: 3/3 plans complete
 Plans:
 **Wave 1**
 - [x] 07-01-PLAN.md — Gated CMake consumption block in both `CommonBuildParameters.cmake` files (`SGNS_COLD_STORAGE` default OFF, FORCE-off on iOS/Android, hints + httplib→miniocpp→sgns-blockstore finds outside the PREFER_CONFIG window) + Windows ON-build one-binary link proof + dual-RocksDB no-pin/no-second-archive evidence + thirdparty-tarball CI-readiness verdict (INTG-01)

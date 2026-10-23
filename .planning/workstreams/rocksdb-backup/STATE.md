@@ -2,21 +2,21 @@
 gsd_state_version: "1.0"
 milestone: v1.1
 milestone_name: SuperGenius Cold-Storage Integration & CRDT Garbage Collection
-current_phase: 07
-current_phase_name: SuperGenius Build Wiring & Config Gate
+current_phase: 8
+current_phase_name: Spill-on-Write & Background Drainer
 current_plan: 3
-status: verifying
-stopped_at: Completed 07-03-PLAN.md (all phase-7 plans done)
-last_updated: "2026-10-23T20:44:13.610Z"
+status: planning
+stopped_at: Phase 07 complete, ready to plan Phase 8
+last_updated: "2026-10-23T21:04:18.686Z"
 last_activity: 2026-10-23
-last_activity_desc: Phase 07 execution started
-state_head: 3e86946dd8fc7735c82efba6d0766f61397e26f7
+last_activity_desc: Phase 07 complete, transitioned to Phase 8
+state_head: 7bdbe0142d8fb86f6d8949360f9ce331e53131dd
 progress:
   total_phases: 7
-  completed_phases: 1
+  completed_phases: 2
   total_plans: 6
   completed_plans: 6
-  percent: 14
+  percent: 29
 ---
 
 # Project State
@@ -31,10 +31,10 @@ See: `.planning/PROJECT.md` (workstream sections); `.planning/workstreams/rocksd
 
 ## Current Position
 
-Phase: 07 (SuperGenius Build Wiring & Config Gate) — EXECUTING
-Plan: 3 of 3
-Status: Phase complete — ready for verification
-Last activity: 2026-10-23 — Phase 07 execution started
+Phase: 8 — Spill-on-Write & Background Drainer
+Plan: Not started
+Status: Ready to plan
+Last activity: 2026-10-23 — Phase 07 complete, transitioned to Phase 8
 
 ## Progress
 
@@ -72,7 +72,7 @@ Last activity: 2026-10-23 — Phase 07 execution started
 
 **Last session:** 2026-10-23T20:44:13.565Z
 
-**Stopped At:** Completed 07-03-PLAN.md (all phase-7 plans done)
+**Stopped At:** Phase 07 complete, ready to plan Phase 8
 **Resume File:** None
 
 ## Performance Metrics
