@@ -42,10 +42,16 @@ Milestone audit (passed): [milestones/v1.0-MILESTONE-AUDIT.md](milestones/v1.0-M
   2. Verify-on-put/get checks bytes against the CID's own multihash for both sha-256 and blake2b-256 — a byte-flipped blake2b block is rejected as `Corrupt` with source attribution — and the S3 key layout gains the `dag-cbor` codec token, observable by inspecting stored object keys
   3. No public-API break: all v1.0 sha-256 conformance, guard, and hygiene tests pass unchanged, and no installed header gains a minio-cpp/SDK type (existing compile-time checks stay green)
   4. `OpenMinioS3Client(const S3ClientConfig&)` is declared in installed `S3Client.hpp`, and an out-of-tree consumer TU constructs the production client linking only `sgns-blockstore::sgns-blockstore` from the install tree (compile+link proof)
+
 **Plans**: 3 plans
 Plans:
+**Wave 1**
 - [ ] 06-01-PLAN.md — blake2 build wiring (ipfs-lite-cpp::blake2 link + superbuild entry) + 3-arg `CidOf` overload with pinned known vectors and committed `getCidOf` cross-check evidence (LIB-01)
+
+**Wave 2** *(blocked on Wave 1 completion)*
 - [ ] 06-02-PLAN.md — blake2b-256 hash-gate widening in the three backends (gates to exactly {sha-256, blake2b-256}, verify against the CID's own multihash on put/get, `dag-cbor` S3 key codec token, conformance-kit + guard-test extension/retarget) (LIB-01)
+
+**Wave 3** *(blocked on Wave 2 completion)*
 - [ ] 06-03-PLAN.md — Installed `OpenMinioS3Client` factory in `S3Client.hpp` + install-tree out-of-tree consumer compile/link/construct proof (Tier-1 hermetic ctest) + `config.cmake.in` find_dependency hardening exactly as the proof forces (LIB-02)
 
 **Research note**: standard pattern — the library's own conformance kit and decision framework specify how additive widening is tested; no research-phase needed. Planner decisions: widen to exactly blake2b-256 vs a general multihash set; the S3 key-layout token change is free (no sha-256 production objects exist yet).
@@ -60,12 +66,15 @@ Plans:
   2. With the blockstore section blank or absent, node behavior is byte-identical to today — no blockstore constructed, no new code paths taken — proven by a hermetic config-gate test
   3. A present-but-malformed section fails startup loudly with a precise message (never a silent disable); `SGNS_BLOCKSTORE_S3_ACCESS_KEY`/`_SECRET_KEY` env vars take precedence over config values; a log-scan test proves credentials are never printed (endpoint/bucket logged, keys redacted)
   4. TEST-01 anchor: hermetic Tier-1 SuperGenius-side tests (InMemoryS3Client fake; config-gate cases first) run under `ctest -L Tier1 --no-tests=error` fail-closed on all platforms — no Docker, no live endpoints — and every subsequent phase lands its tests in this lane
+
 **Plans**: TBD (suggested: 3)
 **Suggested plan waves**:
 **Wave 1**
 - 07-01-PLAN.md — The CMake consumption block in both `CommonBuildParameters.cmake` files + option gate (`SGNS_COLD_STORAGE`, default OFF, OFF on mobile) + three-platform dual-RocksDB link proof (INTG-01)
+
 **Wave 2** *(blocked on Wave 1)*
 - 07-02-PLAN.md — `ColdStorageOptions` + `LoadCrdtConfig` extension with strict tri-state semantics + env-credential resolution (never logged) + threading through `GlobalDB::New` (INTG-02)
+
 **Wave 3** *(blocked on Wave 2)*
 - 07-03-PLAN.md — Config-gate hermetic tests (blank/absent/malformed/env-override/credentials-never-logged) + Tier-1 fail-closed CI lane + `GeniusWallet/assets/crdt_config.json` schema parity (TEST-01 + INTG-02 SC2/SC3)
 
@@ -82,12 +91,15 @@ Plans:
   3. After crash-restart, startup reconciles `GetPendingUploads` leftovers and re-drains idempotently (S3 conditional create-only makes re-puts safe) — nothing lost, nothing duplicated; shutdown drains-or-resumes cleanly with ordered thread joins
   4. The backpressure policy is explicit, implemented, and tested: s3d slow/unavailable behavior follows the chosen policy (unbounded-journal+watermark+alarm or bounded-degrade) and the consensus write path never fails due to cold-store state — an s3d-down window leaves publishes succeeding
   5. Hermetic spill tests (fake S3: journal-write, drain, crash-resume, backpressure) run in the Tier-1 lane
+
 **Plans**: TBD (suggested: 3)
 **Suggested plan waves**:
 **Wave 1**
 - 08-01-PLAN.md — `BlockStoreBackedIpfsDatastore` skeleton at the construction seam + `set` journal spill + gated construction (`remove` = hot-only; eviction ≠ CRDT deletion) (SPILL-01)
+
 **Wave 2** *(blocked on Wave 1)*
 - 08-02-PLAN.md — `ColdStorageManager` drainer thread + lifecycle/shutdown join ordering + startup journal reconciliation (SPILL-02)
+
 **Wave 3** *(blocked on Wave 2)*
 - 08-03-PLAN.md — Backpressure policy + crash-resume proof + latency-independence benchmark (drainer paused vs running) + Tier-1 spill tests (SPILL-01/SPILL-02 evidence)
 
@@ -104,12 +116,15 @@ Plans:
   3. The first-class `BlockStatus` mapping holds at the seam: no peer-blacklist writes and no `RecordCIDFailure` from s3d blips; `Corrupt` attributes its source; `HasBlock` is cold-aware ("held locally OR retrievable before deadline")
   4. Restored blocks enter through a dedicated rehydrate path — bytes + resolved marker only; zero pubsub broadcast, zero `AddRoute`, heads unchanged (no restore re-entry storms)
   5. Hermetic fallback tests (fake S3 + fault injection: taxonomy honesty, responder non-blocking, rehydrate silence) run in the Tier-1 lane
+
 **Plans**: TBD (suggested: 3)
 **Suggested plan waves**:
 **Wave 1**
 - 09-01-PLAN.md — `get` fallback chain (inner miss → LocalBlockStore → S3BlockStore, CID-verified → re-cache) + `BlockStatus` taxonomy mapping table at the seam + dedicated rehydrate path (READ-01)
+
 **Wave 2** *(blocked on Wave 1; measure the latency budget first)*
 - 09-02-PLAN.md — Graphsync async cold-serve on a bounded dedicated executor + deadline + measured cold-serve latency budget (or the conscious don't-have+re-warm degradation if the budget is exceeded) (READ-02)
+
 **Wave 3** *(blocked on Wave 2)*
 - 09-03-PLAN.md — Fault-injection honesty suite (no-NotFound-escape, no-blacklist-writes, responder-freeze regression, rehydrate silence) + Tier-1 fallback tests (READ-01/READ-02 evidence)
 
@@ -125,10 +140,12 @@ Plans:
   2. Per-CID journal state transitions LocalCommitted → ObjectStoreAccepted → Durable are observable, and local bytes become evictable only after the configured durability state is recorded — the exact gate Phase 11's eviction consults, testable standalone
   3. Fault injections pass: crash-between-journal-and-drain recovers via journal reconciliation; an s3d outage never surfaces as NotFound; drainer/GC-scheduler/backup-loop shutdown interplay is ordered and race-free under load
   4. Staging health (`pendingObjects`/`bufferUsed`/`bufferLimit`) is monitored and exposed so later GC can be inhibited while staging is unhealthy
+
 **Plans**: TBD (suggested: 2)
 **Suggested plan waves**:
 **Wave 1**
 - 10-01-PLAN.md — Flush cadence + `pendingObjects==0` observation gate + bulk `MarkUploadedDurable` advancement + per-CID durability-state visibility (DUR-01)
+
 **Wave 2** *(blocked on Wave 1)*
 - 10-02-PLAN.md — Crash/outage fault injections + shutdown-ordering under load + staging-health monitoring feed consumed by the later GC inhibitor (DUR-01 evidence + Phase 11 gate)
 
@@ -145,14 +162,18 @@ Plans:
   3. A GC-evicted CID remains retrievable end-to-end: both a graphsync request and a local read for it resolve from the blockstore, CID-verified — hermetic proof in the Tier-1 lane (GC-03)
   4. TEST-03 (dev-gated, never in CI): the live s3d E2E — spill → GC → retrieve — passes with committed evidence artifacts, and the MinIO-binary opt-in roundtrip is available (v1.0 Tier-2/3 precedent)
   5. The epoch watermark record is computed and stored (computation only — nothing is deletion-gated on it in v1.1), with per-pass reclaimed counts/bytes and a dry-run mode
+
 **Plans**: TBD (suggested: 4)
 **Suggested plan waves**:
 **Wave 1**
 - 11-01-PLAN.md — Retention policy scan + reachability walk (`CrdtHeads::GetList` → link walk, batched off `io_`) + protected/pinned namespaces + epoch watermark record (GC-01)
+
 **Wave 2** *(blocked on Wave 1)*
 - 11-02-PLAN.md — Two-phase eviction + durability-record gate consult (Phase 10 output) + bounded disposed-CID markers + block/marker/set-row unit atomicity + `DeleteCIDBlock` LRU invalidation (GC-02)
+
 **Wave 3** *(blocked on Wave 2)*
 - 11-03-PLAN.md — Evicted-CID retrievability E2E (graphsync + local read, CID-verified) + tombstone/metadata never-purged guards + dry-run mode + per-pass metrics in the Tier-1 lane (GC-03)
+
 **Wave 4** *(blocked on Wave 3; human checkpoint for the live session)*
 - 11-04-PLAN.md — TEST-03 live tier: live s3d spill → GC → retrieve E2E with committed evidence artifacts + MinIO-binary opt-in roundtrip (TEST-03)
 
@@ -168,12 +189,15 @@ Plans:
   2. The resurrection counter-test passes: delete → GC → re-deliver a pre-delete delta ⇒ the value is absent everywhere (restore must not resurrect GC'd values)
   3. An s3d-unavailable soak shows bounded journal growth, the alarm firing, and publishes continuing to succeed for the soak duration; teardown-under-load joins cleanly; peer cold-fetch under injected s3d latency stays within its deadline budget
   4. Fresh-clone proof using only pushed commits across the three repos (SuperGenius, GeniusSDK, thirdparty/sgns-blockstore): configure + build + `ctest -L Tier1` green on Windows, Linux, and macOS with the cold-storage option ON; every new test is labeled and gated (tier-label audit passes)
+
 **Plans**: TBD (suggested: 3)
 **Suggested plan waves**:
 **Wave 1**
 - 12-01-PLAN.md — Fault-race matrix (evict × serve × drain under timing injection) + resurrection counter-test (TEST-02)
+
 **Wave 2** *(blocked on Wave 1)*
 - 12-02-PLAN.md — s3d-down soak with bounded-journal assertion + teardown-under-load + peer cold-fetch under injected s3d latency (TEST-02)
+
 **Wave 3** *(blocked on Wave 2)*
 - 12-03-PLAN.md — Fresh-clone three-platform Tier-1-green proof (pushed commits only, option ON) + tier-label/gating audit (TEST-02 closing evidence)
 
