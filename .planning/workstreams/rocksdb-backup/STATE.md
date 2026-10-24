@@ -2,21 +2,21 @@
 gsd_state_version: "1.0"
 milestone: v1.1
 milestone_name: SuperGenius Cold-Storage Integration & CRDT Garbage Collection
-current_phase: 8
-current_phase_name: Spill-on-Write & Background Drainer
 current_plan: 3
 status: executing
-stopped_at: Phase 8 context gathered
-last_updated: "2026-10-24T00:37:31.043Z"
-last_activity: 2026-10-23
+stopped_at: Completed 08-01-PLAN.md (spill journal half); next 08-02 backpressure config + drainer
+last_updated: "2026-10-24T01:47:51.777Z"
+last_activity: 2026-10-24
 last_activity_desc: Phase 07 complete, transitioned to Phase 8
-state_head: f62e229f50e19418a6cf6631ed40f0306d58f9c7
+state_head: 76baee5f06301c91936a8ace05b04feeea766291
 progress:
   total_phases: 7
   completed_phases: 2
   total_plans: 9
-  completed_plans: 6
+  completed_plans: 7
   percent: 29
+current_phase: 8
+current_phase_name: Spill-on-Write & Background Drainer
 ---
 
 # Project State
@@ -27,14 +27,14 @@ See: `.planning/PROJECT.md` (workstream sections); `.planning/workstreams/rocksd
 
 **Core value:** Older CRDT/IPLD blocks can spill from RocksDB hot state to durable, CID-verified object storage through a shared thirdparty static library (`sgns-blockstore`) consumable by both SuperGenius and genius-tube — no RocksDB remote-FS integration, no SDK/SuperGenius types in the public API, and local eviction is never a CRDT deletion.
 
-**Current focus:** Phase 07 — SuperGenius Build Wiring & Config Gate
+**Current focus:** Phase 08 — Spill-on-Write & Background Drainer
 
 ## Current Position
 
-Phase: 8 (Spill-on-Write & Background Drainer) — READY TO EXECUTE
-Plan: Not started
-Status: Ready to execute
-Last activity: 2026-10-23 — Phase 07 complete, transitioned to Phase 8
+Current Plan: 2
+Total Plans in Phase: 3
+Status: Executing — 08-01 complete (spill journal half landed)
+Last activity: 2026-10-24 — 08-01 SUMMARY committed
 
 ## Progress
 
@@ -70,10 +70,10 @@ Last activity: 2026-10-23 — Phase 07 complete, transitioned to Phase 8
 
 ## Session Continuity
 
-**Last session:** 2026-10-23T23:26:57.792Z
+**Last session:** 2026-10-24T01:47:51.612Z
 
-**Stopped At:** Phase 8 context gathered
-**Resume File:** .planning/workstreams/rocksdb-backup/phases/08-spill-on-write-background-drainer/08-CONTEXT.md
+**Stopped At:** Completed 08-01-PLAN.md (spill journal half); next 08-02 backpressure config + drainer
+**Resume File:** None
 
 ## Performance Metrics
 
@@ -95,6 +95,7 @@ Last activity: 2026-10-23 — Phase 07 complete, transitioned to Phase 8
 | Phase 07 P01 | 75 min | 2 tasks | 8 files |
 | Phase 07 P02 | 55 min | 2 tasks | 4 files |
 | Phase 07 P03 | 50 min | 3 tasks | 6 files |
+| Phase 08 P01 | 70 min | 2 tasks | 10 files |
 
 ## Decisions
 
