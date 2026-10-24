@@ -13,8 +13,8 @@
 
 ### Library Prerequisites (LIB)
 
-- [ ] **LIB-01**: `sgns-blockstore` accepts blake2b-256 CIDv1 blocks additively alongside sha-256 (hash-gate widening with known vectors for DAG_CBOR/blake2b; conformance kit + guard tests extended; no public-API break) — the Phase-0 blocker: every CRDT DAG block is CIDv1/DAG_CBOR/blake2b-256
-- [ ] **LIB-02**: an installed factory (e.g. `OpenMinioS3Client(S3ClientConfig)` exported from installed `S3Client.hpp`) lets consumers construct the production S3 client from the install tree without non-installed headers
+- [x] **LIB-01**: `sgns-blockstore` accepts blake2b-256 CIDv1 blocks additively alongside sha-256 (hash-gate widening with known vectors for DAG_CBOR/blake2b; conformance kit + guard tests extended; no public-API break) — the Phase-0 blocker: every CRDT DAG block is CIDv1/DAG_CBOR/blake2b-256
+- [x] **LIB-02**: an installed factory (e.g. `OpenMinioS3Client(S3ClientConfig)` exported from installed `S3Client.hpp`) lets consumers construct the production S3 client from the install tree without non-installed headers
 
 ### Build & Config (INTG)
 
@@ -23,8 +23,8 @@
 
 ### Spill-on-Write (SPILL)
 
-- [ ] **SPILL-01**: every CRDT block Put passing the `IpfsDatastore` seam (`globaldb.cpp:329`) journals block + PendingUpload record into `LocalBlockStore` atomically — local WAL only, no remote I/O on the `dagMutex_`-held write path
-- [ ] **SPILL-02**: a background UploadDrainer thread drains the journal to S3 (backup-loop lifecycle pattern) with a defined backpressure policy when s3d is slow/unavailable, and drains cleanly at shutdown / resumes from the journal after crash-restart
+- [x] **SPILL-01**: every CRDT block Put passing the `IpfsDatastore` seam (`globaldb.cpp:329`) journals block + PendingUpload record into `LocalBlockStore` atomically — local WAL only, no remote I/O on the `dagMutex_`-held write path
+- [x] **SPILL-02**: a background UploadDrainer thread drains the journal to S3 (backup-loop lifecycle pattern) with a defined backpressure policy when s3d is slow/unavailable, and drains cleanly at shutdown / resumes from the journal after crash-restart
 
 ### Read Fallback (READ)
 
@@ -72,12 +72,12 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| LIB-01 | Phase 6 | |
-| LIB-02 | Phase 6 | |
+| LIB-01 | Phase 6 | Complete (06-01; verification 17/17 2026-10-22 — checkbox repaired 2026-10-24, verb had left it stale) |
+| LIB-02 | Phase 6 | Complete (06-02; verification 17/17 2026-10-22 — checkbox repaired 2026-10-24, verb had left it stale) |
 | INTG-01 | Phase 7 | Complete (07-01; Windows local evidence; Linux/macOS via CI on push) |
 | INTG-02 | Phase 7 | Complete (07-02 + 07-03; matrix green, wallet parity) |
-| SPILL-01 | Phase 8 | |
-| SPILL-02 | Phase 8 | |
+| SPILL-01 | Phase 8 | Complete (08-01 + 08-03; journal-first seam, SC1 latency benchmark) |
+| SPILL-02 | Phase 8 | Complete (08-02 + 08-03; drainer, backpressure config, crash-resume, outage window) |
 | READ-01 | Phase 9 | |
 | READ-02 | Phase 9 | |
 | DUR-01 | Phase 10 | |
