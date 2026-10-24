@@ -460,18 +460,24 @@ Phase 8 adds a new runtime state store, not a rename/migration — inventory of 
 | A5 | Backpressure-only `blockstore` sections disable (by Phase-7 (e) inheritance) rather than erroring | Pitfall 9 | Low — matches `prefix`-only precedent; if operators find it confusing, a loud variant is additive |
 | A6 | CI can safely add `-DSGNS_COLD_STORAGE=ON` on desktop legs (install tree always present via unconditional superbuild entry) | Pitfall 10 | Low — build-time cost only; matrix legs without the superbuild would need the gate left OFF |
 
-## Open Questions
+## Open Questions (RESOLVED)
+
+All four questions are dispositioned in the Phase-8 plans; nothing remains open.
 
 1. **CI gate flip** — do desktop CI legs add `-DSGNS_COLD_STORAGE=ON` so spill Tier-1 tests run in the fail-closed lane, or is local-lane evidence sufficient (Phase-7 precedent)?
    - What we know: superbuild always builds sgns-blockstore; CI configure args today are only `-DSGNS_PRINT_LOGS=ON`; the lane passes via the unconditional config-gate test.
    - What's unclear: CI runner build-time budget with the extra link chain.
-   - Recommendation: flip the desktop legs (one-line change per `cmake_args`); keep mobile OFF.
+   - Recommendation (superseded — see disposition): flip the desktop legs (one-line change per `cmake_args`); keep mobile OFF.
+   - **Disposition (RESOLVED):** CI gate stays NOT flipped — blocked on the same thirdparty release cut as Phase 7 (the Phase-7 verdict binds); the local Windows ON-lane Tier-1 evidence stands in (08-03 Task 2 records the exact ctest command + counts in the CI-readiness disposition). Supersedes the flip-the-desktop-legs recommendation above.
 2. **Cold-store directory name** — `<db>/coldstore` vs `<db>/blockstore` vs other.
    - Recommendation: `coldstore` (unambiguous, sibling of `backups`; derived in the factory via the `ResolveBackupDirectory` precedent `globaldb.cpp:533-536`).
+   - **Disposition (RESOLVED):** `<db>/coldstore` — adopted in 08-01 Task 1 step 2 (the factory derives it as a sibling of `backups`, never inside it).
 3. **Watermark semantics under partial drain success** — a cycle where some items succeeded and some failed counts as a failed cycle for backoff (recommended) while still advancing the journal for the successes. Confirm.
+   - **Disposition (RESOLVED):** Yes — a partial-success cycle counts as a failed cycle (backoff applies) while its successes still advance; adopted in 08-02 Task 2 (D-03 backoff rules) and evidenced in 08-03 Task 2 (FlakyS3Client partial-success case).
 4. **Does SC1's benchmark live at the decorator level or through `GlobalDB::Put`?**
    - What we know: hermetic tests construct the manager/decorator directly (D-10) — decorator-level timing is deterministic and needs no pubsub/graphsync scaffolding.
    - Recommendation: decorator-level benchmark (paused vs running + injected latency), plus one integration-flavored test through the real seam only if cheap.
+   - **Disposition (RESOLVED):** Decorator-level SC1 benchmark (paused vs running + injected latency) — adopted in 08-03 Task 2; the optional integration-flavored add-on was not taken (deterministic hermetic evidence preferred, no pubsub/graphsync scaffolding).
 
 ## Environment Availability
 
