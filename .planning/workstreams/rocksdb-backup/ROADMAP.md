@@ -92,13 +92,13 @@ Plans:
   4. The backpressure policy is explicit, implemented, and tested: s3d slow/unavailable behavior follows the chosen policy (unbounded-journal+watermark+alarm or bounded-degrade) and the consensus write path never fails due to cold-store state — an s3d-down window leaves publishes succeeding
   5. Hermetic spill tests (fake S3: journal-write, drain, crash-resume, backpressure) run in the Tier-1 lane
 
-**Plans**: 1/3 plans executed
+**Plans**: 2/3 plans executed
 Plans:
 **Wave 1**
 - [x] 08-01-PLAN.md — gated cold-storage stack (factory/stub split, coldstore dir) + `BlockStoreBackedIpfsDatastore` journal-spill decorator at the `GlobalDB::New` seam (journal-first, remove hot-only, D-04) + hermetic spill journal Tier-1 tests + local tree reconfigured ON (SPILL-01)
 
 **Wave 2** *(blocked on Wave 1)*
-- [ ] 08-02-PLAN.md — `blockstore.backpressure` strict config (D-05/D-06/D-07, 0-defaults, loud validation, wallet parity) + `ColdStorageManager` drainer thread (split-phase drain that never holds the shared mutex across remote I/O, backoff, dual count watermark with always-on alarm, status getter, bounded-grace shutdown, first-poll crash reconciliation) + lifecycle/shutdown join ordering (SPILL-02)
+- [x] 08-02-PLAN.md — `blockstore.backpressure` strict config (D-05/D-06/D-07, 0-defaults, loud validation, wallet parity) + `ColdStorageManager` drainer thread (split-phase drain that never holds the shared mutex across remote I/O, backoff, dual count watermark with always-on alarm, status getter, bounded-grace shutdown, first-poll crash reconciliation) + lifecycle/shutdown join ordering (SPILL-02)
 
 **Wave 3** *(blocked on Wave 2)*
 - [ ] 08-03-PLAN.md — behavior evidence suite (drain-to-S3, crash-resume, s3d-down backpressure window, enqueue-never-inline, shutdown grace) + SC1 latency-independence benchmark (drainer paused vs running under injected latency — never ON-vs-OFF) + partial-success backoff + CI-readiness Phase-8 disposition (SPILL-01/SPILL-02 evidence)
@@ -219,7 +219,7 @@ Plans:
 |-------|----------------|--------|-----------|
 | 6. sgns-blockstore v1.1 Library Prerequisites | 3/3 | In Progress|  |
 | 7. SuperGenius Build Wiring & Config Gate | 3/3 | In Progress|  |
-| 8. Spill-on-Write & Background Drainer | 1/3 | In Progress|  |
+| 8. Spill-on-Write & Background Drainer | 2/3 | In Progress|  |
 | 9. Cold Read Fallback | 0/3 | Not started | - |
 | 10. Flush-Gated Durability Advancement | 0/2 | Not started | - |
 | 11. Retention GC of Cold-Eligible CRDT Data | 0/4 | Not started | - |
