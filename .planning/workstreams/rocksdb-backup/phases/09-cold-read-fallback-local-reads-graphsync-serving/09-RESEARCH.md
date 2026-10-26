@@ -484,12 +484,18 @@ endif()
 
 All other claims in this document are `[VERIFIED: file:line]` against sources read this session.
 
-## Open Questions
+## Open Questions (RESOLVED)
+
+All four questions are decided in the Phase-9 plans — no execution ambiguity remains. Dispositions point at the deciding plan tasks.
 
 1. **Seal-on-rehydrate ruling** — §2.4 recommends bytes-only for Phase 9 with marker restoration deferred to Phase 11's eviction unit. Does the SC4 verification accept "the path *may* write exactly bytes+marker" with the marker branch exercised only when prior resolution is known? (Planner/verifier call; hazard evidence documented.)
+   **RESOLVED — bytes-only in Phase 9 (09-01):** encoded as a 09-01 must_haves prohibition ("never write a resolved marker for a block without prior-resolution evidence — RESEARCH §2.4 ruling") plus the Task 1 action; enforced by 09-03 Task 2's spy cases (zero marker writes for a never-sealed block; pre-sealed block untouched); all three plans' success criteria cite §2.4 and name Phase-11 GC-02's eviction unit as the marker-restoration owner.
 2. **Freeze-regression test depth** — wrapper-level measurement (recommended, cheap, hermetic) vs full two-GlobalDB node-level E2E on the `pubsub_graphsync_test` harness (stronger, costly, links the world). Recommend wrapper-level Tier-1 + optional node-level; needs a ruling if SC2's "whole-node-freeze regression test" is read as requiring the full harness.
+   **RESOLVED — wrapper-level Tier-1 (09-02 Task 3):** SC2's whole-node-freeze regression is delivered as the hermetic `cold_read_freeze_latency_test` suite (hot-hit < 50 ms through the ColdServeDagService wrapper under a saturated re-warm queue with injected latency/faults, per §10.2); no full two-GlobalDB node harness this phase — the wrapper is the seam where the freeze hazard lives, and the worker-off-io_context design makes node-level E2E redundant for the invariant.
 3. **Remote-store serialization choice** — shared `remote_store_mutex_` (recommended) vs read-dedicated second `S3BlockStore`. Decidable now, revisitable with §10.2 data.
+   **RESOLVED — shared `remote_store_mutex_` (09-01 Task 1):** created in `OpenColdStorageStack`, threaded through the bundle, and held by both the read chain's S3 Get and the ColdStorageManager drainer's Put; carried into 09-02's re-warm worker (T-9-08); the read-dedicated second `S3BlockStore` remains a documented future option revisitable with §10.2 data.
 4. **`TemporarilyUnavailable` surfacing mechanism** — additive `GraphsyncDAGSyncer::Error` value (recommended) vs a richer error payload type; affects `GetNodeWithoutRequest` callers' error handling (`crdt_datastore.cpp:1846/:1938/:2277` currently ignore error detail — additive enum is low-risk).
+   **RESOLVED — additive enum values (09-01 Task 1):** `COLD_STORAGE_TEMPORARILY_UNAVAILABLE`, `COLD_STORAGE_CORRUPT`, `COLD_STORAGE_UNAUTHORIZED` appended after `HOST_IS_NULL` (never reordering existing values), mapped by `MapColdReadStatus` in the ungated seam header `cold_read_fallback.hpp` — the low-risk additive route.
 
 ## Environment Availability
 
