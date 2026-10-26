@@ -117,13 +117,13 @@ Plans:
   4. Restored blocks enter through a dedicated rehydrate path — bytes + resolved marker only; zero pubsub broadcast, zero `AddRoute`, heads unchanged (no restore re-entry storms)
   5. Hermetic fallback tests (fake S3 + fault injection: taxonomy honesty, responder non-blocking, rehydrate silence) run in the Tier-1 lane
 
-**Plans**: 1/3 plans executed
+**Plans**: 2/3 plans executed
 Plans:
 **Wave 1**
 - [x] 09-01-PLAN.md — READ-01 tracer: `ColdReadFallback` hook (ungated) + gated `ColdReadService` chain (hot miss → LocalBlockStore → S3BlockStore, CID-verified → re-cache via decorator `set()`, D-01..D-04) + `BlockStatus` taxonomy mapping at the seam (three additive `Error` values) + `remote_store_mutex_` + `getNode` pre-peer cold leg (D-03 fall-through + cold-precedence) + gated `HasBlock` cold-dir check (D-08/D-09) + hermetic `cold_storage_fallback_test` (READ-01)
 
 **Wave 2** *(blocked on Wave 1)*
-- [ ] 09-02-PLAN.md — READ-02: re-warm executor (single worker, queue bound 64, per-CID coalescing D-07, 4 s budget / 5 s grace as D-12 compile-time defaults) + `ColdServeDagService` responder wrapper (delegate-or-enqueue, never block — D-05/D-06) + shutdown slot per Phase-8 D-10/D-11 + SC2 latency-budget benchmark & freeze regression (`cold_read_freeze_latency_test`) (READ-02)
+- [x] 09-02-PLAN.md — READ-02: re-warm executor (single worker, queue bound 64, per-CID coalescing D-07, 4 s budget / 5 s grace as D-12 compile-time defaults) + `ColdServeDagService` responder wrapper (delegate-or-enqueue, never block — D-05/D-06) + shutdown slot per Phase-8 D-10/D-11 + SC2 latency-budget benchmark & freeze regression (`cold_read_freeze_latency_test`) (READ-02)
 
 **Wave 3** *(blocked on Wave 2)*
 - [ ] 09-03-PLAN.md — Fault-injection honesty suite (no-NotFound-escape, no peer-blacklist/per-(peer,cid) failure from cold blips, Corrupt attribution both tiers, rehydrate silence SC4, responder-freeze regression under faulted+slow s3d) + Tier-1 fail-closed lane proof + registration/label parity (READ-01/READ-02 evidence)
@@ -220,7 +220,7 @@ Plans:
 | 6. sgns-blockstore v1.1 Library Prerequisites | 3/3 | In Progress|  |
 | 7. SuperGenius Build Wiring & Config Gate | 3/3 | In Progress|  |
 | 8. Spill-on-Write & Background Drainer | 3/3 | In Progress|  |
-| 9. Cold Read Fallback | 1/3 | In Progress|  |
+| 9. Cold Read Fallback | 2/3 | In Progress|  |
 | 10. Flush-Gated Durability Advancement | 0/2 | Not started | - |
 | 11. Retention GC of Cold-Eligible CRDT Data | 0/4 | Not started | - |
 | 12. Integration Hardening, Fault Races & Fresh-Clone Proof | 0/3 | Not started | - |
