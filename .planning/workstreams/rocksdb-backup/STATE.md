@@ -2,21 +2,21 @@
 gsd_state_version: "1.0"
 milestone: v1.1
 milestone_name: SuperGenius Cold-Storage Integration & CRDT Garbage Collection
-current_plan: 3
+current_plan: 2
 status: executing
-stopped_at: Phase 9 context gathered
-last_updated: "2026-10-26T21:23:40.889Z"
-last_activity: 2026-10-24
-last_activity_desc: Phase 08 complete, transitioned to Phase 9
-state_head: e5af8c5e07517c16273cd7ae534aaf3f9896eba6
+stopped_at: Completed 09-01-PLAN.md
+last_updated: "2026-10-26T21:59:33.532Z"
+last_activity: 2026-10-26
+last_activity_desc: Phase 9 execution started
+state_head: f2761c021387ee7ad4c59eb63d377456a22a6a39
 progress:
   total_phases: 7
   completed_phases: 3
   total_plans: 12
-  completed_plans: 9
+  completed_plans: 10
   percent: 43
-current_phase_name: Cold Read Fallback - Local Reads & Graphsync Serving
 current_phase: 9
+current_phase_name: Cold Read Fallback - Local Reads & Graphsync Serving
 ---
 
 # Project State
@@ -27,19 +27,19 @@ See: `.planning/PROJECT.md` (workstream sections); `.planning/workstreams/rocksd
 
 **Core value:** Older CRDT/IPLD blocks can spill from RocksDB hot state to durable, CID-verified object storage through a shared thirdparty static library (`sgns-blockstore`) consumable by both SuperGenius and genius-tube — no RocksDB remote-FS integration, no SDK/SuperGenius types in the public API, and local eviction is never a CRDT deletion.
 
-**Current focus:** Phase 08 — Spill-on-Write & Background Drainer
+**Current focus:** Phase 9 — Cold Read Fallback - Local Reads & Graphsync Serving
 
 ## Current Position
 
-Current Plan: Not started
+Current Plan: 2
 Total Plans in Phase: 3
 Status: Ready to execute
-Last activity: 2026-10-23 — Phase 08 complete, transitioned to Phase 9
+Last activity: 2026-10-26 — Phase 9 execution started
 
 ## Progress
 
 **Phases Complete:** 0/7 (v1.1) · v1.0 archived 2026-10-22
-**Current Plan:** 3
+**Current Plan:** 2
 
 | Phase | Plans | Status |
 |-------|-------|--------|
@@ -70,10 +70,10 @@ Last activity: 2026-10-23 — Phase 08 complete, transitioned to Phase 9
 
 ## Session Continuity
 
-**Last session:** 2026-10-26T19:22:08.162Z
+**Last session:** 2026-10-26T21:59:33.356Z
 
-**Stopped At:** Phase 9 context gathered
-**Resume File:** .planning/workstreams/rocksdb-backup/phases/09-cold-read-fallback-local-reads-graphsync-serving/09-CONTEXT.md
+**Stopped At:** Completed 09-01-PLAN.md
+**Resume File:** None
 
 ## Performance Metrics
 
@@ -98,6 +98,7 @@ Last activity: 2026-10-23 — Phase 08 complete, transitioned to Phase 9
 | Phase 08 P01 | 70 min | 2 tasks | 10 files |
 | Phase 08 P02 | 65 min | 2 tasks | 9 files |
 | Phase 08 P03 | 55 min | 2 tasks | 2 files |
+| Phase 09 P01 | 75 min | 3 tasks | 17 files |
 
 ## Decisions
 
