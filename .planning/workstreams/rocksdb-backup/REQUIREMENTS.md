@@ -28,8 +28,8 @@
 
 ### Read Fallback (READ)
 
-- [ ] **READ-01**: local node reads that miss the hot datastore fetch from the blockstore (Local tier → S3 tier), CID-verify, and re-cache before returning; transport failures surface as `TemporarilyUnavailable`, never as `NotFound`
-- [ ] **READ-02**: graphsync serving for a CID not held locally performs an async cold fetch with a deadline, off the responder's inline path (the past whole-node-freeze hazard), CID-verifies, then serves
+- [x] **READ-01**: local node reads that miss the hot datastore fetch from the blockstore (Local tier → S3 tier), CID-verify, and re-cache before returning; transport failures surface as `TemporarilyUnavailable`, never as `NotFound`
+- [x] **READ-02**: graphsync serving for a CID not held locally performs an async cold fetch with a deadline, off the responder's inline path (the past whole-node-freeze hazard), CID-verifies, then serves
 
 ### Durability (DUR)
 
@@ -78,8 +78,8 @@
 | INTG-02 | Phase 7 | Complete (07-02 + 07-03; matrix green, wallet parity) |
 | SPILL-01 | Phase 8 | Complete (08-01 + 08-03; journal-first seam, SC1 latency benchmark) |
 | SPILL-02 | Phase 8 | Complete (08-02 + 08-03; drainer, backpressure config, crash-resume, outage window) |
-| READ-01 | Phase 9 | |
-| READ-02 | Phase 9 | |
+| READ-01 | Phase 9 | Complete (09-01 + 09-03; chain + taxonomy fault matrix, SC1/SC3/SC4 evidence — checkboxes repaired 2026-10-27, verb had left them stale) |
+| READ-02 | Phase 9 | Complete (09-02 + 09-03; re-warm executor + wrapper, SC2 freeze/latency evidence — checkboxes repaired 2026-10-27, verb had left them stale) |
 | DUR-01 | Phase 10 | |
 | GC-01 | Phase 11 | |
 | GC-02 | Phase 11 | |
