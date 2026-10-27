@@ -113,7 +113,7 @@ On the SuperGenius side everything slots in additively: the flush tick lands at 
 | Standalone `S3AdminClient` interface + factory (recommended) | `Flush()`/`UploadStats()` methods on `S3BlockStore` (D-05's literal example) | Methods-on-store couples the S3-object facade to admin protocol and churns `S3BlockStore::Open`; standalone keeps the store S3-shaped and the admin independently faked. Both satisfy D-05's letter (additive, in-library, beside the `S3Client` surface) |
 | Fresh accepted-set scan at flush initiation (recommended) | Manager-maintained in-memory accepted set | In-memory is lost at crash; D-03+SC3 require journal-derivable snapshots; the scan runs only on rate-limited flush cycles |
 | Batched `MarkUploadedDurableMany` (recommended, additive) | Loop of single `MarkUploadedDurable` | Loop is correct but one sync WriteBatch (one fsync) per record; after a long outage the backstop recovery would fsync N times. Batch = one fsync + all-or-nothing crash window. Details in Design Notes |
-| Env-only admin password, default-on flush with loud absence warn (recommended) | Require credential when `durability` explicitly configured | Stricter require-mode is louder but couples flush activation to operator bookkeeping; default-on matches D-11 "absent knobs = defaults" and D-07's failure discipline already alarms. Planner may flip; flagged in Open Questions |
+| Env-only admin password, default-on flush with loud absence warn (recommended) | Require credential when `durability` explicitly configured | Stricter require-mode is louder but couples flush activation to operator bookkeeping; default-on matches D-11 "absent knobs = defaults" and D-07's failure discipline already alarms. Planner may flip; flagged in Open Questions (RESOLVED Q1) |
 
 ## 1. The s3d Admin Surface (D-06 verdict + endpoint shapes) — PRIMARY QUESTION
 
@@ -345,7 +345,7 @@ Validation (post-normalization, mirrors the warn<critical rule): `flush_min_inte
 
 ### 5.3 The silent-disable hazard (must be loud)
 
-v1.1 PITFALLS UX table: "Silent-disable on malformed config — operators believe spill/GC is on… Loud startup failure or CRITICAL + health flag" [VERIFIED: PITFALLS-rocksdb-backup-2026-10-22.md]. For Phase 10 the concrete shape: cold storage enabled + admin password ABSENT ⇒ durability advancement cannot ever succeed. Recommended posture (default-on flush per D-11): a one-time startup WARN naming the env var + flush attempts fail per D-07 backoff (health flag false, watermark-style logging) — loud, never silent. Stricter alternative (fail startup when `durability` explicitly configured but password missing) is defensible; see Open Questions.
+v1.1 PITFALLS UX table: "Silent-disable on malformed config — operators believe spill/GC is on… Loud startup failure or CRITICAL + health flag" [VERIFIED: PITFALLS-rocksdb-backup-2026-10-22.md]. For Phase 10 the concrete shape: cold storage enabled + admin password ABSENT ⇒ durability advancement cannot ever succeed. Recommended posture (default-on flush per D-11): a one-time startup WARN naming the env var + flush attempts fail per D-07 backoff (health flag false, watermark-style logging) — loud, never silent. Stricter alternative (fail startup when `durability` explicitly configured but password missing) is defensible; resolved default-on — see Open Questions (RESOLVED Q1).
 
 ## 6. The Library Admin Facade (D-05) — shape, transport, hygiene
 
@@ -607,14 +607,19 @@ TEST( ColdStorageConfigGate, AdminEndpointOptionalString )
 
 Everything else in this document is `[VERIFIED: file:line]` or `[VERIFIED: fetched URL]` against sources read this session.
 
-## Open Questions
+## Open Questions (RESOLVED)
+
+All three questions were ruled at planning (2026-10-26); the rulings are implemented in 10-01 and restated inline below.
 
 1. **Missing-admin-password posture (default-on + loud warn vs hard-fail when `durability` explicitly configured)** — §5.3 recommends default-on + one-time WARN + D-07 alarms. If the planner reads D-11's "absent knobs = defaults" as activating flush by default, confirm the loud-warn shape; a hard-fail mode is a one-line alternative behind the same parse.
    - What we know: D-06 resolves to env-only credential; silent-disable is a documented UX pitfall.
    - What's unclear: whether the user wants startup to FAIL when durability is explicitly configured but the credential is absent.
    - Recommendation: default-on + loud warn (matches D-11/D-07 letter); surface at plan review.
+   - RESOLVED (planner ruling, implemented in 10-01 Task 3): default-on flush + one-time startup WARN naming SGNS_BLOCKSTORE_S3_ADMIN_PASSWORD + D-07 backoff/alarm discipline on sustained failure; no hard-fail mode — flush activation never couples to operator bookkeeping.
 2. **`admin_endpoint` key placement** (`blockstore.admin_endpoint` recommended vs inside `durability`) — pure schema taste; both strictness-equivalent. Planner picks; wallet asset updated in the same task.
+   - RESOLVED (planner ruling, implemented in 10-01 Task 3): `blockstore.admin_endpoint` at the blockstore level, sibling of `endpoint` — connection topology, not cadence, not a secret; wallet asset parity in the same task.
 3. **Batched-marks inclusion in Wave 1** (recommended IN, §3.2/Design Notes) vs minimal single-CID loop — scope decision; correctness identical, shutdown-budget math differs.
+   - RESOLVED (planner ruling, implemented in 10-01 Task 2): `MarkUploadedDurableMany` ships in Wave 1 — one sync WriteBatch = one fsync + all-or-nothing crash window + bounded shutdown budget; the Task-1 tracer advances via the single-CID loop and Task 2 switches the call site.
 
 ## Environment Availability
 
