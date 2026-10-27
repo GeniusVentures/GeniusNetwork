@@ -4,19 +4,19 @@ milestone: v1.1
 milestone_name: SuperGenius Cold-Storage Integration & CRDT Garbage Collection
 current_plan: 2
 status: executing
-stopped_at: Phase 11 context gathered
-last_updated: "2026-10-27T20:38:39.090Z"
-last_activity: 2026-10-26
-last_activity_desc: Phase 10 complete, transitioned to Phase 11
-state_head: 353c4b76f56be0cde1184203f2a1572ddea5e20c
+stopped_at: Completed 11-01-PLAN.md
+last_updated: "2026-10-27T21:45:40.749Z"
+last_activity: 2026-10-27
+last_activity_desc: Phase 11 execution started
+state_head: 2b75bd3aed30eb9a4864c5759cc41d9bb12cee09
 progress:
   total_phases: 7
   completed_phases: 3
   total_plans: 18
-  completed_plans: 14
+  completed_plans: 15
   percent: 43
-current_phase_name: Retention GC of Cold-Eligible CRDT Data
 current_phase: 11
+current_phase_name: Retention GC of Cold-Eligible CRDT Data
 ---
 
 # Project State
@@ -27,14 +27,14 @@ See: `.planning/PROJECT.md` (workstream sections); `.planning/workstreams/rocksd
 
 **Core value:** Older CRDT/IPLD blocks can spill from RocksDB hot state to durable, CID-verified object storage through a shared thirdparty static library (`sgns-blockstore`) consumable by both SuperGenius and genius-tube — no RocksDB remote-FS integration, no SDK/SuperGenius types in the public API, and local eviction is never a CRDT deletion.
 
-**Current focus:** Phase 10 — Flush-Gated Durability Advancement
+**Current focus:** Phase 11 — Retention GC of Cold-Eligible CRDT Data
 
 ## Current Position
 
-Current Plan: Not started
+Current Plan: 2
 Total Plans in Phase: 4
 Status: Ready to execute
-Last activity: 2026-10-26 — Phase 10 complete, transitioned to Phase 11
+Last activity: 2026-10-27 — Phase 11 execution started
 
 ## Progress
 
@@ -70,10 +70,10 @@ Last activity: 2026-10-26 — Phase 10 complete, transitioned to Phase 11
 
 ## Session Continuity
 
-**Last session:** 2026-10-27T19:30:02.689Z
+**Last session:** 2026-10-27T21:45:40.399Z
 
-**Stopped At:** Phase 11 context gathered
-**Resume File:** .planning/workstreams/rocksdb-backup/phases/11-retention-gc-of-cold-eligible-crdt-data/11-CONTEXT.md
+**Stopped At:** Completed 11-01-PLAN.md
+**Resume File:** None
 
 ## Performance Metrics
 
@@ -103,11 +103,13 @@ Last activity: 2026-10-26 — Phase 10 complete, transitioned to Phase 11
 | Phase 09 P03 | 30 min | 3 tasks | 2 files |
 | Phase 10 P01 | 55 min | 3 tasks | 23 files |
 | Phase 10 P02 | 45 min | 2 tasks | 6 files |
+| Phase 11 P01 | 90 min | 3 tasks | 16 files |
 
 ## Decisions
 
 Decision log archived with v1.0 (`milestones/v1.0-ROADMAP.md` + `milestones/v1.0-phases/*/` SUMMARYs). Notable outcomes: `p2p_cid` adopted (D-05/D-06); library-local `result<T,BlockStatus>` alias with `policy::terminate` (D-01 shape preserved); D-11 three-shape 412 classification; G-3-1 closed via in-process OpenSSL cert gen + TLS health probe; s3d accepted-is-max-provable durability ceiling documented.
 - [Phase 10]: DUR-01 tracer landed: Durable is evidence-backed - AdvanceDurabilityOnce (hybrid floor+quiescence-or-backstop cadence, separate flush backoff) marks exactly the pre-flush Accepted snapshot after flush+pendingObjects==0 via the installed S3AdminClient facade; ctor widened by trailing defaults so the Phase-8 5-arg posture stays compiling — DUR-01 tracer landed: Durable is evidence-backed - AdvanceDurabilityOnce (hybrid floor+quiescence-or-backstop cadence, separate flush backoff) marks exactly the pre-flush Accepted snapshot after flush+pendingObjects==0 via the installed S3AdminClient facade; ctor widened by trailing defaults so the Phase-8 5-arg posture stays compiling
+- [Phase 11]: 11-01 GC-01 observe-only retention GC landed: eligibility = spilled-journal Durable (exactly, MI-02) INTERSECT strictly-past-retention age MINUS fresh-walk-reachable MINUS pinned; TRACER fixed the CIDv0 delta-spill defect (EquivalentCidClaim across LocalBlockStore/S3BlockStore verify paths) - CRDT deltas are CIDv0/DAG_PB/sha256, contradicting the research's CIDv1/DAG_CBOR claim; crash/skew/missing-stamp/heads-change all steer to under-eviction — 11-01-SUMMARY key-decisions + deviations 1/4; the CIDv0 fix is load-bearing for Waves 2-4 (no delta spills without it)
 
 ## Deferred Items
 
