@@ -33,7 +33,7 @@
 
 ### Durability (DUR)
 
-- [ ] **DUR-01**: recorded durability advances LocalCommitted → ObjectStoreAccepted → Durable via s3d `/objects/flush` + `pendingObjects==0` evidence (`MarkUploadedDurable`); local bytes become evictable only after the configured durability state is recorded
+- [x] **DUR-01**: recorded durability advances LocalCommitted → ObjectStoreAccepted → Durable via s3d `/objects/flush` + `pendingObjects==0` evidence (`MarkUploadedDurable`); local bytes become evictable only after the configured durability state is recorded
 
 ### Garbage Collection (GC)
 
@@ -80,7 +80,7 @@
 | SPILL-02 | Phase 8 | Complete (08-02 + 08-03; drainer, backpressure config, crash-resume, outage window) |
 | READ-01 | Phase 9 | Complete (09-01 + 09-03; chain + taxonomy fault matrix, SC1/SC3/SC4 evidence — checkboxes repaired 2026-10-27, verb had left them stale) |
 | READ-02 | Phase 9 | Complete (09-02 + 09-03; re-warm executor + wrapper, SC2 freeze/latency evidence — checkboxes repaired 2026-10-27, verb had left them stale) |
-| DUR-01 | Phase 10 | |
+| DUR-01 | Phase 10 | Complete (10-01 + 10-02; evidence-gated advancement + SC3/SC4 honesty suites, 2026-10-26) |
 | GC-01 | Phase 11 | |
 | GC-02 | Phase 11 | |
 | GC-03 | Phase 11 | |
