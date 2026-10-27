@@ -27,7 +27,7 @@ Milestone audit (passed): [milestones/v1.0-MILESTONE-AUDIT.md](milestones/v1.0-M
 - [x] **Phase 8: Spill-on-Write & Background Drainer** - Every CRDT block Put journals locally at the `IpfsDatastore` seam (no remote I/O under `dagMutex_`); a dedicated drainer thread uploads to S3 with crash-resume and an explicit backpressure policy (completed 2026-10-23)
 - [x] **Phase 9: Cold Read Fallback — Local Reads & Graphsync Serving** - Hot-store misses fetch Local→S3 with CID-verify and re-cache; graphsync serves cold CIDs asynchronously off the responder's inline path; transport failure never surfaces as NotFound (completed 2026-10-26)
 - [x] **Phase 10: Flush-Gated Durability Advancement** - `Durable` becomes an evidence-backed state (s3d `/objects/flush` + `pendingObjects==0` → `MarkUploadedDurable`), making the eviction durability gate real before anything deletes (completed 2026-10-26)
-- [ ] **Phase 11: Retention GC of Cold-Eligible CRDT Data** - Eviction-only GC behind durability + non-reachability gates with bounded disposed-CID markers; evicted CIDs stay retrievable end-to-end; live s3d spill→GC→retrieve evidence (dev-gated)
+- [x] **Phase 11: Retention GC of Cold-Eligible CRDT Data** - Eviction-only GC behind durability + non-reachability gates with bounded disposed-CID markers; evicted CIDs stay retrievable end-to-end; live s3d spill→GC→retrieve evidence (dev-gated) (completed 2026-10-27)
 - [ ] **Phase 12: Integration Hardening, Fault Races & Fresh-Clone Proof** - Evict×serve×drain races, resurrection counter-test, s3d-down soak, and fresh-clone Tier-1 green on Windows/Linux/macOS with cold storage ON
 
 ## Phase Details (v1.1)
@@ -163,7 +163,7 @@ Plans:
   4. TEST-03 (dev-gated, never in CI): the live s3d E2E — spill → GC → retrieve — passes with committed evidence artifacts, and the MinIO-binary opt-in roundtrip is available (v1.0 Tier-2/3 precedent)
   5. The epoch watermark record is computed and stored (computation only — nothing is deletion-gated on it in v1.1), with per-pass reclaimed counts/bytes and a dry-run mode
 
-**Plans**: 3/4 plans executed
+**Plans**: 4/4 plans complete
 Plans:
 **Wave 1**
 - [x] 11-01-PLAN.md — TRACER: library spill-timestamp side CF (D-01) + `blockstore.retention` strict parse (required age, D-02/D-04) + dedicated GC thread in `ColdStorageManager` (D-06) with fresh full reachability walk (D-05, no resolution skips) + four-way eligibility gate (heads-snapshot/re-check D-08, exactly-Durable MI-02, staging inhibition) + gc_* status + `Unreadable` enum + SC1 prefix-spy keyspace guard + epoch watermark record (SC5) (GC-01)
@@ -175,7 +175,7 @@ Plans:
 - [x] 11-03-PLAN.md — GC-03 retrievability suite (local-read leg + responder leg + two-GlobalDB in-process graphsync lane, CID-verified, D-12 split both halves) + tombstone/metadata never-purged end-state guard + re-delivery storm dedup + dry-run/per-pass metrics evidence + full Tier-1 lane with parity gates (GC-03)
 
 **Wave 4** *(blocked on Wave 3; human checkpoint for the live session)*
-- [ ] 11-04-PLAN.md — TEST-03 live tier: two-run fresh-process live s3d spill → GC → retrieve E2E (Tier3, env-gated, never CI) + MinIO-binary opt-in GC roundtrip (Tier2) + committed evidence artifacts + runbook under `docs/evidence/gc-e2e/` + blocking human checkpoint for the live session (TEST-03)
+- [x] 11-04-PLAN.md — TEST-03 live tier: two-run fresh-process live s3d spill → GC → retrieve E2E (Tier3, env-gated, never CI) + MinIO-binary opt-in GC roundtrip (Tier2) + committed evidence artifacts + runbook under `docs/evidence/gc-e2e/` + blocking human checkpoint for the live session (TEST-03)
 
 **Research note**: `--research-phase` recommended — the most novel phase; no proven upstream recipe exists (go-ds-crdt ships no tombstone GC; PurgeDAG is admin-only and needed a follow-up fix). Open: reachability-walk cost model (O(history), batching, scheduling), retention age evidence (priority-height vs wall-clock vs app-level horizon), disposed-CID marker column-family design.
 
@@ -222,7 +222,7 @@ Plans:
 | 8. Spill-on-Write & Background Drainer | 3/3 | In Progress|  |
 | 9. Cold Read Fallback | 3/3 | In Progress|  |
 | 10. Flush-Gated Durability Advancement | 2/2 | In Progress|  |
-| 11. Retention GC of Cold-Eligible CRDT Data | 3/4 | In Progress|  |
+| 11. Retention GC of Cold-Eligible CRDT Data | 4/4 | In Progress|  |
 | 12. Integration Hardening, Fault Races & Fresh-Clone Proof | 0/3 | Not started | - |
 
 ---
