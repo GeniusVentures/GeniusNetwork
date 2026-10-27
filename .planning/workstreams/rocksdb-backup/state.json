@@ -31,7 +31,7 @@
     {
       "number": "11",
       "name": "Retention GC of Cold-Eligible CRDT Data",
-      "status": "pending"
+      "status": "in_progress"
     },
     {
       "number": "12",
@@ -44,5 +44,5 @@
     "label": "Advance to the next step",
     "reason": "Phase 11 of 7 · 43% · executing"
   },
-  "updated_at": "2026-10-27T21:45:13.752Z"
+  "updated_at": "2026-10-27T22:16:22.964Z"
 }
