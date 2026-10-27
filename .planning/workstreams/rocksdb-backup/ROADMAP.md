@@ -26,7 +26,7 @@ Milestone audit (passed): [milestones/v1.0-MILESTONE-AUDIT.md](milestones/v1.0-M
 - [x] **Phase 7: SuperGenius Build Wiring & Config Gate** - Both `CommonBuildParameters.cmake` files resolve sgns-blockstore from the install tree; the `crdt_config.json` blockstore section defines the blank=disabled / malformed=loud contract; hermetic Tier-1 CI lane from day one (completed 2026-10-23)
 - [x] **Phase 8: Spill-on-Write & Background Drainer** - Every CRDT block Put journals locally at the `IpfsDatastore` seam (no remote I/O under `dagMutex_`); a dedicated drainer thread uploads to S3 with crash-resume and an explicit backpressure policy (completed 2026-10-23)
 - [x] **Phase 9: Cold Read Fallback — Local Reads & Graphsync Serving** - Hot-store misses fetch Local→S3 with CID-verify and re-cache; graphsync serves cold CIDs asynchronously off the responder's inline path; transport failure never surfaces as NotFound (completed 2026-10-26)
-- [ ] **Phase 10: Flush-Gated Durability Advancement** - `Durable` becomes an evidence-backed state (s3d `/objects/flush` + `pendingObjects==0` → `MarkUploadedDurable`), making the eviction durability gate real before anything deletes
+- [x] **Phase 10: Flush-Gated Durability Advancement** - `Durable` becomes an evidence-backed state (s3d `/objects/flush` + `pendingObjects==0` → `MarkUploadedDurable`), making the eviction durability gate real before anything deletes (completed 2026-10-26)
 - [ ] **Phase 11: Retention GC of Cold-Eligible CRDT Data** - Eviction-only GC behind durability + non-reachability gates with bounded disposed-CID markers; evicted CIDs stay retrievable end-to-end; live s3d spill→GC→retrieve evidence (dev-gated)
 - [ ] **Phase 12: Integration Hardening, Fault Races & Fresh-Clone Proof** - Evict×serve×drain races, resurrection counter-test, s3d-down soak, and fresh-clone Tier-1 green on Windows/Linux/macOS with cold storage ON
 
@@ -141,7 +141,7 @@ Plans:
   3. Fault injections pass: crash-between-journal-and-drain recovers via journal reconciliation; an s3d outage never surfaces as NotFound; drainer/GC-scheduler/backup-loop shutdown interplay is ordered and race-free under load
   4. Staging health (`pendingObjects`/`bufferUsed`/`bufferLimit`) is monitored and exposed so later GC can be inhibited while staging is unhealthy
 
-**Plans**: 2/2 plans executed
+**Plans**: 2/2 plans complete
 Plans:
 **Wave 1**
 - [x] 10-01-PLAN.md — TRACER: s3d admin facade in sgns-blockstore (`S3AdminClient` + `OpenS3dAdminClient` + `InMemoryS3AdminClient` fake, D-05/D-06) + `GetUploadsInState`/`MarkUploadedDurableMany` + drainer flush cadence with D-03 snapshot-at-initiation evidence gate (D-01/D-02/D-07) + per-CID/per-state observability (`ColdUploadState` bridge, `kEvictionDurabilityGate`, D-08/D-09/D-10) + `blockstore.durability` config sub-object + `admin_endpoint` + `SGNS_BLOCKSTORE_S3_ADMIN_PASSWORD` (D-11) + D-04 bounded final flush in Stop() (DUR-01 SC1+SC2)
