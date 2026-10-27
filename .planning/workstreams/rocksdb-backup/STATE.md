@@ -5,10 +5,10 @@ milestone_name: SuperGenius Cold-Storage Integration & CRDT Garbage Collection
 current_plan: 2
 status: executing
 stopped_at: Completed 10-01-PLAN.md (wave 1); wave 2 = 10-02 next
-last_updated: "2026-10-27T01:23:59.999Z"
+last_updated: "2026-10-27T01:24:21.123Z"
 last_activity: 2026-10-26
 last_activity_desc: Phase 10 execution started
-state_head: 2b376cd8b487e72096914ab170fee1bb62b4c7dc
+state_head: f4b8739f786424f3b5769a41c78da088fee810f5
 progress:
   total_phases: 7
   completed_phases: 3
@@ -106,6 +106,7 @@ Last activity: 2026-10-26 — Phase 10 execution started
 ## Decisions
 
 Decision log archived with v1.0 (`milestones/v1.0-ROADMAP.md` + `milestones/v1.0-phases/*/` SUMMARYs). Notable outcomes: `p2p_cid` adopted (D-05/D-06); library-local `result<T,BlockStatus>` alias with `policy::terminate` (D-01 shape preserved); D-11 three-shape 412 classification; G-3-1 closed via in-process OpenSSL cert gen + TLS health probe; s3d accepted-is-max-provable durability ceiling documented.
+- [Phase 10]: DUR-01 tracer landed: Durable is evidence-backed - AdvanceDurabilityOnce (hybrid floor+quiescence-or-backstop cadence, separate flush backoff) marks exactly the pre-flush Accepted snapshot after flush+pendingObjects==0 via the installed S3AdminClient facade; ctor widened by trailing defaults so the Phase-8 5-arg posture stays compiling — DUR-01 tracer landed: Durable is evidence-backed - AdvanceDurabilityOnce (hybrid floor+quiescence-or-backstop cadence, separate flush backoff) marks exactly the pre-flush Accepted snapshot after flush+pendingObjects==0 via the installed S3AdminClient facade; ctor widened by trailing defaults so the Phase-8 5-arg posture stays compiling
 
 ## Deferred Items
 
