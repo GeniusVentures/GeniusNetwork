@@ -141,13 +141,13 @@ Plans:
   3. Fault injections pass: crash-between-journal-and-drain recovers via journal reconciliation; an s3d outage never surfaces as NotFound; drainer/GC-scheduler/backup-loop shutdown interplay is ordered and race-free under load
   4. Staging health (`pendingObjects`/`bufferUsed`/`bufferLimit`) is monitored and exposed so later GC can be inhibited while staging is unhealthy
 
-**Plans**: TBD (suggested: 2)
-**Suggested plan waves**:
+**Plans**: 2 plans
+Plans:
 **Wave 1**
-- 10-01-PLAN.md — Flush cadence + `pendingObjects==0` observation gate + bulk `MarkUploadedDurable` advancement + per-CID durability-state visibility (DUR-01)
+- [ ] 10-01-PLAN.md — TRACER: s3d admin facade in sgns-blockstore (`S3AdminClient` + `OpenS3dAdminClient` + `InMemoryS3AdminClient` fake, D-05/D-06) + `GetUploadsInState`/`MarkUploadedDurableMany` + drainer flush cadence with D-03 snapshot-at-initiation evidence gate (D-01/D-02/D-07) + per-CID/per-state observability (`ColdUploadState` bridge, `kEvictionDurabilityGate`, D-08/D-09/D-10) + `blockstore.durability` config sub-object + `admin_endpoint` + `SGNS_BLOCKSTORE_S3_ADMIN_PASSWORD` (D-11) + D-04 bounded final flush in Stop() (DUR-01 SC1+SC2)
 
 **Wave 2** *(blocked on Wave 1)*
-- 10-02-PLAN.md — Crash/outage fault injections + shutdown-ordering under load + staging-health monitoring feed consumed by the later GC inhibitor (DUR-01 evidence + Phase 11 gate)
+- [ ] 10-02-PLAN.md — SC3 fault-injection honesty (crash-between-journal-and-drain reconciliation, admin-outage-never-NotFound with independent backoffs, shutdown-under-load with SlowFlush, idempotent-replay + acceptance-race assumption discharge) + SC4 staging-health predicate + staging counters/flag in status + `RefreshStagingStats` (D-12/D-13) + restart count seeding (DUR-01 SC3+SC4 + the Phase-11 GC-inhibition gate)
 
 **Research note**: light — flush-cadence cost vs `MarkUploadedDurable` batching policy against s3d's bucket-scoped blocking flush is a design note, not a full research pass. Planner decision: the documented durability-bar policy (flush-gated vs accepted-risk-with-separate-staging).
 
