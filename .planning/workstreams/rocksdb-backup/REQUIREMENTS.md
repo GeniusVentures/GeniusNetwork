@@ -39,7 +39,7 @@
 
 - [x] **GC-01**: a configurable retention policy (age threshold in `crdt_config.json`) identifies cold-eligible CRDT data; policy evaluation never touches tombstones or head-reachable causal history
 - [x] **GC-02**: eviction-only GC removes block bytes locally (two-phase: durability-record gate + non-reachability check; block bytes, resolved marker, and set rows evicted as one unit) and writes a bounded disposed-CID marker yielding authoritative `NotFound` + re-broadcast dedup; tombstones and CRDT metadata are never purged in v1.1
-- [ ] **GC-03**: any GC-evicted CID remains retrievable end-to-end — a graphsync request or local read for it resolves from the blockstore, CID-verified
+- [x] **GC-03**: any GC-evicted CID remains retrievable end-to-end — a graphsync request or local read for it resolves from the blockstore, CID-verified
 
 ### Testing (TEST)
 
@@ -83,7 +83,7 @@
 | DUR-01 | Phase 10 | Complete (10-01 + 10-02; evidence-gated advancement + SC3/SC4 honesty suites, 2026-10-26) |
 | GC-01 | Phase 11 | 2026-10-27 |
 | GC-02 | Phase 11 | 2026-10-27 |
-| GC-03 | Phase 11 | |
+| GC-03 | Phase 11 | 2026-10-27 |
 | TEST-01 | Phase 7 | Complete (07-03; Windows local lane green; CI yaml committed, runtime on push) |
 | TEST-02 | Phase 12 | |
 | TEST-03 | Phase 11 | |
