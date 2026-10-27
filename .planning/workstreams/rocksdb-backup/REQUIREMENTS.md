@@ -45,7 +45,7 @@
 
 - [x] **TEST-01**: hermetic Tier-1 integration tests (InMemoryS3Client fake; config-gate, spill, fallback, GC paths) run in the fail-closed CI lane on all platforms — no Docker, no live endpoints
 - [ ] **TEST-02**: hardening evidence — evict × serve × drain fault races, a resurrection counter-test (restore must not resurrect GC'd values), an s3d-unavailable soak with bounded journal growth, and fresh-clone Tier-1 green on Windows/Linux/macOS with cold storage ON
-- [ ] **TEST-03**: dev-gated live tier — MinIO-binary opt-in roundtrip plus one live s3d spill → GC → retrieve E2E with committed evidence artifacts; never in CI
+- [x] **TEST-03**: dev-gated live tier — MinIO-binary opt-in roundtrip plus one live s3d spill → GC → retrieve E2E with committed evidence artifacts; never in CI
 
 ## Future Requirements
 
@@ -86,7 +86,7 @@
 | GC-03 | Phase 11 | 2026-10-27 |
 | TEST-01 | Phase 7 | Complete (07-03; Windows local lane green; CI yaml committed, runtime on push) |
 | TEST-02 | Phase 12 | |
-| TEST-03 | Phase 11 | |
+| TEST-03 | Phase 11 | 2026-10-27 |
 
 ---
 *Requirements defined: 2026-10-22 — rocksdb-backup workstream, milestone v1.1*
