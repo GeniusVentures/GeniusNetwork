@@ -163,19 +163,19 @@ Plans:
   4. TEST-03 (dev-gated, never in CI): the live s3d E2E — spill → GC → retrieve — passes with committed evidence artifacts, and the MinIO-binary opt-in roundtrip is available (v1.0 Tier-2/3 precedent)
   5. The epoch watermark record is computed and stored (computation only — nothing is deletion-gated on it in v1.1), with per-pass reclaimed counts/bytes and a dry-run mode
 
-**Plans**: TBD (suggested: 4)
-**Suggested plan waves**:
+**Plans**: 4/4 plans
+Plans:
 **Wave 1**
-- 11-01-PLAN.md — Retention policy scan + reachability walk (`CrdtHeads::GetList` → link walk, batched off `io_`) + protected/pinned namespaces + epoch watermark record (GC-01)
+- [ ] 11-01-PLAN.md — TRACER: library spill-timestamp side CF (D-01) + `blockstore.retention` strict parse (required age, D-02/D-04) + dedicated GC thread in `ColdStorageManager` (D-06) with fresh full reachability walk (D-05, no resolution skips) + four-way eligibility gate (heads-snapshot/re-check D-08, exactly-Durable MI-02, staging inhibition) + gc_* status + `Unreadable` enum + SC1 prefix-spy keyspace guard + epoch watermark record (SC5) (GC-01)
 
 **Wave 2** *(blocked on Wave 1)*
-- 11-02-PLAN.md — Two-phase eviction + durability-record gate consult (Phase 10 output) + bounded disposed-CID markers + block/marker/set-row unit atomicity + `DeleteCIDBlock` LRU invalidation (GC-02)
+- [ ] 11-02-PLAN.md — TRACER: library disposed-CID CF + `EvictLocalAndMarkDisposed` single-batch primitive (D-09/D-16 reconciled two-half unit) + manager two-phase eviction (in-memory marks D-15, defer-to-next-tick grace D-13, delete-time heads re-check + cancel D-14) + orphaned-hot re-scan + dual-bound marker trim (D-10) + `HasDisposed` hook + `HasBlock` fourth term (D-11/D-12 split) + dry-run suppression (D-03) + SC2 fault suite (crash mid-grace / between halves / cancel) (GC-02)
 
 **Wave 3** *(blocked on Wave 2)*
-- 11-03-PLAN.md — Evicted-CID retrievability E2E (graphsync + local read, CID-verified) + tombstone/metadata never-purged guards + dry-run mode + per-pass metrics in the Tier-1 lane (GC-03)
+- [ ] 11-03-PLAN.md — GC-03 retrievability suite (local-read leg + responder leg + two-GlobalDB in-process graphsync lane, CID-verified, D-12 split both halves) + tombstone/metadata never-purged end-state guard + re-delivery storm dedup + dry-run/per-pass metrics evidence + full Tier-1 lane with parity gates (GC-03)
 
 **Wave 4** *(blocked on Wave 3; human checkpoint for the live session)*
-- 11-04-PLAN.md — TEST-03 live tier: live s3d spill → GC → retrieve E2E with committed evidence artifacts + MinIO-binary opt-in roundtrip (TEST-03)
+- [ ] 11-04-PLAN.md — TEST-03 live tier: two-run fresh-process live s3d spill → GC → retrieve E2E (Tier3, env-gated, never CI) + MinIO-binary opt-in GC roundtrip (Tier2) + committed evidence artifacts + runbook under `docs/evidence/gc-e2e/` + blocking human checkpoint for the live session (TEST-03)
 
 **Research note**: `--research-phase` recommended — the most novel phase; no proven upstream recipe exists (go-ds-crdt ships no tombstone GC; PurgeDAG is admin-only and needed a follow-up fix). Open: reachability-walk cost model (O(history), batching, scheduling), retention age evidence (priority-height vs wall-clock vs app-level horizon), disposed-CID marker column-family design.
 

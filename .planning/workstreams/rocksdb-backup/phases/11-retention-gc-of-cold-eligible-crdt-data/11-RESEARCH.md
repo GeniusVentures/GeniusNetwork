@@ -507,18 +507,27 @@ TEST( ColdStorageConfigGate, RetentionInertWhenBlockstoreBlank )           // §
 
 Everything else in this document is `[VERIFIED: file:line]` against sources read this session.
 
-## Open Questions
+## Open Questions (RESOLVED)
+
+Every question below is resolved by a planner ruling recorded in the Phase-11 PLAN files; each Disposition line names the ruling location. Nothing in this section remains open.
 
 1. **D-16 "resolved marker in the library batch" reconciliation** — the seal key is hot-store; the library batch cannot contain it. Recommended ruling in §3.1 (library batch = cold bytes + journal + timestamp + marker; hot cleanup = hot bytes + seal + s-rows + LRU). Planner writes it into 11-02 + the SC2 test wording.
    - What we know: all key locations verified; D-16's own crash analysis implies the two-half shape.
    - What's unclear: whether the user intended "resolved marker" to mean the journal record (the batch's third delete).
    - Recommendation: adopt §3.1; note the naming in the plan; no user decision needed unless they object at review.
+   - Disposition: RESOLVED — 11-02-PLAN.md `<objective>` (planner-ruling paragraph: §3.1 adopted — library batch = cold bytes + journal record + spill timestamp + disposed marker; hot-cleanup half = hot bytes + seal key + the block's own s-rows + LRU invalidation), encoded in 11-02 must_haves ("Unit atomicity, reconciled D-16") and Task 1.
 2. **Journal codec v2 vs side CF for timestamps** (§1.3) — side CF recommended; planner confirms.
+   - Disposition: RESOLVED — 11-01-PLAN.md `<context>` planner-rulings line (#2): side column family (`spill_times`, birth-atomic in Put's existing WriteBatch) adopted, codec v2 rejected; implemented in 11-01 Task 1 + the LocalBlockStore must_haves artifact.
 3. **GC thread ownership + DI shape** (§6.1) — manager-owned per CONTEXT integration point with post-construction attach; sibling-service alternative documented.
+   - Disposition: RESOLVED — 11-01-PLAN.md `<context>` planner-rulings line (#3): manager-owned GC thread inside ColdStorageManager with post-construction `AttachGcDependencies` at the §6.1 Init slot (after m_crdtDatastore, before Start()); implemented in 11-01 Task 1 + key_links.
 4. **Grace mechanics** (§3.2) — defer-to-next-tick recommended over inline wait.
+   - Disposition: RESOLVED — 11-01-PLAN.md `<context>` planner-rulings line (#4): defer-to-next-tick adopted; the grace_ms knob parses in 11-01 Task 2, the mark/ProcessDueMarks mechanics land in 11-02 must_haves + Task 1.
 5. **Seal restoration on re-learn** (§3.3) — record `was_sealed` now; whether v1.1 restores is a one-line planner ruling (recommend: restore only on marker-hit rehydrate, ship in 11-02 only if cheap; else defer with the field recorded).
+   - Disposition: RESOLVED — 11-02-PLAN.md `<objective>` (OQ-5 ruling): `was_sealed` is RECORDED in the DisposedRecord now; NO restoration ships in v1.1 (rehydrate stays bytes-only per Phase-9 SC4 — documented deferral, enforced by 11-02's no-seal-restoration prohibition).
 6. **TEST-03 evidence artifact home + runbook location** (§8.3) — recommend following the s3d-spike precedent shape; exact dir is listed discretion.
+   - Disposition: RESOLVED — 11-04-PLAN.md flagged_assumptions: evidence + runbook committed under `thirdparty/sgns-blockstore/docs/evidence/gc-e2e/` following the s3d-spike precedent, with the Task-3 blocking human checkpoint as the confirmation point; encoded in 11-04 artifacts + Task 1 action.
 7. **Pin set completeness** (§2.4) — v1.1 = heads + epoch-record prefix; whether an operator-pinned-CID knob is added is discretion NOT decided (recommend deferring to keep the config surface minimal).
+   - Disposition: RESOLVED — 11-01-PLAN.md `<context>` planner-rulings line (#7): v1.1 pin set = heads + the `/crdt/gc/` epoch-record prefix; operator pinned-CID knob deferred out of v1.1 to keep the config surface minimal (documented deferral); encoded in 11-01 must_haves (eligibility intersection) + prohibitions.
 
 ## Environment Availability
 
