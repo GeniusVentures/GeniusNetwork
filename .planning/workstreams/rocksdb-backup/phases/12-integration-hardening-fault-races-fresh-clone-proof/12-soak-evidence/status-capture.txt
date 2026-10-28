@@ -1,0 +1,46 @@
+# status-capture.txt - wall-clock soak status lines (TEST-02 SC3 / D-06 / D-07 / D-09)
+
+Timestamped status lines excerpted from the three soak processes
+(2026-10-28, Windows dev box, hermetic fakes). Sample cadence 5 s;
+watermark thresholds warn=5 / critical=10; outage windows 2 min.
+
+=== RUN 1 (killed): watermark transition into the outage + kill point ===[status 18:49:31] watermark=None pending=0 accepted=0 durable=0 drainer_healthy=1 staging_healthy=0 gc_enabled=0 gc_inhibited=0 gc_candidates=0 published=1 remote_objects=0
+[status 18:49:36] watermark=None pending=0 accepted=9 durable=70 drainer_healthy=1 staging_healthy=1 gc_enabled=0 gc_inhibited=0 gc_candidates=0 published=81 remote_objects=79
+[status 18:51:32] watermark=Critical pending=11 accepted=6 durable=1915 drainer_healthy=0 staging_healthy=1 gc_enabled=0 gc_inhibited=0 gc_candidates=0 published=1938 remote_objects=1921
+[status 18:51:37] watermark=Critical pending=89 accepted=6 durable=1915 drainer_healthy=0 staging_healthy=0 gc_enabled=0 gc_inhibited=0 gc_candidates=0 published=2018 remote_objects=1921
+[status 18:51:42] watermark=Critical pending=170 accepted=6 durable=1915 drainer_healthy=0 staging_healthy=0 gc_enabled=0 gc_inhibited=0 gc_candidates=0 published=2099 remote_objects=1921
+[kill-window 18:51:32] KILL WINDOW OPEN: outage + pending=11 (the runbook's kill point - see 12-soak-evidence/README.md)
+[kill-window 18:51:37] KILL WINDOW OPEN: outage + pending=89 (the runbook's kill point - see 12-soak-evidence/README.md)
+[kill-window 18:51:42] KILL WINDOW OPEN: outage + pending=170 (the runbook's kill point - see 12-soak-evidence/README.md)
+=== RUN 2 (resume): reconciliation + held-watermark heartbeats + recovery drain ===[resume 18:51:48] RECONCILIATION: reopening test-data/cold-storage-wallclock/cold (kill-9 relaunch - D-09)
+[resume 18:51:49] RECONCILIATION: journal enumerated - 2162 block(s), fake pre-loaded with durable set (1921 object(s))
+[resume 18:51:49] RECONCILIATION: pending=0, watermark=None, remote objects converged to 2162
+[resume 18:51:49] RECONCILIATION: remote objects == published (2162) - no loss, no duplication
+
+(heartbeat lines, 60 s cadence while Critical is held:)
+[2026-10-28 18:54:50][warning][ColdStorageManager] cold-storage watermark still held: 979 pending (watermark level=critical)
+[2026-10-28 18:58:50][warning][ColdStorageManager] cold-storage watermark still held: 980 pending (watermark level=critical)
+[2026-10-28 19:02:50][warning][ColdStorageManager] cold-storage watermark still held: 983 pending (watermark level=critical)
+[2026-10-28 19:06:50][warning][ColdStorageManager] cold-storage watermark still held: 966 pending (watermark level=critical)
+
+(critical watermark held across samples:)
+[status 18:53:50] watermark=Critical pending=13 accepted=11 durable=4067 drainer_healthy=0 staging_healthy=1 gc_enabled=0 gc_inhibited=0 gc_candidates=0 published=4104 remote_objects=4078
+[status 18:53:55] watermark=Critical pending=90 accepted=11 durable=4067 drainer_healthy=0 staging_healthy=0 gc_enabled=0 gc_inhibited=0 gc_candidates=0 published=4184 remote_objects=4078
+
+(phase cycling:)
+[phase 18:53:49] OUTAGE window open
+[phase 18:55:49] HEALTHY window open
+[phase 18:57:49] OUTAGE window open
+[phase 18:59:49] HEALTHY window open
+[phase 19:01:49] OUTAGE window open
+[phase 19:03:49] HEALTHY window open
+
+(post-recovery drain, end of run 2:)
+[status 19:08:44] watermark=None pending=0 accepted=7 durable=18043 drainer_healthy=1 staging_healthy=1 gc_enabled=0 gc_inhibited=0 gc_candidates=0 published=18052 remote_objects=18050
+[status 19:08:48] watermark=None pending=0 accepted=13 durable=18107 drainer_healthy=1 staging_healthy=1 gc_enabled=0 gc_inhibited=0 gc_candidates=0 published=18121 remote_objects=18120
+=== RUN 4 (verification resume, fixed binary): reconciliation + clean close-out ===[resume 19:14:01] RECONCILIATION: reopening test-data/cold-storage-wallclock/cold (kill-9 relaunch - D-09)
+[resume 19:14:02] RECONCILIATION: journal enumerated - 19049 block(s), fake pre-loaded with durable set (19048 object(s))
+[resume 19:14:02] RECONCILIATION: pending=0, watermark=None, remote objects converged to 19049
+[resume 19:14:02] RECONCILIATION: remote objects == published (19049) - no loss, no duplication
+[soak 19:15:02] complete: published 19975 total, remote objects 19975
+[soak 19:15:02] D-06 close-out: remote == published - crash-window (19975 - 0 unreadable) (no loss, no duplication)
