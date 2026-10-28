@@ -36,7 +36,7 @@
     {
       "number": "12",
       "name": "Integration Hardening, Fault Races & Fresh-Clone Proof",
-      "status": "pending"
+      "status": "in_progress"
     }
   ],
   "next": {
@@ -44,5 +44,5 @@
     "label": "Advance to the next step",
     "reason": "Phase 12 of 7 · 43% · executing"
   },
-  "updated_at": "2026-10-28T21:56:04.089Z"
+  "updated_at": "2026-10-28T23:17:19.253Z"
 }
