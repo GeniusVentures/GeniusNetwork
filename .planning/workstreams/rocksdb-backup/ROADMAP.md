@@ -190,10 +190,10 @@ Plans:
   3. An s3d-unavailable soak shows bounded journal growth, the alarm firing, and publishes continuing to succeed for the soak duration; teardown-under-load joins cleanly; peer cold-fetch under injected s3d latency stays within its deadline budget
   4. Fresh-clone proof using only pushed commits across the three repos (SuperGenius, GeniusSDK, thirdparty/sgns-blockstore): configure + build + `ctest -L Tier1` green on Windows, Linux, and macOS with the cold-storage option ON; every new test is labeled and gated (tier-label audit passes)
 
-**Plans**: 3 plans
+**Plans**: 1/3 plans executed
 Plans:
 **Wave 1**
-- [ ] 12-01-PLAN.md — TRACER: D-16 between-halves seam + TimingS3Client decorator + one barrier-driven evict×serve crossing, then the full D-11 race matrix (pairwise + triple at phase boundaries) + D-12 end-state audit walk + seeded jitter legs (D-10), then the SC2 resurrection counter-test (OnMessage-level + trimmed-marker + one full-wire two-GlobalDB pubsub re-delivery, D-13) (TEST-02 SC1+SC2)
+- [x] 12-01-PLAN.md — TRACER: D-16 between-halves seam + TimingS3Client decorator + one barrier-driven evict×serve crossing, then the full D-11 race matrix (pairwise + triple at phase boundaries) + D-12 end-state audit walk + seeded jitter legs (D-10), then the SC2 resurrection counter-test (OnMessage-level + trimmed-marker + one full-wire two-GlobalDB pubsub re-delivery, D-13) (TEST-02 SC1+SC2)
 
 **Wave 2** *(blocked on Wave 1)*
 - [ ] 12-02-PLAN.md — TRACER: iteration soak (outage+recovery, D-06 no-multiply + watermark + bounded drain, D-08 full actor set), then D-09 teardown legs (bounded ordered clean Stop() + kill surrogate with restart reconciliation), then peer cold-fetch deadline budget under injected latency + dev-gated wall-clock soak binary with committed evidence trio (D-07) (TEST-02 SC3)
@@ -223,7 +223,7 @@ Plans:
 | 9. Cold Read Fallback | 3/3 | In Progress|  |
 | 10. Flush-Gated Durability Advancement | 2/2 | In Progress|  |
 | 11. Retention GC of Cold-Eligible CRDT Data | 4/4 | In Progress|  |
-| 12. Integration Hardening, Fault Races & Fresh-Clone Proof | 0/3 | Not started | - |
+| 12. Integration Hardening, Fault Races & Fresh-Clone Proof | 1/3 | In Progress|  |
 
 ---
 *Roadmap created: 2026-10-19 (v1.0) — v1.1 phases added 2026-10-22 — rocksdb-backup workstream (v1.0: 21/21 shipped; v1.1: 15/15 requirements mapped)*

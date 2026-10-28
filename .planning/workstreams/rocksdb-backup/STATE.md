@@ -2,21 +2,21 @@
 gsd_state_version: "1.0"
 milestone: v1.1
 milestone_name: SuperGenius Cold-Storage Integration & CRDT Garbage Collection
-current_plan: 4
+current_plan: 2
 status: executing
-stopped_at: Phase 12 context gathered
-last_updated: "2026-10-28T01:46:49.921Z"
-last_activity: 2026-10-27
-last_activity_desc: Phase 11 complete, transitioned to Phase 12
-state_head: 2e37e8075ee8579e15ec56c38989ce6eb81d0257
+stopped_at: Completed 12-01-PLAN.md (fault-race matrix + resurrection, SC1+SC2 green)
+last_updated: "2026-10-28T21:56:08.910Z"
+last_activity: 2026-10-28
+last_activity_desc: Phase 12 execution started
+state_head: 31f36b585fe85e46c6b272decd0e8b1535a97544
 progress:
   total_phases: 7
   completed_phases: 3
   total_plans: 21
-  completed_plans: 18
+  completed_plans: 19
   percent: 43
-current_phase_name: Integration Hardening, Fault Races & Fresh-Clone Proof
 current_phase: 12
+current_phase_name: Integration Hardening, Fault Races & Fresh-Clone Proof
 ---
 
 # Project State
@@ -27,19 +27,19 @@ See: `.planning/PROJECT.md` (workstream sections); `.planning/workstreams/rocksd
 
 **Core value:** Older CRDT/IPLD blocks can spill from RocksDB hot state to durable, CID-verified object storage through a shared thirdparty static library (`sgns-blockstore`) consumable by both SuperGenius and genius-tube — no RocksDB remote-FS integration, no SDK/SuperGenius types in the public API, and local eviction is never a CRDT deletion.
 
-**Current focus:** Phase 11 — Retention GC of Cold-Eligible CRDT Data
+**Current focus:** Phase 12 — Integration Hardening, Fault Races & Fresh-Clone Proof
 
 ## Current Position
 
-Current Plan: Not started
+Current Plan: 2
 Total Plans in Phase: 3
 Status: Ready to execute
-Last activity: 2026-10-27 — Phase 11 complete, transitioned to Phase 12
+Last activity: 2026-10-28 — Phase 12 execution started
 
 ## Progress
 
 **Phases Complete:** 0/7 (v1.1) · v1.0 archived 2026-10-22
-**Current Plan:** 4
+**Current Plan:** 2
 
 | Phase | Plans | Status |
 |-------|-------|--------|
@@ -70,10 +70,10 @@ Last activity: 2026-10-27 — Phase 11 complete, transitioned to Phase 12
 
 ## Session Continuity
 
-**Last session:** 2026-10-28T00:19:52.533Z
+**Last session:** 2026-10-28T21:56:08.513Z
 
-**Stopped At:** Phase 12 context gathered
-**Resume File:** .planning/workstreams/rocksdb-backup/phases/12-integration-hardening-fault-races-fresh-clone-proof/12-CONTEXT.md
+**Stopped At:** Completed 12-01-PLAN.md (fault-race matrix + resurrection, SC1+SC2 green)
+**Resume File:** None
 
 ## Performance Metrics
 
