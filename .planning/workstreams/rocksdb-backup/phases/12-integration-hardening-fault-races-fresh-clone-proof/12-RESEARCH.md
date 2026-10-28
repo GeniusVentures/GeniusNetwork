@@ -450,20 +450,26 @@ EXPECT_LT( stop_elapsed_ms, bound_ms ) << "Stop() must stay bounded by grace + f
 
 **No other claims are assumed — every load-bearing factual claim above carries a `[VERIFIED: file:line]` tag from this session.**
 
-## Open Questions
+## Open Questions (RESOLVED)
 
-1. **Fake-source acquisition in the ON CI lane (the §5.3 ruling)**
+All four resolved by the Phase-12 plans (markers added at plan revision, 2026-10-27); each disposition names the ruling task.
+
+1. **Fake-source acquisition in the ON CI lane (the §5.3 ruling)** — RESOLVED by 12-03 Task 1
    - What we know: the fakes are source-only; the tarball is install-only; the include path is a hard-coded relative source path [VERIFIED]
    - What's unclear: whether the team prefers the workflow-side overlay (A), the CMake-variable override (B), or installing the fakes (C — forces a tag re-cut)
    - Recommendation: (B) with (A)'s checkout step — smallest blast radius, pure SuperGenius-repo change; planner rules and the D-03 checkpoint sequence accounts for it
-2. **Full-wire two-GlobalDB resurrection case: in Wave 1 or trimmed?**
+   - Disposition: adopted as recommended — 12-03 Task 1 hoists the include into the overridable SGNS_BLOCKSTORE_TEST_SRC_DIR (default = today's relative path); 12-03 Task 3's ON legs feed it via the sparse sgns-blockstore/src overlay at the same resolved tag
+2. **Full-wire two-GlobalDB resurrection case: in Wave 1 or trimmed?** — RESOLVED by 12-01 Task 3
    - What we know: D-13 names the pubsub path; `OnMessage`-level driving proves the dedup/tombstone lines deterministically; the full libp2p wire adds fidelity at harness cost (Pitfall 8)
    - Recommendation: one full-wire case in Wave 1 (SC2's letter deserves the wire once); OnMessage-level for everything else; the verifier's 11-03 precedent accepted wrapper-level for GC-03 — flag the same conscious choice here
-3. **Wall-clock soak evidence artifact format + duration (D-07 discretion)**
+   - Disposition: adopted as recommended — 12-01 Task 3 delivers the resurrection counter-test OnMessage-level plus one full-wire two-GlobalDB case
+3. **Wall-clock soak evidence artifact format + duration (D-07 discretion)** — RESOLVED by 12-02 Task 3
    - What we know: tens of minutes, never CI, committed evidence; the gc-e2e trio (run capture + corroboration + runbook) is the precedent
    - Recommendation: `SuperGenius/test/...` or workstream evidence dir + trio format; duration 20-40 min (long enough for held-watermark heartbeats at 60 s cadence to appear ≥ once under load)
-4. **Jitter-leg iteration count + seed policy (D-10 discretion)**
+   - Disposition: workstream evidence dir (12-soak-evidence/) with the gc-e2e trio format; default 30 min inside the accepted 20-40 min window — 12-02 Task 3
+4. **Jitter-leg iteration count + seed policy (D-10 discretion)** — RESOLVED by 12-01 Task 2
    - Recommendation: N=200-500 iterations per pairwise crossing in the Tier-1 lane (bounded by suite budget), fixed default seed overridable via env (repro on failure), per-iteration end-state invariant checks (the D-12 audit walk on a sampled subset + final full audit)
+   - Disposition: adopted as recommended — 12-01 Task 2 runs seeded jitter legs (default 200 iterations, env-tunable via SGNS_RACE_JITTER_ITERS, fixed default seed overridable via SGNS_RACE_JITTER_SEED) with per-iteration end-state invariant checks plus the final full D-12 audit walk
 
 ## Environment Availability
 

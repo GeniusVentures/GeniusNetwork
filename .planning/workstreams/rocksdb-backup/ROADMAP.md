@@ -190,16 +190,16 @@ Plans:
   3. An s3d-unavailable soak shows bounded journal growth, the alarm firing, and publishes continuing to succeed for the soak duration; teardown-under-load joins cleanly; peer cold-fetch under injected s3d latency stays within its deadline budget
   4. Fresh-clone proof using only pushed commits across the three repos (SuperGenius, GeniusSDK, thirdparty/sgns-blockstore): configure + build + `ctest -L Tier1` green on Windows, Linux, and macOS with the cold-storage option ON; every new test is labeled and gated (tier-label audit passes)
 
-**Plans**: TBD (suggested: 3)
-**Suggested plan waves**:
+**Plans**: 3 plans
+Plans:
 **Wave 1**
-- 12-01-PLAN.md — Fault-race matrix (evict × serve × drain under timing injection) + resurrection counter-test (TEST-02)
+- [ ] 12-01-PLAN.md — TRACER: D-16 between-halves seam + TimingS3Client decorator + one barrier-driven evict×serve crossing, then the full D-11 race matrix (pairwise + triple at phase boundaries) + D-12 end-state audit walk + seeded jitter legs (D-10), then the SC2 resurrection counter-test (OnMessage-level + trimmed-marker + one full-wire two-GlobalDB pubsub re-delivery, D-13) (TEST-02 SC1+SC2)
 
 **Wave 2** *(blocked on Wave 1)*
-- 12-02-PLAN.md — s3d-down soak with bounded-journal assertion + teardown-under-load + peer cold-fetch under injected s3d latency (TEST-02)
+- [ ] 12-02-PLAN.md — TRACER: iteration soak (outage+recovery, D-06 no-multiply + watermark + bounded drain, D-08 full actor set), then D-09 teardown legs (bounded ordered clean Stop() + kill surrogate with restart reconciliation), then peer cold-fetch deadline budget under injected latency + dev-gated wall-clock soak binary with committed evidence trio (D-07) (TEST-02 SC3)
 
 **Wave 3** *(blocked on Wave 2)*
-- 12-03-PLAN.md — Fresh-clone three-platform Tier-1-green proof (pushed commits only, option ON) + tier-label/gating audit (TEST-02 closing evidence)
+- [ ] 12-03-PLAN.md — TRACER: SGNS_BLOCKSTORE_TEST_SRC_DIR override + install-tree-only compile proof (the fakes-not-in-tarball landmine, research §5.3), then the tier-label audit port, then both CI ON surfaces (D-02 permanent cmake.yml legs + build-release-tags.yml posture with sparse fake-source overlay), then the blocking D-03 human checkpoint (thirdparty tag cut + tag dispatch) filling the D-05 fresh-clone checklist (TEST-02 SC4 closing evidence)
 
 **Research note**: standard — v1.0's fault kit, tier contract, and evidence-capture habits are directly reusable.
 
