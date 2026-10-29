@@ -5,30 +5,46 @@ the executor never dispatches workflows and never pushes. Everything in this
 checklist after the validation record is filled ONLY from real CI run results
 supplied by the user.
 
-## D-04 fail-closed validation record (git ls-remote, 2026-10-28)
+## D-04 fail-closed validation record (git ls-remote, refreshed 2026-10-28 after the header-install ruling)
 
 | Repo | Branch | Local SHA | Remote SHA | Pushed? |
 |------|--------|-----------|------------|---------|
-| SuperGenius | dev_blockstore | dc04ef71111ca11756fc17266f2f564ca8b74faa | a49fa72d2f55c08c143ce78ce580ece4780757e4 | **NO — 8 phase-12 commits ahead (e2fb50709..dc04ef711)** |
-| thirdparty | dev_db_storage | b612e46097f9512444572fab470bd73f6507b26d | b612e46097f9512444572fab470bd73f6507b26d | YES |
-| thirdparty/sgns-blockstore | main | ff6a07beda0fefb30179abfd9d9b74ebb70aa252 | ff6a07beda0fefb30179abfd9d9b74ebb70aa252 | YES |
+| SuperGenius | dev_blockstore | 6ed70cd99972b04f3796300827eaac3b38e811c8 | dc04ef71111ca11756fc17266f2f564ca8b74faa | **NO — 9 phase-12 commits ahead (e2fb50709..6ed70cd99)** |
+| thirdparty | dev_db_storage | 8b00aee78d8ae36e348664d73590bf524b6e1dd3 | b612e46097f9512444572fab470bd73f6507b26d | **NO — 1 commit ahead (8b00aee, the fake-header install bump)** |
+| thirdparty/sgns-blockstore | main | ee0266b54e7b0a35c5535b9cc3b7c404e94be17e | ff6a07beda0fefb30179abfd9d9b74ebb70aa252 | **NO — 1 commit ahead (ee0266b, the install rule)** |
 
-**D-03 gate result: STOPPED BEFORE DISPATCH.** The SuperGenius phase branch
-carries the phase-12 work locally (fault-race matrix, resurrection suite +
-the crdt_set fix, soak suites, audit, cache var, CI legs). The only-pushed-
-commits clause requires those commits on the remote BEFORE any tag dispatch.
-The thirdparty side (the tag the ON lanes consume) is fully pushed and
-carries NO phase-12 library change (12-01/12-02 recorded zero sgns-blockstore
-library edits — the resurrection fix landed SuperGenius-side in
-src/crdt/impl/crdt_set.cpp; no D-14 re-cut pending).
+**Approach change (user ruling 2026-10-28, superseding the Task-1 cache var +
+CI sparse overlay):** the test fakes are now INSTALLED WITH the library —
+`install(FILES src/InMemoryS3Client.hpp src/InMemoryS3AdminClient.hpp …)`
+(sgns-blockstore ee0266b). The fakes' object code was already compiled into
+the static library and their only non-std includes are installed public
+headers, so nothing PRIVATE leaks. SuperGenius consumes them as
+`<sgns-blockstore/InMemoryS3Client.hpp>` like every other library header;
+`SGNS_BLOCKSTORE_TEST_SRC_DIR` and both CI sparse-overlay blocks are deleted.
+Proven locally in the stronger form: thirdparty/sgns-blockstore/src HIDDEN,
+all 12 cold targets built from the install tree alone, Tier-1 lane 12/12;
+library Tier-1 14/14.
+
+**This IS the D-14 library change the plan reserved a re-cut note for** — the
+`test_coldstorage` thirdparty release tag must be cut AFTER these three repos
+are pushed, so the tarball carries the installed fake headers (a tag cut
+earlier would make the ON legs fail at the fakes' include).
+
+**D-03 gate result: STOPPED BEFORE DISPATCH.** Push order for the user:
+sgns-blockstore main → thirdparty dev_db_storage → SuperGenius
+dev_blockstore (innermost first, as always).
 
 ## User actions (the D-03 checkpoint)
 
-1. Push `dev_blockstore` in SuperGenius (8 commits, e2fb50709..dc04ef711) —
-   the branch is already remote-tracked; a plain `git push origin dev_blockstore`.
+1. Push innermost-first: `main` in `thirdparty/sgns-blockstore` (ee0266b),
+   then `dev_db_storage` in `thirdparty` (8b00aee), then `dev_blockstore` in
+   SuperGenius (9 commits, e2fb50709..6ed70cd99) — plain `git push origin
+   <branch>` in each.
 2. Dispatch `thirdparty/.github/workflows/build-targets.yml` with a release
-   tag covering Windows/Linux/OSX (sgns-blockstore included). Expected: a
-   completed release page listing the new tag with platform tarballs.
+   tag covering Windows/Linux/OSX (sgns-blockstore included). The tag MUST
+   post-date the pushes so the tarball carries the installed fake headers
+   (it supersedes the `test_coldstorage` tag). Expected: a completed release
+   page listing the new tag with platform tarballs.
 3. Confirm the tag exists on the thirdparty releases page.
 4. Dispatch `SuperGenius/.github/workflows/build-release-tags.yml` with
    `thirdparty_tag` = the cut tag, `run_tests=true`, `cold_storage=true`,
