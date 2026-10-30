@@ -5,10 +5,10 @@ milestone_name: SuperGenius Cold-Storage Integration & CRDT Garbage Collection
 current_plan: 3
 status: executing
 stopped_at: "Phase 12: 12-01+12-02 complete, 12-03 tasks 1-3 done - BLOCKED at D-03 human checkpoint (see 12-FRESH-CLONE-CHECKLIST.md)"
-last_updated: "2026-10-28T23:42:07.485Z"
-last_activity: 2026-10-28
-last_activity_desc: Phase 12 execution started
-state_head: c0ff23096b6ea1f0f51d66189bd7e10a599e9dff
+last_updated: "2026-10-30T03:50:38.955Z"
+last_activity: 2026-10-29
+last_activity_desc: Quick task 261029-uj0 - SC4 CI round 7: serialize GcPassOnce (single-writer pass state), fixes OSX-only fault_race/resurrection CI aborts (SuperGenius dev_blockstore 72e54000)
+state_head: e9cbd7734a7492ebc8ed40ad49e976bc1a87f463
 progress:
   total_phases: 7
   completed_phases: 3
@@ -34,7 +34,7 @@ See: `.planning/PROJECT.md` (workstream sections); `.planning/workstreams/rocksd
 Current Plan: 3
 Total Plans in Phase: 3
 Status: Ready to execute
-Last activity: 2026-10-28 — Phase 12 execution started
+Last activity: 2026-10-29 — Quick task 261029-uj0: SC4 CI round 7 — serialize GcPassOnce; OSX-only fault_race/resurrection CI aborts fixed (SuperGenius 72e54000)
 
 ## Progress
 
@@ -67,6 +67,12 @@ Last activity: 2026-10-28 — Phase 12 execution started
 - Run `/gsd-discuss-phase 6` (blake2b widening scope is the entrance decision)
 
 **Blockers:** None
+
+### Quick Tasks Completed
+
+| # | Description | Date | Commit | Directory |
+|---|-------------|------|--------|-----------|
+| 261029-uj0 | Debug failing SuperGenius cold storage tests (SC4, CI 40963277318) on macOS - serialize GcPassOnce, fixed OSX fault_race/resurrection aborts (SuperGenius 72e54000) | 2026-10-29 | e9cbd77 | [261029-uj0-debug-failing-supergenius-cold-storage-t](./quick/261029-uj0-debug-failing-supergenius-cold-storage-t/) |
 
 ## Session Continuity
 
