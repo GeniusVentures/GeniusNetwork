@@ -78,13 +78,26 @@ changes needed there.
 The crashes could **not** be reproduced locally, even before the fix:
 - 14 solo full-suite iterations (prior executor) — all passed
 - Exact CI replica invocation (`ctest . -j8 -C Debug --output-on-failure -LE
-  requires_foundry`, CI env) on this 10-core Mac mini — fault_race #103 and
+  requires_foundry`, CI env) on this 10-core Mac mini (M2 Pro) — fault_race #103 and
   resurrection #104 **passed** under full lane contention (25-min run)
-- This Mac completes the background first-pass window too fast for the overlap.
-  Root cause was therefore established by static analysis mapping both crash
-  signatures onto the unprotected pass state (documented in the commit message),
-  consistent with the fix being correct-by-construction, then validated by the
-  green sweeps above.
+- Deliberate starvation experiment (pre-fix binaries rebuilt from `72e54000^`, 30 CPU
+  burners = 3x oversubscription on 10 cores, 15 iterations of the crashing test case):
+  **15/15 passed** — uniform CPU starvation does NOT reproduce it
+
+Why: the race window is the background first-pass's duration *relative to* the test
+thread's progress. Uniform starvation scales both lanes together, so the ratio is
+preserved. The CI OSX runner is a tart VM on an M2 Ultra (faster bare metal than this
+M2 Pro) — the amplifier there is **asymmetry**: virtualized scheduling + I-O latency
+stretch the I/O-bound background GC pass (RocksDB walks, store ops) while the CPU-bound
+test thread proceeds, plus `-j8` lane contention descheduling threads mid-copy. That
+asymmetric stretch is not emulatable from userspace on bare metal. Root cause therefore
+rests on: (1) the pass state being verifiably unsynchronized dual-writer, (2) both crash
+signatures being constructible *only* from torn `EvictingMark.cid` copies in this code —
+notably `INVALID_CONTENT_TYPE` requires a V0+non-DAG_PB CID that no legitimate API path
+in these tests can produce, only a torn copy mixing a delta CID's version with a block
+CID's codec, (3) crash-vs-pass behavior matching the window analysis on both platforms.
+The fix eliminates the overlap class entirely regardless of timing — correct by
+construction; CI is the final arbiter.
 
 ## Out-of-scope local observations (NOT addressed here)
 
