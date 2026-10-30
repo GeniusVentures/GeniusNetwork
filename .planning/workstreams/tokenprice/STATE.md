@@ -3,10 +3,10 @@ gsd_state_version: "1.0"
 milestone: v1.1
 status: Awaiting next milestone
 stopped_at: Phase 8 review warnings ALL fixed (WR-01..04, verified by build + 3 test suites)
-last_updated: "2026-10-09T23:10:00.000Z"
-last_activity: 2026-10-09
-last_activity_desc: Quick task 261009-q6i — ALLOWED_IDS/ALLOWED_VS allowlist hardening against proxy abuse (submodule commit cc5fac5ad on dev_price_validation; live after redeploy)
-state_head: 15c9b9c9357b9eb4330d163fb29bd4b7279335dd
+last_updated: "2026-10-30T22:03:41.663Z"
+last_activity: 2026-10-30
+last_activity_desc: Quick task 261030-os1 — MoltenVK static-link ObjC category fix: -ObjC link flag at all 5 Vulkan::Vulkan consumer sites (SuperGenius 6888b9ca, SGPM 37d1e7b, GeniusSDK b44abab, GeniusWallet 55df4d80; conformance tests 36/36 pass)
+state_head: daaeaa9163c82ff7086f2f5b8a2666152fd4a8aa
 progress:
   total_phases: 3
   completed_phases: 3
@@ -42,6 +42,7 @@ Last activity: 2026-10-09 - Completed quick task 261009-q6i: Add ALLOWED_IDS/ALL
 
 | # | Description | Date | Commit | Directory |
 |---|-------------|------|--------|-----------|
+| 261030-os1 | Fix MoltenVK static-link ObjC category drop - add -ObjC linker flag at all Vulkan::Vulkan consumer sites (SuperGenius 6888b9ca, SGPM 37d1e7b, GeniusSDK b44abab, GeniusWallet 55df4d80; conformance tests 36/36 pass) | 2026-10-30 | daaeaa9 | [261030-os1-fix-moltenvk-static-link-objc-category-d](./quick/261030-os1-fix-moltenvk-static-link-objc-category-d/) |
 
 ## Deferred Items
 
