@@ -6,8 +6,9 @@ date: 2026-10-29
 
 # 261029-uj0 — Debug failing SuperGenius cold storage tests (SC4, CI 40963277318)
 
-**SuperGenius commit:** `72e54000` on `dev_blockstore` — `fix(12-03): SC4 CI round 7 - serialize GcPassOnce (single-writer pass state)`
-**Files changed:** `src/crdt/globaldb/ColdStorageManager.cpp`, `src/crdt/globaldb/ColdStorageManager.hpp` (+22 lines, 2 files)
+**SuperGenius commits:** `72e54000` (round 7) + `56175311` (round 8) on `dev_blockstore` — tag `test_coldstorage` @ 56175311
+**Files changed (r7):** `src/crdt/globaldb/ColdStorageManager.cpp/.hpp` (+22)
+**Files changed (r8):** `src/crdt/globaldb/ColdStorageManager.cpp/.hpp`, `test/src/crdt/cold_storage_fault_race_test.cpp` (+85/−1)
 
 ## Outcome
 
@@ -115,3 +116,27 @@ GTEST_FILTER). Recommend a separate investigation if they recur.
   covered by the same serialization argument.
 - Push `dev_blockstore` (`72e54000`) and re-run the tag-build workflow to confirm the
   OSX legs go green.
+
+## Round 8 addendum (2026-10-30) — post-fix CI run 41024756227 residuals
+
+Round 7 was verified partially: the original in-process crash signatures are GONE on CI
+(fault_race no longer aborts in `multihash.cpp`; resurrection test 1 now passes on CI).
+What remained were two DIFFERENT, load-shaped failures:
+
+| Failure | Where | Diagnosis |
+|---|---|---|
+| fault_race 600s timeout in `EvictServe_RewarmAttachVsMark_NoLostBlock` | OSX Debug + Release | `WindowGate` had no RAII release: a load-induced ASSERT early-return between hook arming and `Release()` left the drainer parked in the `put_hold` S3-Put hook; teardown `Stop()` join deadlocked until ctest's kill. Leading trigger: the 10s relearn `PollUntil` budget tripping under -j24 load. |
+| resurrection full-wire 180s deadline (`:828`), node-2 GC clean **0-candidate** passes for the whole window | OSX Debug + Release + Windows (new) | Passes complete every 200ms, no abort warnings, `durable=2` — a silent eligibility gate excluded both detached deltas. Which gate: unknown from available logs. |
+
+**Round 8 fix (`56175311`):**
+1. `~WindowGate()` releases unconditionally at test-body exit — recurrence surfaces as the ASSERT failure, never a hang; relearn budget 10s→60s (rounds 4–6 CI-load precedent).
+2. Per-gate eligibility skip counters (`scanned/stamped/skew/age/reachable/state`) logged rate-limited (1st + every 25th pass of a zero-candidate-with-records streak) — the next CI occurrence names its gate directly from logs.
+
+**Local contention experiments (user-directed — all NEGATIVE, post-round-7 binaries):**
+- All 12 cold storage tests fully concurrent `-j12` ×5: 100% pass each run
+- Full 155-test lane `-j10` (CI-replica env): cold storage 12/12 green (fault_race 24s, resurrection 9.2s incl. the full-wire case CI fails)
+- Earlier: 40× filtered loops, 30-burner uniform starvation, concurrent pairs, 12× Rewarm-under-load — all pass
+- Cross-process state audit: every cold-storage binary uses a distinct `test-data/<base>/` dir and ephemeral ports — no disk/port collisions; contention is resource-level only
+- Conclusion: the residuals require the CI hosts specifically (tart VM on M2 Ultra, 24-way parallelism with heavy processing/multi-node neighbors, ~11 tests failing concurrently around them). The MNN/MoltenVK processing failures (`processing_datatypes/nodes/conformance_*`, `child_tokens`) started with the rebuilt MoltenVK-static thirdparty and reproduce locally — separate investigation.
+
+**Post-round-8 verification:** rebuild + 12/12 cold lane at `-j12` green; eligibility line observed lean (1 per streak). Ready for CI when self-hosted runners return (dispatch: `tag=test_coldstorage thirdparty_tag=test_coldstorage zkllvm_tag=develop run_tests=true cold_storage=true` — BOTH flags, see repo memory note).
