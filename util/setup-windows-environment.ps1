@@ -46,6 +46,18 @@ function Install-WingetPackage {
     }
 
     & winget @args
+    if ($LASTEXITCODE -ne 0) {
+        # winget re-runs "install" as "upgrade" when the package already
+        # exists; -1978335189 (0x8A15002B) means "no applicable upgrade
+        # found", which is the steady-state result on a converged machine.
+        if ($LASTEXITCODE -eq -1978335189) {
+            Write-Host "==> $Id already installed and up to date" -ForegroundColor DarkGreen
+        } else {
+            # Not fatal in general, but visible: a silent exit code is exactly
+            # how an inconclusive provisioning run looks from the outside.
+            Write-Host "WARNING: winget exited with code $LASTEXITCODE for $Id - continuing." -ForegroundColor Yellow
+        }
+    }
 }
 
 function Ensure-Chocolatey {
@@ -398,9 +410,30 @@ function Ensure-JavaHome {
     Ensure-MachinePathContains @((Join-Path $jdkHome "bin"))
 }
 
-function Ensure-VsBuildToolsAtl {
+function Get-VsAtlHeaderPath {
+    param([string]$InstancePath)
+
+    # cl.exe with PlatformToolset v143 resolves to the NEWEST toolset
+    # directory, so atlstr.h must exist there. vswhere's component metadata
+    # can claim ATL is installed while the header is missing on disk (partial
+    # or failed updates), so the file itself is the ground truth the compiler
+    # sees - and what CI fails on when absent.
+    $toolsRoot = Join-Path $InstancePath "VC\Tools\MSVC"
+    if (-not (Test-Path $toolsRoot)) { return $null }
+
+    $newest = Get-ChildItem $toolsRoot -Directory |
+        Sort-Object { [version]$_.Name } -Descending |
+        Select-Object -First 1
+    if (-not $newest) { return $null }
+
+    $header = Join-Path $newest.FullName "atlmfc\include\atlstr.h"
+    if (Test-Path $header) { return $header }
+    return $null
+}
+
+function Ensure-VsAtlComponents {
     Write-Host ""
-    Write-Host "==> Ensuring VS Build Tools 2022 has the C++ ATL component" -ForegroundColor Cyan
+    Write-Host "==> Ensuring VS 2022 C++ instances have the ATL headers" -ForegroundColor Cyan
 
     $vswhere = Join-Path ${env:ProgramFiles(x86)} "Microsoft Visual Studio\Installer\vswhere.exe"
     if (-not (Test-Path $vswhere)) {
@@ -408,34 +441,69 @@ function Ensure-VsBuildToolsAtl {
         return
     }
 
-    $installPath = (& $vswhere -products Microsoft.VisualStudio.Product.BuildTools -version "[17.0,18.0)" -property installationPath |
-        Where-Object { $_ } |
-        Select-Object -First 1)
-    if (-not $installPath) {
-        Write-Host "VS Build Tools 2022 not found - skipping ATL check." -ForegroundColor Yellow
-        return
-    }
-
-    $atlInstalled = (& $vswhere -products Microsoft.VisualStudio.Product.BuildTools -version "[17.0,18.0)" `
-        -requires Microsoft.VisualStudio.Component.VC.ATL -property installationPath |
+    # Flutter/CMake builds use whichever VS 2022 instance vswhere ranks
+    # highest - Build Tools, Community, Pro, anything with the C++ toolset.
+    # Machines with manual setups (e.g. A7_MAX) may carry a full IDE without
+    # ATL, so every C++-capable instance must be checked, not just Build Tools.
+    $vcInstances = @(& $vswhere -products * -version "[17.0,18.0)" `
+        -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 `
+        -property installationPath |
         Where-Object { $_ })
-    if ($atlInstalled) {
-        Write-Host "ATL component already installed." -ForegroundColor DarkGreen
+
+    if ($vcInstances.Count -eq 0) {
+        Write-Host "No VS 2022 instance with C++ tools found - skipping ATL check." -ForegroundColor Yellow
         return
     }
 
-    # ATL is missing (CI symptom: error C1083 "Cannot open include file:
-    # 'atlstr.h'"). winget does not run the VS installer on machines that
-    # already had Build Tools, so modify the existing instance directly.
     $setupExe = Join-Path ${env:ProgramFiles(x86)} "Microsoft Visual Studio\Installer\setup.exe"
-    Write-Host "Adding Microsoft.VisualStudio.Component.VC.ATL to $installPath"
-    & $setupExe modify --installPath "$installPath" `
-        --add Microsoft.VisualStudio.Component.VC.ATL `
-        --passive --norestart --wait
-    if ($LASTEXITCODE -notin @(0, 3010, 1641)) {
-        throw "VS setup.exe modify (ATL) exited with code $LASTEXITCODE."
+
+    foreach ($instancePath in $vcInstances) {
+        $header = Get-VsAtlHeaderPath $instancePath
+        if ($header) {
+            Write-Host "ATL verified: $header" -ForegroundColor DarkGreen
+            continue
+        }
+
+        # ATL headers missing (CI symptom: error C1083 "Cannot open include
+        # file: 'atlstr.h'" from flutter_secure_storage_windows). Add the
+        # component directly - winget never modifies existing instances.
+        # NO --wait here: it is only valid on the downloaded BOOTSTRAPPER
+        # (vs_buildtools.exe); the installed setup.exe (Visual Studio
+        # Installer 4.x) rejects it with "Option 'wait' is unknown",
+        # exit code 87. The installed setup.exe also RETURNS BEFORE the
+        # payload lands on disk, so completion is detected by polling below.
+        Write-Host "atlstr.h missing under $instancePath - adding Microsoft.VisualStudio.Component.VC.ATL"
+        & $setupExe modify --installPath "$instancePath" `
+            --add Microsoft.VisualStudio.Component.VC.ATL `
+            --passive --norestart
+        if ($LASTEXITCODE -notin @(0, 3010, 1641)) {
+            throw "VS setup.exe modify (ATL for $instancePath) exited with code $LASTEXITCODE."
+        }
+
+        # setup.exe returning does not mean the component is on disk yet -
+        # poll for the header (ATL is a small payload; a few minutes is
+        # normal, 20 is the safety cap). Heartbeat every 30s so a slow
+        # install never looks like a hang.
+        $deadline = (Get-Date).AddMinutes(20)
+        $nextNote = (Get-Date).AddSeconds(30)
+        while (-not (Get-VsAtlHeaderPath $instancePath)) {
+            if ((Get-Date) -ge $deadline) {
+                throw @"
+ATL headers did not appear under $instancePath within 20 minutes of adding
+the component. The instance is likely damaged. Repair it manually, then
+rerun this script:
+
+  "$setupExe" repair --installPath "$instancePath" --passive --norestart
+"@
+            }
+            if ((Get-Date) -ge $nextNote) {
+                Write-Host "    ... waiting for ATL to land on disk ($(Get-Date -Format HH:mm:ss))"
+                $nextNote = (Get-Date).AddSeconds(30)
+            }
+            Start-Sleep -Seconds 5
+        }
+        Write-Host "==> ATL verified after install: $(Get-VsAtlHeaderPath $instancePath)" -ForegroundColor DarkGreen
     }
-    Write-Host "==> ATL component installed (exit $LASTEXITCODE)." -ForegroundColor DarkGreen
 }
 
 function Restart-ActionsRunnerService {
@@ -496,8 +564,27 @@ if (Get-AdoptiumJdkHome) {
 # Visual Studio Build Tools 2022 with C++ tools. ATL is included because some
 # build steps need atlstr.h and CI hit C1083 "Cannot open include file:
 # 'atlstr.h'" on runners provisioned before this component was added.
-$vsOverride = "--passive --wait --norestart --add Microsoft.VisualStudio.Workload.VCTools;includeRecommended --add Microsoft.VisualStudio.Component.VC.ATL"
-Install-WingetPackage -Id "Microsoft.VisualStudio.2022.BuildTools" -Override $vsOverride
+# When a VS 2022 C++ instance already exists, winget switches to UPGRADE mode
+# and its installer exits with code 1 - so skip winget there and let
+# Ensure-VsAtlComponents converge the existing instance via setup.exe.
+$vswhere = Join-Path ${env:ProgramFiles(x86)} "Microsoft Visual Studio\Installer\vswhere.exe"
+$existingVcInstances = @()
+if (Test-Path $vswhere) {
+    $existingVcInstances = @(& $vswhere -products * -version "[17.0,18.0)" `
+        -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 `
+        -property installationPath |
+        Where-Object { $_ })
+}
+if ($existingVcInstances.Count -gt 0) {
+    Write-Host ""
+    Write-Host "==> VS 2022 C++ already installed - skipping winget install ($($existingVcInstances -join '; '))" -ForegroundColor DarkGreen
+} else {
+    # --wait IS valid here: winget hands these args to the downloaded
+    # BOOTSTRAPPER (vs_buildtools.exe), which supports it - unlike the
+    # installed setup.exe (see Ensure-VsAtlComponents).
+    $vsOverride = "--passive --wait --norestart --add Microsoft.VisualStudio.Workload.VCTools;includeRecommended --add Microsoft.VisualStudio.Component.VC.ATL"
+    Install-WingetPackage -Id "Microsoft.VisualStudio.2022.BuildTools" -Override $vsOverride
+}
 
 # CI build scripts use "choco install ..."
 Ensure-Chocolatey
@@ -521,9 +608,11 @@ Ensure-UserPathContains @(
 # caused intermittent "Could NOT find JNI" failures.
 Ensure-JavaHome
 
-# Converge pre-existing Build Tools installs that winget skipped (fresh
-# installs already get ATL through the winget override above).
-Ensure-VsBuildToolsAtl
+# Converge pre-existing VS installs that winget skipped (fresh Build Tools
+# installs already get ATL through the winget override above). Covers full
+# IDE instances too - Flutter builds use whichever instance vswhere ranks
+# first, and manually-provisioned machines may only have a full IDE.
+Ensure-VsAtlComponents
 
 # Refresh current session PATH so newly-installed tools work immediately
 Refresh-ProcessPath
