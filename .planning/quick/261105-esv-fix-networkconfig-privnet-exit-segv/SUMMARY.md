@@ -59,3 +59,21 @@ destroyed logging global.
   (changes rebroadcast wake latency semantics), needs its own phase/plan.
 - Guard `libp2p::log::createLogger` against a dead/absent logging system for
   exit-time robustness (thirdparty patch).
+
+## Post-fix CI triage (tag-build run 42116912132, on b85778ef6)
+
+Fix verified: `network_config_private_network_test` passed everywhere; the
+exit-time SegFault is gone. Four NEW failures moved in — triage:
+
+| Job | Case | Verdict |
+|---|---|---|
+| Linux x64 Debug | `MultiAccountTest.NodeConsensusTest` (77 s) | **Known flake** — same case failed on develop Oct 26 (40315629323, aarch64) and tag-build Nov 2 (41542857150) |
+| OSX Debug | `TrustFirstBootE2ETest.PassiveNodeDurablyActivatesPolicyWithoutExtraAdminCall` (137 s) | Wait-timeout, no assertion; Debug + `-j24` load. Suite already has an excluded flaky sibling (`TransientRefreshRetryExhaustion...`, GTEST_FILTER base). Single occurrence of this case |
+| OSX Release | `FinalityFaultNetwork.PublisherLossAfterPersistenceUsesDeterministicFailover` | `crdt_blind == nullptr` — node/GlobalDB creation failure under load. Same binary flaked PRE-fix with a different case (`ProductionComposition...`, Nov 2 x2 + Nov 4) — suite-level flake, not caused by b85778ef6 |
+| OSX Release | `ColdStorageGcTest.EndToEndRetentionPassIdentifiesExactCandidateSet` | **Only genuinely new case** (first failure in run history). Mechanism: GC reachability walk visited 1 node (`TraverseCIDsLinks: Links to fetch: 0, Visited: 1`) — missed the d2->d1 chain link, so backdated d1 read as unreachable -> false 2nd candidate. 10/10 local passes (~590 ms each); test builds CrdtDatastore directly, no GeniusNode (fix-independent). Load-sensitive race in walk/heads-link timing — watch for recurrence, then dig into `WalkReachable` vs. delta head-link creation |
+
+Develop comparison: latest develop cmake.yml run (41669250334) died at runner
+allocation (exit 78, no tests); Oct 26 develop run's failures were
+`MultiAccountTest.NodeConsensusTest` + already-excluded known flakes — nothing
+new there either.
+
