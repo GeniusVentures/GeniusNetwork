@@ -5,6 +5,9 @@
 *.cxx linguist-language=C++
 *.cc linguist-language=C++
 
+# Shell scripts must stay LF: CRLF breaks the shebang line on Linux/macOS runners
+*.sh text eol=lf
+
 # Allow Markdown to be detected correctly
 *.md linguist-language=Markdown
 *.markdown linguist-language=Markdown
