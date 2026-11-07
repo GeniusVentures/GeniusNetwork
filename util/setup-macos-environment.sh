@@ -189,6 +189,44 @@ ensure_jdk() {
 ensure_jdk
 
 # --------------------------------------------------------------------------
+# Login-shell persistence
+# --------------------------------------------------------------------------
+
+# launchctl setenv only reaches GUI-session children - shells spawned by sshd
+# do NOT inherit it, so an ssh login still sees an empty JAVA_HOME (java
+# itself resolves via Apple's /usr/bin/java stub, but Gradle / CMake FindJNI
+# need the variable). rustup solves the same problem for ~/.cargo/bin by
+# writing to the login profiles; do the same for JAVA_HOME, plus the UTF-8
+# LANG CocoaPods insists on.
+persist_login_shell_env() {
+    log "==> Persisting JAVA_HOME + LANG to login-shell profiles"
+
+    local marker_begin="# >>> gnus-ci-env (setup-macos-environment.sh) >>>"
+    local marker_end="# <<< gnus-ci-env (setup-macos-environment.sh) <<<"
+    local rc tmp
+
+    for rc in "$HOME/.zprofile" "$HOME/.bash_profile" "$HOME/.profile"; do
+        tmp="$(mktemp)"
+        # Strip any previous managed block, then append the fresh one.
+        if [ -f "$rc" ]; then
+            sed "\|^${marker_begin}\$|,\|^${marker_end}\$|d" "$rc" > "$tmp"
+        fi
+        {
+            echo ""
+            echo "$marker_begin"
+            echo "export JAVA_HOME=\"$JAVA_HOME\""
+            echo "export LANG=\"\${LANG:-en_US.UTF-8}\""
+            echo "$marker_end"
+        } >> "$tmp"
+        mv "$tmp" "$rc"
+    done
+
+    ok "~/.zprofile, ~/.bash_profile, ~/.profile export JAVA_HOME ($JAVA_HOME)"
+}
+
+persist_login_shell_env
+
+# --------------------------------------------------------------------------
 # rustup (OFFICIAL installer - deliberately NOT from Homebrew)
 # --------------------------------------------------------------------------
 
@@ -330,5 +368,8 @@ printf '  git --version\n'
 printf '  gh --version\n'
 printf '  pod --version\n'
 printf '  java -version\n'
-printf '  echo $JAVA_HOME\n'
+printf '  which -a git      (brew git should list before /usr/bin/git in a new session)\n'
 printf '  xcodebuild -version   (full Xcode needed for iOS/macOS wallet builds)\n'
+printf '  then open a NEW ssh session and verify:\n'
+printf '    echo $JAVA_HOME\n'
+printf '    rustup --version && cargo --version\n'
