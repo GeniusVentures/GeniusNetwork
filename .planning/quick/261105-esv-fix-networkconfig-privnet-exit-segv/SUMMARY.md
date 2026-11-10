@@ -77,3 +77,12 @@ allocation (exit 78, no tests); Oct 26 develop run's failures were
 `MultiAccountTest.NodeConsensusTest` + already-excluded known flakes — nothing
 new there either.
 
+## Rerun verdict (tag-build 42130985363, OSX-only, 2026-11-05)
+
+All four triaged failures confirmed as load flakes — OSX Debug AND Release both
+**100% tests passed, 0 failed out of 155** on b85778ef6 (cold storage ON,
+thirdparty=test_coldstorage_rtti, zkllvm=develop). cold_storage_gc
+EndToEndRetentionPass did not recur; no WalkReachable investigation warranted
+absent a second occurrence. dev_blockstore @ b85778ef6 is fully green on OSX.
+
+
