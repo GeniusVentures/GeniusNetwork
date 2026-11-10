@@ -28,7 +28,7 @@ Milestone audit (passed): [milestones/v1.0-MILESTONE-AUDIT.md](milestones/v1.0-M
 - [x] **Phase 9: Cold Read Fallback — Local Reads & Graphsync Serving** - Hot-store misses fetch Local→S3 with CID-verify and re-cache; graphsync serves cold CIDs asynchronously off the responder's inline path; transport failure never surfaces as NotFound (completed 2026-10-26)
 - [x] **Phase 10: Flush-Gated Durability Advancement** - `Durable` becomes an evidence-backed state (s3d `/objects/flush` + `pendingObjects==0` → `MarkUploadedDurable`), making the eviction durability gate real before anything deletes (completed 2026-10-26)
 - [x] **Phase 11: Retention GC of Cold-Eligible CRDT Data** - Eviction-only GC behind durability + non-reachability gates with bounded disposed-CID markers; evicted CIDs stay retrievable end-to-end; live s3d spill→GC→retrieve evidence (dev-gated) (completed 2026-10-27)
-- [ ] **Phase 12: Integration Hardening, Fault Races & Fresh-Clone Proof** - Evict×serve×drain races, resurrection counter-test, s3d-down soak, and fresh-clone Tier-1 green on Windows/Linux/macOS with cold storage ON
+- [x] **Phase 12: Integration Hardening, Fault Races & Fresh-Clone Proof** - Evict×serve×drain races, resurrection counter-test, s3d-down soak, and fresh-clone Tier-1 green on Windows/Linux/macOS with cold storage ON (completed 2026-11-10 — SC4 closed by tag-build run 42905264387: 153/153 Windows, 152/152 Linux, 155/155 OSX, cold storage ON, test_coldstorage_rtti)
 
 ## Phase Details (v1.1)
 
@@ -199,7 +199,7 @@ Plans:
 - [x] 12-02-PLAN.md — TRACER: iteration soak (outage+recovery, D-06 no-multiply + watermark + bounded drain, D-08 full actor set), then D-09 teardown legs (bounded ordered clean Stop() + kill surrogate with restart reconciliation), then peer cold-fetch deadline budget under injected latency + dev-gated wall-clock soak binary with committed evidence trio (D-07) (TEST-02 SC3)
 
 **Wave 3** *(blocked on Wave 2)*
-- [ ] 12-03-PLAN.md — TRACER: SGNS_BLOCKSTORE_TEST_SRC_DIR override + install-tree-only compile proof (the fakes-not-in-tarball landmine, research §5.3), then the tier-label audit port, then both CI ON surfaces (D-02 permanent cmake.yml legs + build-release-tags.yml posture with sparse fake-source overlay), then the blocking D-03 human checkpoint (thirdparty tag cut + tag dispatch) filling the D-05 fresh-clone checklist (TEST-02 SC4 closing evidence)
+- [x] 12-03-PLAN.md — TRACER: header-install ruling supersedes the cache var (fakes ship as installed public headers) + install-tree-only compile proof, then the tier-label audit port, then both CI ON surfaces (D-02 permanent cmake.yml legs + build-release-tags.yml posture), then the blocking D-03 human checkpoint (thirdparty tag cut + tag dispatch) filling the D-05 fresh-clone checklist (TEST-02 SC4 closing evidence) — CLOSED 2026-11-10: run 42905264387 all 15 jobs green, Windows 153/153 + Linux 152/152 + OSX 155/155, cold storage ON, audit green in CI
 
 **Research note**: standard — v1.0's fault kit, tier contract, and evidence-capture habits are directly reusable.
 

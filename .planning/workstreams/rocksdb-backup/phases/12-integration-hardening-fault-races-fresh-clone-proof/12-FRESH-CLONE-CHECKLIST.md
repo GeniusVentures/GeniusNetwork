@@ -1,9 +1,9 @@
 # 12-FRESH-CLONE-CHECKLIST — SC4 Fresh-Clone Proof (TEST-02 / D-05)
 
-Status: **AWAITING D-03 HUMAN CHECKPOINT** — pre-validation complete (below);
-the executor never dispatches workflows and never pushes. Everything in this
-checklist after the validation record is filled ONLY from real CI run results
-supplied by the user.
+Status: **COMPLETE 2026-11-10** â€” all three SC4 legs green in SuperGenius Tag
+Build run 42905264387 (workflow_dispatch, dev_blockstore @ 9994718ce,
+thirdparty tag `test_coldstorage_rtti`, run_tests=true, cold_storage=true,
+all 15 jobs success). Evidence tables below.
 
 ## D-04 fail-closed validation record (git ls-remote, refreshed 2026-10-28 after the header-install ruling)
 
@@ -30,9 +30,19 @@ library Tier-1 14/14.
 are pushed, so the tarball carries the installed fake headers (a tag cut
 earlier would make the ON legs fail at the fakes' include).
 
-**D-03 gate result: STOPPED BEFORE DISPATCH.** Push order for the user:
-sgns-blockstore main → thirdparty dev_db_storage → SuperGenius
-dev_blockstore (innermost first, as always).
+**D-03 gate result: SATISFIED 2026-11-10.** User pushed all three repos
+(innermost-first) and dispatched the tag build; SuperGenius dev_blockstore
+advanced to 9994718ce (two CI commits forcing self-hosted runners â€” cherry-
+picked cmake.yml 669cb821b + mirrored build-release-tags.yml; runner
+selection only, zero build-content change) before the dispatch.
+
+## D-04 fail-closed validation record (final refresh 2026-11-10)
+
+| Repo | Branch | SHA (run-verified) | Pushed? |
+|------|--------|--------------------|---------|
+| SuperGenius | dev_blockstore | 9994718ce (run 42905264387 head) | YES |
+| thirdparty | dev_db_storage | 4a97e95 (= test_coldstorage_rtti tag target) | YES |
+| thirdparty/sgns-blockstore | main | ee0266b | YES |
 
 ## User actions (the D-03 checkpoint)
 
@@ -63,38 +73,43 @@ regression-net baseline.
 
 ## Thirdparty tag
 
+- **FINAL consumed tag: `test_coldstorage_rtti`** (cut 2026-11-02, target 4a97e95 = thirdparty dev_db_storage HEAD; all 14 platform assets; post-dates the fake-header install ee0266b AND adds RocksDB USE_RTTI=ON — the RTTI requirement is what forced the re-cut over `test_coldstorage`). Release URL: https://github.com/GeniusVentures/thirdparty/releases/tag/test_coldstorage_rtti
+- Interim tag `test_coldstorage` (superseded; history): first tag to carry the fake-header install. Original record:
 - Tag name: **`test_coldstorage`** (assets clobbered by run 40798318449, dispatched 2026-10-29T01:06Z from dev_db_storage @ 8b00aee — carries the fake-header install). The tag REF still points at 1209fb5 and was NOT moved — irrelevant: every consumer downloads the release ASSETS by tag name, never the git tag ref.
 - Freshness (asset updated_at): 13/14 assets clobbered 01:15–02:06Z; **Windows-Debug.tar.gz stale** (2026-10-28T04:02 — the failed leg, os error 4551 Application Control block on wallet-core's cargo build-script, environmental; user re-running).
 - Payload verified: Windows-Release.tar.gz (fresh, 01:33:58Z) contains `build/Windows/Release/sgns-blockstore/include/sgns-blockstore/InMemoryS3Client.hpp` AND `InMemoryS3AdminClient.hpp` (tar listing, 2 hits) — the header-install change reached the assets the ON lanes consume.
 - sgns-blockstore SHA in the build: ee0266b (via thirdparty 8b00aee; validated pushed)
 - Release URL: https://github.com/GeniusVentures/thirdparty/releases/tag/test_coldstorage
 
-## Platform results (filled from real runs)
+## Platform results â€” run 42905264387 (all three legs, one dispatch)
+
+Run: https://github.com/GeniusVentures/SuperGenius/actions/runs/42905264387
+(dispatch 2026-11-10, head 9994718ce, all 15 matrix jobs success;
+`Downloading thirdparty from tag: test_coldstorage_rtti` verified in every leg's log)
 
 ### Windows Release (cold storage ON)
-- Configure evidence (-DSGNS_COLD_STORAGE=ON visible): _(pending)_
-- Tier-1 pass count: _(pending)_
-- Run URL: _(pending)_
+- Configure evidence: `-DSGNS_COLD_STORAGE=ON` in the configure command (COLD_STORAGE_ARGS env, log-verified) â—d **153/153, 100% tests passed**
+- Run URL: https://github.com/GeniusVentures/SuperGenius/actions/runs/42905264387 (job: build (Windows, Release))
 
 ### Linux x86_64 Release (cold storage ON)
-- Configure evidence: _(pending)_
-- Tier-1 pass count: _(pending)_
-- Run URL: _(pending)_
+- Configure evidence: same â—d **152/152, 100% tests passed** (tier1_static_audit = Test #15, Passed 0.03s)
+- Run URL: same run (job: build (Linux, x86_64, Release))
 
 ### OSX Release (cold storage ON)
-- Configure evidence: _(pending)_
-- Tier-1 pass count: _(pending)_
-- Run URL: _(pending)_
+- Configure evidence: same â—d **155/155, 100% tests passed** (consistent with the 2026-11-05 OSX-only rerun 42130985363: same count at b85778ef6)
+- Run URL: same run (job: build (OSX, Release))
 
 ## Permanent cmake.yml ON-leg baseline (regression net)
 
-- Expected-red window runs (pre-tag): _(record URLs if the push preceded the tag cut)_
-- First GREEN Windows-Release-ON run: _(pending)_
-- First GREEN Linux-ON run: _(pending)_
-- First GREEN OSX-ON run: _(pending)_
+- Baseline PENDING by topology, not by defect: dev_blockstore pushes do not
+  trigger cmake.yml (its push filters do not watch this branch), so the
+  permanent ON legs first run when this branch merges to develop. The tag-
+  build legs above prove the identical configure (same COLD_STORAGE_ARGS
+  append, same artifact consumption) â€” the D-02a net activates at merge.
 
 ## Audit result
 
-- tier1_static_audit: green in the local Tier-1 lane (12/12 including the
-  audit; teeth spot-checked by scratch-removing a LABELS line — audit failed,
-  reverted, lane green again). First CI-lane audit run: _(pending)_
+- tier1_static_audit: **GREEN IN CI** â€” Linux-x86_64-Release leg of run
+  42905264387, Test #15/152 Passed (0.03 sec); included in every leg's 100%
+  pass count. (Local pre-check had already exercised the teeth: scratch-
+  removing a LABELS line failed the audit; restored, lane green.)

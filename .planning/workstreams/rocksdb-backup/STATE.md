@@ -4,16 +4,16 @@ milestone: v1.1
 milestone_name: SuperGenius Cold-Storage Integration & CRDT Garbage Collection
 current_plan: 3
 status: executing
-stopped_at: "Phase 12: 12-01+12-02 complete, 12-03 tasks 1-3 done - BLOCKED at D-03 human checkpoint (see 12-FRESH-CLONE-CHECKLIST.md)"
-last_updated: "2026-10-30T03:50:38.955Z"
+stopped_at: "Phase 12 COMPLETE - all 21/21 plans done; SC4 closed by tag-build run 42905264387 (Win 153/153, Linux 152/152, OSX 155/155, cold storage ON, test_coldstorage_rtti). Next: verification then complete-milestone"
+last_updated: "2026-11-10T23:35:00.031Z"
 last_activity: 2026-10-29
-last_activity_desc: Quick task 261029-uj0 - SC4 CI round 7: serialize GcPassOnce (single-writer pass state), fixes OSX-only fault_race/resurrection CI aborts (SuperGenius dev_blockstore 72e54000)
-state_head: e9cbd7734a7492ebc8ed40ad49e976bc1a87f463
+last_activity_desc: "Quick task 261029-uj0 - SC4 CI round 7: serialize GcPassOnce (single-writer pass state), fixes OSX-only fault_race/resurrection CI aborts (SuperGenius dev_blockstore 72e54000)"
+state_head: ceafd17e0a12a70c8ef5c012e2d823e1d19e23a8
 progress:
   total_phases: 7
   completed_phases: 3
   total_plans: 21
-  completed_plans: 20
+  completed_plans: 21
   percent: 43
 current_phase: 12
 current_phase_name: Integration Hardening, Fault Races & Fresh-Clone Proof
@@ -76,10 +76,10 @@ Last activity: 2026-10-29 — Quick task 261029-uj0: SC4 CI round 7 — serializ
 
 ## Session Continuity
 
-**Last session:** 2026-10-28T23:42:07.093Z
+**Last session:** 2026-11-10T23:34:59.549Z
 
-**Stopped At:** Phase 12: 12-01+12-02 complete, 12-03 tasks 1-3 done - BLOCKED at D-03 human checkpoint (see 12-FRESH-CLONE-CHECKLIST.md)
-**Resume File:** .planning/workstreams/rocksdb-backup/phases/12-integration-hardening-fault-races-fresh-clone-proof/12-FRESH-CLONE-CHECKLIST.md
+**Stopped At:** Phase 12 COMPLETE - all 21/21 plans done; SC4 closed by tag-build run 42905264387 (Win 153/153, Linux 152/152, OSX 155/155, cold storage ON, test_coldstorage_rtti). Next: verification then complete-milestone
+**Resume File:** .planning/workstreams/rocksdb-backup/phases/12-integration-hardening-fault-races-fresh-clone-proof/12-03-SUMMARY.md
 
 ## Performance Metrics
 
