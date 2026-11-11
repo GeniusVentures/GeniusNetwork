@@ -4,11 +4,11 @@ milestone: v1.1
 milestone_name: SuperGenius Cold-Storage Integration & CRDT Garbage Collection
 current_plan: 3
 status: executing
-stopped_at: "Phase 12 COMPLETE - all 21/21 plans done; SC4 closed by tag-build run 42905264387 (Win 153/153, Linux 152/152, OSX 155/155, cold storage ON, test_coldstorage_rtti). Next: verification then complete-milestone"
-last_updated: "2026-11-10T23:35:00.031Z"
+stopped_at: "Phase 12 VERIFIED - UAT 17/17 pass (CI 42905264387 accepted as evidence per user ruling) + 12-VERIFICATION.md PASSED 4/4 (TEST-02). Phase 12 gate closed; next: complete-milestone"
+last_updated: "2026-11-11T00:31:29.637Z"
 last_activity: 2026-10-29
 last_activity_desc: "Quick task 261029-uj0 - SC4 CI round 7: serialize GcPassOnce (single-writer pass state), fixes OSX-only fault_race/resurrection CI aborts (SuperGenius dev_blockstore 72e54000)"
-state_head: ceafd17e0a12a70c8ef5c012e2d823e1d19e23a8
+state_head: 81b4420d935434c5c97f79db3c12dfe33af78c2c
 progress:
   total_phases: 7
   completed_phases: 3
@@ -76,10 +76,10 @@ Last activity: 2026-10-29 — Quick task 261029-uj0: SC4 CI round 7 — serializ
 
 ## Session Continuity
 
-**Last session:** 2026-11-10T23:34:59.549Z
+**Last session:** 2026-11-11T00:31:29.075Z
 
-**Stopped At:** Phase 12 COMPLETE - all 21/21 plans done; SC4 closed by tag-build run 42905264387 (Win 153/153, Linux 152/152, OSX 155/155, cold storage ON, test_coldstorage_rtti). Next: verification then complete-milestone
-**Resume File:** .planning/workstreams/rocksdb-backup/phases/12-integration-hardening-fault-races-fresh-clone-proof/12-03-SUMMARY.md
+**Stopped At:** Phase 12 VERIFIED - UAT 17/17 pass (CI 42905264387 accepted as evidence per user ruling) + 12-VERIFICATION.md PASSED 4/4 (TEST-02). Phase 12 gate closed; next: complete-milestone
+**Resume File:** .planning/workstreams/rocksdb-backup/phases/12-integration-hardening-fault-races-fresh-clone-proof/12-VERIFICATION.md
 
 ## Performance Metrics
 
