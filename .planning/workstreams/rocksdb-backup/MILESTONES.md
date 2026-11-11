@@ -1,5 +1,28 @@
 # Milestones
 
+## v1.1 SuperGenius Cold-Storage Integration & CRDT Garbage Collection (Shipped: 2026-11-10)
+
+**Phases completed:** 7 phases, 21 plans, 32 tasks
+
+**Key accomplishments:**
+- 3-arg CidOf composes CIDv1/DAG_CBOR/blake2b-256 exactly as the real CRDT producer getCidOf does — linked against the same vendored blake2 object code, pinned by an independently derived + producer-cross-checked committed vector.
+- The library now accepts every CID the SuperGenius CRDT DAG produces: gates at all three backends widened to {sha-256, blake2b-256}, six verify sites branch on the CID's own multihash, and the conformance kit proves it with the cross-check-log vectors on every backend.
+- Any out-of-tree consumer can now construct the production S3 client from the install tree alone - proven by a hermetic Tier-1 ctest whose original forced failure drove exactly three new find_dependency lines into the package config.
+- Gated `SGNS_COLD_STORAGE` find_package wiring in SuperGenius + GeniusSDK proven on Windows end-to-end (configure → find → link → construct → test green), with the dual-RocksDB reinterpretation and a committed `verdict=stale` CI-readiness decision for 07-03.
+- Strict tri-state `blockstore` parser (absent/blank=disabled byte-identical, malformed=loud naming the offender, env=credential-value-override-only) threaded through `GlobalDB::New` as a trailing defaulted parameter — credentials never logged.
+- Hermetic 15-case config-gate matrix green in a fail-closed Tier-1 lane (non-empty on OFF builds), additive CI lane step committed (ON-lane blocked-on-release-cut per verdict=stale), wallet schema parity shipped with the Pitfall-7 corruption fix, and the M3 cold-journal posture documented and tracked.
+- Gated cold-storage stack + journal-first IpfsDatastore decorator at the single GlobalDB::New construction seam - every block Put spills to the durable local journal with zero remote I/O, proven by five hermetic Tier-1 tests.
+- Strict blockstore.backpressure config surface plus the SuperGenius-owned ColdStorageManager drainer - a backup-loop-pattern thread with split-phase drain, exponential backoff, always-on dual watermarks, and bounded-grace shutdown wired into GlobalDB's lifecycle.
+- Hermetic Tier-1 evidence for all five ROADMAP success criteria - drain, crash-resume, outage window, latency independence (1.98 ms medians both ways vs 300 ms injected), and partial-success backoff - plus the honest blocked-on-release-cut CI disposition.
+- Hot-store misses now resolve through the CID-verifying Local->S3 cold chain with an honest four-class taxonomy at the GraphsyncDAGSyncer seam, re-caching bytes through the Phase-8 decorator before returning.
+- Peer requests for cold CIDs now answer an honest immediate don't-have while a bounded, coalesced background re-warm fetches the block hot - the responder never waits, so the whole-node-freeze hazard stays closed.
+- The SC1-SC5 invariants are now disproof-proven under induced failure: no transport fault escapes as NotFound, cold blips never blame peers, rehydrate writes bytes and nothing else, and the responder stays sub-50 ms hot while a faulted or slow s3d churns cold misses.
+- `Durable` is now an evidence-backed journal state: the drainer's cadence step fires POST /objects/flush, observes pendingObjects==0 through the new installed s3d admin facade, and marks exactly the pre-flush Accepted snapshot in one atomic WriteBatch — never accepted-is-durable.
+- The 10-01 advancement construction is now proven honest under fault — crash reconciliation, admin outages, bounded shutdown, idempotent replay, and the acceptance race all hold — and Phase 11's GC inhibitor has its staging-health signal: raw s3d counters plus a conservative healthy predicate, fresh on every tick and on demand.
+- Status: COMPLETE (2026-11-10)
+
+---
+
 ## v1.0 CRDT Cold-Storage BlockStore Library (Sia s3d backend) (Shipped: 2026-10-22)
 
 **Phases completed:** 5 phases, 16 plans, 40 tasks

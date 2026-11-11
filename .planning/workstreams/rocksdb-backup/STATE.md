@@ -3,18 +3,18 @@ gsd_state_version: "1.0"
 milestone: v1.1
 milestone_name: SuperGenius Cold-Storage Integration & CRDT Garbage Collection
 current_plan: 3
-status: executing
+status: Awaiting next milestone
 stopped_at: "Phase 12 VERIFIED - UAT 17/17 pass (CI 42905264387 accepted as evidence per user ruling) + 12-VERIFICATION.md PASSED 4/4 (TEST-02). Phase 12 gate closed; next: complete-milestone"
-last_updated: "2026-11-11T00:31:29.637Z"
-last_activity: 2026-10-29
-last_activity_desc: "Quick task 261029-uj0 - SC4 CI round 7: serialize GcPassOnce (single-writer pass state), fixes OSX-only fault_race/resurrection CI aborts (SuperGenius dev_blockstore 72e54000)"
-state_head: 81b4420d935434c5c97f79db3c12dfe33af78c2c
+last_updated: "2026-11-11T00:56:48.682Z"
+last_activity: 2026-11-10
+last_activity_desc: Milestone v1.1 completed and archived
+state_head: 7c2950e6dcdecb3540dbc33ed384bfbf064b9247
 progress:
   total_phases: 7
-  completed_phases: 3
+  completed_phases: 7
   total_plans: 21
   completed_plans: 21
-  percent: 43
+  percent: 100
 current_phase: 12
 current_phase_name: Integration Hardening, Fault Races & Fresh-Clone Proof
 ---
@@ -27,29 +27,20 @@ See: `.planning/PROJECT.md` (workstream sections); `.planning/workstreams/rocksd
 
 **Core value:** Older CRDT/IPLD blocks can spill from RocksDB hot state to durable, CID-verified object storage through a shared thirdparty static library (`sgns-blockstore`) consumable by both SuperGenius and genius-tube — no RocksDB remote-FS integration, no SDK/SuperGenius types in the public API, and local eviction is never a CRDT deletion.
 
-**Current focus:** Phase 12 — Integration Hardening, Fault Races & Fresh-Clone Proof
+**Current focus:** v1.1 shipped & archived 2026-11-10 — planning next milestone (`/gsd-new-milestone`)
 
 ## Current Position
 
-Current Plan: 3
-Total Plans in Phase: 3
-Status: Ready to execute
-Last activity: 2026-10-29 — Quick task 261029-uj0: SC4 CI round 7 — serialize GcPassOnce; OSX-only fault_race/resurrection CI aborts fixed (SuperGenius 72e54000)
+Phase: Milestone v1.1 complete
+Plan: —
+Status: Awaiting next milestone
+Last activity: 2026-11-10 — Milestone v1.1 completed and archived
 
 ## Progress
 
-**Phases Complete:** 0/7 (v1.1) · v1.0 archived 2026-10-22
-**Current Plan:** 3
+**Phases Complete:** 7/7 (v1.1) · v1.0 archived 2026-10-22 · v1.1 archived 2026-11-10
 
-| Phase | Plans | Status |
-|-------|-------|--------|
-| 06 — sgns-blockstore Library Prerequisites (blake2b CIDs, installed S3 factory) | 0/2 | Not started |
-| 07 — SuperGenius Build Wiring & Config Gate | 0/3 | Not started |
-| 08 — Spill-on-Write & Background Drainer | 0/3 | Not started |
-| 09 — Cold Read Fallback (Local + Graphsync) | 0/3 | Not started |
-| 10 — Flush-Gated Durability Advancement | 0/2 | Not started |
-| 11 — Retention GC of Cold-Eligible CRDT Data | 0/4 | Not started |
-| 12 — Integration Hardening & Fresh-Clone Proof | 0/3 | Not started |
+All v1.1 phases shipped — see [milestones/v1.1-ROADMAP.md](milestones/v1.1-ROADMAP.md) for the completion record.
 
 ## Accumulated Context
 
@@ -64,7 +55,7 @@ Last activity: 2026-10-29 — Quick task 261029-uj0: SC4 CI round 7 — serializ
 - Open planner decisions carried in ROADMAP research notes: config section naming, backpressure policy, retention age evidence (priority-height vs wall-clock), cold-serve latency budget, mobile superbuild leg coverage, GlobalDB backup vs cold-store dir
 
 **Todos:**
-- Run `/gsd-discuss-phase 6` (blake2b widening scope is the entrance decision)
+- None — v1.1 archived; start the next milestone with `/gsd-new-milestone`
 
 **Blockers:** None
 
@@ -126,6 +117,9 @@ Items acknowledged and deferred at milestone close, most recent first:
 
 | Category | Item | Status | Deferred At | Milestone |
 |----------|------|--------|-------------|-----------|
+| hardening | Soak-scale GC eviction-storm crash (12-02 deviation; repro: retention ~1 ms + ~2000 Durable orphans + live GC thread; candidate: mark-capture/eviction at ~2000-mark scale) | open | 2026-11-10 | v1.1 |
+| testing | TEST-03 MinIO-binary live leg (`gc_minio_roundtrip_test`, Tier2) registered + loud-skip-verified but never executed live — runbook-deferred (SGNS_BLOCKSTORE_TEST_MINIO_BIN) | open | 2026-11-10 | v1.1 |
+| ci | Permanent cmake.yml ON-leg regression-net baseline first runs when dev_blockstore merges to develop (push-filter topology, self-resolving; tag-build legs prove the identical configure) | pending-merge | 2026-11-10 | v1.1 |
 | uat_gaps | 03/03-UAT.md | passed | 2026-10-22 | v1.0 |
 
 ## Operator Next Steps
