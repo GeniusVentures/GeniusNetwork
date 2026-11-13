@@ -55,7 +55,7 @@ All v1.1 phases shipped — see [milestones/v1.1-ROADMAP.md](milestones/v1.1-ROA
 - Open planner decisions carried in ROADMAP research notes: config section naming, backpressure policy, retention age evidence (priority-height vs wall-clock), cold-serve latency budget, mobile superbuild leg coverage, GlobalDB backup vs cold-store dir
 
 **Todos:**
-- None — v1.1 archived; start the next milestone with `/gsd-new-milestone`
+- NEXT-MILESTONE SEED (2026-11-12, post develop-merge 55fca03f8/7961ec264): erase-vs-cold-storage interplay design pass. develop's erase (PRUNE/GATE-03) is hot-only removal relying on the `<cid>sealed` marker as the re-fetch terminator; cold storage retains S3 copies of evicted blocks — erased content may remain recoverable from the cold tier, and GC-evicted blocks now retain seals (7961ec264). Open questions: should EraseEntry also purge/dispose the cold-tier copy? Does a retained seal on a disposed CID suppress legitimate re-delivery re-learning after marker trim? Coordinate with develop's erase-feature owners (their v1.2 milestone).
 
 **Blockers:** None
 
