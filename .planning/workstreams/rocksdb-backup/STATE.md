@@ -1,22 +1,16 @@
 ---
 gsd_state_version: "1.0"
-milestone: v1.1
-milestone_name: SuperGenius Cold-Storage Integration & CRDT Garbage Collection
-current_plan: 3
-status: Awaiting next milestone
-stopped_at: "Phase 12 VERIFIED - UAT 17/17 pass (CI 42905264387 accepted as evidence per user ruling) + 12-VERIFICATION.md PASSED 4/4 (TEST-02). Phase 12 gate closed; next: complete-milestone"
-last_updated: "2026-11-11T00:56:48.682Z"
-last_activity: 2026-11-10
-last_activity_desc: Milestone v1.1 completed and archived
-state_head: 7c2950e6dcdecb3540dbc33ed384bfbf064b9247
+milestone: v1.2
+milestone_name: SuperGenius Cold-Storage Archive Integration
+status: planning
+last_updated: "2026-11-14T02:41:08.053Z"
+last_activity: 2026-11-13
 progress:
-  total_phases: 7
-  completed_phases: 7
-  total_plans: 21
-  completed_plans: 21
-  percent: 100
-current_phase: 12
-current_phase_name: Integration Hardening, Fault Races & Fresh-Clone Proof
+  total_phases: 0
+  completed_phases: 0
+  total_plans: 0
+  completed_plans: 0
+  percent: 0
 ---
 
 # Project State
@@ -31,10 +25,10 @@ See: `.planning/PROJECT.md` (workstream sections); `.planning/workstreams/rocksd
 
 ## Current Position
 
-Phase: Milestone v1.1 complete
+Phase: Not started (defining requirements)
 Plan: —
-Status: Awaiting next milestone
-Last activity: 2026-11-10 — Milestone v1.1 completed and archived
+Status: Defining requirements
+Last activity: 2026-11-13 — Milestone v1.2 started
 
 ## Progress
 
@@ -55,7 +49,7 @@ All v1.1 phases shipped — see [milestones/v1.1-ROADMAP.md](milestones/v1.1-ROA
 - Open planner decisions carried in ROADMAP research notes: config section naming, backpressure policy, retention age evidence (priority-height vs wall-clock), cold-serve latency budget, mobile superbuild leg coverage, GlobalDB backup vs cold-store dir
 
 **Todos:**
-- NEXT-MILESTONE SEED (2026-11-12, post develop-merge 55fca03f8/7961ec264): erase-vs-cold-storage interplay design pass. develop's erase (PRUNE/GATE-03) is hot-only removal relying on the `<cid>sealed` marker as the re-fetch terminator; cold storage retains S3 copies of evicted blocks — erased content may remain recoverable from the cold tier, and GC-evicted blocks now retain seals (7961ec264). Open questions: should EraseEntry also purge/dispose the cold-tier copy? Does a retained seal on a disposed CID suppress legitimate re-delivery re-learning after marker trim? Coordinate with develop's erase-feature owners (their v1.2 milestone).
+- None — v1.1 archived; start the next milestone with `/gsd-new-milestone`
 
 **Blockers:** None
 
