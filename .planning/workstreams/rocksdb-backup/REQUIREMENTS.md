@@ -1,0 +1,73 @@
+---
+milestone: v1.2
+milestone_name: SuperGenius Cold-Storage Archive Integration
+status: draft
+last_updated: 2026-11-13
+---
+
+# Requirements — v1.2 SuperGenius Cold-Storage Archive Integration
+
+**Core value:** Cold storage becomes the authoritative archive tier of the append-only CRDT ledger. Cold-enabled (archive) nodes hold complete history and serve it; light nodes may prune locally-irrelevant data (gained → spent → gained) with the guarantee that anything pruned remains fetchable from archive nodes. Evidence, not bytes, decides whether cold-resident data is live history or inert.
+
+**Governing invariants (from research SUMMARY-v1.2):**
+1. Never erase hot what is not Durable in cold.
+2. Evidence outranks bytes — node-local prune evidence is terminal; cold bytes never resurrect what a node deliberately pruned.
+3. Seals are never deleted by any path (TxPruner or GC).
+4. Collectibility and the GC walk-gap exemption are two halves of one rule — they ship together or not at all.
+
+## Current Milestone Requirements
+
+### PRUNE — Durability-Gated TxPruner Eligibility
+- [ ] **PRUNE-01**: A cold-enabled node's TxPruner erases a transaction's hot data only when every constituent block is Durable in cold — NoRecord, Pending, Accepted, and Unreadable journal states all defer the erase loudly (fail closed).
+- [ ] **PRUNE-02**: The durability gate re-checks evidence at erase-commit time under the compose lock, so a durability-state change after evaluation cannot enable an erase that would destroy the last copy (TOCTOU prevention).
+- [ ] **PRUNE-03**: The gate is injected at TxPruner's cycle filter rather than inside the PruneEligibility evaluator, keeping the evaluator contractually pure so the gate composes (not conflicts) with develop's pending Phase 17 evaluator.
+
+### SERVE — Evidence-Aware Cold Serving
+- [ ] **SERVE-01**: A request for a TxPruner-erased CID is answered with pruned semantics even when cold bytes still exist — the cold chain (Rehydrate path) consults prune evidence before serving; no resurrection.
+- [ ] **SERVE-02**: A request for a GC-evicted CID (no prune evidence) on a cold-enabled node is served through the cold chain and re-warm — evict ≈ DETACH, re-attachable; the node remains an archive node, never masquerading.
+- [ ] **SERVE-03**: The three-way answer (pruned / evicted-restorable / not-found) is consistent across HasBlock, getNode, and the cold chain via a single role-aware evidence predicate owned by GlobalDB.
+- [ ] **SERVE-04**: Pruned answers remain distinct from not-found at the protocol surface so requesters fail over to serving archive nodes correctly (develop's SURV-02 tri-state extended to cold-enabled nodes).
+
+### RECOVER — Bootstrap Branch Composition
+- [ ] **RECOVER-01**: fix/trust-genesis-bootstrap is merged into dev_coldstorage_additions with the full existing suite green (Phase 13 gate for all recovery work).
+- [ ] **RECOVER-02**: The forced walk restores GC-evicted ancestors from cold — retained means hot OR cold-resident-without-evidence; the walk never conflates GC-evicted with pruned.
+- [ ] **RECOVER-03**: The forced walk never resurrects TxPruner-erased elements — CanRestoreElement composition makes prune evidence terminal in recovery, matching serving semantics.
+- [ ] **RECOVER-04**: Recovery peer-failover is bounded (per-CID budget) and walk-gaps abort-never-skip — no infinite failover loops and no silently-validated partial history.
+
+### COMP — TxPruner × GC Composition
+- [ ] **COMP-01**: EraseEntry's post-commit cleanup is hardened to GC's parity — the stale-LRU window (guard checks at compose-start only, no post-commit DeleteCIDBlock) is closed.
+- [ ] **COMP-02**: Concurrent TxPruner and GC passes are proven safe under an interleave matrix covering overlapping set rows, seal rows, and the block LRU — both idempotent on absent keys, seals untouched by both.
+- [ ] **COMP-03**: The GC-disposal starvation interplay (journal record deleted → gate reads NoRecord while remote S3 still serves) is ruled, documented, and its fail-safe direction (under-prune) is asserted by test.
+
+### POLICY — Collectibility + Role Downgrade
+- [ ] **POLICY-01**: Cold collectibility ships as an explicit recorded policy decision — cold objects are permanent this milestone; the machinery is documented as an sgns-blockstore v2 contract ask (frozen v1 forbids Remove).
+- [ ] **POLICY-02**: An archive-role downgrade (archive → light) is E2E-proven: after downgrade the node prunes under light rules, history remains fetchable from other archive nodes, and existing Durable records satisfy the prune gate without re-drain or migration.
+
+### SEAL — Seal Growth Measurement
+- [ ] **SEAL-01**: Seal growth is measured at representative workloads (row counts + bytes, including recovery-walk ancestry density) and the explicit decision — accept hot growth vs. future design — is documented with capacity math.
+
+### TEST — Hardening Capstone
+- [ ] **TEST-01**: Evidence-aware test fakes model the PrunedLookup tri-state (present / pruned / not-found) hermetically, backing every SERVE / RECOVER / PRUNE suite without live services.
+- [ ] **TEST-02**: An extended fault-race matrix crosses erase × serve × recovery — induced failures at each phase boundary cannot produce resurrection, partial-history validation, or lost last copies.
+- [ ] **TEST-03**: Recovery-walk suites run green on all three platform CI lanes (Windows, macOS, Linux).
+
+## Future Requirements (Deferred)
+
+- Cold collectibility machinery (per-CID evidence-driven S3 deletion) — blocked on sgns-blockstore v2 contract (CORE-05 forbids Remove in v1).
+- Seal storage redesign (spill / compaction / sidecar) — only if SEAL-01 measurement demands it; seals are not DAG blocks, blockstore spill does not apply.
+- Composition with develop Phase 17 (eligibility dry-run) and Phase 20 (reclamation proof: CompactRange kForce + measured-bytes CI gate) once they land on develop.
+- `DisposedDurable` journal terminal state (or remote-presence verification) as the v2 answer to the starvation interplay.
+
+## Out of Scope
+
+- **CRDT tombstone deletion as a pruning mechanism** — develop already rejected: network-wide tombstones would erase history on archive nodes too; pruning is node-local (BIP-159 precedent).
+- **Pruning on full/archive nodes as a network operation** — archive nodes ARE the complete-history source by design; anything they remove hot must be Durable in their own cold tier first.
+- **sgns-blockstore v1 contract changes** — frozen; no Remove, no deletion surface, this milestone.
+- **Seal spill/migration this milestone** — measure-and-decide only (SEAL-01); redesign doubles risk on the load-bearing recovery index.
+- **Executing cold collection** — policy only (POLICY-01); enabling collection without the GC walk-gap exemption ships breaks GC liveness (poisoned-GC triangle — the two halves rule).
+
+## Traceability
+
+| Requirement | Phase | Status |
+|-------------|-------|--------|
+| *(filled by roadmap)* | | |
