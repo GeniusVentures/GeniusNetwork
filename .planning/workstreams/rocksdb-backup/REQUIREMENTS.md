@@ -70,4 +70,23 @@ last_updated: 2026-11-13
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| *(filled by roadmap)* | | |
+| PRUNE-01 | Phase 14 | Pending |
+| PRUNE-02 | Phase 14 | Pending |
+| PRUNE-03 | Phase 14 | Pending |
+| SERVE-01 | Phase 15 | Pending |
+| SERVE-02 | Phase 15 | Pending |
+| SERVE-03 | Phase 15 | Pending |
+| SERVE-04 | Phase 15 | Pending |
+| RECOVER-01 | Phase 13 | Pending |
+| RECOVER-02 | Phase 15 | Pending |
+| RECOVER-03 | Phase 15 | Pending |
+| RECOVER-04 | Phase 15 | Pending |
+| COMP-01 | Phase 16 | Pending |
+| COMP-02 | Phase 16 | Pending |
+| COMP-03 | Phase 16 | Pending |
+| POLICY-01 | Phase 18 | Pending |
+| POLICY-02 | Phase 18 | Pending |
+| SEAL-01 | Phase 17 | Pending |
+| TEST-01 | Phase 15 | Pending |
+| TEST-02 | Phase 19 | Pending |
+| TEST-03 | Phase 19 | Pending |

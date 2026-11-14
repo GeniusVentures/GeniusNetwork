@@ -3,10 +3,12 @@ gsd_state_version: "1.0"
 milestone: v1.2
 milestone_name: SuperGenius Cold-Storage Archive Integration
 status: planning
-last_updated: "2026-11-14T02:41:08.053Z"
+current_phase: 13
+current_phase_name: Bootstrap Branch Merge & Composition Baseline
+last_updated: "2026-11-14T03:00:00.000Z"
 last_activity: 2026-11-13
 progress:
-  total_phases: 0
+  total_phases: 7
   completed_phases: 0
   total_plans: 0
   completed_plans: 0
@@ -21,37 +23,42 @@ See: `.planning/PROJECT.md` (workstream sections); `.planning/workstreams/rocksd
 
 **Core value:** Older CRDT/IPLD blocks can spill from RocksDB hot state to durable, CID-verified object storage through a shared thirdparty static library (`sgns-blockstore`) consumable by both SuperGenius and genius-tube — no RocksDB remote-FS integration, no SDK/SuperGenius types in the public API, and local eviction is never a CRDT deletion.
 
-**Current focus:** v1.1 shipped & archived 2026-11-10 — planning next milestone (`/gsd-new-milestone`)
+**Current focus:** v1.2 "SuperGenius Cold-Storage Archive Integration" — roadmap created (Phases 13-19, 20/20 requirements mapped); cold storage becomes the authoritative archive tier of the append-only CRDT ledger — evidence, not bytes, decides whether cold-resident data is live history or inert
 
 ## Current Position
 
-Phase: Not started (defining requirements)
-Plan: —
-Status: Defining requirements
-Last activity: 2026-11-13 — Milestone v1.2 started
+Phase: 13 — Bootstrap Branch Merge & Composition Baseline (first of 7 v1.2 phases; numbering continues from v1.1's Phase 12)
+Plan: — (not yet planned)
+Status: Planning — v1.2 roadmap created 2026-11-13
+Last activity: 2026-11-13 — v1.2 roadmap created (Phases 13-19, 20/20 requirements mapped)
 
 ## Progress
 
-**Phases Complete:** 7/7 (v1.1) · v1.0 archived 2026-10-22 · v1.1 archived 2026-11-10
+**Phases Complete:** 0/7 (v1.2) · v1.0 archived 2026-10-22 · v1.1 archived 2026-11-10
 
-All v1.1 phases shipped — see [milestones/v1.1-ROADMAP.md](milestones/v1.1-ROADMAP.md) for the completion record.
+v1.2 Phases 13-19 defined — see [ROADMAP.md](ROADMAP.md). v1.1 completion record: [milestones/v1.1-ROADMAP.md](milestones/v1.1-ROADMAP.md).
 
 ## Accumulated Context
 
-**Key decisions (from v1.1 research SUMMARY, 2026-10-22):**
-- BLOCKING: CRDT DAG blocks are CIDv1/DAG_CBOR/blake2b-256 but the v1.0 library gates on sha-256 → Phase 6 widens additively (blake2b widening preferred over dual-CID mapping; conformance kit + guards extended)
-- Second library gap: MinioS3Client not installed → installed `OpenMinioS3Client` factory (Phase 6)
-- Single integration seam: the IpfsDatastore at globaldb.cpp:329 — one decorator delivers spill + fallback + serving with zero changes to GraphsyncDAGSyncer/CrdtDatastore/ipfs-lite
-- Spill discipline: journal-then-drain — never inline S3 on the dagMutex_-held write path; drainer on its own thread mirroring the backup-loop pattern
-- GC shape: local-tombstone/eviction-only for v1.1 (dispose bytes past retention, bounded disposed-CID markers, tombstones/metadata never purged; epoch-based deletion compaction is v2+)
-- Durability bar: flush-gated (s3d /objects/flush + pendingObjects==0) before local bytes are evictable; ObjectStoreAccepted alone leaves the only copy in s3d staging
-- Config: crdt_config.json blockstore section canonical + SGNS_BLOCKSTORE_S3_* env overrides; blank = disabled = today's behavior; malformed = loud failure
-- Open planner decisions carried in ROADMAP research notes: config section naming, backpressure policy, retention age evidence (priority-height vs wall-clock), cold-serve latency budget, mobile superbuild leg coverage, GlobalDB backup vs cold-store dir
+**Key decisions (from v1.2 research SUMMARY, 2026-11-13):**
+- Governing principle: evidence outranks bytes, node-locally — prune markers decide serve-vs-refuse and restore-vs-skip; cold bytes alone are never authoritative
+- Governing invariants: never erase hot what is not Durable in cold; node-local prune evidence is terminal; seals are never deleted by any path; collectibility + the GC walk-gap exemption are two halves of one rule, shipped together
+- Zero new dependencies — all v1.2 work composes pinned mechanisms (RocksDB 9.4.0, s3d v0.2.1, vendored ipfs-lite-cpp unedited, minio-cpp 1.0.0); no compaction-filter deletion, no DeleteRange
+- Two discovered bugs v1.2 must fix (research-verified): the cold-chain resurrection gap (`FetchNodeFromColdStorage` consults no prune evidence) + the forced-walk GC-evicted conflation (`!retained && sealed` treats GC-evicted as pruned)
+- Durability gate lives in `TxPruner::RunCycle`'s block-group filter, NOT `PruneEligibility::Evaluate` (contractually pure; develop Phase 17 landing stays a merge, not a rewrite)
+- Pruner composition: sequence + close the LRU window — never unify the two pruners; both idempotent on absent keys; reverse order safe by construction
+- Frozen constraint: cold collectibility is POLICY-ONLY this milestone (sgns-blockstore v1 has no Remove); the poisoned-GC-triangle constraint is honored by construction
+- External gates: the Phase 13 merge gates ALL walk work; develop Phase 17 evaluator shape gates Phase 14 executability (keep the cold conjunct a separate predicate argument)
+- Converged phase order: merge (13) → durability gate (14) → evidence-serving + walk fix (15) → pruner×GC hardening (16) → seals measurement (17) → policy/downgrade capstone (18) → fault-race + 3-platform CI capstone (19)
+- SEAL probe feeds Phase 15's walk bounds (probe = first plan of Phase 17; the recorded decision closes citing real walk-recovery numbers)
+
+v1.1 key decisions archived with the milestone (`milestones/v1.1-ROADMAP.md` + phase artifacts).
 
 **Todos:**
-- None — v1.1 archived; start the next milestone with `/gsd-new-milestone`
+- Next: `/gsd-plan-phase 13` (Bootstrap Branch Merge & Composition Baseline)
+- Phase 14 planning needs `--research-phase` (durability monotonicity — `AdvanceDurabilityOnce` code read; develop Phase 17 landing status)
 
-**Blockers:** None
+**Blockers:** None — watching two external gates: develop Phase 17/20 timing (composition-vs-rebase if they land mid-milestone) and the bootstrap-merge conflict surface (MEDIUM confidence until the merge executes)
 
 ### Quick Tasks Completed
 
@@ -61,10 +68,10 @@ All v1.1 phases shipped — see [milestones/v1.1-ROADMAP.md](milestones/v1.1-ROA
 
 ## Session Continuity
 
-**Last session:** 2026-11-11T00:31:29.075Z
+**Last session:** 2026-11-13
 
-**Stopped At:** Phase 12 VERIFIED - UAT 17/17 pass (CI 42905264387 accepted as evidence per user ruling) + 12-VERIFICATION.md PASSED 4/4 (TEST-02). Phase 12 gate closed; next: complete-milestone
-**Resume File:** .planning/workstreams/rocksdb-backup/phases/12-integration-hardening-fault-races-fresh-clone-proof/12-VERIFICATION.md
+**Stopped At:** v1.2 roadmap created — Phases 13-19, 20/20 requirements mapped, ordering constraints honored (merge gate → durability gate → evidence-serving/walk → pruner×GC → seals → policy capstone → fault-race/CI capstone). Next: `/gsd-plan-phase 13`
+**Resume File:** .planning/workstreams/rocksdb-backup/ROADMAP.md
 
 ## Performance Metrics
 
@@ -118,4 +125,4 @@ Items acknowledged and deferred at milestone close, most recent first:
 
 ## Operator Next Steps
 
-- Start the next milestone with /gsd-new-milestone
+- `/gsd-plan-phase 13` — Bootstrap Branch Merge & Composition Baseline (gates all v1.2 recovery/walk work)

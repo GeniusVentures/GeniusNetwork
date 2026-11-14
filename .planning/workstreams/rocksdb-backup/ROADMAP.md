@@ -4,6 +4,7 @@
 
 - ✅ **v1.0 CRDT Cold-Storage BlockStore Library (Sia s3d backend)** — Phases 1-5, 21/21 requirements (shipped 2026-10-22) — archive: [milestones/v1.0-ROADMAP.md](milestones/v1.0-ROADMAP.md)
 - ✅ **v1.1 SuperGenius Cold-Storage Integration & CRDT Garbage Collection** — Phases 6-12, 21 plans, 3/3 TEST requirements (shipped 2026-11-10) — archive: [milestones/v1.1-ROADMAP.md](milestones/v1.1-ROADMAP.md)
+- 🚧 **v1.2 SuperGenius Cold-Storage Archive Integration** — Phases 13-19, 20 requirements (started 2026-11-13)
 
 <details>
 <summary>✅ v1.0 CRDT Cold-Storage BlockStore Library (Phases 1-5) — SHIPPED 2026-10-22</summary>
@@ -39,9 +40,110 @@ Milestone audit (passed — 3/3 requirements, 7/7 phases, 5/5 integration seams,
 
 ## Phases
 
-_No active phases — v1.1 archived 2026-11-10. Start the next milestone with `/gsd-new-milestone`._
+**Phase Numbering:** Continuous across milestones — v1.0: Phases 1-5 · v1.1: Phases 6-12 · v1.2: Phases 13-19.
 
-Deferred signals carried forward (see STATE.md `## Deferred Items` and the v1.1 audit's tech-debt section): soak-scale GC eviction-storm hardening; TEST-03 MinIO-binary live leg (runbook); permanent cmake.yml ON-leg baseline (activates at develop merge).
+- [ ] **Phase 13: Bootstrap Branch Merge & Composition Baseline** - Merge `fix/trust-genesis-bootstrap` into `dev_coldstorage_additions` with the full existing suite green — the gate for all v1.2 recovery/walk work
+- [ ] **Phase 14: Durability-Gated TxPruner Eligibility** - A cold-enabled node never erases hot data that is not evidence-Durable in cold — fail closed, TOCTOU re-checked under the compose lock, gate composes with (not into) the eligibility evaluator
+- [ ] **Phase 15: Evidence-Aware Cold Serving & Forced-Walk Recovery** - Evidence outranks bytes on every path — fixes the cold-chain resurrection gap and the forced-walk GC-evicted conflation; hermetic tri-state evidence fakes land here
+- [ ] **Phase 16: TxPruner × GC Composition Hardening** - Close the stale-LRU erase window, prove the TxPruner×GC interleave matrix, rule the disposal-starvation interplay fail-safe (under-prune)
+- [ ] **Phase 17: Seal Growth Measurement & Decision** - Measure seal growth at representative workloads (probe first — it feeds Phase 15's walk bounds) and record the accept-vs-redesign decision with capacity math
+- [ ] **Phase 18: Role Downgrade, Collectibility Policy & GC Walk-Gap Exemption** - The two-halves rule recorded as one policy (cold permanent this milestone + GC walk-gap exemption); archive→light downgrade E2E-proven
+- [ ] **Phase 19: Cross-Feature Fault-Race Matrix & Three-Platform CI Capstone** - Induced failures across erase × serve × recovery cannot resurrect, partially validate, or lose last copies; recovery-walk suites green on Windows/macOS/Linux with cold storage ON
+
+*Deferred signals carried forward (see STATE.md `## Deferred Items` and the v1.1 audit's tech-debt section): soak-scale GC eviction-storm hardening; TEST-03 MinIO-binary live leg (runbook); permanent cmake.yml ON-leg baseline (activates at develop merge).*
+
+## Phase Details
+
+### Phase 13: Bootstrap Branch Merge & Composition Baseline
+**Goal**: The `fix/trust-genesis-bootstrap` forced-walk work lands on `dev_coldstorage_additions` as a pure merge — no cold-storage/recovery logic re-derived — establishing the merged-line baseline on which every recovery/walk requirement becomes testable.
+**Depends on**: Nothing (first v1.2 phase; builds on shipped v1.1 phases 6-12)
+**Requirements**: RECOVER-01
+**Success Criteria** (what must be TRUE):
+  1. `fix/trust-genesis-bootstrap` is merged into `dev_coldstorage_additions` and pushed — conflicts resolved per the `GeniusNode.cpp` merge checklist, recovery logic composed (not rebuilt).
+  2. The full existing test suite runs green on the merged line — zero regressions against the pre-merge baseline.
+  3. The post-merge verification gate passes observably: 4-term `HasBlock`, cold-chained `GetNodeWithoutRequest`, GATE-03 seal permanence intact, and cold-before-peer fetch ordering observable.
+  4. A composition-only grep gate proves no recovery/bootstrap logic was re-derived or rewritten in the merge (checklist + evidence committed).
+**Plans**: TBD
+
+### Phase 14: Durability-Gated TxPruner Eligibility
+**Goal**: A cold-enabled node's TxPruner erases hot data only when every constituent block is evidence-Durable in cold — the gate fails closed, survives durability races, and composes with (not conflicts with) develop's Phase 17 evaluator.
+**Depends on**: Phase 13 (soft — implementation parallel-startable on different files; final test evidence on the merged line)
+**Requirements**: PRUNE-01, PRUNE-02, PRUNE-03
+**Success Criteria** (what must be TRUE):
+  1. A TxPruner erase proceeds only when every constituent block of the transaction is `Durable` in cold; NoRecord, Pending, Accepted, and Unreadable journal states all defer the erase loudly (fail closed — deferrals surface as a `cold_deferred_groups` counter, not a failure reason, so the next cycle re-evaluates).
+  2. An induced durability-state regression between evaluation and erase-commit cannot enable a destroying erase — evidence is re-checked at erase-commit time under the compose lock (TOCTOU counter-test proves the last copy is never destroyed).
+  3. The gate is injected at `RunCycle`'s cycle/group filter while `PruneEligibility::Evaluate` stays contractually pure — proven by a composition test in which the cold-durability conjunct composes with the evaluator (develop Phase 17 landing remains a merge, not a rewrite).
+  4. On a node with no cold tier, TxPruner behavior is unchanged from today (gate vacuous — `prune_eligible(tx) AND (no_cold_tier OR cold_durable(cid))`).
+**Plans**: TBD
+**Research flag**: needs `--research-phase` — durability monotonicity (`AdvanceDurabilityOnce`: can any path regress `Durable`→`Accepted` post-merge?) + develop Phase 17 landing status.
+
+### Phase 15: Evidence-Aware Cold Serving & Forced-Walk Recovery
+**Goal**: Evidence outranks bytes on every read path — serving and the forced walk distinguish pruned (terminal refusal) from evicted (restorable from cold), fixing both research-discovered bugs, with hermetic evidence-aware fakes backing every suite.
+**Depends on**: Phase 13, Phase 14
+**Requirements**: SERVE-01, SERVE-02, SERVE-03, SERVE-04, RECOVER-02, RECOVER-03, RECOVER-04, TEST-01
+**Success Criteria** (what must be TRUE):
+  1. A request for a TxPruner-erased CID is answered with pruned semantics even when cold bytes still exist — the cold chain (Rehydrate path) consults prune evidence before serving; no resurrection of deliberately erased bytes (kills the cold-chain resurrection gap).
+  2. A request for a GC-evicted CID (no prune evidence) on a cold-enabled node is served through the cold chain and re-warmed — evict ≈ DETACH; the node stays an archive node, proven by masquerading counter-tests in both directions.
+  3. The three-way answer (pruned / evicted-restorable / not-found) is consistent across `HasBlock`, `getNode`, and the cold chain via a single role-aware evidence predicate owned by GlobalDB — and pruned stays distinct from not-found at the protocol surface so requesters fail over to serving archive nodes correctly.
+  4. The forced walk restores GC-evicted ancestors from cold (never conflating GC-evicted with pruned), never resurrects TxPruner-erased elements (`CanRestoreElement` composition is terminal), bounds peer failover per-CID, and aborts-never-skips on walk-gaps — no infinite failover loops, no silently-validated partial history.
+  5. Hermetic evidence-aware test fakes model the PrunedLookup tri-state (present / pruned / not-found) and back every SERVE / RECOVER / PRUNE suite without live services — with the refusal matrix running as a product: {hot} × {cold} × {evidence: none/PRUNED/malformed} × {serve, walk visit, erase-gate}.
+**Plans**: TBD
+**Research flag**: light/optional — `/prune/blk` marker staging mechanism (widen `EraseEntry`'s `extra_entry` vs. staging via `TransactionManager`).
+
+### Phase 16: TxPruner × GC Composition Hardening
+**Goal**: Concurrent TxPruner and GC passes are proven safe on the gated, evidence-aware line — sequenced, not unified — with the stale-LRU window closed, interleavings matrix-proven, and the disposal-starvation interplay ruled fail-safe.
+**Depends on**: Phase 14, Phase 15 (the gate defines the disposal interplay; marker infrastructure from Phase 15)
+**Requirements**: COMP-01, COMP-02, COMP-03
+**Success Criteria** (what must be TRUE):
+  1. `EraseEntry`'s post-commit cleanup is hardened to GC's parity — a concurrent `GrabCIDBlock` insert between compose-start and commit cannot leave a stale LRU entry (post-commit `DeleteCIDBlock` closes the window).
+  2. An interleave matrix crossing concurrent TxPruner and GC passes — overlapping set rows, seal rows, and the block LRU — proves both idempotent on absent keys, seals untouched by both, and both erase orders converging to one fixed point.
+  3. The GC-disposal starvation interplay (journal record deleted → gate reads NoRecord while remote S3 still serves) is ruled and documented with its fail-safe direction asserted by test: the observable outcome is under-prune, never destruction of the last copy.
+**Plans**: TBD
+
+### Phase 17: Seal Growth Measurement & Decision
+**Goal**: Seal growth at representative workloads is measured and an explicit accept-hot-growth-vs-future-design decision is recorded with capacity math — measure-and-decide only; no seal spill/redesign this milestone.
+**Depends on**: Phase 15 (its walk-bound defaults consume this phase's probe numbers), Phase 16
+**Requirements**: SEAL-01
+**Success Criteria** (what must be TRUE):
+  1. Seal growth is measured at representative workloads — row counts + bytes per seal, enumeration cost at 10⁶/10⁷/10⁸ seals scale, and recovery-walk ancestry density — with committed evidence.
+  2. The measurement probe runs as this phase's first plan and its numbers feed the walk-bounds work: Phase 15's walk-bound defaults are validated (or re-tuned) against the probe's real numbers — the recorded dependency is honored.
+  3. An explicit decision — accept hot growth vs. future design — is documented with capacity math citing real walk-recovery numbers; any spill/compaction/sidecar redesign is a measured trigger deferred to a future milestone.
+**Plans**: TBD
+
+### Phase 18: Role Downgrade, Collectibility Policy & GC Walk-Gap Exemption
+**Goal**: Cold collectibility ships as the two-halves rule — permanent-cold-this-milestone policy and the GC walk-gap evidence exemption recorded together — and an archive→light downgrade is E2E-proven as the composed flow.
+**Depends on**: Phase 14, Phase 15 (the downgrade E2E exercises exactly gate + refusal + cold availability), Phase 17
+**Requirements**: POLICY-01, POLICY-02
+**Success Criteria** (what must be TRUE):
+  1. A recorded policy decision documents: cold objects are permanent this milestone, the permanent-once-written invariant, collectibility machinery as an sgns-blockstore v2 contract ask (frozen v1 forbids Remove), and — in the same record — the GC walk-gap evidence exemption (what may be absent = what may be collected; no collection can ever land without the exemption).
+  2. An archive→light downgrade is E2E-proven: after downgrade the node prunes under light rules, and the history it pruned remains fetchable from other archive nodes.
+  3. Existing Durable records from the archive era satisfy the prune gate after downgrade — no re-drain, no migration.
+  4. The downgrade timeline is observable end-to-end: markers accumulate post-downgrade, refusal activates, and a config interlock prevents silent downgrade (operator-initiated, checklist-gated).
+**Plans**: TBD
+
+### Phase 19: Cross-Feature Fault-Race Matrix & Three-Platform CI Capstone
+**Goal**: The composed v1.2 system — erase × serve × recovery — is disproof-proven under induced failure at every phase boundary, and recovery-walk suites run green on all three platform CI lanes with cold storage ON.
+**Depends on**: Phases 13-18 (all semantics settled)
+**Requirements**: TEST-02, TEST-03
+**Success Criteria** (what must be TRUE):
+  1. The extended fault-race matrix (extending v1.1's 13-case matrix) crosses erase × serve × recovery — induced failures at each phase boundary cannot produce resurrection, partial-history validation, or lost last copies (`VALUE_PRESENT_INVARIANT_VIOLATION` stays loud); race tests are barrier-driven (no sleeps) and red-first proven, with env-knob reproducibility on every nondeterministic test.
+  2. Recovery-walk suites run green on Windows, macOS, and Linux CI lanes — fresh-clone, cold storage ON, tier labels intact.
+  3. The Windows/macOS walk-lane portability list is documented (CloudflareWARP adapter = environmental, distinct per-node base paths, poll predicates, gtest filter grammar) so the three-platform lanes stay reproducible run over run.
+**Plans**: TBD
+
+## Progress
+
+**Execution Order:** Phases 13 → 14 → 15 → 16 → 17 → 18 → 19 (Phase 14 implementation may start in parallel with Phase 13 — different files; test evidence finalizes on the merged line)
+
+| Phase | Plans Complete | Status | Completed |
+|-------|----------------|--------|-----------|
+| 13. Bootstrap Branch Merge & Composition Baseline | 0/TBD | Not started | - |
+| 14. Durability-Gated TxPruner Eligibility | 0/TBD | Not started | - |
+| 15. Evidence-Aware Cold Serving & Forced-Walk Recovery | 0/TBD | Not started | - |
+| 16. TxPruner × GC Composition Hardening | 0/TBD | Not started | - |
+| 17. Seal Growth Measurement & Decision | 0/TBD | Not started | - |
+| 18. Role Downgrade, Collectibility Policy & GC Walk-Gap Exemption | 0/TBD | Not started | - |
+| 19. Cross-Feature Fault-Race Matrix & Three-Platform CI Capstone | 0/TBD | Not started | - |
 
 ---
-*Roadmap created: 2026-10-19 (v1.0) — v1.1 phases added 2026-10-22, shipped & archived 2026-11-10 — rocksdb-backup workstream*
+*Roadmap created: 2026-10-19 (v1.0) — v1.1 phases added 2026-10-22, shipped & archived 2026-11-10 — v1.2 phases added 2026-11-13 — rocksdb-backup workstream*
