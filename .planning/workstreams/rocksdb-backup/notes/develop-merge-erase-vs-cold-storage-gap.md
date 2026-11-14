@@ -1,31 +1,43 @@
-# Seed: develop-merge exposed erase (v1.2 erasure) × cold-storage retention gap
+# Seed: Cold Storage as the Archive Tier — next milestone framing (post develop-merge)
 
-Date: 2026-11-12
-Context: `origin/develop` merged into SuperGenius `dev_blockstore` (merge `55fca03f8`, 275 commits; follow-up `7961ec264`). Recorded as a next-milestone seed because v1.1 is closed and neither feature knew about the other when designed.
+Date: 2026-11-13 (supersedes the 2026-11-12 gap note; deleted and rewritten after discussion)
+Context: `origin/develop` merged into SuperGenius `dev_blockstore` (merge `55fca03f8` + keep-seal `7961ec264`, root bump `53a77a7`). v1.1 is closed; this note captures the agreed model and candidate work for the next milestone.
 
-## What develop added (their v1.2 erasure work, phases 16-18 in SuperGenius/.planning)
+## The tiered-node model (user-confirmed)
 
-- `GlobalDB::EraseEntry` + `GraphsyncDAGSyncer::StageBlockRemoval` + `GlobalDB::Error::POST_COMMIT_ERASE_ANOMALY` — authoritative CRDT erase with post-commit seal re-check.
-- Seal markers: vendored `RocksdbDatastore::seal()/is_sealed()` (thirdparty/ipfs-lite-cpp `datastore_rocksdb.cpp`), key format `<cid>sealed`. Semantics per their header: seal is the traversal terminator preventing re-fetch storms; **erasing a block must never erase its seal**.
-- GATE-03 (`EraseSurfaceGateTest.SealKeyHasNoProductionHome` in `test/src/crdt/crdt_erase_test.cpp`): the quoted `"sealed"` literal must have NO production home in SuperGenius `src/` — all seal access must flow through the sanctioned `markResolved`/`isResolved` API (which forward to seal/is_sealed).
+Two node roles, one append-only global ledger:
 
-## What we shipped in v1.1 (cold storage)
+- **Archive/cold nodes** — configured with cold storage (`blockstore` section, v1.1). They hold complete history forever: hot RocksDB working set + S3/object cold tier. This IS the ledger ("essentially a blockchain"). They never erase; the cold tier is never a deletion target.
+- **Light/pruned nodes** — no cold storage. They may purge data irrelevant to their own ledger (TxPruner). Example: gained GNUS → spent it → gained more — the intermediate spent-history knowledge may eventually be purged locally. Pruning is a LOCAL operation; develop explicitly rejected CRDT tombstone deletion because it would erase history on archive nodes too.
 
-- GC eviction (`ColdStorageManager`) previously deleted `<cid>sealed` rows at eviction and hand-constructed the key with a `"sealed"` literal in `ColdStorageManager.cpp`.
-- S3/object storage retains block copies after hot eviction (spill-on-write); `disposed_cids` CF tracks library-side disposal.
+**Availability invariant:** anything a light node prunes must always be obtainable from archive/cold nodes (Bitcoin BIP-159 precedent — SURV-02/03: pruned nodes answer "history pruned" ≠ not-found; full nodes serve).
 
-## Resolution already applied (commit `7961ec264` on `dev_blockstore`)
+## What develop actually shipped (their v1.2 erasure work, phases 16–20)
 
-- GC eviction now RETAINS seal markers (keep-seal, matching develop's invariant: an evicted-then-re-delivered block stays "already processed").
-- Seal reads/writes in `ColdStorageManager` go through the sanctioned `markResolved`/`isResolved` path; no quoted `"sealed"` literal remains in production `src/` — GATE-03 passes.
-- Verified: `cold_storage_gc_test` 22/22 (keep-seal assertions), `crdt_test` 47/47 (all erase behavior + gate tests), `cold_storage_gc_retrievability_test` 4/4, `cold_storage_fallback_test` 21/21 (incl. SC4 seal-preservation cases).
+- `EraseEntry` / `StageBlockRemoval` / `POST_COMMIT_ERASE_ANOMALY` = TxPruner local hot erase, NOT network erase. Phases 16/18/19 complete on develop; 17 (eligibility dry-run, spend-recency window) and 20 (disk reclamation proof) pending.
+- Seals (`<cid>sealed` ≡ `markResolved`/`isResolved`) are asserted retained through every erase — the permanent "existed and was processed" record. GATE-03 bans `"sealed"` literal in production src/.
+- Pruning evidence is node-local (`/prune/` markers, `PrunedLookup` tri-state) and authoritative for THAT node only.
 
-## OPEN GAP for next milestone requirements
+## fix/trust-genesis-bootstrap branch (likely in develop soon — analyzed at d556f86de)
 
-1. **Erase → cold propagation**: develop's erase removes hot blocks only. A cold-enabled node that already spilled a block keeps the S3 copy — erased content remains recoverable via cold read/re-warm. Need a policy bridging `EraseEntry` to cold disposal (interaction with `disposed_cids`, drainer durability gates, and the never-inline-S3-under-`dagMutex_` rule).
-2. **Seal lifecycle on cold-evicted blocks**: seals now stay in hot RocksDB forever (by design, both sides). Assess unbounded seal-row growth vs. spilling seals (they are not DAG blocks; the library gates on CID-shaped keys) — may need a dedicated answer rather than blockstore spill.
-3. **Pruned-mesh × cold-read interplay**: develop's erase tests exercise refusal-failover and pruned-history serving; cold-enabled nodes answer `HasBlock` via the cold term first. Verify refusal semantics (`pruned` responses) are not bypassed when the serving node can still fetch the block from cold storage.
+- **Validated bootstrap history recovery**: opt-in bounded "forced walk" over retained sealed FullNode ancestry; fetch = `retained ? GetStoredNode : getNode` — `getNode` is exactly our Phase-9 cold-read seam, so on a cold node the walk pulls missing parents from S3 before peers, offline-capable, CID-verified. Composition with v1.1 is nearly free: verify + test, don't build.
+- **`CanRestoreElement`** (PruneEligibility): refuses restoration when local prune evidence says PRUNED, even if bytes come back. This is the pruned-vs-evicted pivot: cold bytes + no prune evidence = restorable history (archive semantics); prune evidence = inert bytes (light semantics). Local evidence decides; cold is never authoritative on its own.
+- Merge forecast vs dev_blockstore: only `GeniusNode.cpp` conflicts; all CRDT seams auto-merge.
+- Seals gain a second job: they are the recovery's ancestry index — raises the weight of the seal-growth question below.
+
+## Resolution already applied on dev_blockstore (commit `7961ec264`)
+
+GC eviction now RETAINS seals; seal access via sanctioned `markResolved`/`isResolved` only; GATE-03 passes. Verified: gc 22/22, crdt_test 47/47, retrievability 4/4, fallback 21/21.
+
+## Candidate milestone work (order = suggested priority)
+
+1. **Durability-gated TxPruner eligibility on cold nodes**: hot erase permitted only when the block is Durable in cold (v1.1 `kEvictionDurabilityGate` shape: Durable + Unreadable). "Never erase what isn't in cold."
+2. **Archive serving from cold**: pruned-hot + cold-resident + no prune evidence → serve via re-warm (node IS an archive node, not masquerading). Compose with the forced walk: missing GC-evicted parents restore from cold; missing TxPruner-erased parents restore NOTHING (evidence refuses).
+3. **TxPruner × v1.1 GC composition**: both pruners have overlapping hot-cleanup paths (set rows `/crdt/s|t/k`, seals, `DeleteCIDBlock` LRU). Unify or sequence them; seals are NEVER deleted by either.
+4. **Cold-tier collectibility policy**: today cold objects live forever (correct for archive role). Decide whether cold data for LOCALY-pruned transactions can ever be collected on a node that later stops being an archive node (role downgrade), or is permanent once written.
+5. **Seal growth/capacity**: seals accumulate hot forever, O(all processed CIDs), and are now also the recovery index. Assess compaction/spill options (they are not DAG blocks; blockstore spill doesn't apply naturally) or accept + document.
+6. **Light-node ledger-irrelevance policy**: the gained→spent→gained purge example maps to develop's Phase 17 eligibility (spend-recency window). Confirm composition when 17 lands; cold nodes may want their own (stricter/never) policy knob.
 
 ## Environmental note (not a gap)
 
-Local Windows network-dependent suites (globaldb_integration/erase-redelivery, resurrection full-wire) currently fail "nodes did not connect" — the CloudflareWARP adapter (100.96.0.1) is picked as the interface address and dials to it hang. Reproduced identically on PRE-merge code (A/B verified 2026-11-12); develop's Windows CI green 12h prior. Disconnect WARP before running pubsub-dependent suites locally.
+Local Windows network-dependent suites fail "nodes did not connect" — CloudflareWARP adapter (100.96.0.1) picked as interface address; dials hang. A/B-verified identical on pre-merge code (2026-11-12); develop Windows CI green. Disconnect WARP before running pubsub suites locally.
