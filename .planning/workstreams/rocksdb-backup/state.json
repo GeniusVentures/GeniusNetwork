@@ -1,12 +1,48 @@
 {
   "contract": "1.0.0",
   "flavor": "core",
-  "milestone": "v1.2",
-  "phases": [],
+  "milestone": "v1.2 — SuperGenius Cold-Storage Archive Integration",
+  "phases": [
+    {
+      "number": "13",
+      "name": "Bootstrap Branch Merge & Composition Baseline",
+      "status": "pending"
+    },
+    {
+      "number": "14",
+      "name": "Durability-Gated TxPruner Eligibility",
+      "status": "pending"
+    },
+    {
+      "number": "15",
+      "name": "Evidence-Aware Cold Serving & Forced-Walk Recovery",
+      "status": "pending"
+    },
+    {
+      "number": "16",
+      "name": "TxPruner × GC Composition Hardening",
+      "status": "pending"
+    },
+    {
+      "number": "17",
+      "name": "Seal Growth Measurement & Decision",
+      "status": "pending"
+    },
+    {
+      "number": "18",
+      "name": "Role Downgrade, Collectibility Policy & GC Walk-Gap Exemption",
+      "status": "pending"
+    },
+    {
+      "number": "19",
+      "name": "Cross-Feature Fault-Race Matrix & Three-Platform CI Capstone",
+      "status": "pending"
+    }
+  ],
   "next": {
-    "command": "/gsd:discuss-phase",
-    "label": "Discuss the first phase",
-    "reason": "Project initialized — plan your first phase"
+    "command": "/gsd:progress --next",
+    "label": "Advance to the next step (plan phase 13)",
+    "reason": "Phase 13 of 7 — needs a plan"
   },
-  "updated_at": "2026-11-14T02:41:08.055Z"
+  "updated_at": "2026-11-16T20:38:18.508Z"
 }
