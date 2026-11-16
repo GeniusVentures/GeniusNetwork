@@ -446,11 +446,11 @@ Select-String -Path <run-log> -SimpleMatch 'cold read: rehydrated CID','cold rea
 | A3 | Debug-level logging is obtainable in the D-12 scenario (the "rehydrated" line is `logger_->debug`) | SC3/D-12 | If the scenario harness cannot raise log level, fall back to the fallback-suite cases that assert chain order in-process; flag in checklist |
 | A4 | The branch's walk tests configure their own scenarios (no committed config change needed for them to exercise the walk) | SC3 | Their `BootstrapRecoverySettingsAreLoadedStrictlyFromSgnsConfig` + `ForcedBootstrapWalk*` names strongly imply self-contained fixtures; verified only by name/branch-diff, not by reading test bodies |
 
-## Open Questions
+## Open Questions (RESOLVED)
 
-1. **D-07 baseline acceptance** — no full-suite run on exactly `7961ec264` is on record (only filtered suites + Nov 3-4-era binaries). Recommendation: fresh pre-merge full run (cheap vs. the gate's stakes); executor discretion criteria should require: same tree, same configure, complete scope.
-2. **Full-suite runtime on the Release tree** — not recorded in artifacts read. Recommendation: capture wall-clock in the SC2 record; use it for Phase 19 planning.
-3. **Walk-test Windows behavior post-merge** — the branch's `node_startup_test` walk cases were validated on their line; their behavior on the merged line with cold storage compiled ON is exactly what SC2/SC3 observes. If any flake, apply the `local_trust_setup.hpp` migration kit precedent (canonical ref) before considering gating.
+1. **D-07 baseline acceptance** — (RESOLVED → implemented 13-01 Task 3) No full-suite run on exactly `7961ec264` is on record (only filtered suites + Nov 3-4-era binaries). Resolution: the fresh pre-merge full run is planned as 13-01 Task 3, with the executor-discretion criteria recorded (same tree, same configure, complete scope) AND binary provenance established — HEAD verified by rev-parse then an incremental Release rebuild before the run, so the cached Nov 3-4 binaries never serve as the denominator.
+2. **Full-suite runtime on the Release tree** — (RESOLVED → implemented 13-01 Task 3 + 13-03 Task 1) Not recorded in artifacts read. Resolution: both SC2 legs capture wall-clock duration (Get-Date bracket around each ctest invocation) into their task/plan SUMMARY records — SUMMARY-only per D-08; the numbers feed Phase 19 planning.
+3. **Walk-test Windows behavior post-merge** — (RESOLVED → implemented 13-03 Task 2) The branch's `node_startup_test` walk cases were validated on their line; their behavior on the merged line with cold storage compiled ON is exactly what SC2/SC3 observes. Resolution: walk-case outcomes are recorded individually in the SC3 item-2 row; a trust-gate fixture failure routes through the `local_trust_setup.hpp` migration kit precedent (canonical ref) before any gating consideration, and a genuine walk-logic failure escalates per D-14.
 
 ## Environment Availability
 
