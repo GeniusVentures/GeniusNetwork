@@ -1,6 +1,6 @@
 # 13-MERGE-CHECKLIST — Composition Merge of fix/trust-genesis-bootstrap (RECOVER-01 / D-13)
 
-Status: **PREDICTED** — authored pre-merge per D-13; amended as-run by 13-02/13-03/13-04
+Status: **COMPLETE 2026-11-16** — merge executed and proven (13-02), SC2 zero-regression + SC3 evidence landed (13-03), gates re-run at final HEAD and checklist committed (13-04). Evidence tables below. The D-04 push section's as-run verification line is completed after the user push.
 
 Composes `fix/trust-genesis-bootstrap` (validated bootstrap history recovery) onto
 `dev_coldstorage_additions` (the v1.2 cold-storage line) as a **pure composition** —
@@ -224,9 +224,10 @@ Expected: **3 matches**. Plus review `git diff d556f86de HEAD -- src/crdt/impl/g
 
 **Pre-leg record (13-01 Task 3, CLOSED 2026-11-16):** full suite ran on binaries freshly rebuilt at `7961ec264` (5m44s incremental; provenance verified) — **167 total, 166 passed, 1 failed**: `cold_storage_resurrection_test` (`Resurrect_TrimmedMarker_TombstoneDominanceKeepsValueAbsent`), deterministic in isolation. Root cause (user-verified against CI history — last green run `9994718ce` Nov 10; both behavior-changing commits `55fca03f8`+`7961ec264` landed Nov 12 with the suite never run after): the keep-seal retention makes the seal marker the walk terminator, so the case's S3-refetch evidence-wait can never fire — a stale test expectation, not a product regression. **User disposition (b): fix the test on the baseline** → `4ae8a9a4e` rewrites the case to the retention contract (mirrors the marker-present sibling: zero S3 Gets, no re-journal, value stays absent). Re-verification at `4ae8a9a4e`: resurrection suite green (all cases), Tier-1 lane **12/12 exit 0**. **User-approved composed denominator** (full re-run declined as unnecessary — one test file changed, all other binaries byte-identical): 166 carried results + the fixed target green at the tip. The `requires_foundry` family PASSED locally both legs' scope — the shared exclusion set is EMPTY. WARP adapter ABSENT. Pre-leg wall-clock: **33m34s** (serial, 2014.41s ctest total). The pre-leg comparison log (`%TEMP%\p13-sc2-pre-full.log`) is the `7961ec264` run; its single failed name is the already-root-caused-and-fixed case, so the 13-03 subset gate compares post-leg failures against a denominator whose only entry is fixed on the merge line.
 
-### 7.4 Status flip (13-04)
+### 7.4 Status flip (13-04) — CLOSED 2026-11-16
 
-- Status: **PREDICTED** (flips to COMPLETE by 13-04 Task 1)
+- Fresh final-HEAD gate re-runs (2026-11-16, verbatim): fresh merge-tree OID regenerated deterministically `08bffc1e87a268132c28bfe45d37d244a99747a1`; D-15a assertion-1 `d15a1-final-exit=0` (no output); D-15b `d15b-final-exit=0`; symbol check `symbol-count=3`; parents `4ae8a9a4e` + `d556f86de`; GATE-03 quote-safe grep `gate03-final-matches=0`. Assertion-2 review artifact unchanged from §7.2 (same OID, same HEAD).
+- Status flipped **PREDICTED → COMPLETE** with this record.
 
 ## 8. D-04 push checkpoint (filled by 13-04 — user actions)
 
