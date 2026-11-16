@@ -199,12 +199,21 @@ Expected: **3 matches**. Plus review `git diff d556f86de HEAD -- src/crdt/impl/g
 - Deviation note: the plan's drift verify initially flagged ` M SGProcessingManager (untracked content)` — caused by the nested repo's untracked `test/fixtures/` scratch (D-02-ignorable, "scratch left in place unless user says otherwise"), NOT pointer drift. Resolved with a local, uncommitted `git config submodule.SGProcessingManager.ignore untracked` (scoped: tracked modifications still surface). User scratch preserved.
 - Untracked `?? test-data/` at SuperGenius root remains — ignorable per D-02's presumption (neither line tracks those paths).
 
-### 7.2 Merge execution record (13-02)
+### 7.2 Merge execution record (13-02) — CLOSED 2026-11-16
 
-- Fresh merge-tree OID: _pending_
-- Merge SHA: _pending_
-- Resolution rule applied: _pending_
-- D-15 gate outputs (verbatim, pre- and post-commit): _pending_
+- Topology re-verified at execution: HEAD ≡ `dev_coldstorage_additions` = `4ae8a9a4e`; `dev_blockstore` ≡ `origin/dev_blockstore` = `7961ec264` (one behind, expected); both bootstrap refs = `d556f86de`; merge-base = `8ff74636b`; tree clean (untracked `?? test-data/` only).
+- Fresh merge-tree OID: **`08bffc1e87a268132c28bfe45d37d244a99747a1`** (differs from the research reference `b91b84c94` by design — the ours input carries the 13-01 test fix). Conflict file-set identical to the forecast: single conflict `src/account/GeniusNode.cpp` + auto-merging `GeniusNode.hpp`, `globaldb.cpp`, `globaldb.hpp`, `graphsync_dagsyncer.hpp`, `impl/graphsync_dagsyncer.cpp`.
+- Merge SHA: **`2af184fa1db04b5832ce5432a3ae2108c4e2e2ab`** (parents verified `4ae8a9a4e` + `d556f86de`).
+- Resolution rule applied: the checklist §3 compose rule verbatim — our drain-barrier comment kept (+ the sanctioned one-line barrier note appended), their `bootstrap_walk_timer_` / `trust_bootstrap_sync_handle_` cancellation inserted inside the shared `lifecycle_mutex_` scope. No other edit.
+- D-15 gate outputs (verbatim):
+  - D-15a assertion 1 pre-commit: `d15a1-exit=0` (no output) — vs working state
+  - D-15a assertion 1 post-commit: `d15a1-exit=0` (no output) — `git diff --exit-code 08bffc1e8 HEAD -- . ':!src/account/GeniusNode.cpp'`
+  - D-15a assertion 2 (review artifact): diff confined to the conflict region — markers removed, comment amended, their two if-blocks inside the lock scope (captured in the 13-02 SUMMARY)
+  - D-15b pre- and post-commit: `d15b-exit=0` on `src/crdt/impl/crdt_datastore.cpp` + `src/transaction/PruneEligibility.cpp` (byte-identical to `d556f86de` blobs)
+  - Symbol check (staged and HEAD): `symbol-count=3` (`InheritRoutes`, `HasStoredBlock`, `GetStoredNode`)
+  - Gitlink check: `gitlink-diff-empty=True` — zero submodule pointer takes
+  - `graphsync_dagsyncer.cpp` hunk-preservation review: diff vs branch blob = +269/−8 — our cold-chain regions on top of their preserved content
+- Post-merge incremental Release rebuild: exit 0, 3m37s, zero errors; branch test targets resolve fail-closed (`ctest -N`: `prune_eligibility_test` #30, `tx_pruner_test` #37, `node_startup_test` #95).
 
 ### 7.3 SC2 pre/post table (13-03)
 
