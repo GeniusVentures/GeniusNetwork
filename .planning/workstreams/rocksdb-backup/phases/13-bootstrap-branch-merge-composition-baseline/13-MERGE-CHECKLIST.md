@@ -237,3 +237,5 @@ Expected: **3 matches**. Plus review `git diff d556f86de HEAD -- src/crdt/impl/g
 4. Executor verifies read-only: `git ls-remote origin refs/heads/dev_coldstorage_additions` == merge SHA; records the push (timestamp, remote SHA, pushed-by-user) in this section; commits the amendment.
 5. Note: the origin CI run on the new line is CONFIRMATION, not a gate — SC2's gate closed locally per D-05.
 6. Optional, separate, user's call: root-repo push (`dev_persisprocresults`, ahead of origin + this phase's docs commits) — not part of this gate.
+
+**AS-RUN (2026-11-16):** user confirmed the push (`pushed`). Read-only verification: `git ls-remote origin refs/heads/dev_coldstorage_additions` → `2af184fa1db04b5832ce5432a3ae2108c4e2e2ab` — **equals the local merge commit** (`remote-equals-merge-sha`). The new canonical v1.2 remote line exists; `origin/dev_blockstore` stale at `7961ec264` by decision (D-01). Pushed-by: user (executor ran no push command — D-04/v1.1 D-03 discipline held). The origin CI run on the new line is CONFIRMATION, not a gate — SC2's gate closed locally per D-05.
