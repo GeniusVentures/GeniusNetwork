@@ -12,10 +12,10 @@ the D-15 gates (§5) make any other edit a loud, binary failure.
 
 | Ref | SHA | Note |
 |-----|-----|------|
-| `dev_coldstorage_additions` (ours, local HEAD) | `7961ec264ab00d14efe99ceb857ec9796de8116b` | ≡ `dev_blockstore` ≡ `origin/dev_blockstore` |
+| `dev_coldstorage_additions` (ours, local HEAD) | `4ae8a9a4ec1dc9187f2eb7f498d0114c15f27026` | 7961ec264 + the 13-01 baseline resurrection-test fix (user-approved disposition b); `dev_blockstore` ≡ `origin/dev_blockstore` remain one behind at `7961ec264ab00d14efe99ceb857ec9796de8116b` (expected) |
 | `fix/trust-genesis-bootstrap` (theirs) | `d556f86deab7fe78dead80fead1f333625b7a2ce` | ≡ `origin/fix/trust-genesis-bootstrap` |
-| Merge base | `8ff74636bf21ad0bb4964574f2badcd42b17498c` | old develop PR #402 |
-| Reference merge-tree OID (research) | `b91b84c94481ea542e567c951b83fe2f2057fee5` | regenerate at execution — 13-02 records the fresh value |
+| Merge base | `8ff74636bf21ad0bb4964574f2badcd42b17498c` | old develop PR #402 (unchanged by the fix commit) |
+| Reference merge-tree OID (research, computed from 7961ec264) | `b91b84c94481ea542e567c951b83fe2f2057fee5` | regenerate at execution from `4ae8a9a4e` — the fresh OID DIFFERS by design (ours input carries the test fix); the conflict FILE-SET must stay identical |
 | `origin/dev_coldstorage_additions` | does not exist | created by the D-04 push (§8) |
 
 Branch commits (the 4 commits the merge carries, `8ff74636b..d556f86de`):
@@ -210,6 +210,8 @@ Expected: **3 matches**. Plus review `git diff d556f86de HEAD -- src/crdt/impl/g
 
 - Verdict: _pending_ (counts live in the 13-01/13-03 SUMMARYs per D-08 — not here)
 - Shared exclusion names: _pending_
+
+**Pre-leg record (13-01 Task 3, CLOSED 2026-11-16):** full suite ran on binaries freshly rebuilt at `7961ec264` (5m44s incremental; provenance verified) — **167 total, 166 passed, 1 failed**: `cold_storage_resurrection_test` (`Resurrect_TrimmedMarker_TombstoneDominanceKeepsValueAbsent`), deterministic in isolation. Root cause (user-verified against CI history — last green run `9994718ce` Nov 10; both behavior-changing commits `55fca03f8`+`7961ec264` landed Nov 12 with the suite never run after): the keep-seal retention makes the seal marker the walk terminator, so the case's S3-refetch evidence-wait can never fire — a stale test expectation, not a product regression. **User disposition (b): fix the test on the baseline** → `4ae8a9a4e` rewrites the case to the retention contract (mirrors the marker-present sibling: zero S3 Gets, no re-journal, value stays absent). Re-verification at `4ae8a9a4e`: resurrection suite green (all cases), Tier-1 lane **12/12 exit 0**. **User-approved composed denominator** (full re-run declined as unnecessary — one test file changed, all other binaries byte-identical): 166 carried results + the fixed target green at the tip. The `requires_foundry` family PASSED locally both legs' scope — the shared exclusion set is EMPTY. WARP adapter ABSENT. Pre-leg wall-clock: **33m34s** (serial, 2014.41s ctest total). The pre-leg comparison log (`%TEMP%\p13-sc2-pre-full.log`) is the `7961ec264` run; its single failed name is the already-root-caused-and-fixed case, so the 13-03 subset gate compares post-leg failures against a denominator whose only entry is fixed on the merge line.
 
 ### 7.4 Status flip (13-04)
 
