@@ -1,0 +1,225 @@
+# 13-MERGE-CHECKLIST — Composition Merge of fix/trust-genesis-bootstrap (RECOVER-01 / D-13)
+
+Status: **PREDICTED** — authored pre-merge per D-13; amended as-run by 13-02/13-03/13-04
+
+Composes `fix/trust-genesis-bootstrap` (validated bootstrap history recovery) onto
+`dev_coldstorage_additions` (the v1.2 cold-storage line) as a **pure composition** —
+recovery/bootstrap logic lands via merge, never re-derived. Hand-edits are sanctioned
+ONLY inside the single `GeniusNode::ShutdownForDestruction()` conflict hunk (§3);
+the D-15 gates (§5) make any other edit a loud, binary failure.
+
+## 1. Topology (verified 2026-11-16 research; re-verify at execution — Pitfall 3)
+
+| Ref | SHA | Note |
+|-----|-----|------|
+| `dev_coldstorage_additions` (ours, local HEAD) | `7961ec264ab00d14efe99ceb857ec9796de8116b` | ≡ `dev_blockstore` ≡ `origin/dev_blockstore` |
+| `fix/trust-genesis-bootstrap` (theirs) | `d556f86deab7fe78dead80fead1f333625b7a2ce` | ≡ `origin/fix/trust-genesis-bootstrap` |
+| Merge base | `8ff74636bf21ad0bb4964574f2badcd42b17498c` | old develop PR #402 |
+| Reference merge-tree OID (research) | `b91b84c94481ea542e567c951b83fe2f2057fee5` | regenerate at execution — 13-02 records the fresh value |
+| `origin/dev_coldstorage_additions` | does not exist | created by the D-04 push (§8) |
+
+Branch commits (the 4 commits the merge carries, `8ff74636b..d556f86de`):
+
+| SHA | Subject |
+|-----|---------|
+| `d556f86de` | fix: add validated bootstrap history recovery |
+| `6acee9c9a` | fix: initialize UTXOs before certificate replay |
+| `5c9b5fab9` | fix: register certificate slot rules before consensus startup |
+| `3b337643d` | fix: fetch trust genesis before transaction startup |
+
+Submodule pointers: this merge takes **ZERO** pointer takes — the merged tree keeps our
+recorded values (`SGProcessingManager` `dc8a994cb`, `docs` `77f4fcfd5`); any gitlink delta
+is a D-15a gate failure (Pitfall 2).
+
+## 2. The predicted conflict, verbatim (single content conflict; merged-blob line 2795)
+
+`git merge-tree --write-tree --name-only 7961ec264 d556f86de` reports exactly:
+
+```
+CONFLICT (content): Merge conflict in src/account/GeniusNode.cpp   ← the ONLY conflict
+Auto-merging src/account/GeniusNode.hpp
+Auto-merging src/crdt/globaldb/globaldb.cpp
+Auto-merging src/crdt/globaldb/globaldb.hpp
+Auto-merging src/crdt/graphsync_dagsyncer.hpp
+Auto-merging src/crdt/impl/graphsync_dagsyncer.cpp
+```
+
+Inside `GeniusNode::ShutdownForDestruction()`, immediately after
+`node_logger_->info( "GeniusNode shutdown start" )`:
+
+```cpp
+<<<<<<< 7961ec264
+        // Drain barrier: an in-flight StateTransition body (e.g. the detached
+        // migration thread's INITIALIZING_DATABASE -> InitDatabase) may have
+        // passed the shutdown gate before shutdown_started_ was set. Acquiring
+        // lifecycle_mutex_ here waits for that body to finish so every member
+        // read below -- tx_globaldb_ in particular -- observes final state, and
+        // the tx_globaldb_->ShutdownNow() below stops/joins the CRDT rebroadcast
+        // worker instead of leaking it to process exit (run 41936126485 exit-time
+        // SegFault). Pairs with the post-lock shutdown re-check in
+        // StateTransition: after this barrier no body is running and none can
+        // start. Recursive mutex: safe if teardown is ever reached from a body
+        // thread. Sits BEFORE io teardown so a blocked body can still complete;
+        // bounded by one state body.
+        {
+            std::lock_guard<std::recursive_mutex> lifecycle_lock( lifecycle_mutex_ );
+=======
+        {
+            std::lock_guard<std::recursive_mutex> lifecycle_lock( lifecycle_mutex_ );
+            if ( bootstrap_walk_timer_ )
+            {
+                boost::system::error_code ignored;
+                bootstrap_walk_timer_->cancel( ignored );
+            }
+            if ( trust_bootstrap_sync_handle_ )
+            {
+                trust_bootstrap_sync_handle_->cancel();
+                trust_bootstrap_sync_handle_.reset();
+            }
+>>>>>>> d556f86de
+        }
+```
+
+## 3. Per-hunk compose rule (D-14 compose-don't-pick — hunk #1, the forecast's ONLY content hunk)
+
+1. Keep OUR drain-barrier comment block **verbatim**.
+2. Keep the lock-scope opening `{ std::lock_guard<std::recursive_mutex> lifecycle_lock( lifecycle_mutex_ ); }` (identical on both sides).
+3. Insert THEIR two if-blocks **inside the lock scope**:
+   - `if ( bootstrap_walk_timer_ )` containing `boost::system::error_code ignored;` and `bootstrap_walk_timer_->cancel( ignored );`
+   - `if ( trust_bootstrap_sync_handle_ )` containing `trust_bootstrap_sync_handle_->cancel();` and `trust_bootstrap_sync_handle_.reset();`
+4. Keep the closing `}`.
+5. Optional: append one comment line noting walk-timer cancellation also happens under the barrier.
+
+Shapes match the sibling `gc_timer_` / `prune_dry_run_timer_` / `health_check_handle_`
+cancellation blocks already in the function (Ullman braces, trailing-underscore members).
+**Hand-edits anywhere else in the tree are prohibited by D-15a** (§5).
+
+## 4. Both-side hunk maps of `src/account/GeniusNode.cpp` (since merge base `8ff74636b`)
+
+OUR side (`git diff 8ff74636b 7961ec264 -- src/account/GeniusNode.cpp`), 8 hunks — all cold-storage wiring:
+
+| Base line | Region | Content |
+|---|---|---|
+| @376 | startup/logging | address logging (`Account Address {}`) |
+| @581 | `LoadCrdtConfig()` | config load ordering comment |
+| @593 | config parsing | `ParseColdStorageConfig` → `cold_storage_config_`, throws on error, `LogSummary()`, retention-without-enabled check |
+| @636 | constructor/init | `crdt_backup_config_` + `cold_storage_config_` to GlobalDB ctor (widened arg) |
+| @708 | lifecycle lock area | runtime-member release logging |
+| @2158 | ctor wiring | cold-stack ctor arg additions (`scheduler_, generator_, nullptr`) |
+| @2530 | **`ShutdownForDestruction()`** | **drain-barrier lock scope + comment (THE conflict)** |
+| @3156 | `DeleteAccount` area | `return DeleteAccount( previous_address )` context |
+
+THEIR side (`git diff 8ff74636b d556f86de -- src/account/GeniusNode.cpp`), 12 hunks — all bootstrap/walk machinery:
+
+| Base line | Content (symbols) |
+|---|---|
+| @60 | includes (MigrationManager.hpp + walk-related) |
+| @433 (+44) | config: `force_bootstrap_walk` (must-be-boolean), `bootstrap_walk_max_blocks`, `bootstrap_walk_max_retries` via `read_walk_limit`, INFO log |
+| @718 | `transition_in_progress_`/`transition_epoch_` bookkeeping |
+| @796 | `private_network_id_` area |
+| @804 | `blockchain_` guards |
+| @866 | `blockchain_` guards (2nd) |
+| @1047 | early-return guard |
+| @1155 | return guard |
+| @1437 | `NodeState::WAITING_FOR_TRUST_GENESIS` / `WAITING_FOR_BURN_GENESIS` handling |
+| @1453 (+149) | **`RequestBootstrapWalk()` implementation** (timer cancel, force/retry guards, `PruneEligibility::CanRestoreElement` guard during replay) |
+| @1837 | `trust_bootstrap_sync_interval_` scheduling (`trust_bootstrap_sync_handle_.emplace(...)`) |
+| @2530 | **`ShutdownForDestruction()` walk-timer/trust-handle cancellation (THE conflict)** |
+
+Base line 2530 is the **only overlap**; every other hunk pair is disjoint → one conflict.
+
+Overlap files (6 paths, all auto-merge except the conflict file):
+`src/account/GeniusNode.cpp` (conflict), `src/account/GeniusNode.hpp`, `src/crdt/globaldb/globaldb.cpp`, `src/crdt/globaldb/globaldb.hpp`, `src/crdt/graphsync_dagsyncer.hpp`, `src/crdt/impl/graphsync_dagsyncer.cpp`.
+
+Their-side-only files (24, land as pure branch blobs — incl. the D-15b targets
+`src/crdt/impl/crdt_datastore.cpp`, `src/transaction/PruneEligibility.cpp`); our-side-only
+files (43, incl. CI workflows, cold-storage stack, 13 `A` cold test files). Their 9 test
+files (`node_startup_test`, `prune_eligibility_test`, `tx_pruner_test`, `tx_lookup_tri_state_test`,
+`transaction_manager_*_test`, `crdt_datastore_test`, `globaldb_erase_test`) land via merge.
+
+## 5. D-15 gates (exact commands + expected results; run pre-commit AND re-run post-commit)
+
+**D-15a assertion 1 — nothing outside the sanctioned hunk differs from the auto-merge:**
+
+```
+git diff --exit-code <fresh-merge-tree-OID> HEAD -- . ':!src/account/GeniusNode.cpp'
+```
+
+Expected: **exit 0, no output**. Regenerate the OID first:
+`git merge-tree --write-tree 7961ec264 d556f86de` (deterministic; should equal the research
+reference `b91b84c94481ea542e567c951b83fe2f2057fee5` on the same git 2.48.1 — a different OID
+or any different conflict file-set = EDGE-empty halt, D-14 escalation). NOTE: this merge takes
+**no submodule pointers** — ANY gitlink delta (e.g. recording the stale merge-base checkouts)
+is a gate failure (Pitfall 2).
+
+**D-15a assertion 2 — the GeniusNode.cpp delta IS exactly the conflict resolution (review artifact):**
+
+```
+git diff <fresh-merge-tree-OID> HEAD -- src/account/GeniusNode.cpp
+```
+
+Expected: exactly the §3 compose resolution.
+
+**D-15b — theirs-only walk-bearing files byte-identical to the branch blobs:**
+
+```
+git diff --exit-code d556f86de HEAD -- src/crdt/impl/crdt_datastore.cpp src/transaction/PruneEligibility.cpp
+```
+
+Expected: **exit 0**.
+
+**graphsync_dagsyncer.cpp (both-sides-touched) — symbol preservation + hunk review:**
+
+```
+git show HEAD:src/crdt/impl/graphsync_dagsyncer.cpp | Select-String 'GraphsyncDAGSyncer::(HasStoredBlock|GetStoredNode|InheritRoutes)'
+```
+
+Expected: **3 matches**. Plus review `git diff d556f86de HEAD -- src/crdt/impl/graphsync_dagsyncer.cpp`
+— diff confined to our cold-chain regions.
+
+**Parent check:** `git rev-parse HEAD^1 HEAD^2` → `7961ec264ab00d14efe99ceb857ec9796de8116b` / `d556f86deab7fe78dead80fead1f333625b7a2ce`.
+
+## 6. SC3 evidence-map skeleton (amended as-run by 13-03)
+
+| # | Item | Evidence vehicle (existing tests only — D-09) | As-run result |
+|---|------|-----------------------------------------------|---------------|
+| 1 | 4-term `HasBlock` observable (`GetNodeFromMerkleDAG`, `GrabCIDBlock`, `HasLocalCold`, `HasDisposed`) | `cold_storage_fallback_test` filtered re-run (incl. `ColdStorageFallbackTest.D08_HasLocalColdBoolContractUnderFault`, `ColdStorageFallbackTest.D02_LocalTierHitPerformsZeroS3Gets`) + `cold_storage_gc_test` / `cold_storage_gc_retrievability_test` (disposed term) + 4-term source check on merged HEAD | _pending 13-03_ |
+| 2 | Cold-chained `GetNodeWithoutRequest` observable | `ColdStorageFallbackTest.D01_S3TierHitEndToEnd`, `ColdStorageFallbackTest.D03_LocalUnavailableFallsThroughToS3`, `ColdStorageFallbackTest.SC4_RehydrateSilence_BytesOnlyNoMarkers` + branch suites `node_startup_test` (walk cases) / `prune_eligibility_test` (four `CanRestoreElement` cases) | _pending 13-03_ |
+| 3 | GATE-03 intact (D-11 — re-run as-is) | Quote-safe piped grep (expected **0** matches; PowerShell 5.1 eats embedded quotes — the naive form produced a false 49-match count live in research) + `EraseSurfaceGateTest.SealKeyHasNoProductionHome` via `crdt_erase_test` | _pending 13-03_ |
+| 4 | D-12 cold-before-peer fetch ordering (observed, not enforced) | Parse `cold read: rehydrated CID` (`graphsync_dagsyncer.cpp:780`) / `cold read: chain miss for CID` (:802) — rehydrate line precedes peer-fetch activity for the same CID | _pending 13-03_ |
+
+## 7. As-run sections (amend below)
+
+### 7.1 D-02 disposition record — CLOSED 2026-11-16
+
+- User pick (verbatim from `$env:TEMP\p13-d02-pick.txt`): **`reset`**
+- User qualification (verbatim): "I believe procmanager should be at dc8a994cb7705e6b4e78969fada233a488e6b5ee to work with our moltenvk setup."
+- Evidence re-verified live at the checkpoint: working-tree `SGProcessingManager` @ `89d161b08` and `docs` @ `c6d8c8342` are both merge-base values AND ancestors of the recorded pointers (`merge-base --is-ancestor` exit 0 both); `git ls-files test-data/` empty; no merge command had run.
+- Executed: `git submodule update SGProcessingManager docs` → checkouts re-synced to `dc8a994cb` / `77f4fcfd5`; pointer equality verified (`ls-tree HEAD` == `rev-parse HEAD` in each nested repo); post-disposition verify: `reset-clean-ok`.
+- Deviation note: the plan's drift verify initially flagged ` M SGProcessingManager (untracked content)` — caused by the nested repo's untracked `test/fixtures/` scratch (D-02-ignorable, "scratch left in place unless user says otherwise"), NOT pointer drift. Resolved with a local, uncommitted `git config submodule.SGProcessingManager.ignore untracked` (scoped: tracked modifications still surface). User scratch preserved.
+- Untracked `?? test-data/` at SuperGenius root remains — ignorable per D-02's presumption (neither line tracks those paths).
+
+### 7.2 Merge execution record (13-02)
+
+- Fresh merge-tree OID: _pending_
+- Merge SHA: _pending_
+- Resolution rule applied: _pending_
+- D-15 gate outputs (verbatim, pre- and post-commit): _pending_
+
+### 7.3 SC2 pre/post table (13-03)
+
+- Verdict: _pending_ (counts live in the 13-01/13-03 SUMMARYs per D-08 — not here)
+- Shared exclusion names: _pending_
+
+### 7.4 Status flip (13-04)
+
+- Status: **PREDICTED** (flips to COMPLETE by 13-04 Task 1)
+
+## 8. D-04 push checkpoint (filled by 13-04 — user actions)
+
+1. Review the six evidence items presented by 13-04 Task 3 (merge SHA + parents; SC2 verdict; SC3 four rows; committed COMPLETE checklist; root pointer-bump commit; exact push command).
+2. **User runs, from the SuperGenius root:** `git push origin dev_coldstorage_additions` — this CREATES the new canonical v1.2 remote line (D-01; verified during research: the ref does not exist on origin). The executor never pushes (D-04 / v1.1 D-03 discipline).
+3. `origin/dev_blockstore` goes stale at `7961ec264` **by decision** (D-01).
+4. Executor verifies read-only: `git ls-remote origin refs/heads/dev_coldstorage_additions` == merge SHA; records the push (timestamp, remote SHA, pushed-by-user) in this section; commits the amendment.
+5. Note: the origin CI run on the new line is CONFIRMATION, not a gate — SC2's gate closed locally per D-05.
+6. Optional, separate, user's call: root-repo push (`dev_persisprocresults`, ahead of origin + this phase's docs commits) — not part of this gate.
