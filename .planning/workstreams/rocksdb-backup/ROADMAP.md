@@ -42,7 +42,7 @@ Milestone audit (passed — 3/3 requirements, 7/7 phases, 5/5 integration seams,
 
 **Phase Numbering:** Continuous across milestones — v1.0: Phases 1-5 · v1.1: Phases 6-12 · v1.2: Phases 13-19.
 
-- [ ] **Phase 13: Bootstrap Branch Merge & Composition Baseline** - Merge `fix/trust-genesis-bootstrap` into `dev_coldstorage_additions` with the full existing suite green — the gate for all v1.2 recovery/walk work
+- [x] **Phase 13: Bootstrap Branch Merge & Composition Baseline** - Merge `fix/trust-genesis-bootstrap` into `dev_coldstorage_additions` with the full existing suite green — the gate for all v1.2 recovery/walk work (completed 2026-11-16 — merge `2af184fa1` pushed by user as `origin/dev_coldstorage_additions`; SC2 zero-regression 167/167 post vs composed pre baseline; SC3 items 1-3 green, item 4 D-12 escalated-deferred to Phase 15 per user ruling; SC4 checklist COMPLETE with fresh final-HEAD D-15 gate outputs)
 - [ ] **Phase 14: Durability-Gated TxPruner Eligibility** - A cold-enabled node never erases hot data that is not evidence-Durable in cold — fail closed, TOCTOU re-checked under the compose lock, gate composes with (not into) the eligibility evaluator
 - [ ] **Phase 15: Evidence-Aware Cold Serving & Forced-Walk Recovery** - Evidence outranks bytes on every path — fixes the cold-chain resurrection gap and the forced-walk GC-evicted conflation; hermetic tri-state evidence fakes land here
 - [ ] **Phase 16: TxPruner × GC Composition Hardening** - Close the stale-LRU erase window, prove the TxPruner×GC interleave matrix, rule the disposal-starvation interplay fail-safe (under-prune)
@@ -65,20 +65,20 @@ Milestone audit (passed — 3/3 requirements, 7/7 phases, 5/5 integration seams,
   3. The post-merge verification gate passes observably: 4-term `HasBlock`, cold-chained `GetNodeWithoutRequest`, GATE-03 seal permanence intact, and cold-before-peer fetch ordering observable.
   4. A composition-only grep gate proves no recovery/bootstrap logic was re-derived or rewritten in the merge (checklist + evidence committed).
 
-**Plans**: 4 plans
+**Plans**: 4/4 plans executed
 
 Plans:
 **Wave 1**
-- [ ] 13-01-PLAN.md — D-02 dirty-tree checkpoint (blocking human), D-13 pre-merge checklist authored, SC2 pre-merge baseline leg on 7961ec264
+- [x] 13-01-PLAN.md — D-02 dirty-tree checkpoint (blocking human), D-13 pre-merge checklist authored, SC2 pre-merge baseline leg on 7961ec264
 
 **Wave 2** *(blocked on Wave 1 completion)*
-- [ ] 13-02-PLAN.md — TRACER: the step-gated composition merge (topology re-verify, merge --no-commit, single-hunk compose, D-15a/D-15b gates, commit) + incremental Release rebuild
+- [x] 13-02-PLAN.md — TRACER: the step-gated composition merge (topology re-verify, merge --no-commit, single-hunk compose, D-15a/D-15b gates, commit) + incremental Release rebuild
 
 **Wave 3** *(blocked on Wave 2 completion)*
-- [ ] 13-03-PLAN.md — SC2 post-merge leg + zero-regression comparison; SC3 four-check evidence (HasBlock terms, cold chain, GATE-03 as-is, D-12 log ordering)
+- [x] 13-03-PLAN.md — SC2 post-merge leg + zero-regression comparison; SC3 four-check evidence (HasBlock terms, cold chain, GATE-03 as-is, D-12 log ordering)
 
 **Wave 4** *(blocked on Wave 3 completion)*
-- [ ] 13-04-PLAN.md — SC4 checklist finalized/committed, root pointer bump, D-04/D-01 human-gated push creating origin/dev_coldstorage_additions
+- [x] 13-04-PLAN.md — SC4 checklist finalized/committed, root pointer bump, D-04/D-01 human-gated push creating origin/dev_coldstorage_additions
 
 ### Phase 14: Durability-Gated TxPruner Eligibility
 
@@ -164,7 +164,7 @@ Plans:
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 13. Bootstrap Branch Merge & Composition Baseline | 0/TBD | Not started | - |
+| 13. Bootstrap Branch Merge & Composition Baseline | 4/4 | In Progress|  |
 | 14. Durability-Gated TxPruner Eligibility | 0/TBD | Not started | - |
 | 15. Evidence-Aware Cold Serving & Forced-Walk Recovery | 0/TBD | Not started | - |
 | 16. TxPruner × GC Composition Hardening | 0/TBD | Not started | - |
