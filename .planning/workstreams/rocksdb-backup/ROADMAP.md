@@ -43,7 +43,7 @@ Milestone audit (passed — 3/3 requirements, 7/7 phases, 5/5 integration seams,
 **Phase Numbering:** Continuous across milestones — v1.0: Phases 1-5 · v1.1: Phases 6-12 · v1.2: Phases 13-19.
 
 - [x] **Phase 13: Bootstrap Branch Merge & Composition Baseline** - Merge `fix/trust-genesis-bootstrap` into `dev_coldstorage_additions` with the full existing suite green — the gate for all v1.2 recovery/walk work (completed 2026-11-16 — merge `2af184fa1` pushed by user as `origin/dev_coldstorage_additions`; SC2 zero-regression 167/167 post vs composed pre baseline; SC3 items 1-3 green, item 4 D-12 escalated-deferred to Phase 15 per user ruling; SC4 checklist COMPLETE with fresh final-HEAD D-15 gate outputs)
-- [ ] **Phase 14: Durability-Gated TxPruner Eligibility** - A cold-enabled node never erases hot data that is not evidence-Durable in cold — fail closed, TOCTOU re-checked under the compose lock, gate composes with (not into) the eligibility evaluator
+- [x] **Phase 14: Durability-Gated TxPruner Eligibility** - A cold-enabled node never erases hot data that is not evidence-Durable in cold — fail closed, TOCTOU re-checked under the compose lock, gate composes with (not into) the eligibility evaluator (completed 2026-11-16)
 - [ ] **Phase 15: Evidence-Aware Cold Serving & Forced-Walk Recovery** - Evidence outranks bytes on every path — fixes the cold-chain resurrection gap and the forced-walk GC-evicted conflation; hermetic tri-state evidence fakes land here
 - [ ] **Phase 16: TxPruner × GC Composition Hardening** - Close the stale-LRU erase window, prove the TxPruner×GC interleave matrix, rule the disposal-starvation interplay fail-safe (under-prune)
 - [ ] **Phase 17: Seal Growth Measurement & Decision** - Measure seal growth at representative workloads (probe first — it feeds Phase 15's walk bounds) and record the accept-vs-redesign decision with capacity math
@@ -91,7 +91,7 @@ Plans:
   3. The gate is injected at `RunCycle`'s cycle/group filter while `PruneEligibility::Evaluate` stays contractually pure — proven by a composition test in which the cold-durability conjunct composes with the evaluator (develop Phase 17 landing remains a merge, not a rewrite).
   4. On a node with no cold tier, TxPruner behavior is unchanged from today (gate vacuous — `prune_eligible(tx) AND (no_cold_tier OR cold_durable(cid))`).
 
-**Plans**: 2/3 plans executed defined (research complete 2026-11-16 — monotonicity answered NO in-process regression; develop Phase 17 confirmed LANDED, evaluator purity stays the defense)
+**Plans**: 3/3 plans complete defined (research complete 2026-11-16 — monotonicity answered NO in-process regression; develop Phase 17 confirmed LANDED, evaluator purity stays the defense)
 
 Plans:
 **Wave 1**
@@ -101,7 +101,7 @@ Plans:
 - [x] 14-02-PLAN.md — guard 5 in-compose durability re-check (Error::COLD_NOT_DURABLE + TxPruner counter mapping, Pitfall 1) + red-first TOCTOU counter-test at the new kInterruptAfterColdGate step-5 seam
 
 **Wave 3** *(blocked on Wave 2 completion)*
-- [ ] 14-03-PLAN.md — five-state journal matrix completion (CF seeding, adjacency/empty/ordering edges, Unreadable bridge+gate legs) + SC3 composition & purity gates + dev-gated live smoke + full Tier-1 contract
+- [x] 14-03-PLAN.md — five-state journal matrix completion (CF seeding, adjacency/empty/ordering edges, Unreadable bridge+gate legs) + SC3 composition & purity gates + dev-gated live smoke + full Tier-1 contract
 
 ### Phase 15: Evidence-Aware Cold Serving & Forced-Walk Recovery
 
@@ -174,7 +174,7 @@ Plans:
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 13. Bootstrap Branch Merge & Composition Baseline | 4/4 | In Progress|  |
-| 14. Durability-Gated TxPruner Eligibility | 2/3 | In Progress|  |
+| 14. Durability-Gated TxPruner Eligibility | 3/3 | Complete    | 2026-11-16 |
 | 15. Evidence-Aware Cold Serving & Forced-Walk Recovery | 0/TBD | Not started | - |
 | 16. TxPruner × GC Composition Hardening | 0/TBD | Not started | - |
 | 17. Seal Growth Measurement & Decision | 0/TBD | Not started | - |

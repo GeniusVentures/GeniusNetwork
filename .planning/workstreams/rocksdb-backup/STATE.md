@@ -2,19 +2,20 @@
 gsd_state_version: "1.0"
 milestone: v1.2
 milestone_name: SuperGenius Cold-Storage Archive Integration
-current_phase: 14
-current_phase_name: Durability-Gated TxPruner Eligibility
-status: executing
-stopped_at: Phase 14 context gathered
-last_updated: "2026-11-17T03:30:41.576Z"
+current_phase: 15
+current_phase_name: Evidence-Aware Cold Serving & Forced-Walk Recovery
+status: planning
+stopped_at: Phase 14 complete, ready to plan Phase 15
+last_updated: "2026-11-17T04:06:29.757Z"
 last_activity: 2026-11-16
-last_activity_desc: Phase 14 execution started
-state_head: a872057470be761bc18a2671490971e76dc04715
+last_activity_desc: Phase 14 complete, transitioned to Phase 15
+state_head: 4db2a14c75bc8f6626e0a44f6dec9d9a07e0dc32
 progress:
   total_phases: 7
-  completed_phases: 0
+  completed_phases: 1
   total_plans: 7
-  completed_plans: 6
+  completed_plans: 7
+  percent: 14
 ---
 
 # Project State
@@ -29,10 +30,10 @@ See: `.planning/PROJECT.md` (workstream sections); `.planning/workstreams/rocksd
 
 ## Current Position
 
-Phase: 14 (Durability-Gated TxPruner Eligibility) — EXECUTING
-Plan: 3 of 3
-Status: Ready to execute
-Last activity: 2026-11-16 — Phase 14 execution started
+Phase: 15 — Evidence-Aware Cold Serving & Forced-Walk Recovery
+Plan: Not started
+Status: Ready to plan
+Last activity: 2026-11-16 — Phase 14 complete, transitioned to Phase 15
 
 ## Progress
 
@@ -72,7 +73,7 @@ v1.1 key decisions archived with the milestone (`milestones/v1.1-ROADMAP.md` + p
 
 **Last session:** 2026-11-17T01:49:29.762Z
 
-**Stopped At:** Phase 14 context gathered
+**Stopped At:** Phase 14 complete, ready to plan Phase 15
 **Resume File:** .planning/workstreams/rocksdb-backup/phases/14-durability-gated-txpruner-eligibility/14-CONTEXT.md
 
 ## Performance Metrics
@@ -109,6 +110,7 @@ v1.1 key decisions archived with the milestone (`milestones/v1.1-ROADMAP.md` + p
 | Phase 11 P04 | 75 min | 3 tasks | 6 files |
 | Phase 14 P01 | 25min | 2 tasks | 6 files |
 | Phase 14 P02 | 20min | 2 tasks | 6 files |
+| Phase 14 P03 | 65min | 3 tasks | 3 files |
 
 ## Decisions
 

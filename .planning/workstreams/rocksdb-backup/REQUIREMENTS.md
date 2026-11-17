@@ -18,35 +18,42 @@ last_updated: 2026-11-13
 ## Current Milestone Requirements
 
 ### PRUNE — Durability-Gated TxPruner Eligibility
-- [ ] **PRUNE-01**: A cold-enabled node's TxPruner erases a transaction's hot data only when every constituent block is Durable in cold — NoRecord, Pending, Accepted, and Unreadable journal states all defer the erase loudly (fail closed).
-- [ ] **PRUNE-02**: The durability gate re-checks evidence at erase-commit time under the compose lock, so a durability-state change after evaluation cannot enable an erase that would destroy the last copy (TOCTOU prevention).
-- [ ] **PRUNE-03**: The gate is injected at TxPruner's cycle filter rather than inside the PruneEligibility evaluator, keeping the evaluator contractually pure so the gate composes (not conflicts) with develop's pending Phase 17 evaluator.
+
+- [x] **PRUNE-01**: A cold-enabled node's TxPruner erases a transaction's hot data only when every constituent block is Durable in cold — NoRecord, Pending, Accepted, and Unreadable journal states all defer the erase loudly (fail closed).
+- [x] **PRUNE-02**: The durability gate re-checks evidence at erase-commit time under the compose lock, so a durability-state change after evaluation cannot enable an erase that would destroy the last copy (TOCTOU prevention).
+- [x] **PRUNE-03**: The gate is injected at TxPruner's cycle filter rather than inside the PruneEligibility evaluator, keeping the evaluator contractually pure so the gate composes (not conflicts) with develop's pending Phase 17 evaluator.
 
 ### SERVE — Evidence-Aware Cold Serving
+
 - [ ] **SERVE-01**: A request for a TxPruner-erased CID is answered with pruned semantics even when cold bytes still exist — the cold chain (Rehydrate path) consults prune evidence before serving; no resurrection.
 - [ ] **SERVE-02**: A request for a GC-evicted CID (no prune evidence) on a cold-enabled node is served through the cold chain and re-warm — evict ≈ DETACH, re-attachable; the node remains an archive node, never masquerading.
 - [ ] **SERVE-03**: The three-way answer (pruned / evicted-restorable / not-found) is consistent across HasBlock, getNode, and the cold chain via a single role-aware evidence predicate owned by GlobalDB.
 - [ ] **SERVE-04**: Pruned answers remain distinct from not-found at the protocol surface so requesters fail over to serving archive nodes correctly (develop's SURV-02 tri-state extended to cold-enabled nodes).
 
 ### RECOVER — Bootstrap Branch Composition
+
 - [ ] **RECOVER-01**: fix/trust-genesis-bootstrap is merged into dev_coldstorage_additions with the full existing suite green (Phase 13 gate for all recovery work).
 - [ ] **RECOVER-02**: The forced walk restores GC-evicted ancestors from cold — retained means hot OR cold-resident-without-evidence; the walk never conflates GC-evicted with pruned.
 - [ ] **RECOVER-03**: The forced walk never resurrects TxPruner-erased elements — CanRestoreElement composition makes prune evidence terminal in recovery, matching serving semantics.
 - [ ] **RECOVER-04**: Recovery peer-failover is bounded (per-CID budget) and walk-gaps abort-never-skip — no infinite failover loops and no silently-validated partial history.
 
 ### COMP — TxPruner × GC Composition
+
 - [ ] **COMP-01**: EraseEntry's post-commit cleanup is hardened to GC's parity — the stale-LRU window (guard checks at compose-start only, no post-commit DeleteCIDBlock) is closed.
 - [ ] **COMP-02**: Concurrent TxPruner and GC passes are proven safe under an interleave matrix covering overlapping set rows, seal rows, and the block LRU — both idempotent on absent keys, seals untouched by both.
 - [ ] **COMP-03**: The GC-disposal starvation interplay (journal record deleted → gate reads NoRecord while remote S3 still serves) is ruled, documented, and its fail-safe direction (under-prune) is asserted by test.
 
 ### POLICY — Collectibility + Role Downgrade
+
 - [ ] **POLICY-01**: Cold collectibility ships as an explicit recorded policy decision — cold objects are permanent this milestone; the machinery is documented as an sgns-blockstore v2 contract ask (frozen v1 forbids Remove).
 - [ ] **POLICY-02**: An archive-role downgrade (archive → light) is E2E-proven: after downgrade the node prunes under light rules, history remains fetchable from other archive nodes, and existing Durable records satisfy the prune gate without re-drain or migration.
 
 ### SEAL — Seal Growth Measurement
+
 - [ ] **SEAL-01**: Seal growth is measured at representative workloads (row counts + bytes, including recovery-walk ancestry density) and the explicit decision — accept hot growth vs. future design — is documented with capacity math.
 
 ### TEST — Hardening Capstone
+
 - [ ] **TEST-01**: Evidence-aware test fakes model the PrunedLookup tri-state (present / pruned / not-found) hermetically, backing every SERVE / RECOVER / PRUNE suite without live services.
 - [ ] **TEST-02**: An extended fault-race matrix crosses erase × serve × recovery — induced failures at each phase boundary cannot produce resurrection, partial-history validation, or lost last copies.
 - [ ] **TEST-03**: Recovery-walk suites run green on all three platform CI lanes (Windows, macOS, Linux).
@@ -70,9 +77,9 @@ last_updated: 2026-11-13
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| PRUNE-01 | Phase 14 | Pending |
-| PRUNE-02 | Phase 14 | Pending |
-| PRUNE-03 | Phase 14 | Pending |
+| PRUNE-01 | Phase 14 | Complete |
+| PRUNE-02 | Phase 14 | Complete |
+| PRUNE-03 | Phase 14 | Complete |
 | SERVE-01 | Phase 15 | Pending |
 | SERVE-02 | Phase 15 | Pending |
 | SERVE-03 | Phase 15 | Pending |
