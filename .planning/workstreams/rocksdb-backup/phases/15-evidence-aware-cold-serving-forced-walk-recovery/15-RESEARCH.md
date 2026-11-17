@@ -466,12 +466,14 @@ if ( !retained && sealed )
 
 All other claims in this research were verified in source this session or cited from committed planning artifacts.
 
-## Open Questions
+## Open Questions (RESOLVED)
 
-1. **Exact refusal `Error` enum value name** — `HISTORY_PRUNED_LOCALLY` vs `PRUNED_LOCALLY` vs similar; placement appended after `COLD_STORAGE_UNAUTHORIZED` (`graphsync_dagsyncer.hpp:50-66`, `uint8_t` — append-only is backward compatible). Discretion; planner picks.
-2. **Pure virtual vs defaulting virtual on `ColdReadFallback::LookupPruneEvidence`** — one production implementor today; default-returning-NoEvidence is kinder to test stubs. Discretion.
-3. **Whether the per-CID peer budget lands in `getNode` unconditionally or behind a walk-passed parameter** — see A3; both are safe; the unconditional bound changes general fetch behavior (in the safe direction — bounded failover is RECOVER-04's letter for recovery, arguably desirable globally). Planner + user checkpoint if unconditional.
-4. **Erase-gate matrix legs scope** — SC5's "erase-gate" column rides the Phase 14 gate suites (`cold_prune_gate_test`) extended with `/prune/blk` assertions; whether those extensions live in the gate suite file or the new evidence-matrix suite is planner's call.
+All four items were planner-discretion delegations; each is now locked in a phase plan's rulings — none remains an open unknown.
+
+1. **Exact refusal `Error` enum value name** — `HISTORY_PRUNED_LOCALLY` vs `PRUNED_LOCALLY` vs similar; placement appended after `COLD_STORAGE_UNAUTHORIZED` (`graphsync_dagsyncer.hpp:50-66`, `uint8_t` — append-only is backward compatible). Discretion; planner picks. **RESOLVED — locked in 15-01:** `HISTORY_PRUNED_LOCALLY` (refusal) + `PRUNE_EVIDENCE_CORRUPT` (fail-closed malformed), both appended after `COLD_STORAGE_UNAUTHORIZED`.
+2. **Pure virtual vs defaulting virtual on `ColdReadFallback::LookupPruneEvidence`** — one production implementor today; default-returning-NoEvidence is kinder to test stubs. Discretion. **RESOLVED — locked in 15-01:** pure virtual on `ColdReadFallback`; `ColdReadService` is the sole production implementor, and the empty-callable → NoEvidence posture covers the test-stub case.
+3. **Whether the per-CID peer budget lands in `getNode` unconditionally or behind a walk-passed parameter** — see A3; both are safe; the unconditional bound changes general fetch behavior (in the safe direction — bounded failover is RECOVER-04's letter for recovery, arguably desirable globally). Planner + user checkpoint if unconditional. **RESOLVED — locked in 15-02:** walk-passed parameter — a `getNode(cid, peer_failover_budget)` overload with the 1-arg virtual delegating through an unbounded sentinel; the unconditional variant was ruled out precisely because it changes general fetch behavior (the flagged checkpoint condition therefore never arises).
+4. **Erase-gate matrix legs scope** — SC5's "erase-gate" column rides the Phase 14 gate suites (`cold_prune_gate_test`) extended with `/prune/blk` assertions; whether those extensions live in the gate suite file or the new evidence-matrix suite is planner's call. **RESOLVED — locked in 15-03:** the erase-gate column extends the gate suite file (`cold_prune_gate_test.cpp`) while the product legs live in `cold_evidence_matrix_test.cpp` — the split follows each suite's fixture strengths.
 
 ## Environment Availability
 
