@@ -6,7 +6,7 @@
     {
       "number": "13",
       "name": "Bootstrap Branch Merge & Composition Baseline",
-      "status": "pending"
+      "status": "in_progress"
     },
     {
       "number": "14",
@@ -42,7 +42,7 @@
   "next": {
     "command": "/gsd:progress --next",
     "label": "Advance to the next step",
-    "reason": "Phase 13 of 7 · executing"
+    "reason": "Phase 14 of 7 · executing"
   },
-  "updated_at": "2026-11-16T21:01:03.216Z"
+  "updated_at": "2026-11-17T02:46:43.558Z"
 }

@@ -2,18 +2,18 @@
 gsd_state_version: "1.0"
 milestone: v1.2
 milestone_name: SuperGenius Cold-Storage Archive Integration
-current_phase: 13
-current_phase_name: Bootstrap Branch Merge & Composition Baseline
+current_phase: 14
+current_phase_name: Durability-Gated TxPruner Eligibility
 status: executing
 stopped_at: Phase 14 context gathered
-last_updated: "2026-11-17T01:49:29.778Z"
+last_updated: "2026-11-17T02:46:43.519Z"
 last_activity: 2026-11-16
 last_activity_desc: Phase 13 execution started
-state_head: d5c7c1528dcf3732cdb1df8bbe53059351ba7f2a
+state_head: 9e74a7fcdeefb1a13fe91db1c747299a5dd018d6
 progress:
   total_phases: 7
   completed_phases: 0
-  total_plans: 4
+  total_plans: 7
   completed_plans: 4
 ---
 
@@ -29,9 +29,9 @@ See: `.planning/PROJECT.md` (workstream sections); `.planning/workstreams/rocksd
 
 ## Current Position
 
-Phase: 13 (Bootstrap Branch Merge & Composition Baseline) — EXECUTING
+Phase: 14 (Durability-Gated TxPruner Eligibility) — READY TO EXECUTE
 Plan: 1 of 4
-Status: Executing Phase 13
+Status: Ready to execute
 Last activity: 2026-11-16 — Phase 13 execution started
 
 ## Progress
