@@ -91,11 +91,11 @@ Plans:
   3. The gate is injected at `RunCycle`'s cycle/group filter while `PruneEligibility::Evaluate` stays contractually pure — proven by a composition test in which the cold-durability conjunct composes with the evaluator (develop Phase 17 landing remains a merge, not a rewrite).
   4. On a node with no cold tier, TxPruner behavior is unchanged from today (gate vacuous — `prune_eligible(tx) AND (no_cold_tier OR cold_durable(cid))`).
 
-**Plans**: 3/3 plans defined (research complete 2026-11-16 — monotonicity answered NO in-process regression; develop Phase 17 confirmed LANDED, evaluator purity stays the defense)
+**Plans**: 1/3 plans executed defined (research complete 2026-11-16 — monotonicity answered NO in-process regression; develop Phase 17 confirmed LANDED, evaluator purity stays the defense)
 
 Plans:
 **Wave 1**
-- [ ] 14-01-PLAN.md — TRACER: cold-durability admission conjunct at RunCycle's group filter (HasColdStorage accessor, cold_deferred/cold_unreadable counters, INFO extension) + Tier-1 gate suite (Durable-erases / Pending-defers-whole-group / cold-off-vacuuous)
+- [x] 14-01-PLAN.md — TRACER: cold-durability admission conjunct at RunCycle's group filter (HasColdStorage accessor, cold_deferred/cold_unreadable counters, INFO extension) + Tier-1 gate suite (Durable-erases / Pending-defers-whole-group / cold-off-vacuuous)
 
 **Wave 2** *(blocked on Wave 1 completion)*
 - [ ] 14-02-PLAN.md — guard 5 in-compose durability re-check (Error::COLD_NOT_DURABLE + TxPruner counter mapping, Pitfall 1) + red-first TOCTOU counter-test at the new kInterruptAfterColdGate step-5 seam
@@ -174,7 +174,7 @@ Plans:
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 13. Bootstrap Branch Merge & Composition Baseline | 4/4 | In Progress|  |
-| 14. Durability-Gated TxPruner Eligibility | 0/3 | Not started | - |
+| 14. Durability-Gated TxPruner Eligibility | 1/3 | In Progress|  |
 | 15. Evidence-Aware Cold Serving & Forced-Walk Recovery | 0/TBD | Not started | - |
 | 16. TxPruner × GC Composition Hardening | 0/TBD | Not started | - |
 | 17. Seal Growth Measurement & Decision | 0/TBD | Not started | - |

@@ -11,7 +11,7 @@
     {
       "number": "14",
       "name": "Durability-Gated TxPruner Eligibility",
-      "status": "pending"
+      "status": "in_progress"
     },
     {
       "number": "15",
@@ -44,5 +44,5 @@
     "label": "Advance to the next step",
     "reason": "Phase 14 of 7 · executing"
   },
-  "updated_at": "2026-11-17T02:46:43.558Z"
+  "updated_at": "2026-11-17T03:15:46.098Z"
 }
