@@ -377,19 +377,22 @@ const std::string kJournalDurable  = std::string{ '\x01', '\x02' };
 
 **All other claims in this research are `[VERIFIED: file:lines]` from direct reads on `2af184fa1` this session.** No external documentation providers were consulted — the phase's domain is entirely in-repo (zero new dependencies, per STACK-v1.2 row 1, re-confirmed), and both mandated research questions are code-read questions answered above.
 
-## Open Questions
+## Open Questions (RESOLVED)
 
 1. **Guard-5 refusal signal shape**
    - What we know: guards 1-4 return `Error::INVALID_PARAMETERS`; SC1 wants deferrals as counters, not failure reasons.
    - What's unclear: distinct `GlobalDB::Error` value vs. TxPruner-side mapping of the existing code.
    - Recommendation: distinct error value (auditable at the GlobalDB surface), mapped to `cold_deferred_groups` in `RunCycle` — keeps `errors` semantics clean.
+   - RESOLVED: Adopted by 14-02 — guard 5 returns a distinct `GlobalDB::Error::COLD_NOT_DURABLE` (Task 2(1)) and TxPruner maps exactly that error to `cold_deferred_groups` in the per-tx failure path (Task 2(3)), never to `stats.errors`.
 2. **Unreadable-leg vehicle in the full-GlobalDB matrix**
    - What we know: value-seeding covers 4 states; `Unreadable` needs the fault seam, which needs a `LocalBlockStore` handle (Pitfall 5).
    - What's unclear: narrow test-only fault passthrough vs. driving the leg on a directly-constructed manager.
    - Recommendation: drive the leg on the durability-test fixture shape (manager held directly) for the bridge mapping + a gate-level assertion via the passthrough only if the planner finds the fixture split awkward.
+   - RESOLVED: Adopted by 14-03 Task 1(4) with both legs — family-1 bridge leg (directly-held `LocalBlockStore` + `FaultKind::Unavailable` fault mapping) and gate-level hook leg (`cold_unreadable_groups` counter + one WARN, cycle continues).
 3. **Per-tx vs per-group short-circuit of the in-compose re-check** (the agent's Discretion)
    - What we know: after a group's first erase commits, the block bytes are gone; later re-checks in the same group re-read a journal record that GC disposal could have deleted mid-group (→ NoRecord → refuse → remaining txs counted deferred; safe but noisy).
    - Recommendation: per-tx re-check (simple, always-safe); revisit only if the matrix shows mid-group deferral noise matters.
+   - RESOLVED: CONTEXT agent's Discretion — resolved structurally by 14-02's per-erase guard-5 placement inside `EraseEntry`'s compose critical section (the re-check executes per-tx; the recommendation's posture holds).
 
 ## Environment Availability
 
