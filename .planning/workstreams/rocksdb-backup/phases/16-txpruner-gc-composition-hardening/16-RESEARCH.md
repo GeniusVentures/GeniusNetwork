@@ -524,20 +524,25 @@ EXPECT_EQ(ValueStillPresent(real_globaldb, tx_key), true); // the last hot copy 
 | A4 | The `/prune/blk` marker's back-reference record (erasing tx hash + generation) needs no extension for SC2's crossfire rows (presence + byte-identity is what the matrix asserts) | Pitfall 3 | Low — Phase 17 measurement may extend it later; not this phase's concern |
 | A5 | Tier-1 suites can drive a real GC pass hermetically (InMemory fakes + forced `GcPassOnce` invocation or its natural timer under test-accelerated retention) for the seam-stepped matrix legs, as `cold_storage_gc_test` already does | Standard Stack / Patterns | Low — the GC suite is the precedent; if the timer cannot be forced deterministically, `GcPassOnce` is public on the manager |
 
-## Open Questions
+## Open Questions (RESOLVED)
 
-1. **New seam contract shape (Agent's Discretion, needs a planner ruling)**
+_All three questions were ruled at plan level (planner, within the CONTEXT Agent's-Discretion grants); each ruling is recorded inline below and implemented by the plan named. No question remains open._
+
+1. **New seam contract shape (Agent's Discretion, needs a planner ruling)** — (RESOLVED by 16-01)
    - What we know: the existing `SetEraseInterruptHookForTest` aborts on true at steps 1-3 (hpp :527-534); SC1 needs fire-and-continue between guard 3 and commit.
    - What's unclear: extend the existing hook with step 4 whose return is ignored (overloads the contract) vs a sibling hook (e.g., a mid-compose observer) — the CONTEXT hints "sibling of `kInterruptBeforeErase`".
    - Recommendation: sibling observe-and-continue hook with its own steps, documented as NOT an abort seam — keeps the abort contract honest.
+   - **Ruling (16-01):** SIBLING observe-and-continue hook `SetEraseWindowObserverForTest( std::function<void()> )` — void return, the erase proceeds unconditionally, ONE fire site immediately before the single `batch->commit()`; no step parameter (the latest window point — widest window, tightest determinism — is the only one that matters); the abort contract stays exclusive to `SetEraseInterruptHookForTest` steps 1-3.
 
-2. **Whether the Tier-3 live SC3 leg lives in a new file or extends `cold_prune_live_smoke_test.cpp`**
+2. **Whether the Tier-3 live SC3 leg lives in a new file or extends `cold_prune_live_smoke_test.cpp`** — (RESOLVED by 16-02)
    - What we know: the Tier-3 precedent is `cold_prune_live_smoke_test` (CMakeLists :440-470, env-gated, loud-skip-verified).
    - Recommendation: planner's call; a sibling file keeps the runbook surface distinct.
+   - **Ruling (16-02):** NEW sibling file `cold_compose_live_smoke_test.cpp`, registered beside the precedent block inside `if(SGNS_COLD_STORAGE)` with `LABELS "Tier3"` — the cold-compose runbook surface stays distinct from the cold-prune one.
 
-3. **Does the SC1 delete also run on the `POST_COMMIT_ERASE_ANOMALY` path?**
+3. **Does the SC1 delete also run on the `POST_COMMIT_ERASE_ANOMALY` path?** — (RESOLVED by 16-01)
    - What we know: the commit landed there too (:1666-1681), so the LRU entry is equally stale; but the function returns failure immediately.
    - Recommendation: place the delete BEFORE the seal re-assert's failure return OR duplicate it on that path — planner rules; document either way (the bytes are gone; leaving a stale LRU entry on an anomaly path re-opens the class the fix closes).
+   - **Ruling (16-01):** ONE call site — immediately after `batch->commit()` and BEFORE the seal re-assert block — so BOTH committed exits (the success return AND `POST_COMMIT_ERASE_ANOMALY`) are covered with no duplication; enforced by 16-01's source-ordering verify gate (the delete strictly between the commit TRY and the isResolved TRY).
 
 ## Environment Availability
 
