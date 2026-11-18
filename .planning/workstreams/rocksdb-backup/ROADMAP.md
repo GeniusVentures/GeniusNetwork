@@ -139,7 +139,18 @@ Plans:
   2. An interleave matrix crossing concurrent TxPruner and GC passes — overlapping set rows, seal rows, and the block LRU — proves both idempotent on absent keys, seals untouched by both, and both erase orders converging to one fixed point.
   3. The GC-disposal starvation interplay (journal record deleted → gate reads NoRecord while remote S3 still serves) is ruled and documented with its fail-safe direction asserted by test: the observable outcome is under-prune, never destruction of the last copy.
 
-**Plans**: TBD
+**Plans**: 3/3 plans defined (research + patterns complete 2026-11-18 — anchors re-located at `af644481f` post-Phase-15; open questions ruled: sibling observe-and-continue seam `SetEraseWindowObserverForTest`, Tier-3 leg in a new `cold_compose_live_smoke_test.cpp` sibling file, anomaly-exit coverage via a single pre-re-assert call site)
+
+Plans:
+**Wave 1**
+- [ ] 16-01-PLAN.md — TRACER: SC1 stale-LRU close (observe-and-continue seam + post-commit `DeleteCIDBlock` covering both committed exits, red-first window counter-test both D-06 layers, `cold_compose_matrix_test` Tier-1 suite born)
+
+**Wave 2** *(blocked on Wave 1 — shared files: globaldb.cpp/.hpp, the suite, CMakeLists)*
+- [ ] 16-02-PLAN.md — SC3 starvation ruling (`IsColdDisposed` consult chain + `cold_disposed_stranded_groups` split counter + deterministic Tier-1 + dev-gated Tier-3 live leg + D-02/D-12 ruling comments at both homes + the workstream rulings doc)
+
+**Wave 3** *(blocked on Wave 2 — same suite file; matrix rows assert the stranded classification)*
+- [ ] 16-03-PLAN.md — SC2 interleave matrix (order-A/order-B + seam-stepped + barrier-driven legs, D-08 two-layer fixed-point convergence, D-07 crossfire rows, seals-untouched, Interaction-C durability-flip race row)
+
 
 ### Phase 17: Seal Growth Measurement & Decision
 
