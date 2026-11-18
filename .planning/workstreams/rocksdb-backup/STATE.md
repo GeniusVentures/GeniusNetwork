@@ -2,18 +2,18 @@
 gsd_state_version: "1.0"
 milestone: v1.2
 milestone_name: SuperGenius Cold-Storage Archive Integration
-current_phase: 15
-current_phase_name: Evidence-Aware Cold Serving & Forced-Walk Recovery
+current_phase: 16
+current_phase_name: TxPruner × GC Composition Hardening
 status: executing
 stopped_at: Phase 16 context gathered
-last_updated: "2026-11-18T21:55:24.729Z"
+last_updated: "2026-11-18T22:51:37.233Z"
 last_activity: 2026-11-17
 last_activity_desc: Phase 15 execution started
-state_head: f21e0eb1e41d8891b39e1a3fb96227e8956bd87f
+state_head: b51f02ee031eb6f7e0e6cc4c9a16cb162e2a6be1
 progress:
   total_phases: 7
   completed_phases: 1
-  total_plans: 10
+  total_plans: 13
   completed_plans: 10
 ---
 
@@ -29,9 +29,9 @@ See: `.planning/PROJECT.md` (workstream sections); `.planning/workstreams/rocksd
 
 ## Current Position
 
-Phase: 15 (Evidence-Aware Cold Serving & Forced-Walk Recovery) — EXECUTING
+Phase: 16 (TxPruner × GC Composition Hardening) — READY TO EXECUTE
 Plan: 1 of 3
-Status: Executing Phase 15
+Status: Ready to execute
 Last activity: 2026-11-17 — Phase 15 execution started
 
 ## Progress

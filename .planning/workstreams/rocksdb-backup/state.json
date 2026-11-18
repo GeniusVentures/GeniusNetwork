@@ -16,7 +16,7 @@
     {
       "number": "15",
       "name": "Evidence-Aware Cold Serving & Forced-Walk Recovery",
-      "status": "pending"
+      "status": "in_progress"
     },
     {
       "number": "16",
@@ -42,7 +42,7 @@
   "next": {
     "command": "/gsd:progress --next",
     "label": "Advance to the next step",
-    "reason": "Phase 15 of 7 · executing"
+    "reason": "Phase 16 of 7 · executing"
   },
-  "updated_at": "2026-11-17T23:26:52.263Z"
+  "updated_at": "2026-11-18T22:51:37.273Z"
 }
