@@ -115,7 +115,7 @@ Plans:
   4. The forced walk restores GC-evicted ancestors from cold (never conflating GC-evicted with pruned), never resurrects TxPruner-erased elements (`CanRestoreElement` composition is terminal), bounds peer failover per-CID, and aborts-never-skips on walk-gaps — no infinite failover loops, no silently-validated partial history.
   5. Hermetic evidence-aware test fakes model the PrunedLookup tri-state (present / pruned / not-found) and back every SERVE / RECOVER / PRUNE suite without live services — with the refusal matrix running as a product: {hot} × {cold} × {evidence: none/PRUNED/malformed} × {serve, walk visit, erase-gate}.
 
-**Plans**: 2/3 plans executed defined (research + patterns complete 2026-11-17 — anchors re-located at `095c8c502`; D-01 widening ruled feasible, layering fact recorded: the predicate lambda goes GlobalDB-native)
+**Plans**: 3/3 plans executed defined (research + patterns complete 2026-11-17 — anchors re-located at `095c8c502`; D-01 widening ruled feasible, layering fact recorded: the predicate lambda goes GlobalDB-native)
 
 Plans:
 **Wave 1**
@@ -125,7 +125,7 @@ Plans:
 - [x] 15-02-PLAN.md — D-05 walk evidence matrix (RECOVER-02/03) + walk_gaps abort-never-skip + D-06 per-CID failover budget (kForcedWalkPeerFailoverPerCid=8, walk-passed) + node-level walk suites (RECOVER-04)
 
 **Wave 3** *(blocked on Waves 1-2 completion)*
-- [ ] 15-03-PLAN.md — full refusal matrix as a product (SC5/TEST-01) + red-first masquerading counter-tests (SC2) + SC3 source-consistency flip-test (D-04) + erase-gate both-marker atomicity (D-01) + cold-enabled refusal failover with A5 discipline (SERVE-04)
+- [x] 15-03-PLAN.md — full refusal matrix as a product (SC5/TEST-01) + red-first masquerading counter-tests (SC2) + SC3 source-consistency flip-test (D-04) + erase-gate both-marker atomicity (D-01) + cold-enabled refusal failover with A5 discipline (SERVE-04)
 
 **Research flag**: light/optional — `/prune/blk` marker staging mechanism (widen `EraseEntry`'s `extra_entry` vs. staging via `TransactionManager`).
 
@@ -186,7 +186,7 @@ Plans:
 |-------|----------------|--------|-----------|
 | 13. Bootstrap Branch Merge & Composition Baseline | 4/4 | In Progress|  |
 | 14. Durability-Gated TxPruner Eligibility | 3/3 | Complete    | 2026-11-16 |
-| 15. Evidence-Aware Cold Serving & Forced-Walk Recovery | 2/3 | In Progress|  |
+| 15. Evidence-Aware Cold Serving & Forced-Walk Recovery | 3/3 | In Progress|  |
 | 16. TxPruner × GC Composition Hardening | 0/TBD | Not started | - |
 | 17. Seal Growth Measurement & Decision | 0/TBD | Not started | - |
 | 18. Role Downgrade, Collectibility Policy & GC Walk-Gap Exemption | 0/TBD | Not started | - |
