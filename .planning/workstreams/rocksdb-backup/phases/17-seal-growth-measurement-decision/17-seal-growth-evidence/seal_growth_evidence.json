@@ -1,0 +1,131 @@
+{
+  "meta": {
+    "harness": "cold_seal_growth_test",
+    "phase_plan": "17-02 (aggregates 17-01 floor + 17-02 fidelity/density/big)",
+    "host": "MOFU",
+    "os": "windows",
+    "build_config": "release",
+    "generated_utc": "2026-11-19T04:58:39Z",
+    "canonical_run": "one gated process (SGNS_SEAL_BIG_ENABLE=1), 2026-11-19T04:57-04:58Z; transcript in run-capture.md",
+    "grow_dataset_fingerprint": "seed=20261118;scale=10000000;first=QmXdPgAFU8fwjEfyU5tJW5oQFmtkq9L7kNEX3yeq4VaZNv;last=QmaahEfaSSHn92heeG2rboFWHV3EWZBCQUHVGHfzQn64Kw",
+    "floor_dataset_fingerprint": "seed=20261118;scale=1000000;first=QmPK2jeNNbhSkJ3K4CCyMwZP4Kui3r8CDu9XXnPkhg45Ad;last=QmRGW73uutDCtbdZ2aHyDrZ7DYCmUsW5o4SZPrpSqESttw"
+  },
+  "options": {
+    "target_file_size_base": 33554432,
+    "max_compaction_bytes": 33554432,
+    "write_buffer_size": 33554432,
+    "level0_file_num_compaction_trigger": 1,
+    "target_file_size_multiplier": 1,
+    "level_compaction_dynamic_level_bytes": false,
+    "create_if_missing": true,
+    "wal_posture": "default (WAL on)"
+  },
+  "leg": {
+    "volume_10e6_floor": {
+      "root": "test-data/cold-seal-growth/floor (wiped per run)",
+      "seeded_count": 1000000,
+      "seed_elapsed_ms": 6977.735,
+      "seeding_rate_per_sec": 143312.987,
+      "seal_rows": 1000000,
+      "other_rows": 0,
+      "seal_bytes_total": 52000000,
+      "per_row_bytes_mean": 52.0,
+      "enum_repeats": 3,
+      "warm_rows_per_sec_mean": 6797530.976,
+      "enum_max_deviation_pct": 5.239,
+      "derived_tier1_floor_rows_per_sec": 480000,
+      "derived_tier1_bytes_band": [46, 60]
+    },
+    "volume_10e6": {
+      "root": "test-data/cold-seal-growth/grow (persistent, never wiped)",
+      "grow_seed_rate_per_sec": 118497.875,
+      "seal_rows": 1000000,
+      "per_row_bytes": 52.0,
+      "enum_warm": {
+        "rows_per_s": 7254963.065,
+        "max_deviation_pct": 4.743,
+        "cv_pct": 3.354
+      },
+      "enum_cold_fill_cache_false": {
+        "rows_per_s": 7839226.378
+      }
+    },
+    "volume_10e7": {
+      "root": "test-data/cold-seal-growth/grow (grown IN PLACE from the 10^6 point)",
+      "seal_rows": 10000000,
+      "per_row_bytes": 52.0,
+      "grow_increment_ms": 69068.192,
+      "grow_increment_rate_per_sec": 130306.002,
+      "enum_warm": {
+        "rows_per_s": 6250308.401,
+        "max_deviation_pct": 22.792,
+        "cv_pct": 16.152
+      },
+      "enum_cold": {
+        "rows_per_s": 6898709.751
+      },
+      "enum_reopen_cold": {
+        "rows_per_s": 5227098.071,
+        "wall_ms": 1913.107,
+        "caveat": "fresh DB reopen; OS page cache outside harness control"
+      }
+    },
+    "volume_10e8_extrapolated": {
+      "extrapolated": true,
+      "total_bytes": 5200000000.0,
+      "enum_rows_per_sec": 6250308.401,
+      "enum_wall_ms": 15999.211,
+      "seeding_time_ms": 767424.357,
+      "spot_check_deviation_pct": -9.062,
+      "spot_check_basis": "10^6-point seeding-rate prediction of the 10^6-to-10^7 increment vs measured",
+      "derivation": "bytes = per_row_bytes(10^7) x 10^8; enum = 10^8 / warm mean rows_per_s(10^7) (the slower 10^7 point, conservative); seeding = 10^8 / measured 10^6-to-10^7 increment rate"
+    },
+    "fidelity": {
+      "topology": "datastore-level (GlobalDB RequestForcedWalk) + W3 syncer-alias for spectrum shape sets",
+      "chain_puts": 64,
+      "walk": {
+        "state": "Completed",
+        "visited": 64,
+        "fetched": 0,
+        "restored": 0,
+        "skipped_pruned": 0,
+        "skipped_existing": 64,
+        "walk_gaps": 0,
+        "deferred": 0,
+        "errors": 0
+      },
+      "identity_equal": true,
+      "seal_keys_compared": 242,
+      "shapes": {
+        "deep": { "ancestry_size": 64, "max_depth": 63, "max_breadth": 1, "identity_equal": true },
+        "wide": { "ancestry_size": 73, "max_depth": 2, "max_breadth": 8, "identity_equal": true },
+        "mixed": { "ancestry_size": 41, "max_depth": 32, "max_breadth": 9, "identity_equal": true }
+      }
+    },
+    "density": {
+      "source": "/prune/blk back-references via PruneEligibility::WritePrunedBlockEntryForTest / LookupPrunedBlockEntry",
+      "matrix": {
+        "deep": {
+          "frac_1_4": { "marked": 16, "total": 64, "density": 0.25, "roundtrip_ok": true },
+          "frac_1_2": { "marked": 32, "total": 64, "density": 0.5, "roundtrip_ok": true },
+          "frac_1_1": { "marked": 64, "total": 64, "density": 1.0, "roundtrip_ok": true }
+        },
+        "wide": {
+          "frac_1_4": { "marked": 18, "total": 73, "density": 0.247, "roundtrip_ok": true },
+          "frac_1_2": { "marked": 37, "total": 73, "density": 0.507, "roundtrip_ok": true },
+          "frac_1_1": { "marked": 73, "total": 73, "density": 1.0, "roundtrip_ok": true }
+        },
+        "mixed": {
+          "frac_1_4": { "marked": 10, "total": 41, "density": 0.244, "roundtrip_ok": true },
+          "frac_1_2": { "marked": 21, "total": 41, "density": 0.512, "roundtrip_ok": true },
+          "frac_1_1": { "marked": 41, "total": 41, "density": 1.0, "roundtrip_ok": true }
+        }
+      },
+      "shared_cf": {
+        "seals": 8,
+        "others": 211,
+        "per_row_bytes": 52.0
+      }
+    }
+  }
+}
