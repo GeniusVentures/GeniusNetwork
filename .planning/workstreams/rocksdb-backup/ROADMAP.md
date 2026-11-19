@@ -161,7 +161,17 @@ Plans:
   2. The measurement probe runs as this phase's first plan and its numbers feed the walk-bounds work: Phase 15's walk-bound defaults are validated (or re-tuned) against the probe's real numbers — the recorded dependency is honored.
   3. An explicit decision — accept hot growth vs. future design — is documented with capacity math citing real walk-recovery numbers; any spill/compaction/sidecar redesign is a measured trigger deferred to a future milestone.
 
-**Plans**: TBD
+**Plans**: 3/3 plans defined (research + patterns complete 2026-11-18 — anchors verified at SuperGenius `741980f5d`; probe-first ordering per SC2)
+
+Plans:
+**Wave 1**
+- [ ] 17-01-PLAN.md — TRACER: the probe harness itself — sanctioned seal seeding, raw-iterator suffix enumeration, flat JSON evidence, Tier-1 floor registration with derived floors (D-03/D-07/D-08/D-09)
+
+**Wave 2** *(blocked on Wave 1 — shared files: the harness + its registration)*
+- [ ] 17-02-PLAN.md — SC1 completion: fidelity byte-identity leg (D-04), knobbed DAG-spectrum density legs over /prune/blk (D-05/D-06), dev-gated growing 10⁶→10⁷ big legs + flagged 10⁸ extrapolation, committed evidence trio (D-01/D-02/D-09)
+
+**Wave 3** *(blocked on Wave 2 — the verdict and capacity math consume the committed numbers)*
+- [ ] 17-03-PLAN.md — SC2/SC3 closure: D-12 band + walk-bounds verdict + conditional both-homes re-tune (the phase's only production touch), the D-10 decision record with D-11 triggers + D-13 capacity math, STATE.md one-liner
 
 ### Phase 18: Role Downgrade, Collectibility Policy & GC Walk-Gap Exemption
 
@@ -198,7 +208,7 @@ Plans:
 | 14. Durability-Gated TxPruner Eligibility | 3/3 | Complete    | 2026-11-16 |
 | 15. Evidence-Aware Cold Serving & Forced-Walk Recovery | 3/3 | In Progress|  |
 | 16. TxPruner × GC Composition Hardening | 3/3 | In Progress|  |
-| 17. Seal Growth Measurement & Decision | 0/TBD | Not started | - |
+| 17. Seal Growth Measurement & Decision | 0/3 | Planned    |  |
 | 18. Role Downgrade, Collectibility Policy & GC Walk-Gap Exemption | 0/TBD | Not started | - |
 | 19. Cross-Feature Fault-Race Matrix & Three-Platform CI Capstone | 0/TBD | Not started | - |
 
