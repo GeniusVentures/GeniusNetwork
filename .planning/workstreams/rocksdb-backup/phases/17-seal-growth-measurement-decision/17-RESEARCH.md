@@ -478,18 +478,24 @@ Not a rename/refactor/migration phase — additive measurement code only. Not ap
 | A4 | `ReadOptions::fill_cache = false` approximates cold-cache point reads, and a fresh process (resume-mode precedent) is the cleaner cold-cache leg | Discretion recommendation | Low — cold-cache mechanics is locked as agent discretion; both options preserved for the planner |
 | A5 | No existing test target links nlohmann/json in a way the probe can reuse for the evidence JSON (unverified) | Standard Stack / JSON emitter | Low — the recommendation is a hand-rolled flat emitter which needs no linkage; if wrong, reuse is a simplification, not a blocker |
 
-## Open Questions
+## Open Questions (RESOLVED)
 
-1. **Does the Tier-1 floor leg need `if(SGNS_COLD_STORAGE)` gating?**
+_All four questions were ruled at plan level (planner, within the CONTEXT Agent's-Discretion grants); each ruling is recorded inline below and implemented by the plan named. No question remains open._
+
+1. **Does the Tier-1 floor leg need `if(SGNS_COLD_STORAGE)` gating?** — (RESOLVED by 17-01)
    - What we know: audit check 2 requires gating ONLY for targets linking `sgns-blockstore::sgns-blockstore`; a pure seal probe (rocksdb + vendored datastore + syncer) links neither.
    - What's unclear: whether the fidelity/walk legs (CrdtDatastore-level walks) pull in gated includes transitively.
    - Recommendation: mirror the neighboring `cold_*` registration blocks; let `tier1_static_audit` arbitrate at wiring time; if gated, the floor leg runs only on SGNS_COLD_STORAGE builds (consistent with every existing Tier-1 cold suite).
-2. **Walk-leg topology weight: node-level (W1–W4 in `node_startup_test.cpp`) vs datastore-level walks in the crdt test dir?**
+   - **Ruling (17-01):** registration lands INSIDE `if(SGNS_COLD_STORAGE)` with `LABELS "Tier1"` — gating parity with every cold Tier-1 suite, `tier1_static_audit` arbitrating at wiring time (17-01 Task 1, action step 6).
+2. **Walk-leg topology weight: node-level (W1–W4 in `node_startup_test.cpp`) vs datastore-level walks in the crdt test dir?** — (RESOLVED by 17-02)
    - What we know: the W3 fidelity precedent is node-level (heavy but proven); the crdt-dir suites construct datastore+syncer directly (lighter).
    - Recommendation: planner weighs fidelity-leg size (discretion) — the W-shape precedents prove node-level works; a datastore-level walk suffices for byte-identity if the sealing surface is the same `dagService_` path.
-3. **Tolerance-band repetition budget (D-12):** how many repeats per scale point on the dev legs (runtime cost vs variance quality).
+   - **Ruling (17-02):** DATASTORE-LEVEL walk — CrdtDatastore + GraphsyncDAGSyncer over a real GlobalDB hot store on the Phase-14 kit construction, driving the public walk surface; the node-level W3 shape is the sanctioned fallback only if datastore-level driving proves impractical, and the SUMMARY records which topology was used (17-02 objective, planner rulings).
+3. **Tolerance-band repetition budget (D-12):** how many repeats per scale point on the dev legs (runtime cost vs variance quality). — (RESOLVED by 17-02)
    - Recommendation: 3–5 repeats on the 10⁶ legs, ≥2 on 10⁷; record the statistic (e.g. max-deviation or coefficient of variation) in the decision doc.
-4. **Where the walk-bounds re-tune lands if triggered** (same plan vs follow-up) — planner sequences per CONTEXT discretion; research notes the amendment site is small (one constant + comment) but must carry the both-homes record.
+   - **Ruling (17-02):** SGNS_SEAL_REPEATS default 3 at 10⁶ and minimum 2 at 10⁷; recorded statistics = max deviation AND coefficient of variation per leg, both emitted into the evidence JSON as the D-12 band inputs (17-02 objective, planner rulings).
+4. **Where the walk-bounds re-tune lands if triggered** (same plan vs follow-up) — planner sequences per CONTEXT discretion; research notes the amendment site is small (one constant + comment) but must carry the both-homes record. — (RESOLVED by 17-03)
+   - **Ruling (17-03):** the conditional amendment lands in 17-03 Task 1, immediately after the verdict commit — not a follow-up plan — with the both-homes record (in-code derivation-comment extension + decision-doc ruling section) shipping in the same plan (17-03 objective, planner rulings).
 
 ## Sources
 
