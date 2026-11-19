@@ -55,3 +55,75 @@ The largest measured repeat statistic is the 10⁷ warm CV of **16.152%** (domin
 **Branch executed:** IN-BAND — `SuperGenius/src` carries **zero diff** vs the phase anchor `741980f5d` (the diff gate is this branch's evidence). The Phase 15 ↔ 17 derive-now/refine-later contract is closed with both halves honored: derived in Phase 15 (D-06), validated here against the probe's real walk-recovery numbers.
 
 **Verdict date:** 2026-11-19. Chronology: band commit `de04874` precedes this verdict commit; no constant amendment follows (in-band branch).
+
+---
+
+## (a) The growth being accepted
+
+The seal row is a **monotone, never-deleted text key** in the hot store's shared default column family: `<cid-string> + "sealed"`, empty value, written by the one vendored constructor (`RocksdbDatastore::seal`, GATE-03's single home) and retained by BOTH pruners (governing invariant 3 — verified end-to-end by Phase 16's interleave matrix). Growth is O(processed CIDs): every resolved walk node and every replaced head accumulates a row; no path deletes one.
+
+Measured anatomy (committed JSON):
+
+- **Per-row bytes: 52.000 at every scale point** (`leg.volume_10e6.per_row_bytes`, `leg.volume_10e7.per_row_bytes`) — a 46-char CIDv0 text key plus the 6-char suffix. The spectrum collapses to a point here: the row depends only on CID string length, and all three shapes (deep/wide/mixed) emit CIDv0 keys, so the D-13 uncertainty band on bytes/node is the Tier-1 shape band [46, 60] (`leg.volume_10e6_floor.derived_tier1_bytes_band`), not a shape spread.
+- **Shared-CF posture:** seals share the default CF with block keys and CRDT rows — the density fixture's empirical mix measured **8 seals vs 211 non-seal rows** (`leg.density.shared_cf.*`); a maintenance sweep pays the FULL-CF suffix scan (Pitfall 1's finding — that cost is what the enumeration numbers measure).
+- **Recovery-walk ancestry density** (the workload axis, D-05/D-06): measured across the spectrum from `/prune/blk` back-references at ¼/½/1 erase fractions — every cell exact and round-trip-verified (`leg.density.<shape>.frac_*.*`), so the density curve the capacity math interpolates over is on record.
+
+## (b) The SC3 ruling — accept hot growth; redesign deferred to measured triggers
+
+**ACCEPT.** The measured costs are small, flat, and far from any service-impact threshold on the recorded hardware fingerprint (MOFU / windows / release):
+
+**Spectrum-band capacity math (D-13)** — representative mix with the deep/wide endpoints as the uncertainty band; the bytes axis collapses (see (a)), the cost axis carries the band:
+
+| Scale | Seal bytes | Warm full-sweep | Cold (reopen) | Basis | JSON keys |
+|---|---|---|---|---|---|
+| 10⁶ | 52.0 MB (52.000 B × 10⁶) | ≈138–147 ms (7.25M rows/s) | 7.84M rows/s (fill_cache=false) | **measured** | `leg.volume_10e6.*` |
+| 10⁷ | 520 MB | ≈1.6 s (6.25M rows/s) | **5.23M rows/s** (fresh reopen — the cold point of record) | **measured** | `leg.volume_10e7.*` |
+| 10⁸ | **5.2 GB** | **≈16.0 s** | — | **EXTRAPOLATED** (flagged) | `leg.volume_10e8_extrapolated.*` |
+
+Enumeration degrades ~14% from 10⁶ to 10⁷ (7.25M → 6.25M rows/s — the dataset outgrows cache; the 10⁸ projection uses the slower 10⁷ point, conservative). Seeding rates: 143k/s floor, 118k/s grow-to-10⁶, 130k/s 10⁶→10⁷ increment (`leg.volume_10e6_floor.seeding_rate_per_sec`, `leg.volume_10e6.grow_seed_rate_per_sec`, `leg.volume_10e7.grow_increment_rate_per_sec`); 10⁸ seeding ≈ 767 s EXTRAPOLATED with the spot-check anchored at **−9.06%** (`leg.volume_10e8_extrapolated.spot_check_deviation_pct`).
+
+Even at 10⁸ CIDs — a scale no node in this milestone's envelope approaches — the entire seal keyspace costs ~5.2 GB and a full maintenance sweep ~16 s. The redesign machinery (spill/compaction/sidecar) would spend complexity and new failure modes on a problem this size does not have.
+
+## D-11 numeric triggers ("demands it", operationalized)
+
+Each trigger is checkable against the committed JSON alone (re-measure per the re-run instructions below, then compare):
+
+| # | Trigger | Threshold | Cited key (measured value) | Derivation note |
+|---|---|---|---|---|
+| T1 | Per-row shape change | re-measured `per_row_bytes` outside **[46, 60]** | `leg.volume_10e7.per_row_bytes` = 52.000 | The committed Tier-1 band (mean ±8 clamped inside the [46, 90] envelope) — any exit is a CID-scheme or row-shape change, far outside the ±25% D-12 band |
+| T2 | Enumeration service impact | warm 10⁷ full-sweep (10⁷ ÷ `enum_warm.rows_per_s`) exceeds **10 s** | `leg.volume_10e7.enum_warm.rows_per_s` = 6,250,308 (≈1.6 s measured) | ≈6× measured — beyond the 22.8% worst in-run deviation AND the day-to-day spread; a real regression, not variance |
+| T3 | Bytes share at scale | extrapolated 10⁸ `total_bytes` exceeds **20 GB** | `leg.volume_10e8_extrapolated.total_bytes` = 5.2×10⁹ | ≈4× the measured-shape projection — reachable only by a row-shape or CID-scheme change (T1's territory at scale); crossing it re-opens the redesign question with a material number |
+
+## Options considered and rejected
+
+| Option | Verdict | Why |
+|---|---|---|
+| **Accept hot growth** (status quo: seals stay in the shared CF, read/count/time only) | **ACCEPTED (this ruling)** | Measured costs flat and small (above); zero new dependencies; invariant 3 untouched. |
+| **Seal spill to cold storage** | **Rejected — deferred to triggers** | Seals are not DAG blocks; blockstore spill does not apply (REQUIREMENTS Future, line: "Seal storage redesign (spill / compaction / sidecar) — only if SEAL-01 measurement demands it"). The measurement says it does not (T1–T3 all far from tripping). |
+| **Compaction-filter deletion / DeleteRange cleanup** | **Rejected** | Violates governing invariant 3 (seals never deleted by any path) and the v1.2 zero-new-mechanism budget (no compaction-filter deletion, no DeleteRange — STATE key decisions). |
+| **Sidecar keyspace / dedicated CF** | **Rejected — deferred to triggers** | A redesign of the vendored, GATE-03-pinned key scheme ("Out of Scope: redesign doubles risk on the load-bearing recovery index"); only a tripped trigger re-opens it. |
+
+## Evidence
+
+- Volume + enumeration at 10⁶/10⁷ measured and 10⁸ extrapolated-and-flagged: `leg.volume_10e6_floor.*`, `leg.volume_10e6.*`, `leg.volume_10e7.*`, `leg.volume_10e8_extrapolated.*` in `phases/17-seal-growth-measurement-decision/17-seal-growth-evidence/seal_growth_evidence.json`
+- Fidelity (D-04 — direct seeding admissible): `leg.fidelity.*` (242/242 byte-identical keys, walk Completed/64 visited/0 gaps)
+- Density spectrum (D-05/D-06): `leg.density.*` (3 shapes × 3 fractions, all round-trips green, shared-CF context 8/211)
+- Variance (D-12 band inputs): the max-deviation/CV keys cited in (c)
+- Run transcript + runbook: `17-seal-growth-evidence/run-capture.md`, `17-seal-growth-evidence/README.md`
+
+## D-08 re-run instructions
+
+See `17-seal-growth-evidence/README.md` (the full runbook). Summary: build target `cold_seal_growth_test` (`cmake --build SuperGenius/build/Windows/Release --config Release --target cold_seal_growth_test --parallel 8`), run from `SuperGenius/build/Windows/Release/test/src/crdt` (the `test-data/...` fixture roots are relative to it), set `SGNS_SEAL_BIG_ENABLE` for the big legs (loud labelled skip otherwise). Knobs (NAMES only): `SGNS_SEAL_SCALE`, `SGNS_SEAL_BIG_SCALE`, `SGNS_SEAL_REPEATS`, `SGNS_SEAL_SEED`, `SGNS_SEAL_DEPTH`, `SGNS_SEAL_FANOUT`, `SGNS_SEAL_MIX`. The Tier-1 lane runs the bounded floor leg ungated on every CI pass.
+
+## Sources (the four resolvable citations — per the research's ruling)
+
+1. The in-code derivation comment: `SuperGenius/src/crdt/graphsync_dagsyncer.hpp:58-82` (the three-8-bounds derivation, PrunedMesh [1,4], composition with CID_FAILURE_SUPPRESSION 4 s and kTotalFetchTimeout 20 s, and the in-code Phase 17 SC2 contract).
+2. The sibling bounds: `SuperGenius/src/crdt/crdt_datastore.hpp:743` (`MAX_FAILED_ROOT_RETRIES = 8`) and `SuperGenius/src/account/GeniusNode.hpp:1225` (`bootstrap_walk_max_retries_ = 8`).
+3. The develop-line observations: `SuperGenius/.planning/phases/19-pruned-node-survival-recovery-hardening/19-07-SUMMARY.md` (T-19-0701: attempts bounded **≤8 RefusalFailover**, **≤4 PrunedMesh Phase B**; PrunedMesh Phase B attempts in **[1,4]**).
+4. This phase's own probe numbers: `phases/17-seal-growth-measurement-decision/17-seal-growth-evidence/seal_growth_evidence.json` (the keys cited throughout this doc).
+
+## Forward pointers
+
+- **Phase 18** (policy/downgrade capstone): its policy record cites this doc's D-11 triggers as the seal-side "demands it" gate and the D-12 verdict as the walk-bounds closure.
+- **Phase 19** (fault-race + 3-platform CI capstone): the Tier-1 floor leg (`cold_seal_growth_test`, LABELS Tier1, derived floors 480k rows/s and [46, 60] bytes) joins the three-platform lane contract it proves.
+- **Future seal-redesign milestone** (if ever convened): gates on T1–T3 above; re-opens the spill/compaction/sidecar options table with material numbers; honors GATE-03's single-home rule in any migration.

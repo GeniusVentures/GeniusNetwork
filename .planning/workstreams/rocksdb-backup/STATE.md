@@ -5,16 +5,16 @@ milestone_name: SuperGenius Cold-Storage Archive Integration
 current_phase: 17
 current_phase_name: Seal Growth Measurement & Decision
 status: executing
-stopped_at: Phase 17 context gathered
-last_updated: "2026-11-19T03:35:45.055Z"
-last_activity: 2026-11-17
-last_activity_desc: Phase 15 execution started
-state_head: bc9792742ea701ad1c617fa8d34222ee7eb3e3c1
+stopped_at: 17-02 complete (2/3); Phase-16 compose flake fixed en route (f758356fe); next 17-03 decision record
+last_updated: "2026-11-19T05:12:46.996Z"
+last_activity: 2026-11-18
+last_activity_desc: Phase 17 execution started
+state_head: d5e2736b0862857e5508e624950e9a2f3878ff12
 progress:
   total_phases: 7
   completed_phases: 1
   total_plans: 16
-  completed_plans: 13
+  completed_plans: 15
 ---
 
 # Project State
@@ -25,14 +25,14 @@ See: `.planning/PROJECT.md` (workstream sections); `.planning/workstreams/rocksd
 
 **Core value:** Older CRDT/IPLD blocks can spill from RocksDB hot state to durable, CID-verified object storage through a shared thirdparty static library (`sgns-blockstore`) consumable by both SuperGenius and genius-tube — no RocksDB remote-FS integration, no SDK/SuperGenius types in the public API, and local eviction is never a CRDT deletion.
 
-**Current focus:** Phase 15 — Evidence-Aware Cold Serving & Forced-Walk Recovery
+**Current focus:** Phase 17 — Seal Growth Measurement & Decision
 
 ## Current Position
 
-Phase: 17 (Seal Growth Measurement & Decision) — READY TO EXECUTE
-Plan: 3 of 3
-Status: Ready to execute
-Last activity: 2026-11-17 — Phase 15 execution started
+Phase: 17 (Seal Growth Measurement & Decision) — EXECUTING
+Plan: 1 of 3
+Status: Executing Phase 17
+Last activity: 2026-11-18 — Phase 17 execution started
 
 ## Progress
 
@@ -53,6 +53,7 @@ v1.2 Phases 13-19 defined — see [ROADMAP.md](ROADMAP.md). v1.1 completion reco
 - External gates: the Phase 13 merge gates ALL walk work; develop Phase 17 evaluator shape gates Phase 14 executability (keep the cold conjunct a separate predicate argument)
 - Converged phase order: merge (13) → durability gate (14) → evidence-serving + walk fix (15) → pruner×GC hardening (16) → seals measurement (17) → policy/downgrade capstone (18) → fault-race + 3-platform CI capstone (19)
 - SEAL probe feeds Phase 15's walk bounds (probe = first plan of Phase 17; the recorded decision closes citing real walk-recovery numbers)
+- SEAL-01 measured and decided (2026-11-19): accept hot seal growth — 52.000 B/row measured at 10^6/10^7, 10^8 extrapolated at 5.2 GB / ~16 s full sweep (evidence: phases/17-seal-growth-measurement-decision/17-seal-growth-evidence/); redesign deferred to the recorded D-11 numeric triggers in notes/17-seal-growth-decision.md; D-12 verdict: kForcedWalkPeerFailoverPerCid = 8 validated in-band-with-noted-limitation (hermetic topology, zero production touch)
 
 v1.1 key decisions archived with the milestone (`milestones/v1.1-ROADMAP.md` + phase artifacts).
 
@@ -70,10 +71,10 @@ v1.1 key decisions archived with the milestone (`milestones/v1.1-ROADMAP.md` + p
 
 ## Session Continuity
 
-**Last session:** 2026-11-19T02:40:58.526Z
+**Last session:** 2026-11-19T05:12:46.403Z
 
-**Stopped At:** Phase 17 context gathered
-**Resume File:** .planning/workstreams/rocksdb-backup/phases/17-seal-growth-measurement-decision/17-CONTEXT.md
+**Stopped At:** 17-02 complete (2/3); Phase-16 compose flake fixed en route (f758356fe); next 17-03 decision record
+**Resume File:** .planning/workstreams/rocksdb-backup/phases/17-seal-growth-measurement-decision/17-02-SUMMARY.md
 
 ## Performance Metrics
 
