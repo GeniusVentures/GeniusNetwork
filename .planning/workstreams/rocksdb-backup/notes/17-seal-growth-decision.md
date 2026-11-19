@@ -31,4 +31,27 @@ The largest measured repeat statistic is the 10⁷ warm CV of **16.152%** (domin
 
 ## (d) SC2 verdict
 
-*(placeholder — filled by the verdict commit; the band above is already final)*
+**Verdict: VALIDATED — in-band, with noted limitation. No production touch.**
+
+**Inputs (committed JSON keys):**
+
+| Input | Value | JSON key |
+|---|---|---|
+| Walk state | Completed | `leg.fidelity.walk.state` |
+| visited / skipped_existing | 64 / 64 | `leg.fidelity.walk.visited` / `.skipped_existing` |
+| fetched / restored | 0 / 0 | `leg.fidelity.walk.fetched` / `.restored` |
+| skipped_pruned / deferred / errors | 0 / 0 / 0 | `leg.fidelity.walk.skipped_pruned` / `.deferred` / `.errors` |
+| **walk_gaps** | **0** | `leg.fidelity.walk.walk_gaps` |
+| Topology | datastore-level (GlobalDB RequestForcedWalk) + W3 syncer-alias — hermetic, no peers | `leg.fidelity.topology` |
+| Attempts-per-CID | not observable (zero recovery fetches occurred) | — |
+
+**Comparison:** against the derivation envelope (healthy [1,4], bound 8, 2× headroom) through the ±25% band recorded in (c).
+
+- *Bound-binding disjunct:* `walk_gaps = 0` across the walk and every shape — the per-CID budget was never approached, let alone exhausted. **Not triggered.**
+- *Dead-weight disjunct:* the measured profile sits entirely at the zero-attempt point (`fetched = restored = 0`: a fully-retained hermetic ancestry exercises no recovery fetches and therefore zero peer-failover attempts). **Reduced observability:** the topology could not exercise peer failover, so the symmetric clause engages — the below-envelope reading is a **topology artifact**, recorded as **in-band-with-noted-limitation**, not dead-weight evidence. **Not triggered.**
+
+**Noted limitation:** this verdict validates the bound's *non-interference* (the walk completes cleanly, zero gaps/errors/deferrals, at budget-free operation) but cannot speak to the bound's *tightness* — attempts-per-CID was unobservable under the hermetic datastore-level topology. The tightness question keeps its answer from the envelope's recorded sources (the in-code derivation and the develop-line 19-07 observations, cited in the Sources section); a peer-exercising topology leg is a natural addition for a future milestone that revisits the constant.
+
+**Branch executed:** IN-BAND — `SuperGenius/src` carries **zero diff** vs the phase anchor `741980f5d` (the diff gate is this branch's evidence). The Phase 15 ↔ 17 derive-now/refine-later contract is closed with both halves honored: derived in Phase 15 (D-06), validated here against the probe's real walk-recovery numbers.
+
+**Verdict date:** 2026-11-19. Chronology: band commit `de04874` precedes this verdict commit; no constant amendment follows (in-band branch).
