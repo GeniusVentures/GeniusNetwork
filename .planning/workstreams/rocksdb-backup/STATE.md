@@ -2,18 +2,18 @@
 gsd_state_version: "1.0"
 milestone: v1.2
 milestone_name: SuperGenius Cold-Storage Archive Integration
-current_phase: 17
-current_phase_name: Seal Growth Measurement & Decision
+current_phase: 18
+current_phase_name: Role Downgrade, Collectibility Policy & GC Walk-Gap Exemption
 status: executing
 stopped_at: Phase 18 context gathered
-last_updated: "2026-11-19T22:00:35.951Z"
+last_updated: "2026-11-19T23:01:36.984Z"
 last_activity: 2026-11-18
 last_activity_desc: Phase 17 execution started
-state_head: 8edb94486bee127c63c588987f33c68423d4901c
+state_head: a5c93eaea5f10cc1122ed9592f51d60090aef6fc
 progress:
   total_phases: 7
   completed_phases: 1
-  total_plans: 16
+  total_plans: 20
   completed_plans: 16
 ---
 
@@ -29,9 +29,9 @@ See: `.planning/PROJECT.md` (workstream sections); `.planning/workstreams/rocksd
 
 ## Current Position
 
-Phase: 17 (Seal Growth Measurement & Decision) — EXECUTING
+Phase: 18 (Role Downgrade, Collectibility Policy & GC Walk-Gap Exemption) — READY TO EXECUTE
 Plan: 1 of 3
-Status: Executing Phase 17
+Status: Ready to execute
 Last activity: 2026-11-18 — Phase 17 execution started
 
 ## Progress
