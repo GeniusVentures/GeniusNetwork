@@ -5,16 +5,16 @@ milestone_name: SuperGenius Cold-Storage Archive Integration
 current_phase: 18
 current_phase_name: Role Downgrade, Collectibility Policy & GC Walk-Gap Exemption
 status: executing
-stopped_at: Phase 18 planned (4 plans, 4 waves, verification passed — ready to execute)
-last_updated: "2026-11-19T23:03:36.627Z"
-last_activity: 2026-11-18
-last_activity_desc: Phase 17 execution started
-state_head: 3c4660e3005f4b663b94c1903ff96ee4471749c4
+stopped_at: Completed 18-01-PLAN.md (GC walk-gap exemption red-then-green, Tier-1 18/18)
+last_updated: "2026-11-19T23:53:37.712Z"
+last_activity: 2026-11-19
+last_activity_desc: Phase 18 execution started
+state_head: 15602053fbaf37b997d18d64aaf3b880e0da5eb6
 progress:
   total_phases: 7
   completed_phases: 1
   total_plans: 20
-  completed_plans: 16
+  completed_plans: 17
 ---
 
 # Project State
@@ -25,14 +25,14 @@ See: `.planning/PROJECT.md` (workstream sections); `.planning/workstreams/rocksd
 
 **Core value:** Older CRDT/IPLD blocks can spill from RocksDB hot state to durable, CID-verified object storage through a shared thirdparty static library (`sgns-blockstore`) consumable by both SuperGenius and genius-tube — no RocksDB remote-FS integration, no SDK/SuperGenius types in the public API, and local eviction is never a CRDT deletion.
 
-**Current focus:** Phase 17 — Seal Growth Measurement & Decision
+**Current focus:** Phase 18 — Role Downgrade, Collectibility Policy & GC Walk-Gap Exemption
 
 ## Current Position
 
-Phase: 18 (Role Downgrade, Collectibility Policy & GC Walk-Gap Exemption) — READY TO EXECUTE
-Plan: 1 of 3
+Phase: 18 (Role Downgrade, Collectibility Policy & GC Walk-Gap Exemption) — EXECUTING
+Plan: 2 of 4
 Status: Ready to execute
-Last activity: 2026-11-18 — Phase 17 execution started
+Last activity: 2026-11-19 — Phase 18 execution started
 
 ## Progress
 
@@ -71,10 +71,10 @@ v1.1 key decisions archived with the milestone (`milestones/v1.1-ROADMAP.md` + p
 
 ## Session Continuity
 
-**Last session:** 2026-11-19T23:03:36.209Z
+**Last session:** 2026-11-19T23:53:37.309Z
 
-**Stopped At:** Phase 18 planned (4 plans, 4 waves, verification passed — ready to execute)
-**Resume File:** .planning/workstreams/rocksdb-backup/phases/18-role-downgrade-collectibility-policy-gc-walk-gap-exemption/18-CONTEXT.md
+**Stopped At:** Completed 18-01-PLAN.md (GC walk-gap exemption red-then-green, Tier-1 18/18)
+**Resume File:** None
 
 ## Performance Metrics
 
@@ -114,6 +114,7 @@ v1.1 key decisions archived with the milestone (`milestones/v1.1-ROADMAP.md` + p
 | Phase 16 P01 | 35min | 2 tasks | 5 files |
 | Phase 16 P02 | 55min | 3 tasks | 11 files |
 | Phase 16 P03 | 85min | 2 tasks | 5 files |
+| Phase 18 P01 | 65min | 2 tasks | 6 files |
 
 ## Decisions
 

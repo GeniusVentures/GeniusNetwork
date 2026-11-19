@@ -184,11 +184,11 @@ Plans:
   3. Existing Durable records from the archive era satisfy the prune gate after downgrade — no re-drain, no migration.
   4. The downgrade timeline is observable end-to-end: markers accumulate post-downgrade, refusal activates, and a config interlock prevents silent downgrade (operator-initiated, checklist-gated).
 
-**Plans**: 4/4 plans defined (research + patterns complete 2026-11-19 — anchors verified at SuperGenius `84d87d462`; red-first tracer per D-01)
+**Plans**: 1/4 plans executed defined (research + patterns complete 2026-11-19 — anchors verified at SuperGenius `84d87d462`; red-first tracer per D-01)
 
 Plans:
 **Wave 1**
-- [ ] 18-01-PLAN.md — TRACER: the GC walk-gap exemption red-first — LEG-1 poisoned-triangle/LEG-2 deleted-cold counter-test observed RED, then the one-predicate consult + counted-continue counter turning it green (D-01/D-02/D-03-hermetic/D-04)
+- [x] 18-01-PLAN.md — TRACER: the GC walk-gap exemption red-first — LEG-1 poisoned-triangle/LEG-2 deleted-cold counter-test observed RED, then the one-predicate consult + counted-continue counter turning it green (D-01/D-02/D-03-hermetic/D-04)
 
 **Wave 2** *(blocked on Wave 1 — shared file: test/src/crdt/CMakeLists.txt)*
 - [ ] 18-02-PLAN.md — SC4 mechanics: `downgrade_acknowledged` ack key + persisted role fingerprint + the GeniusNode start-normally/disarm gate + tiered-light posture line + the Tier-1 verdict matrix incl. birth-light control (D-05/D-06/D-07)
@@ -222,7 +222,7 @@ Plans:
 | 15. Evidence-Aware Cold Serving & Forced-Walk Recovery | 3/3 | In Progress|  |
 | 16. TxPruner × GC Composition Hardening | 3/3 | In Progress|  |
 | 17. Seal Growth Measurement & Decision | 3/3 | In Progress|  |
-| 18. Role Downgrade, Collectibility Policy & GC Walk-Gap Exemption | 0/TBD | Not started | - |
+| 18. Role Downgrade, Collectibility Policy & GC Walk-Gap Exemption | 1/4 | In Progress|  |
 | 19. Cross-Feature Fault-Race Matrix & Three-Platform CI Capstone | 0/TBD | Not started | - |
 
 ---
