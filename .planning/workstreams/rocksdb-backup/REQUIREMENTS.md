@@ -40,7 +40,7 @@ last_updated: 2026-11-13
 ### COMP — TxPruner × GC Composition
 
 - [x] **COMP-01**: EraseEntry's post-commit cleanup is hardened to GC's parity — the stale-LRU window (guard checks at compose-start only, no post-commit DeleteCIDBlock) is closed.
-- [ ] **COMP-02**: Concurrent TxPruner and GC passes are proven safe under an interleave matrix covering overlapping set rows, seal rows, and the block LRU — both idempotent on absent keys, seals untouched by both.
+- [x] **COMP-02**: Concurrent TxPruner and GC passes are proven safe under an interleave matrix covering overlapping set rows, seal rows, and the block LRU — both idempotent on absent keys, seals untouched by both.
 - [x] **COMP-03**: The GC-disposal starvation interplay (journal record deleted → gate reads NoRecord while remote S3 still serves) is ruled, documented, and its fail-safe direction (under-prune) is asserted by test.
 
 ### POLICY — Collectibility + Role Downgrade
@@ -89,7 +89,7 @@ last_updated: 2026-11-13
 | RECOVER-03 | Phase 15 | Pending |
 | RECOVER-04 | Phase 15 | Pending |
 | COMP-01 | Phase 16 | Complete |
-| COMP-02 | Phase 16 | Pending |
+| COMP-02 | Phase 16 | Complete |
 | COMP-03 | Phase 16 | Complete |
 | POLICY-01 | Phase 18 | Pending |
 | POLICY-02 | Phase 18 | Pending |
