@@ -5,11 +5,11 @@ milestone_name: SuperGenius Cold-Storage Archive Integration
 current_phase: 16
 current_phase_name: TxPruner × GC Composition Hardening
 status: verifying
-stopped_at: Completed 16-03-PLAN.md - phase 16 execution complete (18-leg suite)
-last_updated: "2026-11-19T01:32:16.015Z"
+stopped_at: "Phase 16 executed + verified (passed_with_uat); UAT item pending (live MinIO SC3 leg); next: gsd-verify-work 16"
+last_updated: "2026-11-19T01:33:58.589Z"
 last_activity: 2026-11-17
 last_activity_desc: Phase 15 execution started
-state_head: 9fb81a234eaf9b6e0609235b01f364052e91ede8
+state_head: b9a5308198834a0dbfb96a8040987e38cdf51faa
 progress:
   total_phases: 7
   completed_phases: 1
@@ -70,10 +70,10 @@ v1.1 key decisions archived with the milestone (`milestones/v1.1-ROADMAP.md` + p
 
 ## Session Continuity
 
-**Last session:** 2026-11-19T01:32:15.799Z
+**Last session:** 2026-11-19T01:33:58.195Z
 
-**Stopped At:** Completed 16-03-PLAN.md - phase 16 execution complete (18-leg suite)
-**Resume File:** None
+**Stopped At:** Phase 16 executed + verified (passed_with_uat); UAT item pending (live MinIO SC3 leg); next: gsd-verify-work 16
+**Resume File:** .planning/workstreams/rocksdb-backup/phases/16-txpruner-gc-composition-hardening/16-UAT.md
 
 ## Performance Metrics
 
