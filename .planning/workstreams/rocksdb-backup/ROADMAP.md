@@ -161,17 +161,17 @@ Plans:
   2. The measurement probe runs as this phase's first plan and its numbers feed the walk-bounds work: Phase 15's walk-bound defaults are validated (or re-tuned) against the probe's real numbers — the recorded dependency is honored.
   3. An explicit decision — accept hot growth vs. future design — is documented with capacity math citing real walk-recovery numbers; any spill/compaction/sidecar redesign is a measured trigger deferred to a future milestone.
 
-**Plans**: 3/3 plans defined (research + patterns complete 2026-11-18 — anchors verified at SuperGenius `741980f5d`; probe-first ordering per SC2)
+**Plans**: 3/3 plans executed defined (research + patterns complete 2026-11-18 — anchors verified at SuperGenius `741980f5d`; probe-first ordering per SC2)
 
 Plans:
 **Wave 1**
-- [ ] 17-01-PLAN.md — TRACER: the probe harness itself — sanctioned seal seeding, raw-iterator suffix enumeration, flat JSON evidence, Tier-1 floor registration with derived floors (D-03/D-07/D-08/D-09)
+- [x] 17-01-PLAN.md — TRACER: the probe harness itself — sanctioned seal seeding, raw-iterator suffix enumeration, flat JSON evidence, Tier-1 floor registration with derived floors (D-03/D-07/D-08/D-09)
 
 **Wave 2** *(blocked on Wave 1 — shared files: the harness + its registration)*
-- [ ] 17-02-PLAN.md — SC1 completion: fidelity byte-identity leg (D-04), knobbed DAG-spectrum density legs over /prune/blk (D-05/D-06), dev-gated growing 10⁶→10⁷ big legs + flagged 10⁸ extrapolation, committed evidence trio (D-01/D-02/D-09)
+- [x] 17-02-PLAN.md — SC1 completion: fidelity byte-identity leg (D-04), knobbed DAG-spectrum density legs over /prune/blk (D-05/D-06), dev-gated growing 10⁶→10⁷ big legs + flagged 10⁸ extrapolation, committed evidence trio (D-01/D-02/D-09)
 
 **Wave 3** *(blocked on Wave 2 — the verdict and capacity math consume the committed numbers)*
-- [ ] 17-03-PLAN.md — SC2/SC3 closure: D-12 band + walk-bounds verdict + conditional both-homes re-tune (the phase's only production touch), the D-10 decision record with D-11 triggers + D-13 capacity math, STATE.md one-liner
+- [x] 17-03-PLAN.md — SC2/SC3 closure: D-12 band + walk-bounds verdict + conditional both-homes re-tune (the phase's only production touch), the D-10 decision record with D-11 triggers + D-13 capacity math, STATE.md one-liner
 
 ### Phase 18: Role Downgrade, Collectibility Policy & GC Walk-Gap Exemption
 
@@ -184,7 +184,20 @@ Plans:
   3. Existing Durable records from the archive era satisfy the prune gate after downgrade — no re-drain, no migration.
   4. The downgrade timeline is observable end-to-end: markers accumulate post-downgrade, refusal activates, and a config interlock prevents silent downgrade (operator-initiated, checklist-gated).
 
-**Plans**: TBD
+**Plans**: 4/4 plans defined (research + patterns complete 2026-11-19 — anchors verified at SuperGenius `84d87d462`; red-first tracer per D-01)
+
+Plans:
+**Wave 1**
+- [ ] 18-01-PLAN.md — TRACER: the GC walk-gap exemption red-first — LEG-1 poisoned-triangle/LEG-2 deleted-cold counter-test observed RED, then the one-predicate consult + counted-continue counter turning it green (D-01/D-02/D-03-hermetic/D-04)
+
+**Wave 2** *(blocked on Wave 1 — shared file: test/src/crdt/CMakeLists.txt)*
+- [ ] 18-02-PLAN.md — SC4 mechanics: `downgrade_acknowledged` ack key + persisted role fingerprint + the GeniusNode start-normally/disarm gate + tiered-light posture line + the Tier-1 verdict matrix incl. birth-light control (D-05/D-06/D-07)
+
+**Wave 3** *(blocked on Wave 2 — shared files: cold_downgrade_e2e_test.cpp + CMakeLists.txt; t3 consumes the 18-01 exemption in-band)*
+- [ ] 18-03-PLAN.md — SC2/SC3/SC4 evidence: the t0→t3 single-node re-open timeline (held-drainer no-re-drain, markers, refusal, t3 retention + exemption in-band) + the Tier-3 MinIO live leg (D-09/D-10/D-11/D-12)
+
+**Wave 4** *(blocked on Wave 3 — the record cites all committed evidence)*
+- [ ] 18-04-PLAN.md — SC1 closure: the `notes/18-*` rulings record (two-halves policy + exemption record + v2 contract-ask sketch + operator checklist) + STATE.md one-liner (D-08/D-13/D-14)
 
 ### Phase 19: Cross-Feature Fault-Race Matrix & Three-Platform CI Capstone
 
@@ -208,7 +221,7 @@ Plans:
 | 14. Durability-Gated TxPruner Eligibility | 3/3 | Complete    | 2026-11-16 |
 | 15. Evidence-Aware Cold Serving & Forced-Walk Recovery | 3/3 | In Progress|  |
 | 16. TxPruner × GC Composition Hardening | 3/3 | In Progress|  |
-| 17. Seal Growth Measurement & Decision | 0/3 | Planned    |  |
+| 17. Seal Growth Measurement & Decision | 3/3 | In Progress|  |
 | 18. Role Downgrade, Collectibility Policy & GC Walk-Gap Exemption | 0/TBD | Not started | - |
 | 19. Cross-Feature Fault-Race Matrix & Three-Platform CI Capstone | 0/TBD | Not started | - |
 
