@@ -2,19 +2,20 @@
 gsd_state_version: "1.0"
 milestone: v1.2
 milestone_name: SuperGenius Cold-Storage Archive Integration
-current_phase: 18
-current_phase_name: Role Downgrade, Collectibility Policy & GC Walk-Gap Exemption
-status: verifying
-stopped_at: Completed 18-04-PLAN.md - phase 18 execution complete (4/4 plans)
-last_updated: "2026-11-20T00:32:27.766Z"
+current_phase: 15
+current_phase_name: Evidence-Aware Cold Serving & Forced-Walk Recovery
+status: planning
+stopped_at: Phase 18 complete, ready to plan Phase 15
+last_updated: "2026-11-20T01:04:38.675Z"
 last_activity: 2026-11-19
-last_activity_desc: Phase 18 execution started
-state_head: e1ec8c196f41b1b9b5b912d14672901a2fb97a95
+last_activity_desc: Phase 18 complete, transitioned to Phase 15
+state_head: cc56151c75b40d0ddf9932732ac9de8bffe13fb3
 progress:
   total_phases: 7
-  completed_phases: 1
+  completed_phases: 2
   total_plans: 20
   completed_plans: 20
+  percent: 29
 ---
 
 # Project State
@@ -29,10 +30,10 @@ See: `.planning/PROJECT.md` (workstream sections); `.planning/workstreams/rocksd
 
 ## Current Position
 
-Phase: 18 (Role Downgrade, Collectibility Policy & GC Walk-Gap Exemption) — EXECUTING
-Plan: 4 of 4
-Status: Phase complete — ready for verification
-Last activity: 2026-11-19 — Phase 18 execution started
+Phase: 15 — Evidence-Aware Cold Serving & Forced-Walk Recovery
+Plan: Not started
+Status: Ready to plan
+Last activity: 2026-11-19 — Phase 18 complete, transitioned to Phase 15
 
 ## Progress
 
@@ -74,7 +75,7 @@ v1.1 key decisions archived with the milestone (`milestones/v1.1-ROADMAP.md` + p
 
 **Last session:** 2026-11-20T00:32:27.357Z
 
-**Stopped At:** Completed 18-04-PLAN.md - phase 18 execution complete (4/4 plans)
+**Stopped At:** Phase 18 complete, ready to plan Phase 15
 **Resume File:** None
 
 ## Performance Metrics

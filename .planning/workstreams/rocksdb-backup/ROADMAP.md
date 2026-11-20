@@ -47,7 +47,7 @@ Milestone audit (passed — 3/3 requirements, 7/7 phases, 5/5 integration seams,
 - [ ] **Phase 15: Evidence-Aware Cold Serving & Forced-Walk Recovery** - Evidence outranks bytes on every path — fixes the cold-chain resurrection gap and the forced-walk GC-evicted conflation; hermetic tri-state evidence fakes land here
 - [ ] **Phase 16: TxPruner × GC Composition Hardening** - Close the stale-LRU erase window, prove the TxPruner×GC interleave matrix, rule the disposal-starvation interplay fail-safe (under-prune)
 - [ ] **Phase 17: Seal Growth Measurement & Decision** - Measure seal growth at representative workloads (probe first — it feeds Phase 15's walk bounds) and record the accept-vs-redesign decision with capacity math
-- [ ] **Phase 18: Role Downgrade, Collectibility Policy & GC Walk-Gap Exemption** - The two-halves rule recorded as one policy (cold permanent this milestone + GC walk-gap exemption); archive→light downgrade E2E-proven
+- [x] **Phase 18: Role Downgrade, Collectibility Policy & GC Walk-Gap Exemption** - The two-halves rule recorded as one policy (cold permanent this milestone + GC walk-gap exemption); archive→light downgrade E2E-proven (completed 2026-11-19)
 - [ ] **Phase 19: Cross-Feature Fault-Race Matrix & Three-Platform CI Capstone** - Induced failures across erase × serve × recovery cannot resurrect, partially validate, or lose last copies; recovery-walk suites green on Windows/macOS/Linux with cold storage ON
 
 *Deferred signals carried forward (see STATE.md `## Deferred Items` and the v1.1 audit's tech-debt section): soak-scale GC eviction-storm hardening; TEST-03 MinIO-binary live leg (runbook); permanent cmake.yml ON-leg baseline (activates at develop merge).*
@@ -184,7 +184,7 @@ Plans:
   3. Existing Durable records from the archive era satisfy the prune gate after downgrade — no re-drain, no migration.
   4. The downgrade timeline is observable end-to-end: markers accumulate post-downgrade, refusal activates, and a config interlock prevents silent downgrade (operator-initiated, checklist-gated).
 
-**Plans**: 4/4 plans executed defined (research + patterns complete 2026-11-19 — anchors verified at SuperGenius `84d87d462`; red-first tracer per D-01)
+**Plans**: 4/4 plans complete defined (research + patterns complete 2026-11-19 — anchors verified at SuperGenius `84d87d462`; red-first tracer per D-01)
 
 Plans:
 **Wave 1**
@@ -222,7 +222,7 @@ Plans:
 | 15. Evidence-Aware Cold Serving & Forced-Walk Recovery | 3/3 | In Progress|  |
 | 16. TxPruner × GC Composition Hardening | 3/3 | In Progress|  |
 | 17. Seal Growth Measurement & Decision | 3/3 | In Progress|  |
-| 18. Role Downgrade, Collectibility Policy & GC Walk-Gap Exemption | 4/4 | In Progress|  |
+| 18. Role Downgrade, Collectibility Policy & GC Walk-Gap Exemption | 4/4 | Complete    | 2026-11-19 |
 | 19. Cross-Feature Fault-Race Matrix & Three-Platform CI Capstone | 0/TBD | Not started | - |
 
 ---
