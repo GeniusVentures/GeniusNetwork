@@ -45,8 +45,8 @@ last_updated: 2026-11-13
 
 ### POLICY — Collectibility + Role Downgrade
 
-- [ ] **POLICY-01**: Cold collectibility ships as an explicit recorded policy decision — cold objects are permanent this milestone; the machinery is documented as an sgns-blockstore v2 contract ask (frozen v1 forbids Remove).
-- [ ] **POLICY-02**: An archive-role downgrade (archive → light) is E2E-proven: after downgrade the node prunes under light rules, history remains fetchable from other archive nodes, and existing Durable records satisfy the prune gate without re-drain or migration.
+- [x] **POLICY-01**: Cold collectibility ships as an explicit recorded policy decision — cold objects are permanent this milestone; the machinery is documented as an sgns-blockstore v2 contract ask (frozen v1 forbids Remove).
+- [x] **POLICY-02**: An archive-role downgrade (archive → light) is E2E-proven: after downgrade the node prunes under light rules, history remains fetchable from other archive nodes, and existing Durable records satisfy the prune gate without re-drain or migration.
 
 ### SEAL — Seal Growth Measurement
 
@@ -91,8 +91,8 @@ last_updated: 2026-11-13
 | COMP-01 | Phase 16 | Complete |
 | COMP-02 | Phase 16 | Complete |
 | COMP-03 | Phase 16 | Complete |
-| POLICY-01 | Phase 18 | Pending |
-| POLICY-02 | Phase 18 | Pending |
+| POLICY-01 | Phase 18 | Complete |
+| POLICY-02 | Phase 18 | Complete |
 | SEAL-01 | Phase 17 | Pending |
 | TEST-01 | Phase 15 | Pending |
 | TEST-02 | Phase 19 | Pending |
