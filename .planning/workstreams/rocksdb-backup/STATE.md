@@ -5,11 +5,11 @@ milestone_name: SuperGenius Cold-Storage Archive Integration
 current_phase: 19
 current_phase_name: Cross-Feature Fault-Race Matrix & Three-Platform CI Capstone
 status: executing
-stopped_at: "Phase 19 executing: 19-01 COMPLETE (X1/X2+seam+fix 723189461, Tier1 20/20; root a6f7382). 19-02 IN PROGRESS (uncommitted WIP in SuperGenius working tree): X3/X8/X5 cases + GlobalDB tx-stack fixture extension appended to cold_cross_feature_fault_race_test.cpp (~2371 lines, does NOT compile yet - ipfs_lite network.hpp needs the resurrection-test include POSITION: move network.hpp/gossip_pubsub AFTER the sgns project includes like cold_storage_resurrection_test.cpp:95-102, not before). src/ production tree CLEAN for 19-02. Wave 2 of 5, 1/5 plans done."
-last_updated: "2026-11-20T10:18:35.668Z"
+stopped_at: "Phase 19 executing: 19-01 COMPLETE (commits 3e3e970e4/723189461/7748752c1, root a6f7382, Tier1 20/20). 19-02 WIP UNCOMMITTED in SuperGenius test/src/crdt/cold_cross_feature_fault_race_test.cpp (~2460 lines, COMPILES): X3/X8/X5 + GlobalDB tx-stack fixture extension present. STATUS: X1/X2/both-barrier-legs GREEN; X3 leg A GREEN in isolation (outside-install flip shape, cold_deferred=1 proven); X3 leg B HANGS (parked-serve-thread + cycle interaction - NEXT: drop leg B to the leg-A shape + a post-cycle serve on its own thread, or make WaitInside failure join-safe); X8 leg A GREEN shape (defer via read-seam injector, monotone-journal finding); X8 fault arm + X5 legs UNTESTED post-restructure (shared-stack, no mid-test rebuilds - rebuild deadlocks). KEY FINDINGS: journal monotone in-process (re-journal needs D-07 read-seam injection); install-upload-override-from-INSIDE TxPruner kInterruptAfterColdGate hook WEDGES the cycle; mid-test TeardownTxStack+rebuild deadlocks (use shared stack + fresh graphs per leg); fresh-pruner settle loop REQUIRED (TxRunCycle watermark discriminator). Zombie test processes + stale test-data LOCKs must be purged between hung runs."
+last_updated: "2026-11-20T19:41:02.330Z"
 last_activity: 2026-11-20
 last_activity_desc: Phase 19 execution started
-state_head: a6f7382e9daaf2b4f737f238d4535bf64a0ad8bd
+state_head: 8eba3c0541223945d7c60c98315ed3c41f8ab294
 progress:
   total_phases: 7
   completed_phases: 2
@@ -72,9 +72,9 @@ v1.1 key decisions archived with the milestone (`milestones/v1.1-ROADMAP.md` + p
 
 ## Session Continuity
 
-**Last session:** 2026-11-20T10:18:35.020Z
+**Last session:** 2026-11-20T19:41:01.709Z
 
-**Stopped At:** Phase 19 executing: 19-01 COMPLETE (X1/X2+seam+fix 723189461, Tier1 20/20; root a6f7382). 19-02 IN PROGRESS (uncommitted WIP in SuperGenius working tree): X3/X8/X5 cases + GlobalDB tx-stack fixture extension appended to cold_cross_feature_fault_race_test.cpp (~2371 lines, does NOT compile yet - ipfs_lite network.hpp needs the resurrection-test include POSITION: move network.hpp/gossip_pubsub AFTER the sgns project includes like cold_storage_resurrection_test.cpp:95-102, not before). src/ production tree CLEAN for 19-02. Wave 2 of 5, 1/5 plans done.
+**Stopped At:** Phase 19 executing: 19-01 COMPLETE (commits 3e3e970e4/723189461/7748752c1, root a6f7382, Tier1 20/20). 19-02 WIP UNCOMMITTED in SuperGenius test/src/crdt/cold_cross_feature_fault_race_test.cpp (~2460 lines, COMPILES): X3/X8/X5 + GlobalDB tx-stack fixture extension present. STATUS: X1/X2/both-barrier-legs GREEN; X3 leg A GREEN in isolation (outside-install flip shape, cold_deferred=1 proven); X3 leg B HANGS (parked-serve-thread + cycle interaction - NEXT: drop leg B to the leg-A shape + a post-cycle serve on its own thread, or make WaitInside failure join-safe); X8 leg A GREEN shape (defer via read-seam injector, monotone-journal finding); X8 fault arm + X5 legs UNTESTED post-restructure (shared-stack, no mid-test rebuilds - rebuild deadlocks). KEY FINDINGS: journal monotone in-process (re-journal needs D-07 read-seam injection); install-upload-override-from-INSIDE TxPruner kInterruptAfterColdGate hook WEDGES the cycle; mid-test TeardownTxStack+rebuild deadlocks (use shared stack + fresh graphs per leg); fresh-pruner settle loop REQUIRED (TxRunCycle watermark discriminator). Zombie test processes + stale test-data LOCKs must be purged between hung runs.
 **Resume File:** .planning/workstreams/rocksdb-backup/phases/19-cross-feature-fault-race-matrix-three-platform-ci-capstone/19-CONTEXT.md
 
 ## Performance Metrics
