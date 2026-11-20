@@ -1,0 +1,14 @@
+# Phase 18 Review Disposition
+
+**Review:** 18-REVIEW.md (2026-11-19) — verdict CHANGES REQUESTED: 1 critical / 2 major / 1 minor / 2 advisory
+**Disposition date:** 2026-11-19
+**Outcome:** F-1, F-2, F-3, F-4 fixed and re-verified (full Tier-1 lane 19/19 green); F-5, F-6 accepted with rationale.
+
+| Finding | Severity | Disposition | Resolution |
+|---|---|---|---|
+| F-1 Interlock defeatable by one unacknowledged restart (the unack'd arm rewrote the record to the light posture, so a second un-acked boot read NoDowngrade and armed) | CRITICAL | **fixed** | `PruneEligibility.cpp`: the DowngradeUnacknowledged arm now PRESERVES the prior record (mirroring the corrupt arm's no-overwrite posture) — the interlock holds across any number of unacknowledged restarts until the ack key is set. Regression-pinned by the new `FP-UnackedPersists` Tier-1 leg (second un-acked check fires DowngradeUnacknowledged again; record still parses as Archive). The 18-03 t1 re-seed workaround was removed (it existed only because of this bug); the live-smoke t2 verdict strengthened to expect DowngradeAcknowledged. Header @note contract updated; notes/18 §(c) corrected. |
+| F-2 Read-error arm best-effort write launders unreadable records | MAJOR | **fixed** | The read-error arm no longer writes: overwriting what could not be read is the laundering the parse-failure arm forbids. An unreadable archive-era record now survives transient read failures untouched. |
+| F-3 GeniusNode wiring unenforced (deleting the interlock block kept the lane green) | MAJOR | **fixed** | New Tier-1 source-scan leg `ColdDowngradeWiringGate.InterlockGateWiringPinnedInGeniusNode` (the EraseSurfaceGateTest precedent, `SUPERGNUS_DOWNGRADE_GATE_SRC` compile definition): pins the CheckAndRewrite call ABOVE the pruning-enabled early return, both WARN literals between the Light check and the TxPruner::New arm, the ack-key instruction, the notes/18 checklist-path citation, and the tiered-light posture line. |
+| F-4 Live-smoke t2 verdict assertion vacuous (`has_value()` only) | MINOR | **fixed** | Now asserts `DowngradeAcknowledged` exactly (meaningful post-F-1: the preserved archive prior is what the ack verdict reads). |
+| F-5 Fingerprint enum validation asymmetry (garbage node_type values ride ReplicatesAllAccounts) vs the /prune/blk empty-row discipline | ADVISORY | **accepted** | Every garbage-value sub-case resolves to the SAFE direction (non-Light prior ⇒ downgrade-detected-or-disarm; the predicate can only fail toward under-erase). A strict validation arm would add a sixth verdict without changing any outcome; recorded here for v2 if the record format ever gains semantic weight beyond the predicate. |
+| F-6 Ill-typed ack key parses silently (no warn) | ADVISORY | **accepted** | Fail-safe by construction (default false = consent absent); the per-key silent-default posture matches every sibling key in PruningConfig::FromJSON. A warn line would be cosmetic asymmetry. |
