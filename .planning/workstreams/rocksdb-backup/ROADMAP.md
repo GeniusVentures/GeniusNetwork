@@ -184,7 +184,7 @@ Plans:
   3. Existing Durable records from the archive era satisfy the prune gate after downgrade — no re-drain, no migration.
   4. The downgrade timeline is observable end-to-end: markers accumulate post-downgrade, refusal activates, and a config interlock prevents silent downgrade (operator-initiated, checklist-gated).
 
-**Plans**: 3/4 plans executed defined (research + patterns complete 2026-11-19 — anchors verified at SuperGenius `84d87d462`; red-first tracer per D-01)
+**Plans**: 4/4 plans executed defined (research + patterns complete 2026-11-19 — anchors verified at SuperGenius `84d87d462`; red-first tracer per D-01)
 
 Plans:
 **Wave 1**
@@ -197,7 +197,7 @@ Plans:
 - [x] 18-03-PLAN.md — SC2/SC3/SC4 evidence: the t0→t3 single-node re-open timeline (held-drainer no-re-drain, markers, refusal, t3 retention + exemption in-band) + the Tier-3 MinIO live leg (D-09/D-10/D-11/D-12)
 
 **Wave 4** *(blocked on Wave 3 — the record cites all committed evidence)*
-- [ ] 18-04-PLAN.md — SC1 closure: the `notes/18-*` rulings record (two-halves policy + exemption record + v2 contract-ask sketch + operator checklist) + STATE.md one-liner (D-08/D-13/D-14)
+- [x] 18-04-PLAN.md — SC1 closure: the `notes/18-*` rulings record (two-halves policy + exemption record + v2 contract-ask sketch + operator checklist) + STATE.md one-liner (D-08/D-13/D-14)
 
 ### Phase 19: Cross-Feature Fault-Race Matrix & Three-Platform CI Capstone
 
@@ -222,7 +222,7 @@ Plans:
 | 15. Evidence-Aware Cold Serving & Forced-Walk Recovery | 3/3 | In Progress|  |
 | 16. TxPruner × GC Composition Hardening | 3/3 | In Progress|  |
 | 17. Seal Growth Measurement & Decision | 3/3 | In Progress|  |
-| 18. Role Downgrade, Collectibility Policy & GC Walk-Gap Exemption | 3/4 | In Progress|  |
+| 18. Role Downgrade, Collectibility Policy & GC Walk-Gap Exemption | 4/4 | In Progress|  |
 | 19. Cross-Feature Fault-Race Matrix & Three-Platform CI Capstone | 0/TBD | Not started | - |
 
 ---
