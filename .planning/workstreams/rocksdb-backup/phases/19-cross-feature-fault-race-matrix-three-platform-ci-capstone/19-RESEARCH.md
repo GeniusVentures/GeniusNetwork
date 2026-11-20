@@ -482,20 +482,25 @@ ctest --test-dir SuperGenius/build/Windows/Release -C Release -R cold_cross_feat
 | A5 | X11's reuse of the leg-3 recipe extends cleanly to refusal-failover-under-concurrent-erase (recipe proven for re-delivery only) | Discretion 1/5 | medium — if the topology fights back, the leg's scope narrows (single-direction refusal) with the demotion path as relief |
 | A6 | node_startup_test stays unlabeled; D-11 reads over both lanes (documented reading, not a label change) | Discretion 3 | medium — if TEST-03 verification insists on `-L Tier1` including walk legs, node_startup_test needs a label + RESOURCE_LOCK review (avoid: full-node boots in the hermetic lane) |
 
-## Open Questions
+## Open Questions (RESOLVED)
+
+> All three resolved by the 19-05 planner rulings (recorded in 19-05-PLAN.md objective + flagged_assumptions + Task-2/Task-3 dispositions). Dispositions appended per question below — original question text preserved.
 
 1. **Push-filter ruling (A3)**
    - What we know: legs exist; filters exclude the v1.2 branch; user pushes manually.
    - What's unclear: whether the user will push dev_coldstorage_additions repeatedly pre-merge (B1's payoff).
    - Recommendation: plan assumes B2 + shape A; the dispatch checkpoint asks the user to rule B1 explicitly; the ruling lands in notes/19.
+   - **(RESOLVED — 19-05 ruling, flagged assumption):** B2 adopted as the planning default — cmake.yml is NOT edited (on.push.branches stays develop/main); the permanent lane is permanent-in-shape, dormant-in-topology until the v1.2 merge (the v1.1 posture); B1 recorded as DECLINED with the runner-load rationale (SG-WIN11 thermal cap + gv-OSX-Large tart VM standing load, the full ~28-job matrix per push); offered as an explicit veto at the 19-05 Task-3 blocking checkpoint (final ruling lands in notes/19-*).
 2. **D-11 lane-contract reading (A6)**
    - What we know: walk legs live in an unlabeled, RESOURCE_LOCK'd suite.
    - What's unclear: whether TEST-03 verification accepts both-lanes-green as "recovery-walk suites green".
    - Recommendation: pin the both-lanes reading in notes/19 at doc time (evidence = full-suite + Tier-1 lane green per platform); do not relabel node_startup_test.
+   - **(RESOLVED — 19-05 ruling):** the both-lanes reading is adopted and pinned in notes/19-* — "recovery-walk suites green on all three platforms" means BOTH lanes green: ctest -L Tier1 (the label set incl. cold_cross_feature_fault_race_test) AND the full-suite lane (which runs node_startup_test's walk legs + globaldb_integration_test cold legs); node_startup_test stays UNLABELED (RESOURCE_LOCK genius_node_pool + full-node boots do not belong in the hermetic fail-closed lane).
 3. **Q5/Q7 quarantine mechanisms**
    - What we know: the flakes + run IDs; macOS crash capture already surfaces Q5.
    - What's unclear: whether Q5 gets an OSX `CTEST_EXCLUDE_REGEX`/`GTEST_FILTER` entry or stays capture-only until the backlog fix.
    - Recommendation: entry yes (it is the documented debt), mechanism = `GTEST_FILTER` append on the OSX legs only; Q7's run ID from dispatch history at doc time.
+   - **(RESOLVED — 19-05 ruling):** Q5 gets the OSX entry — mechanism = `GTEST_FILTER` append on the OSX legs only (append-never-replace composition), recorded in the notes/19-* quarantine table; the backlog fix remains out of phase scope (the v1.1 round-14 posture). Q7's first-occurrence run ID is seeded [ASSUMED] — filled from dispatch history at doc time if verifiable, else the entry stays flagged [ASSUMED] rather than inventing an ID.
 
 ## Environment Availability
 
