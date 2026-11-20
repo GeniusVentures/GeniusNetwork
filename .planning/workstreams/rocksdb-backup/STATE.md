@@ -54,6 +54,7 @@ v1.2 Phases 13-19 defined — see [ROADMAP.md](ROADMAP.md). v1.1 completion reco
 - Converged phase order: merge (13) → durability gate (14) → evidence-serving + walk fix (15) → pruner×GC hardening (16) → seals measurement (17) → policy/downgrade capstone (18) → fault-race + 3-platform CI capstone (19)
 - SEAL probe feeds Phase 15's walk bounds (probe = first plan of Phase 17; the recorded decision closes citing real walk-recovery numbers)
 - SEAL-01 measured and decided (2026-11-19): accept hot seal growth — 52.000 B/row measured at 10^6/10^7, 10^8 extrapolated at 5.2 GB / ~16 s full sweep (evidence: phases/17-seal-growth-measurement-decision/17-seal-growth-evidence/); redesign deferred to the recorded D-11 numeric triggers in notes/17-seal-growth-decision.md; D-12 verdict: kForcedWalkPeerFailoverPerCid = 8 validated in-band-with-noted-limitation (hermetic topology, zero production touch)
+- POLICY-01/02 decided (2026-11-19): cold permanent this milestone (frozen v1, no Remove) + the GC walk-gap evidence exemption shipped as code (one-predicate consult at the WalkReachable gap site, counted-continue observable) + the downgrade interlock (persisted role fingerprint + downgrade_acknowledged ack key + start-normally disarm) E2E-proven on the t0→t3 single-node timeline; v2 collectibility recorded as a contract ask in notes/18-collectibility-policy-downgrade-interlock.md
 
 v1.1 key decisions archived with the milestone (`milestones/v1.1-ROADMAP.md` + phase artifacts).
 
