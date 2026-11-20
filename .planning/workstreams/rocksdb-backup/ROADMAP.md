@@ -209,7 +209,23 @@ Plans:
   2. Recovery-walk suites run green on Windows, macOS, and Linux CI lanes — fresh-clone, cold storage ON, tier labels intact.
   3. The Windows/macOS walk-lane portability list is documented (CloudflareWARP adapter = environmental, distinct per-node base paths, poll predicates, gtest filter grammar) so the three-platform lanes stay reproducible run over run.
 
-**Plans**: TBD
+**Plans**: 5 plans defined (research + patterns complete 2026-11-19 — anchors verified at SuperGenius `d2f2a7dec`; 11-case matrix X1–X11 adopted within D-03's budget; B2 push-topology default with checkpoint veto)
+
+Plans:
+**Wave 1**
+- [ ] 19-01-PLAN.md — TRACER: the serve-side interrupt seam (`kInterruptAfterEvidenceConsult`/`kInterruptBeforeRehydrate`/`kInterruptAfterColdFetch` on GraphsyncDAGSyncer, TxPruner-family shape) + the `cold_cross_feature_fault_race_test` sibling born red — X1 evidence-lands-mid-consult + X2 in-flight-cold-get, fault arms + NoEvidence controls + real-thread barrier legs, resurrection-test link set, Tier-1 registration (D-01/D-02/D-03/D-04/D-05/D-07)
+
+**Wave 2** *(blocked on Wave 1 — shared file: test/src/crdt/cold_cross_feature_fault_race_test.cpp)*
+- [ ] 19-02-PLAN.md — the erase arm: X3 durability-flip vs cold gate + X8 rehydrate-vs-second-erase (the lost-last-copy pair) + X5 erase-mid-walk-visit (skip-never-partial, no peer re-fetch), all on landed TxPruner seams (D-01/D-03/D-04/D-05/D-08)
+
+**Wave 3** *(blocked on Wave 2 — shared suite file)*
+- [ ] 19-03-PLAN.md — the recovery arm: X4 GC-eviction mid-restore + X6 downgrade-arms mid-walk + X7 exemption-vs-concurrent-prune with embedded fail-closed controls + X9 budget-vs-terminality asserted at exactly `kForcedWalkPeerFailoverPerCid` and one past, under seeded jitter (D-01/D-03/D-04/D-07/D-08)
+
+**Wave 4** *(blocked on Wave 3 — shared suite file; X10 audits all prior cases)*
+- [ ] 19-04-PLAN.md — X10 suite-end audit walk + counter teeth (byte-flip) + zero-CID baseline + X11 the ONE full-wire two-GlobalDB refusal-failover-under-concurrent-erase leg, Tier-1 default with the two-green-dispatch promotion contract armed (D-01/D-03/D-04/D-06/D-10)
+
+**Wave 5** *(blocked on Wave 4 — evidence cites the complete matrix; blocking user checkpoint)*
+- [ ] 19-05-PLAN.md — TEST-03 closure: Tier-1 fail-closed lane steps in build-release-tags.yml (shape A; B2 push-topology posture — cmake.yml untouched, B1 recorded as declined with veto offered) + the `notes/19-cross-feature-fault-race-three-platform-capstone.md` rulings doc (matrix table, quarantine table Q1–Q7, D-14 portability runbook, D-11 both-lanes reading, X11 promotion record) + the refreshed `19-FRESH-CLONE-CHECKLIST.md` + the D-15/D-16 per-platform evidence checkpoint (D-09/D-10/D-11/D-12/D-13/D-14/D-15/D-16)
 
 ## Progress
 
@@ -223,7 +239,7 @@ Plans:
 | 16. TxPruner × GC Composition Hardening | 3/3 | In Progress|  |
 | 17. Seal Growth Measurement & Decision | 3/3 | In Progress|  |
 | 18. Role Downgrade, Collectibility Policy & GC Walk-Gap Exemption | 4/4 | Complete    | 2026-11-19 |
-| 19. Cross-Feature Fault-Race Matrix & Three-Platform CI Capstone | 0/TBD | Not started | - |
+| 19. Cross-Feature Fault-Race Matrix & Three-Platform CI Capstone | 0/5 | Planned | - |
 
 ---
 *Roadmap created: 2026-10-19 (v1.0) — v1.1 phases added 2026-10-22, shipped & archived 2026-11-10 — v1.2 phases added 2026-11-13 — rocksdb-backup workstream*
