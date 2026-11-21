@@ -219,7 +219,7 @@ Plans:
 - [x] 19-02-PLAN.md — the erase arm: X3 durability-flip vs cold gate + X8 rehydrate-vs-second-erase (the lost-last-copy pair) + X5 erase-mid-walk-visit (skip-never-partial, no peer re-fetch), all on landed TxPruner seams (D-01/D-03/D-04/D-05/D-08)
 
 **Wave 3** *(blocked on Wave 2 — shared suite file)*
-- [ ] 19-03-PLAN.md — the recovery arm: X4 GC-eviction mid-restore + X6 downgrade-arms mid-walk + X7 exemption-vs-concurrent-prune with embedded fail-closed controls + X9 budget-vs-terminality asserted at exactly `kForcedWalkPeerFailoverPerCid` and one past, under seeded jitter (D-01/D-03/D-04/D-07/D-08)
+- [x] 19-03-PLAN.md — the recovery arm: X4 GC-eviction mid-restore + X6 downgrade-arms mid-walk + X7 exemption-vs-concurrent-prune with embedded fail-closed controls + X9 budget-vs-terminality asserted at exactly `kForcedWalkPeerFailoverPerCid` and one past, under seeded jitter (D-01/D-03/D-04/D-07/D-08)
 
 **Wave 4** *(blocked on Wave 3 — shared suite file; X10 audits all prior cases)*
 - [ ] 19-04-PLAN.md — X10 suite-end audit walk + counter teeth (byte-flip) + zero-CID baseline + X11 the ONE full-wire two-GlobalDB refusal-failover-under-concurrent-erase leg, Tier-1 default with the two-green-dispatch promotion contract armed (D-01/D-03/D-04/D-06/D-10)

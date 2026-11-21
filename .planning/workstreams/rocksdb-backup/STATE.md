@@ -5,8 +5,8 @@ milestone_name: SuperGenius Cold-Storage Archive Integration
 current_phase: 19
 current_phase_name: Cross-Feature Fault-Race Matrix & Three-Platform CI Capstone
 status: executing
-stopped_at: "Phase 19: 19-01+19-02 COMPLETE (SuperGenius 50ad85673; knob-off 10/10, RED 5/5 arms, Tier1 20/20). 19-03 IN PROGRESS - Task 1 (X4 GC-eviction-mid-walk-restore + X6 downgrade-arms-mid-walk) reading phase complete: GC hooks = ColdStorageStack.hpp SetGcBetweenHalves/PreHalfOne/PreMarkProcessHookForTesting (null-safe forwardings, need the manager ptr); exemption consult = ColdStorageManager.cpp WalkReachable:813 (LookupPruneEvidence, Pruned-only exempt, counted-continue pass_walk_exempted_, NoEvidence/Malformed abort); X9 budget = kForcedWalkPeerFailoverPerCid=8 graphsync_dagsyncer.hpp:83 (read by symbol); SERVE-04 terminality = dagsyncer.cpp:460-477 + ApplyColdPrecedence:41; X6 interlock = PruneEligibility::PRUNE_ROLE_FINGERPRINT_KEY + PruningConfig downgrade_acknowledged (cold_downgrade_e2e_test.cpp PruningOn(ack) helper); X4 restore branch = crdt_datastore.cpp ProcessForcedWalkCID:464 (!retained&&sealed :480/:551). NEXT: read 18-01 cold_gc_walk_gap_exempt_test.cpp (GcPassOnce drive + control legs) + downgrade e2e timeline legs, then write X4/X6 in the 19-01/19-02 grammar (BuildTxStack per case incl. LegB, no park-inside-cycle, LRU hygiene at kInterruptBeforeErase if erase needed). Task 2 = X7+X9 after Task 1 commits."
-last_updated: "2026-11-21T02:11:28.194Z"
+stopped_at: "Phase 19: 19-01..19-03 COMPLETE (SuperGenius bdeb9e95c; knob-off 15/15, RED 9/9 arms, Tier1 20/20). 19-03 landed the recovery arm: X4 (eviction mid-restore, complete-or-abort + the reachability-pin proof), X4-B (seeded jitter barrier), X6 (the 18 interlock timeline across a mid-flight walk; torn-ack arm), X7 (fail-closed controls stay under concurrent sanctioned writes; forge_pruned_ arm), X9 (budget boundary by symbol M-1/M/M+1, terminality outranks budget, gap-not-skip, jitter). Fixture finds recorded: grace_ms=0 is the zero-sentinel to kDefaultGraceMs=60000 (MakeManager now takes explicit grace); the hermetic walk needs AddTopicName; GC walk universe = every topic's heads (X7 heals gaps + rejuvenates canaries per block). NEXT: /gsd-execute-phase 19 --ws rocksdb-backup runs Wave 4 (19-04: X10 suite-end audit + X11 full-wire leg, the D-06 two-green-dispatch promotion contract)."
+last_updated: "2026-11-21T03:50:00.000Z"
 last_activity: 2026-11-20
 last_activity_desc: Phase 19 execution started
 state_head: 1ffb0aab53656ddecd10fa857f8e787a1c3f02a3
@@ -14,7 +14,7 @@ progress:
   total_phases: 7
   completed_phases: 2
   total_plans: 25
-  completed_plans: 22
+  completed_plans: 23
 ---
 
 # Project State
@@ -30,9 +30,9 @@ See: `.planning/PROJECT.md` (workstream sections); `.planning/workstreams/rocksd
 ## Current Position
 
 Phase: 19 (Cross-Feature Fault-Race Matrix & Three-Platform CI Capstone) — EXECUTING
-Plan: 1 of 5
-Status: Executing Phase 19
-Last activity: 2026-11-20 — Phase 19 execution started
+Plan: 3 of 5 complete
+Status: Executing Phase 19 (Wave 4 next)
+Last activity: 2026-11-20 — 19-03 complete (recovery arm crossed)
 
 ## Progress
 
@@ -72,9 +72,9 @@ v1.1 key decisions archived with the milestone (`milestones/v1.1-ROADMAP.md` + p
 
 ## Session Continuity
 
-**Last session:** 2026-11-21T02:11:27.540Z
+**Last session:** 2026-11-21T03:50:00.000Z
 
-**Stopped At:** Phase 19: 19-01+19-02 COMPLETE (SuperGenius 50ad85673; knob-off 10/10, RED 5/5 arms, Tier1 20/20). 19-03 IN PROGRESS - Task 1 (X4 GC-eviction-mid-walk-restore + X6 downgrade-arms-mid-walk) reading phase complete: GC hooks = ColdStorageStack.hpp SetGcBetweenHalves/PreHalfOne/PreMarkProcessHookForTesting (null-safe forwardings, need the manager ptr); exemption consult = ColdStorageManager.cpp WalkReachable:813 (LookupPruneEvidence, Pruned-only exempt, counted-continue pass_walk_exempted_, NoEvidence/Malformed abort); X9 budget = kForcedWalkPeerFailoverPerCid=8 graphsync_dagsyncer.hpp:83 (read by symbol); SERVE-04 terminality = dagsyncer.cpp:460-477 + ApplyColdPrecedence:41; X6 interlock = PruneEligibility::PRUNE_ROLE_FINGERPRINT_KEY + PruningConfig downgrade_acknowledged (cold_downgrade_e2e_test.cpp PruningOn(ack) helper); X4 restore branch = crdt_datastore.cpp ProcessForcedWalkCID:464 (!retained&&sealed :480/:551). NEXT: read 18-01 cold_gc_walk_gap_exempt_test.cpp (GcPassOnce drive + control legs) + downgrade e2e timeline legs, then write X4/X6 in the 19-01/19-02 grammar (BuildTxStack per case incl. LegB, no park-inside-cycle, LRU hygiene at kInterruptBeforeErase if erase needed). Task 2 = X7+X9 after Task 1 commits.
+**Stopped At:** Phase 19: 19-01..19-03 COMPLETE (SuperGenius bdeb9e95c; knob-off 15/15, RED 9/9 arms, Tier1 20/20). 19-03 landed the recovery arm: X4 (eviction mid-restore, complete-or-abort + the reachability-pin proof), X4-B (seeded jitter barrier), X6 (the 18 interlock timeline across a mid-flight walk; torn-ack arm), X7 (fail-closed controls stay under concurrent sanctioned writes; forge_pruned_ arm), X9 (budget boundary by symbol M-1/M/M+1, terminality outranks budget, gap-not-skip, jitter). Fixture finds recorded: grace_ms=0 is the zero-sentinel to kDefaultGraceMs=60000 (MakeManager now takes explicit grace); the hermetic walk needs AddTopicName; GC walk universe = every topic's heads (X7 heals gaps + rejuvenates canaries per block). NEXT: /gsd-execute-phase 19 --ws rocksdb-backup runs Wave 4 (19-04: X10 suite-end audit + X11 full-wire leg, the D-06 two-green-dispatch promotion contract).
 **Resume File:** .planning/workstreams/rocksdb-backup/phases/19-cross-feature-fault-race-matrix-three-platform-ci-capstone/19-CONTEXT.md
 
 ## Performance Metrics
