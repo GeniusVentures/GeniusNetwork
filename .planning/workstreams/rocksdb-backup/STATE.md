@@ -5,16 +5,16 @@ milestone_name: SuperGenius Cold-Storage Archive Integration
 current_phase: 19
 current_phase_name: Cross-Feature Fault-Race Matrix & Three-Platform CI Capstone
 status: executing
-stopped_at: "Phase 19: 19-01 COMPLETE. 19-02 WIP UNCOMMITTED (compiles; NOT committed - committed lane stays green). Run6 evidence (.gsd/run6.txt): 6/10 GREEN - X1, X2, X1-BARRIER, X2-BARRIER, X3 legA (full case: flip defer cold_deferred=1 + in-suite), X8 legA (re-journal defer via D-07 injector + in-suite). FAILING: X3-LegB/X8-LegB/X5-LegB ALL SEH 0xc0000005 ~600ms in (during BuildTxStack/seeding of every SECOND tx-stack case; X8A survived after X3B crash so not simple accumulation - NEEDS WinDbg stack: run test exe under cdb, !analyze on the SEH, likely GossipPubSub/static or context teardown residue; hermetic fixture SetUp per-case is a difference vs cold_prune_gate which is multi-stack green). X5 legA: assert fail (1615ms) - check walk vocabulary expectations (skipped_pruned may be 0 if walk does not visit the erased tx block; heads linkage). Remaining sequence once fixed: knob-off 10/10, knob-on RED, Tier1 lane, test(19-02) commit + SUMMARY (deviations list incl. per-TEST_F split, no-thread GlobalDB legs, monotone journal, park-wedge, LegB SEH root cause), close-out; then waves 3-5 (19-03/04 case additions; 19-05 CI+docs+checkpoint). Scratch: .gsd/*.ps1 + run*.txt/x3b.txt evidence."
-last_updated: "2026-11-20T21:18:42.090Z"
+stopped_at: "Phase 19: 19-01 + 19-02 COMPLETE (19-02 commit SuperGenius 50ad85673: X3/X8/X5 erase arm crossed, knob-off 10/10, knob-on RED 5/5 arms, Tier1 20/20, zero src diff; run6 LegB SEH root-caused as missing BuildTxStack null-deref, park-vs-cycle wedge restructured, LRU-guard hygiene at SeedX5Graph + kInterruptBeforeErase seam + X8 fault arm; SUMMARY lists 7 deviations). Next: wave 3 = 19-03 (X9/X10/X11 case additions to the same suite), then 19-04, then 19-05 (CI+docs+checkpoint). Scratch: .gsd/run7..run14 evidence."
+last_updated: "2026-11-21T02:09:56.870Z"
 last_activity: 2026-11-20
 last_activity_desc: Phase 19 execution started
-state_head: a3cd20fce67a624c504b493b4b166acaec2f54bd
+state_head: fc7134563713466e28d140a22eae474df93b613c
 progress:
   total_phases: 7
   completed_phases: 2
   total_plans: 25
-  completed_plans: 21
+  completed_plans: 22
 ---
 
 # Project State
@@ -72,9 +72,9 @@ v1.1 key decisions archived with the milestone (`milestones/v1.1-ROADMAP.md` + p
 
 ## Session Continuity
 
-**Last session:** 2026-11-20T21:18:41.447Z
+**Last session:** 2026-11-21T02:09:56.226Z
 
-**Stopped At:** Phase 19: 19-01 COMPLETE. 19-02 WIP UNCOMMITTED (compiles; NOT committed - committed lane stays green). Run6 evidence (.gsd/run6.txt): 6/10 GREEN - X1, X2, X1-BARRIER, X2-BARRIER, X3 legA (full case: flip defer cold_deferred=1 + in-suite), X8 legA (re-journal defer via D-07 injector + in-suite). FAILING: X3-LegB/X8-LegB/X5-LegB ALL SEH 0xc0000005 ~600ms in (during BuildTxStack/seeding of every SECOND tx-stack case; X8A survived after X3B crash so not simple accumulation - NEEDS WinDbg stack: run test exe under cdb, !analyze on the SEH, likely GossipPubSub/static or context teardown residue; hermetic fixture SetUp per-case is a difference vs cold_prune_gate which is multi-stack green). X5 legA: assert fail (1615ms) - check walk vocabulary expectations (skipped_pruned may be 0 if walk does not visit the erased tx block; heads linkage). Remaining sequence once fixed: knob-off 10/10, knob-on RED, Tier1 lane, test(19-02) commit + SUMMARY (deviations list incl. per-TEST_F split, no-thread GlobalDB legs, monotone journal, park-wedge, LegB SEH root cause), close-out; then waves 3-5 (19-03/04 case additions; 19-05 CI+docs+checkpoint). Scratch: .gsd/*.ps1 + run*.txt/x3b.txt evidence.
+**Stopped At:** Phase 19: 19-01 + 19-02 COMPLETE (19-02 commit SuperGenius 50ad85673: X3/X8/X5 erase arm crossed, knob-off 10/10, knob-on RED 5/5 arms, Tier1 20/20, zero src diff; run6 LegB SEH root-caused as missing BuildTxStack null-deref, park-vs-cycle wedge restructured, LRU-guard hygiene at SeedX5Graph + kInterruptBeforeErase seam + X8 fault arm; SUMMARY lists 7 deviations). Next: wave 3 = 19-03 (X9/X10/X11 case additions to the same suite), then 19-04, then 19-05 (CI+docs+checkpoint). Scratch: .gsd/run7..run14 evidence.
 **Resume File:** .planning/workstreams/rocksdb-backup/phases/19-cross-feature-fault-race-matrix-three-platform-ci-capstone/19-CONTEXT.md
 
 ## Performance Metrics
