@@ -5,8 +5,8 @@ milestone_name: SuperGenius Cold-Storage Archive Integration
 current_phase: 19
 current_phase_name: Cross-Feature Fault-Race Matrix & Three-Platform CI Capstone
 status: executing
-stopped_at: "Phase 19: 19-01..19-03 COMPLETE (SuperGenius bdeb9e95c; knob-off 15/15, RED 9/9 arms, Tier1 20/20). 19-03 landed the recovery arm: X4 (eviction mid-restore, complete-or-abort + the reachability-pin proof), X4-B (seeded jitter barrier), X6 (the 18 interlock timeline across a mid-flight walk; torn-ack arm), X7 (fail-closed controls stay under concurrent sanctioned writes; forge_pruned_ arm), X9 (budget boundary by symbol M-1/M/M+1, terminality outranks budget, gap-not-skip, jitter). Fixture finds recorded: grace_ms=0 is the zero-sentinel to kDefaultGraceMs=60000 (MakeManager now takes explicit grace); the hermetic walk needs AddTopicName; GC walk universe = every topic's heads (X7 heals gaps + rejuvenates canaries per block). NEXT: /gsd-execute-phase 19 --ws rocksdb-backup runs Wave 4 (19-04: X10 suite-end audit + X11 full-wire leg, the D-06 two-green-dispatch promotion contract)."
-last_updated: "2026-11-21T03:50:00.000Z"
+stopped_at: "Phase 19: 19-01..19-04 COMPLETE (SuperGenius b17787b0e; knob-off 16/16 x3 consecutive, RED 9/9 arms with X10 teeth ungated-green, Tier1 20/20). 19-04 closed the matrix: X10 (trichotomy audit + audit-x-GC coherence + empty baseline + byte-flip teeth + VALUE_PRESENT_INVARIANT_VIOLATION counter teeth via WritePrunedEntryForTest) + X11 (the ONE full-wire leg: refusal terminal on the wire - zero cold Gets after the drain-quiesce find; failover serves y-value from A CID-verified; A5 invoked for the A-side concurrent-erase leg - covered by X3-B/X8-B; rebroadcasts bounded-retry vs the address-resolution race). The X1..X11 set is complete. NEXT: /gsd-execute-phase 19 --ws rocksdb-backup runs Wave 5 (19-05: TEST-03 closure - build-release-tags.yml Tier-1 fail-closed lane + the notes/19 rulings doc + refreshed FRESH-CLONE-CHECKLIST + the D-15/D-16 per-platform evidence checkpoint; BLOCKING user checkpoint per the wave marker)."
+last_updated: "2026-11-21T04:35:00.000Z"
 last_activity: 2026-11-20
 last_activity_desc: Phase 19 execution started
 state_head: 1ffb0aab53656ddecd10fa857f8e787a1c3f02a3
@@ -14,7 +14,7 @@ progress:
   total_phases: 7
   completed_phases: 2
   total_plans: 25
-  completed_plans: 23
+  completed_plans: 24
 ---
 
 # Project State
@@ -30,9 +30,9 @@ See: `.planning/PROJECT.md` (workstream sections); `.planning/workstreams/rocksd
 ## Current Position
 
 Phase: 19 (Cross-Feature Fault-Race Matrix & Three-Platform CI Capstone) — EXECUTING
-Plan: 3 of 5 complete
-Status: Executing Phase 19 (Wave 4 next)
-Last activity: 2026-11-20 — 19-03 complete (recovery arm crossed)
+Plan: 4 of 5 complete
+Status: Executing Phase 19 (Wave 5 next — blocking user checkpoint)
+Last activity: 2026-11-20 — 19-04 complete (the matrix closed)
 
 ## Progress
 
@@ -72,9 +72,9 @@ v1.1 key decisions archived with the milestone (`milestones/v1.1-ROADMAP.md` + p
 
 ## Session Continuity
 
-**Last session:** 2026-11-21T03:50:00.000Z
+**Last session:** 2026-11-21T04:35:00.000Z
 
-**Stopped At:** Phase 19: 19-01..19-03 COMPLETE (SuperGenius bdeb9e95c; knob-off 15/15, RED 9/9 arms, Tier1 20/20). 19-03 landed the recovery arm: X4 (eviction mid-restore, complete-or-abort + the reachability-pin proof), X4-B (seeded jitter barrier), X6 (the 18 interlock timeline across a mid-flight walk; torn-ack arm), X7 (fail-closed controls stay under concurrent sanctioned writes; forge_pruned_ arm), X9 (budget boundary by symbol M-1/M/M+1, terminality outranks budget, gap-not-skip, jitter). Fixture finds recorded: grace_ms=0 is the zero-sentinel to kDefaultGraceMs=60000 (MakeManager now takes explicit grace); the hermetic walk needs AddTopicName; GC walk universe = every topic's heads (X7 heals gaps + rejuvenates canaries per block). NEXT: /gsd-execute-phase 19 --ws rocksdb-backup runs Wave 4 (19-04: X10 suite-end audit + X11 full-wire leg, the D-06 two-green-dispatch promotion contract).
+**Stopped At:** Phase 19: 19-01..19-04 COMPLETE (SuperGenius b17787b0e; knob-off 16/16 x3 consecutive, RED 9/9 arms with X10 teeth ungated-green, Tier1 20/20). 19-04 closed the matrix: X10 (trichotomy audit + audit-x-GC coherence + empty baseline + byte-flip teeth + VALUE_PRESENT_INVARIANT_VIOLATION counter teeth via WritePrunedEntryForTest) + X11 (the ONE full-wire leg: refusal terminal on the wire - zero cold Gets after the drain-quiesce find; failover serves y-value from A CID-verified; A5 invoked for the A-side concurrent-erase leg - covered by X3-B/X8-B; rebroadcasts bounded-retry vs the address-resolution race). The X1..X11 set is complete. NEXT: /gsd-execute-phase 19 --ws rocksdb-backup runs Wave 5 (19-05: TEST-03 closure - build-release-tags.yml Tier-1 fail-closed lane + the notes/19 rulings doc + refreshed FRESH-CLONE-CHECKLIST + the D-15/D-16 per-platform evidence checkpoint; BLOCKING user checkpoint per the wave marker).
 **Resume File:** .planning/workstreams/rocksdb-backup/phases/19-cross-feature-fault-race-matrix-three-platform-ci-capstone/19-CONTEXT.md
 
 ## Performance Metrics

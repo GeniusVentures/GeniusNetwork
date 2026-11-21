@@ -222,7 +222,7 @@ Plans:
 - [x] 19-03-PLAN.md — the recovery arm: X4 GC-eviction mid-restore + X6 downgrade-arms mid-walk + X7 exemption-vs-concurrent-prune with embedded fail-closed controls + X9 budget-vs-terminality asserted at exactly `kForcedWalkPeerFailoverPerCid` and one past, under seeded jitter (D-01/D-03/D-04/D-07/D-08)
 
 **Wave 4** *(blocked on Wave 3 — shared suite file; X10 audits all prior cases)*
-- [ ] 19-04-PLAN.md — X10 suite-end audit walk + counter teeth (byte-flip) + zero-CID baseline + X11 the ONE full-wire two-GlobalDB refusal-failover-under-concurrent-erase leg, Tier-1 default with the two-green-dispatch promotion contract armed (D-01/D-03/D-04/D-06/D-10)
+- [x] 19-04-PLAN.md — X10 suite-end audit walk + counter teeth (byte-flip) + zero-CID baseline + X11 the ONE full-wire two-GlobalDB refusal-failover-under-concurrent-erase leg, Tier-1 default with the two-green-dispatch promotion contract armed (D-01/D-03/D-04/D-06/D-10)
 
 **Wave 5** *(blocked on Wave 4 — evidence cites the complete matrix; blocking user checkpoint)*
 - [ ] 19-05-PLAN.md — TEST-03 closure: Tier-1 fail-closed lane steps in build-release-tags.yml (shape A; B2 push-topology posture — cmake.yml untouched, B1 recorded as declined with veto offered) + the `notes/19-cross-feature-fault-race-three-platform-capstone.md` rulings doc (matrix table, quarantine table Q1–Q7, D-14 portability runbook, D-11 both-lanes reading, X11 promotion record) + the refreshed `19-FRESH-CLONE-CHECKLIST.md` + the D-15/D-16 per-platform evidence checkpoint (D-09/D-10/D-11/D-12/D-13/D-14/D-15/D-16)
