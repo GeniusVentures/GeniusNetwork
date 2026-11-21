@@ -37,14 +37,12 @@ still resolves on the thirdparty releases page before dispatch).
    (never an exclusion, D-12 — quarantine table: notes/19-* §(b)); an X11
    flake specifically goes to the promotion contract (§(d)), never a silent
    skip.
-5. **B1/B2 veto (optional):** B2 stands by default (cmake.yml push filters
-   unchanged — the permanent lane is dormant until the v1.2 merge). If you
-   want ongoing pre-merge per-push evidence for `dev_coldstorage_additions`,
-   say "B1" and the one-line cmake.yml push-filter edit lands with the
-   runner-load acceptance recorded.
-6. **X11 promotion count (confirm or re-rule):** default = two consecutive
-   green dispatches (the second dispatch is X11's own promotion evidence,
-   not a new capstone bar).
+5. **B1/B2 veto:** **RULED at the checkpoint (2026-11-20): B2 stands** —
+   cmake.yml push filters unchanged; the permanent lane stays dormant until
+   the v1.2 merge. B1 remains one line if re-ruled later.
+6. **X11 promotion count:** **RULED at the checkpoint (2026-11-20): ONE
+   green dispatch** — the permanent lane is the recurrence guard (the
+   dispatch itself is both the capstone evidence and X11's promotion).
 
 ## Outcome recording (executor side, on resume with links)
 
