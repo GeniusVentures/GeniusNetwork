@@ -8,9 +8,9 @@ evidence home).
 
 | Repo | Branch | SHA | Pushed? |
 |------|--------|-----|---------|
-| SuperGenius | dev_coldstorage_additions | (fill: the post-19-05 HEAD) | (dispatch requires the push — user action) |
-| thirdparty | (recorded tag branch) | (fill) | (only if a new tag is cut; the recorded tag otherwise) |
-| thirdparty/sgns-blockstore | main | (unchanged this phase — verify) | (existing) |
+| SuperGenius | dev_coldstorage_additions | 3b5885d2f (local HEAD after 19-05 Task 1) | NO — the dispatch requires the user push |
+| thirdparty | (recorded tag branch) | `test_coldstorage_rtti` resolves (4a97e95) | unchanged this phase — no new tag needed |
+| thirdparty/sgns-blockstore | main | ee0266b (unchanged this phase) | existing |
 
 **thirdparty tag check:** use the recorded cold-build tag (`test_coldstorage_rtti`,
 consumed by v1.1 run 42905264387) or any newer tag post-dating the installed fake
