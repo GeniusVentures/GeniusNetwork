@@ -81,10 +81,20 @@ Fault-arm inventory (knob `SGNS_CROSS_RACE_RED_ARMS_ENABLE`, never set in CI): X
 
 ## (e) THE D-15/D-16 EVIDENCE TABLE (one green dispatch per platform — recorded at the Task-3 checkpoint)
 
+**Dispatch 1 — run 45235774034 (2026-11-23, dev_coldstorage_additions @ 3b5885d2f, run_tests=true, cold_storage=true, tag test_coldstorage_rtti): FIX-FORWARD, not the closing evidence.**
+
+| Platform | Outcome | Detail |
+|----------|---------|--------|
+| Windows-Release | Full lane 168/169; **Tier-1 fail-closed lane 20/20 GREEN** | The only full-lane failure: `ColdComposeMatrixTest.Converge_FixedPointIsStable_ReRunsChangeNothing` (:2313 snapshot-field flip — the load class; green locally 3/3). **The Tier-1 lane proved the new step + `cold_cross_feature_fault_race_test` membership green on Windows.** |
+| OSX (Debug+Release) | Both lanes: `cold_cross` **X11** refusal-leg merge + compose `Converge` | X11 (run-45235774034 find): B fetched + merged the evidenced cid while B's S3 op count stayed flat — the cold chain never crossed S3 on that fetch; the Windows passes were genuine (no peer Request for cid_x) but the leg could pass vacuously. Fixed in `9804dbf8f` (the direct B-consult teeth). |
+| Linux (all 4) / iOS (all) / Android (all) | **Build failure** — the GNU/lld link find | `undefined reference to sgns::base::Buffer::Buffer(std::vector<uint8_t>)` from `StageBlockRemoval` (16-02): libbuffer.a precedes libcrdt_graphsync_dagsyncer.a; single-pass linkers never pull buffer.cpp.o; MSVC/Apple multi-pass resolve — latent since 16-02, invisible until the branch's first Linux build. Fixed in `9804dbf8f` (ctor inlined into buffer.hpp). |
+
+**Open fix-forward item (cold-labeled — never quarantined):** the compose `Converge` load-flake (OSX both lanes + the Windows full lane) needs its own stabilization (the before/after snapshot window races background-GC pass activity on loaded runners). Recorded here; excluded from no lane.
+
 | Platform | Run link | Toggles | thirdparty tag | Branch SHA | Full-suite lane | Tier-1 fail-closed lane (incl. cold_cross_feature_fault_race_test) |
 |----------|----------|---------|----------------|------------|-----------------|---------------------------------------------------------------------|
-| Windows-Release | *PENDING — recorded at the checkpoint* | run_tests=true, cold_storage=true | (recorded) | (recorded) | (recorded) | (recorded) |
-| Linux-x86_64-Release | *PENDING* | run_tests=true, cold_storage=true | (recorded) | (recorded) | (recorded) | (recorded) |
-| OSX-Release | *PENDING* | run_tests=true, cold_storage=true | (recorded) | (recorded) | (recorded) | (recorded) |
+| Windows-Release | https://github.com/GeniusVentures/SuperGenius/actions/runs/45235774034 | run_tests=true, cold_storage=true | test_coldstorage_rtti | 3b5885d2f | 168/169 (compose load flake) | **GREEN 20/20 (membership proven)** |
+| Linux-x86_64-Release | (same run) | same | same | same | build failed — the link find (fixed 9804dbf8f) | — |
+| OSX-Release | (same run) | same | same | same | X11 + compose (both fixed/recorded — re-dispatch pending) | X11 + compose |
 
-One green per platform closes the capstone record — **confirmed as the bar at the checkpoint (the one-green X11 re-rule: the permanent lane is the recurrence guard)**. Membership check: the Tier-1 lane listing must include `cold_cross_feature_fault_race_test` in each platform's run evidence (checked from dispatch output, not the local lane alone).
+One green per platform closes the capstone record — **confirmed as the bar at the checkpoint (the one-green X11 re-rule: the permanent lane is the recurrence guard)**. Membership check: the Tier-1 lane listing must include `cold_cross_feature_fault_race_test` in each platform's run evidence (checked from dispatch output, not the local lane alone). **Next dispatch (post-9804dbf8f) is the closing candidate.**
