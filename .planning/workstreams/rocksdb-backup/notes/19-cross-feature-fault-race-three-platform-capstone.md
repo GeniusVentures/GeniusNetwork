@@ -106,6 +106,18 @@ Fault-arm inventory (knob `SGNS_CROSS_RACE_RED_ARMS_ENABLE`, never set in CI): X
 
 **THE X11 FIND (run 45257655488, the case's teeth paid off):** the consult-teeth PASSED (B's own `LookupPruneEvidence` answered `Pruned`) yet the merge happened — pinning a **production resurrection gap**: (a) A's broadcaster pushes new head CIDs to connected peers through the **direct peer-queue path (topic-agnostic)** — a "private" topic does not isolate on the wire (macOS Requests 3/4 fetched the private cids before any test drive); (b) `getNode` only consults evidence on **cold-chain misses** — its cache/DAG-service steps precede the consult, so a block already stored by a background fetcher **merges without a consult**. Fix designed (worker-side terminal evidence guard at `HandleRootCIDBlock`, no-retry terminal marking; the naive broadcaster-thread placement deadlocks ShutdownNow's lifecycle join, and retry-marking starves the workers): currently STASHED locally (`x11-guard-wip`) — the dev machine's pubsub-world tests wedge even on the pristine tree (machine state; needs reboot), and CI is the working verifier.
 
+**Dispatch 4 — run 45308718527 (2026-11-23, @ 0e22c1cd3, desktop-only): X11 GREEN ON OSX — the one-green promotion bar MET on all three platforms; one OSX Tier-1 leg remained, fixed post-run (`4f7281b1f`).**
+
+| Platform | Full-suite lane | Tier-1 fail-closed lane |
+|----------|-----------------|-------------------------|
+| Windows-Release | 168/169 — `MultiAccountTest.NodeConsensusTest` consensus-condition timeout (NON-cold account suite; also failed Linux this dispatch; passed D3 when the platform was fully green — transverse flake, recorded) | **20/20 GREEN** |
+| Windows-Debug | **GREEN** | **GREEN** |
+| Linux-x86_64-Release | 167/168 — the same `multi_account` | **GREEN** |
+| **OSX-Release** | **171/171 GREEN — X11 GREEN, `resurrection_test` GREEN** | 19/20 — compose `Interleave_EraseParkedWhileGCCompletes` only |
+| OSX-Debug | 169/171 — X7 10 s deadline (Debug-lane only) + Interleave | 19/20 — Interleave |
+
+**X11 PROMOTION: MET** (the re-ruled one-green bar — green on Windows D3+D4, Linux D3+D4, OSX D4 full lane). **The Interleave find (fixed in `4f7281b1f`, pending the next dispatch):** the leg parked on the PreMarkProcess hook, which fires only per DUE MARK — and it arms BEFORE `DetachT2Chain` (before new eligibility exists), racing background GC quiescence; D4's tell: the leg passed the full lane and failed the Tier-1 lane on the same machine minutes apart. The fix exposes the 12-01 mid-pass seam (`SetGcMidPassHookForTest`, fires unconditionally every pass, before any marking — same journal protection) with the full forwarding chain + same-commit stub twin; M2 parks there.
+
 | Platform | Run link | Toggles | thirdparty tag | Branch SHA | Full-suite lane | Tier-1 fail-closed lane (incl. cold_cross_feature_fault_race_test) |
 |----------|----------|---------|----------------|------------|-----------------|---------------------------------------------------------------------|
 | Windows-Release | https://github.com/GeniusVentures/SuperGenius/actions/runs/45235774034 | run_tests=true, cold_storage=true | test_coldstorage_rtti | 3b5885d2f | 168/169 (compose load flake) | **GREEN 20/20 (membership proven)** |
