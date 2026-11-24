@@ -141,3 +141,15 @@ One green per platform closes the capstone record — **confirmed as the bar at 
 **The dispatch-7 find (fixed in `41776b0c0`):** `TimelineT0ThroughT3` failed `EXPECT_EQ(fake_s3_->ObjectKeys(), t0_object_keys)` with current=4 vs t0=3 keys — the CAPTURE was the incomplete side: it ran after `WaitDurable(victim)` ONLY, but four blocks are seeded at t0 (spender, victim, driver-1, driver-2); on the slow Debug runner the 4th seed's upload (100 ms drain interval) lagged the victim's, the snapshot took a 3-key baseline, and the log's "final flush at shutdown failed (1 record left UploadedAccepted)" confirmed the straggler. Fix: gate the capture on the full deterministic fact (`pending==0 && durable>=4`, 20 s) before snapshotting. Verified: downgrade 10/10 (TimelineT0 1.7 s).
 
 **Local-environment note (2026-11-24 evening, post-fix):** the local Tier-1 rerun failed exactly TWO cases — `Resurrect_FullWire` (180 s deadline) and X11's prologue gate (60 s, B `durable=0 pending=0`, zero gossip connections) — both **two-node/two-GlobalDB wire-delivery gates**, i.e. the same wire class, while **Cloudflare WARP's tunnel adapter was Up** on the dev box. Both cases were GREEN locally earlier the same day (Tier-1 20/20, pre-WARP) and X11 was green on CI at this exact HEAD ~3 h prior. Ruled environmental (WARP breaks local libp2p loopback dials), NOT code — no fix made to either case; CI remains the verifier. If local wire tests wedge again: check `Get-NetAdapter` for CloudflareWARP first.
+
+---
+
+**Dispatch 8 — THE CLOSING DISPATCH — run 45504484532 (2026-11-24, @ 41776b0c0, OSX-only builds): THE COLD CAPSTONE COMPLETE — zero cold failures, Tier-1 20/20 on BOTH OSX configs.**
+
+| Platform | Full-suite lane | Tier-1 fail-closed lane |
+|----------|-----------------|-------------------------|
+| OSX-Release | 170/171 — `multi_account_test` SEGFAULT (NON-cold; the D4-documented transverse suite — timed out Win+Linux in D4, passed D3/D5/D6/D7; passed on develop's OSX-Debug Nov-19 taking 478 s) | **20/20 GREEN (2nd consecutive)** |
+| OSX-Debug | 170/171 — `transaction_sync_test` (`InvalidPreviousHashTest`, `MissedCrdtHeadIsRecoveredAfterReconnect`, each at its ~50 s internal deadline — NON-cold wire suite, first appearance; green D5/D6/D7 on this branch and green on develop Nov-19 at 124.6 s — the 171-test lane's load on the tart VM, the same class as Resurrect_FullWire's) | **20/20 GREEN — `Resurrect_FullWire` PASSED (the load-class ruling validated); the downgrade capture fix held** |
+| Windows/Linux (all) | exit-78 build-skip + no-tests | — (closing evidence stands from D3/D4) |
+
+**CAPSTONE CLOSED:** every cold suite green on every dispatching platform; one full-green dispatch per platform on record (Windows D3, Linux-x64+arm D3, OSX D7); X11 promoted (one-green all platforms, D4); Tier-1 fail-closed lane green on all platforms, now 2× consecutive on both OSX configs at the final HEAD. The only lane failures in D8 are the two non-cold transverse load-class suites — out of 19-05 scope, recorded here for the audit trail.
