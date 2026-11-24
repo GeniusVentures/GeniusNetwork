@@ -124,4 +124,20 @@ Fault-arm inventory (knob `SGNS_CROSS_RACE_RED_ARMS_ENABLE`, never set in CI): X
 | Linux-x86_64-Release | (same run) | same | same | same | build failed — the link find (fixed 9804dbf8f) | — |
 | OSX-Release | (same run) | same | same | same | X11 + compose (both fixed/recorded — re-dispatch pending) | X11 + compose |
 
-One green per platform closes the capstone record — **confirmed as the bar at the checkpoint (the one-green X11 re-rule: the permanent lane is the recurrence guard)**. Membership check: the Tier-1 lane listing must include `cold_cross_feature_fault_race_test` in each platform's run evidence (checked from dispatch output, not the local lane alone). **Next dispatch (post-9804dbf8f) is the closing candidate.**
+One green per platform closes the capstone record — **confirmed as the bar at the checkpoint (the one-green X11 re-rule: the permanent lane is the recurrence guard)**. Membership check: the Tier-1 lane listing must include `cold_cross_feature_fault_race_test` in each platform's run evidence (checked from dispatch output, not the local lane alone).
+
+**Dispatch 5 — run 45349343985 (2026-11-24, @ 4f7281b1f): 6/8 desktop lanes green incl. FIRST all-green OSX Debug; the compose park-arm races found on OSX (fixed in `ebd8c80b8`).** OSX full-lane failures were `InteractionC`/`Race` — the legs parked on the PreMarkProcess hook racing background quiescence (the Interleave disease); fix = move ALL parks/counters to the mid-pass seam (`SetGcMidPassHookForTest` — fires unconditionally every pass). The `ebd8c80b8` mojibake corruption (PS 5.1 ANSI round-trip) repaired byte-identical in `eaf4ea771`.
+
+**Dispatch 6 — run 45467222690 (2026-11-24, @ eaf4ea771, OSX-only build): OSX-Release TIER-1 20/20 GREEN — the Tier-1 capstone row complete (all platforms).** Full lane failed ONE case: `Converge_TxPrunerThenGC` (snap_a gc_only disposed-by-background) — the UNPARKED variant of the same quiescence race, fixed in `6e8b1610c` (terminal-fact gate: the cycle's `/prune/blk` PRUNED verdicts; two-arm acceptance; cross-arm seal invariant). Win/Linux job failures = exit-78 build-skip + no-tests, not test failures.
+
+**Dispatch 7 — run 45489840538 (2026-11-24, @ 6e8b1610c): OSX-Release FULLY GREEN (BOTH LANES) — the closing-evidence shape for the platform.**
+
+| Platform | Outcome | Detail |
+|----------|---------|--------|
+| **OSX-Release** | **FULLY GREEN — full lane AND Tier-1 20/20** | The Converge fix held; **the platform's closing evidence ✓** |
+| OSX-Debug | Full lane 170/171 — `ColdDowngradeE2ETest.TimelineT0ThroughT3` (the t0 keys-capture race) | Tier-1 19/20 — `Resurrect_FullWire_TwoGlobalDBRedeliveryStaysDeleted` (183 s — the documented 18-03 CI-load class, green in D6 the same day; not a capstone blocker) |
+| Windows/Linux (all) | exit-78 build-skip + no-tests | Desktop-only dispatch (OSX lanes selected); NOT test failures |
+
+**The dispatch-7 find (fixed in `41776b0c0`):** `TimelineT0ThroughT3` failed `EXPECT_EQ(fake_s3_->ObjectKeys(), t0_object_keys)` with current=4 vs t0=3 keys — the CAPTURE was the incomplete side: it ran after `WaitDurable(victim)` ONLY, but four blocks are seeded at t0 (spender, victim, driver-1, driver-2); on the slow Debug runner the 4th seed's upload (100 ms drain interval) lagged the victim's, the snapshot took a 3-key baseline, and the log's "final flush at shutdown failed (1 record left UploadedAccepted)" confirmed the straggler. Fix: gate the capture on the full deterministic fact (`pending==0 && durable>=4`, 20 s) before snapshotting. Verified: downgrade 10/10 (TimelineT0 1.7 s).
+
+**Local-environment note (2026-11-24 evening, post-fix):** the local Tier-1 rerun failed exactly TWO cases — `Resurrect_FullWire` (180 s deadline) and X11's prologue gate (60 s, B `durable=0 pending=0`, zero gossip connections) — both **two-node/two-GlobalDB wire-delivery gates**, i.e. the same wire class, while **Cloudflare WARP's tunnel adapter was Up** on the dev box. Both cases were GREEN locally earlier the same day (Tier-1 20/20, pre-WARP) and X11 was green on CI at this exact HEAD ~3 h prior. Ruled environmental (WARP breaks local libp2p loopback dials), NOT code — no fix made to either case; CI remains the verifier. If local wire tests wedge again: check `Get-NetAdapter` for CloudflareWARP first.
