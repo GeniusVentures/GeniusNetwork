@@ -5,11 +5,8 @@ milestone_name: SuperGenius Cold-Storage Archive Integration
 current_phase: 19
 current_phase_name: Cross-Feature Fault-Race Matrix & Three-Platform CI Capstone
 status: executing
-stopped_at: "Phase 19: 19-05 Tasks 1+2 COMPLETE; Task 3 - dispatch 3 (run 45257655488, @ 583734cba, thirdparty_tag=test_coldstorage) delivered the WINDOWS + LINUX Release CLOSING EVIDENCE (both lanes green, cold_cross+X11 green on Windows, Tier-1 20/20; Linux x86_64+aarch64 Release green; Android+iOS-Debug green - the stub fix held). iOS-ROOT-CAUSE VERIFIED (thirdparty build logs, run 43321951865): both configs generated libMoltenVK-merged.a, but the appended install(FILES ... RENAME libMoltenVK.a) printed Up-to-date: on the fast Release configs and SILENTLY SKIPPED the copy (upstream's install(TARGETS) writes the plain archive first; the mtime comparison tied/back-dated - and the jobs ran DIFFERENT Xcode toolchains, Release 16.4 vs Debug 26.3-rc, the workflow pins neither) - iOS-Debug shipped the merged 139-member lib, iOS-Release+iOS-sim shipped the unmerged 48-member one. FIXED in thirdparty da17826 (install(CODE file(REMOVE dest)) ahead of the merge install - no dest, no up-to-date comparison). REMAINING: push thirdparty da17826, re-run the thirdparty build to regenerate + re-upload the iOS/iOS-sim assets to test_coldstorage, then re-dispatch SuperGenius on the same tag; runner hygiene RULED (2026-11-23): machine-level xcode-select to 16.4 on the one 26.3-rc runner (workflow DEVELOPER_DIR pin declined for now across the many repos; revisit on fleet growth). REMAINING BLOCKERS: (1) OSX X11 = the REAL production find: the consult teeth passed but the merge happened - the broadcaster's direct peer-queue push is TOPIC-AGNOSTIC and getNode consults evidence only on cold-chain misses, so stored blocks merge unconsulted; the fix (worker-side terminal evidence guard in HandleRootCIDBlock, no-retry marking) is DESIGNED and STASHED in SuperGenius (x11-guard-wip) - local pubsub tests currently wedge even on the pristine tree (dev machine needs a reboot; hermetic cases pass), so the next CI dispatch is the working verifier. (2) OSX compose race-legs (InteractionC/Interleave/Race, tart-VM load; Converge GREEN - the fix held) + cold_storage_resurrection_test Tier-1 (detail untriaged). (3) Linux Debug cold_seal_growth_test (Debug-only soak slowness; Release green). NEXT: decide whether the X11 guard rides the next dispatch (tag=test_coldstorage_rtti); OSX green closes the capstone."
-last_updated: "2026-11-23T23:30:00.000Z"
-last_updated: "2026-11-23T20:30:00.000Z"
-last_updated: "2026-11-23T00:00:00.000Z"
-last_updated: "2026-11-21T05:20:00.000Z"
+stopped_at: "Phase 19: 19-05 Tasks 1+2 COMPLETE; Task 3 - dispatch 3 delivered Windows+Linux Release closing evidence (both lanes green, cold_cross+X11 green on Windows, Tier-1 20/20). SINCE: the X11 wire-resurrection ROOT CAUSE fixed and locally verified (SuperGenius 0e22c1cd3, 4 ahead of origin): A direct peer-queue push is topic-agnostic AND queued-then-flushed-on-connect (dispatch 3 merged the refused key pre-evidence) - the test now arms B evidence+teeth BEFORE the dial, keyY-first link-free private puts, latched prologue-dead poll; PLUS the production merge-gate evidence guard in HandleRootCIDBlock (terminal no-retry; never the broadcaster thread). Local: X11 green, suite 17/17 x2, Tier-1 20/20 (WARP interference window closed - the runbook libp2p breaker; hermetic passed throughout). iOS link fixed at the asset layer (thirdparty da17826 mtime Up-To-Date silent skip; iOS-only rebuild 45297525343 confirmed good). REMAINING: user pushes SuperGenius (9804dbf8f, 8e792470a, 583734cba, 0e22c1cd3) + re-dispatch on tag test_coldstorage = the CLOSING candidate (OSX X11 expected green; compose race-legs + resurrection_test remain tart-VM load class); then evidence table, checklist Status, 19-05-SUMMARY, phase verification + ROADMAP. RESUME SIGNAL: the user reports the dispatch run URL(s)."
+last_updated: "2026-11-23T21:15:00.000Z"
 last_activity: 2026-11-20
 last_activity_desc: Phase 19 execution started
 state_head: 1ffb0aab53656ddecd10fa857f8e787a1c3f02a3
@@ -26,46 +23,46 @@ progress:
 
 See: `.planning/PROJECT.md` (workstream sections); `.planning/workstreams/rocksdb-backup/ROADMAP.md`; v1.0 archive: `.planning/workstreams/rocksdb-backup/milestones/` (ROADMAP, REQUIREMENTS, MILESTONE-AUDIT, phase artifacts)
 
-**Core value:** Older CRDT/IPLD blocks can spill from RocksDB hot state to durable, CID-verified object storage through a shared thirdparty static library (`sgns-blockstore`) consumable by both SuperGenius and genius-tube — no RocksDB remote-FS integration, no SDK/SuperGenius types in the public API, and local eviction is never a CRDT deletion.
+**Core value:** Older CRDT/IPLD blocks can spill from RocksDB hot state to durable, CID-verified object storage through a shared thirdparty static library (`sgns-blockstore`) consumable by both SuperGenius and genius-tube Ã¢â‚¬â€ no RocksDB remote-FS integration, no SDK/SuperGenius types in the public API, and local eviction is never a CRDT deletion.
 
-**Current focus:** Phase 19 — Cross-Feature Fault-Race Matrix & Three-Platform CI Capstone
+**Current focus:** Phase 19 Ã¢â‚¬â€ Cross-Feature Fault-Race Matrix & Three-Platform CI Capstone
 
 ## Current Position
 
-Phase: 19 (Cross-Feature Fault-Race Matrix & Three-Platform CI Capstone) — EXECUTING
+Phase: 19 (Cross-Feature Fault-Race Matrix & Three-Platform CI Capstone) Ã¢â‚¬â€ EXECUTING
 Plan: 4 of 5 complete
-Status: Executing Phase 19 (Wave 5 next — blocking user checkpoint)
-Last activity: 2026-11-20 — 19-04 complete (the matrix closed)
+Status: Executing Phase 19 (Wave 5 next Ã¢â‚¬â€ blocking user checkpoint)
+Last activity: 2026-11-20 Ã¢â‚¬â€ 19-04 complete (the matrix closed)
 
 ## Progress
 
-**Phases Complete:** 0/7 (v1.2) · v1.0 archived 2026-10-22 · v1.1 archived 2026-11-10
+**Phases Complete:** 0/7 (v1.2) Ã‚Â· v1.0 archived 2026-10-22 Ã‚Â· v1.1 archived 2026-11-10
 
-v1.2 Phases 13-19 defined — see [ROADMAP.md](ROADMAP.md). v1.1 completion record: [milestones/v1.1-ROADMAP.md](milestones/v1.1-ROADMAP.md).
+v1.2 Phases 13-19 defined Ã¢â‚¬â€ see [ROADMAP.md](ROADMAP.md). v1.1 completion record: [milestones/v1.1-ROADMAP.md](milestones/v1.1-ROADMAP.md).
 
 ## Accumulated Context
 
 **Key decisions (from v1.2 research SUMMARY, 2026-11-13):**
-- Governing principle: evidence outranks bytes, node-locally — prune markers decide serve-vs-refuse and restore-vs-skip; cold bytes alone are never authoritative
+- Governing principle: evidence outranks bytes, node-locally Ã¢â‚¬â€ prune markers decide serve-vs-refuse and restore-vs-skip; cold bytes alone are never authoritative
 - Governing invariants: never erase hot what is not Durable in cold; node-local prune evidence is terminal; seals are never deleted by any path; collectibility + the GC walk-gap exemption are two halves of one rule, shipped together
-- Zero new dependencies — all v1.2 work composes pinned mechanisms (RocksDB 9.4.0, s3d v0.2.1, vendored ipfs-lite-cpp unedited, minio-cpp 1.0.0); no compaction-filter deletion, no DeleteRange
+- Zero new dependencies Ã¢â‚¬â€ all v1.2 work composes pinned mechanisms (RocksDB 9.4.0, s3d v0.2.1, vendored ipfs-lite-cpp unedited, minio-cpp 1.0.0); no compaction-filter deletion, no DeleteRange
 - Two discovered bugs v1.2 must fix (research-verified): the cold-chain resurrection gap (`FetchNodeFromColdStorage` consults no prune evidence) + the forced-walk GC-evicted conflation (`!retained && sealed` treats GC-evicted as pruned)
 - Durability gate lives in `TxPruner::RunCycle`'s block-group filter, NOT `PruneEligibility::Evaluate` (contractually pure; develop Phase 17 landing stays a merge, not a rewrite)
-- Pruner composition: sequence + close the LRU window — never unify the two pruners; both idempotent on absent keys; reverse order safe by construction
+- Pruner composition: sequence + close the LRU window Ã¢â‚¬â€ never unify the two pruners; both idempotent on absent keys; reverse order safe by construction
 - Frozen constraint: cold collectibility is POLICY-ONLY this milestone (sgns-blockstore v1 has no Remove); the poisoned-GC-triangle constraint is honored by construction
 - External gates: the Phase 13 merge gates ALL walk work; develop Phase 17 evaluator shape gates Phase 14 executability (keep the cold conjunct a separate predicate argument)
-- Converged phase order: merge (13) → durability gate (14) → evidence-serving + walk fix (15) → pruner×GC hardening (16) → seals measurement (17) → policy/downgrade capstone (18) → fault-race + 3-platform CI capstone (19)
+- Converged phase order: merge (13) Ã¢â€ â€™ durability gate (14) Ã¢â€ â€™ evidence-serving + walk fix (15) Ã¢â€ â€™ prunerÃƒâ€”GC hardening (16) Ã¢â€ â€™ seals measurement (17) Ã¢â€ â€™ policy/downgrade capstone (18) Ã¢â€ â€™ fault-race + 3-platform CI capstone (19)
 - SEAL probe feeds Phase 15's walk bounds (probe = first plan of Phase 17; the recorded decision closes citing real walk-recovery numbers)
-- SEAL-01 measured and decided (2026-11-19): accept hot seal growth — 52.000 B/row measured at 10^6/10^7, 10^8 extrapolated at 5.2 GB / ~16 s full sweep (evidence: phases/17-seal-growth-measurement-decision/17-seal-growth-evidence/); redesign deferred to the recorded D-11 numeric triggers in notes/17-seal-growth-decision.md; D-12 verdict: kForcedWalkPeerFailoverPerCid = 8 validated in-band-with-noted-limitation (hermetic topology, zero production touch)
-- POLICY-01/02 decided (2026-11-19): cold permanent this milestone (frozen v1, no Remove) + the GC walk-gap evidence exemption shipped as code (one-predicate consult at the WalkReachable gap site, counted-continue observable) + the downgrade interlock (persisted role fingerprint + downgrade_acknowledged ack key + start-normally disarm) E2E-proven on the t0→t3 single-node timeline; v2 collectibility recorded as a contract ask in notes/18-collectibility-policy-downgrade-interlock.md
+- SEAL-01 measured and decided (2026-11-19): accept hot seal growth Ã¢â‚¬â€ 52.000 B/row measured at 10^6/10^7, 10^8 extrapolated at 5.2 GB / ~16 s full sweep (evidence: phases/17-seal-growth-measurement-decision/17-seal-growth-evidence/); redesign deferred to the recorded D-11 numeric triggers in notes/17-seal-growth-decision.md; D-12 verdict: kForcedWalkPeerFailoverPerCid = 8 validated in-band-with-noted-limitation (hermetic topology, zero production touch)
+- POLICY-01/02 decided (2026-11-19): cold permanent this milestone (frozen v1, no Remove) + the GC walk-gap evidence exemption shipped as code (one-predicate consult at the WalkReachable gap site, counted-continue observable) + the downgrade interlock (persisted role fingerprint + downgrade_acknowledged ack key + start-normally disarm) E2E-proven on the t0Ã¢â€ â€™t3 single-node timeline; v2 collectibility recorded as a contract ask in notes/18-collectibility-policy-downgrade-interlock.md
 
 v1.1 key decisions archived with the milestone (`milestones/v1.1-ROADMAP.md` + phase artifacts).
 
 **Todos:**
 - Next: `/gsd-plan-phase 13` (Bootstrap Branch Merge & Composition Baseline)
-- Phase 14 planning needs `--research-phase` (durability monotonicity — `AdvanceDurabilityOnce` code read; develop Phase 17 landing status)
+- Phase 14 planning needs `--research-phase` (durability monotonicity Ã¢â‚¬â€ `AdvanceDurabilityOnce` code read; develop Phase 17 landing status)
 
-**Blockers:** None — watching two external gates: develop Phase 17/20 timing (composition-vs-rebase if they land mid-milestone) and the bootstrap-merge conflict surface (MEDIUM confidence until the merge executes)
+**Blockers:** None Ã¢â‚¬â€ watching two external gates: develop Phase 17/20 timing (composition-vs-rebase if they land mid-milestone) and the bootstrap-merge conflict surface (MEDIUM confidence until the merge executes)
 
 ### Quick Tasks Completed
 
@@ -126,8 +123,8 @@ v1.1 key decisions archived with the milestone (`milestones/v1.1-ROADMAP.md` + p
 ## Decisions
 
 Decision log archived with v1.0 (`milestones/v1.0-ROADMAP.md` + `milestones/v1.0-phases/*/` SUMMARYs). Notable outcomes: `p2p_cid` adopted (D-05/D-06); library-local `result<T,BlockStatus>` alias with `policy::terminate` (D-01 shape preserved); D-11 three-shape 412 classification; G-3-1 closed via in-process OpenSSL cert gen + TLS health probe; s3d accepted-is-max-provable durability ceiling documented.
-- [Phase 10]: DUR-01 tracer landed: Durable is evidence-backed - AdvanceDurabilityOnce (hybrid floor+quiescence-or-backstop cadence, separate flush backoff) marks exactly the pre-flush Accepted snapshot after flush+pendingObjects==0 via the installed S3AdminClient facade; ctor widened by trailing defaults so the Phase-8 5-arg posture stays compiling — DUR-01 tracer landed: Durable is evidence-backed - AdvanceDurabilityOnce (hybrid floor+quiescence-or-backstop cadence, separate flush backoff) marks exactly the pre-flush Accepted snapshot after flush+pendingObjects==0 via the installed S3AdminClient facade; ctor widened by trailing defaults so the Phase-8 5-arg posture stays compiling
-- [Phase 11]: 11-01 GC-01 observe-only retention GC landed: eligibility = spilled-journal Durable (exactly, MI-02) INTERSECT strictly-past-retention age MINUS fresh-walk-reachable MINUS pinned; TRACER fixed the CIDv0 delta-spill defect (EquivalentCidClaim across LocalBlockStore/S3BlockStore verify paths) - CRDT deltas are CIDv0/DAG_PB/sha256, contradicting the research's CIDv1/DAG_CBOR claim; crash/skew/missing-stamp/heads-change all steer to under-eviction — 11-01-SUMMARY key-decisions + deviations 1/4; the CIDv0 fix is load-bearing for Waves 2-4 (no delta spills without it)
+- [Phase 10]: DUR-01 tracer landed: Durable is evidence-backed - AdvanceDurabilityOnce (hybrid floor+quiescence-or-backstop cadence, separate flush backoff) marks exactly the pre-flush Accepted snapshot after flush+pendingObjects==0 via the installed S3AdminClient facade; ctor widened by trailing defaults so the Phase-8 5-arg posture stays compiling Ã¢â‚¬â€ DUR-01 tracer landed: Durable is evidence-backed - AdvanceDurabilityOnce (hybrid floor+quiescence-or-backstop cadence, separate flush backoff) marks exactly the pre-flush Accepted snapshot after flush+pendingObjects==0 via the installed S3AdminClient facade; ctor widened by trailing defaults so the Phase-8 5-arg posture stays compiling
+- [Phase 11]: 11-01 GC-01 observe-only retention GC landed: eligibility = spilled-journal Durable (exactly, MI-02) INTERSECT strictly-past-retention age MINUS fresh-walk-reachable MINUS pinned; TRACER fixed the CIDv0 delta-spill defect (EquivalentCidClaim across LocalBlockStore/S3BlockStore verify paths) - CRDT deltas are CIDv0/DAG_PB/sha256, contradicting the research's CIDv1/DAG_CBOR claim; crash/skew/missing-stamp/heads-change all steer to under-eviction Ã¢â‚¬â€ 11-01-SUMMARY key-decisions + deviations 1/4; the CIDv0 fix is load-bearing for Waves 2-4 (no delta spills without it)
 
 ## Deferred Items
 
@@ -136,10 +133,10 @@ Items acknowledged and deferred at milestone close, most recent first:
 | Category | Item | Status | Deferred At | Milestone |
 |----------|------|--------|-------------|-----------|
 | hardening | Soak-scale GC eviction-storm crash (12-02 deviation; repro: retention ~1 ms + ~2000 Durable orphans + live GC thread; candidate: mark-capture/eviction at ~2000-mark scale) | open | 2026-11-10 | v1.1 |
-| testing | TEST-03 MinIO-binary live leg (`gc_minio_roundtrip_test`, Tier2) registered + loud-skip-verified but never executed live — runbook-deferred (SGNS_BLOCKSTORE_TEST_MINIO_BIN) | open | 2026-11-10 | v1.1 |
+| testing | TEST-03 MinIO-binary live leg (`gc_minio_roundtrip_test`, Tier2) registered + loud-skip-verified but never executed live Ã¢â‚¬â€ runbook-deferred (SGNS_BLOCKSTORE_TEST_MINIO_BIN) | open | 2026-11-10 | v1.1 |
 | ci | Permanent cmake.yml ON-leg regression-net baseline first runs when dev_blockstore merges to develop (push-filter topology, self-resolving; tag-build legs prove the identical configure) | pending-merge | 2026-11-10 | v1.1 |
 | uat_gaps | 03/03-UAT.md | passed | 2026-10-22 | v1.0 |
 
 ## Operator Next Steps
 
-- `/gsd-plan-phase 13` — Bootstrap Branch Merge & Composition Baseline (gates all v1.2 recovery/walk work)
+- `/gsd-plan-phase 13` Ã¢â‚¬â€ Bootstrap Branch Merge & Composition Baseline (gates all v1.2 recovery/walk work)
