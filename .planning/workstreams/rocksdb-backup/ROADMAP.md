@@ -48,7 +48,7 @@ Milestone audit (passed — 3/3 requirements, 7/7 phases, 5/5 integration seams,
 - [ ] **Phase 16: TxPruner × GC Composition Hardening** - Close the stale-LRU erase window, prove the TxPruner×GC interleave matrix, rule the disposal-starvation interplay fail-safe (under-prune)
 - [ ] **Phase 17: Seal Growth Measurement & Decision** - Measure seal growth at representative workloads (probe first — it feeds Phase 15's walk bounds) and record the accept-vs-redesign decision with capacity math
 - [x] **Phase 18: Role Downgrade, Collectibility Policy & GC Walk-Gap Exemption** - The two-halves rule recorded as one policy (cold permanent this milestone + GC walk-gap exemption); archive→light downgrade E2E-proven (completed 2026-11-19)
-- [ ] **Phase 19: Cross-Feature Fault-Race Matrix & Three-Platform CI Capstone** - Induced failures across erase × serve × recovery cannot resurrect, partially validate, or lose last copies; recovery-walk suites green on Windows/macOS/Linux with cold storage ON
+- [x] **Phase 19: Cross-Feature Fault-Race Matrix & Three-Platform CI Capstone** - Induced failures across erase × serve × recovery cannot resurrect, partially validate, or lose last copies; recovery-walk suites green on Windows/macOS/Linux with cold storage ON
 
 *Deferred signals carried forward (see STATE.md `## Deferred Items` and the v1.1 audit's tech-debt section): soak-scale GC eviction-storm hardening; TEST-03 MinIO-binary live leg (runbook); permanent cmake.yml ON-leg baseline (activates at develop merge).*
 
@@ -209,7 +209,7 @@ Plans:
   2. Recovery-walk suites run green on Windows, macOS, and Linux CI lanes — fresh-clone, cold storage ON, tier labels intact.
   3. The Windows/macOS walk-lane portability list is documented (CloudflareWARP adapter = environmental, distinct per-node base paths, poll predicates, gtest filter grammar) so the three-platform lanes stay reproducible run over run.
 
-**Plans**: 2/5 plans executed defined (research + patterns complete 2026-11-19 — anchors verified at SuperGenius `d2f2a7dec`; 11-case matrix X1–X11 adopted within D-03's budget; B2 push-topology default with checkpoint veto)
+**Plans**: 5/5 plans executed (COMPLETE 2026-11-25 — research + patterns 2026-11-19 at `d2f2a7dec`; 11-case matrix X1–X11 landed 19-01..19-04; 19-05 closed the capstone: Tier-1 fail-closed lane steps in the dispatch instrument, rulings doc, fresh-clone checklist, and one-green-per-platform both-lanes evidence — Windows/Linux D3 (run 45257655488), OSX D7 (run 45489840538), confirming D8 (run 45504484532) at the final HEAD `41776b0c0` with Tier-1 20/20 both OSX configs)
 
 Plans:
 **Wave 1**
@@ -225,7 +225,7 @@ Plans:
 - [x] 19-04-PLAN.md — X10 suite-end audit walk + counter teeth (byte-flip) + zero-CID baseline + X11 the ONE full-wire two-GlobalDB refusal-failover-under-concurrent-erase leg, Tier-1 default with the two-green-dispatch promotion contract armed (D-01/D-03/D-04/D-06/D-10)
 
 **Wave 5** *(blocked on Wave 4 — evidence cites the complete matrix; blocking user checkpoint)*
-- [ ] 19-05-PLAN.md — TEST-03 closure: Tier-1 fail-closed lane steps in build-release-tags.yml (shape A; B2 push-topology posture — cmake.yml untouched, B1 recorded as declined with veto offered) + the `notes/19-cross-feature-fault-race-three-platform-capstone.md` rulings doc (matrix table, quarantine table Q1–Q7, D-14 portability runbook, D-11 both-lanes reading, X11 promotion record) + the refreshed `19-FRESH-CLONE-CHECKLIST.md` + the D-15/D-16 per-platform evidence checkpoint (D-09/D-10/D-11/D-12/D-13/D-14/D-15/D-16)
+- [x] 19-05-PLAN.md — TEST-03 closure: Tier-1 fail-closed lane steps in build-release-tags.yml (shape A; B2 push-topology posture — cmake.yml untouched, B1 recorded as declined with veto offered) + the `notes/19-cross-feature-fault-race-three-platform-capstone.md` rulings doc (matrix table, quarantine table Q1–Q7, D-14 portability runbook, D-11 both-lanes reading, X11 promotion record) + the refreshed `19-FRESH-CLONE-CHECKLIST.md` + the D-15/D-16 per-platform evidence checkpoint (D-09/D-10/D-11/D-12/D-13/D-14/D-15/D-16) — **COMPLETE 2026-11-25 across dispatches D1–D8** (every cold find fixed forward: GNU/lld link, OFF-build stub twins, X11 wire resurrection, MoltenVK install skip, the park/quiescence/capture fragility family; B2 + one-green rulings held; zero quarantined cold failures)
 
 ## Progress
 
@@ -239,7 +239,7 @@ Plans:
 | 16. TxPruner × GC Composition Hardening | 3/3 | In Progress|  |
 | 17. Seal Growth Measurement & Decision | 3/3 | In Progress|  |
 | 18. Role Downgrade, Collectibility Policy & GC Walk-Gap Exemption | 4/4 | Complete    | 2026-11-19 |
-| 19. Cross-Feature Fault-Race Matrix & Three-Platform CI Capstone | 2/5 | In Progress|  |
+| 19. Cross-Feature Fault-Race Matrix & Three-Platform CI Capstone | 5/5 | Complete    | 2026-11-25 |
 
 ---
 *Roadmap created: 2026-10-19 (v1.0) — v1.1 phases added 2026-10-22, shipped & archived 2026-11-10 — v1.2 phases added 2026-11-13 — rocksdb-backup workstream*

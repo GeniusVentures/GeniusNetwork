@@ -1,21 +1,20 @@
 # 19-FRESH-CLONE-CHECKLIST — TEST-03 Capstone Evidence (D-15/D-16)
 
-Status: **PENDING** — completed at the Task-3 checkpoint with the run ID + parameters
-(see notes/19-cross-feature-fault-race-three-platform-capstone.md §(e), the single
-evidence home).
+Status: **COMPLETE (2026-11-25)** — closing evidence recorded across dispatches D1–D8
+(primary per-platform rows: Windows https://github.com/GeniusVentures/SuperGenius/actions/runs/45257655488,
+Linux (same run), OSX https://github.com/GeniusVentures/SuperGenius/actions/runs/45489840538;
+confirming run at the final HEAD: https://github.com/GeniusVentures/SuperGenius/actions/runs/45504484532 —
+run_tests=true, cold_storage=true, thirdparty_tag=test_coldstorage, branch dev_coldstorage_additions;
+see notes/19-cross-feature-fault-race-three-platform-capstone.md §(e) THE CLOSING EVIDENCE TABLE,
+the single evidence home).
 
-## Push-state skeleton (fill at the checkpoint; innermost-first)
+## Push-state skeleton (completed at the checkpoint; innermost-first)
 
 | Repo | Branch | SHA | Pushed? |
 |------|--------|-----|---------|
-| SuperGenius | dev_coldstorage_additions | 3b5885d2f (local HEAD after 19-05 Task 1) | NO — the dispatch requires the user push |
-| thirdparty | (recorded tag branch) | `test_coldstorage_rtti` resolves (4a97e95) | unchanged this phase — no new tag needed |
+| SuperGenius | dev_coldstorage_additions | 41776b0c0 (final HEAD; tag `test_coldstorage` on it) | YES — user pushed (verified via ls-remote) |
+| thirdparty | dev_db_storage | da17826 (the MoltenVK install fix) | YES — user pushed; iOS/iOS-sim assets regenerated + re-uploaded to `test_coldstorage` (user's rebuild run 45297525343) |
 | thirdparty/sgns-blockstore | main | ee0266b (unchanged this phase) | existing |
-
-**thirdparty tag check:** use the recorded cold-build tag (`test_coldstorage_rtti`,
-consumed by v1.1 run 42905264387) or any newer tag post-dating the installed fake
-headers. No library change this phase — a new tag is NOT required (verify the tag
-still resolves on the thirdparty releases page before dispatch).
 
 ## User actions (the D-15/D-16 checkpoint — one dispatch, one veto, one confirmation)
 
@@ -47,6 +46,21 @@ still resolves on the thirdparty releases page before dispatch).
 ## Outcome recording (executor side, on resume with links)
 
 - notes/19-* §(e) evidence table: per-platform run link, toggles, tag, branch
-  SHA, both-lanes results.
+  SHA, both-lanes results. **DONE — see THE CLOSING EVIDENCE TABLE.**
 - This checklist's Status line flips to the completed shape with the primary
-  run ID + parameters.
+  run ID + parameters. **DONE (2026-11-25).**
+
+## Recorded checkpoint rulings (final)
+
+- **B1/B2 veto (item 5):** B2 STANDS (ruled 2026-11-20, re-confirmed through
+  the closing dispatch) — cmake.yml push filters unchanged; the permanent lane
+  is dormant until the v1.2 merge.
+- **X11 promotion count (item 6):** ONE green dispatch (ruled 2026-11-20) —
+  met on all three platforms at D4; X11 remained green in every subsequent
+  dispatch including both closing runs (zero X11 failures D5–D8).
+- **Expected outcome vs. actual:** all three platforms green on both lanes —
+  **MET** (Windows D3 both-lanes green; Linux D3 both-lanes green; OSX D7
+  both-lanes green; D8 confirming: Tier-1 20/20 both OSX configs, every cold
+  test green in the full lanes). Every cold-labeled find in the D1–D8 trail
+  was fixed forward in scope — no exclusion matching a cold_* name was ever
+  added (the D-12 letter held).

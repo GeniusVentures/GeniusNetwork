@@ -153,3 +153,14 @@ One green per platform closes the capstone record — **confirmed as the bar at 
 | Windows/Linux (all) | exit-78 build-skip + no-tests | — (closing evidence stands from D3/D4) |
 
 **CAPSTONE CLOSED:** every cold suite green on every dispatching platform; one full-green dispatch per platform on record (Windows D3, Linux-x64+arm D3, OSX D7); X11 promoted (one-green all platforms, D4); Tier-1 fail-closed lane green on all platforms, now 2× consecutive on both OSX configs at the final HEAD. The only lane failures in D8 are the two non-cold transverse load-class suites — out of 19-05 scope, recorded here for the audit trail.
+
+### THE CLOSING EVIDENCE TABLE (D-15/D-16 — one green dispatch per platform, both lanes)
+
+| Platform | Run link | Toggles | thirdparty tag | Branch SHA | Full-suite lane | Tier-1 fail-closed lane (incl. cold_cross_feature_fault_race_test) |
+|----------|----------|---------|----------------|------------|-----------------|---------------------------------------------------------------------|
+| **Windows-Release** | https://github.com/GeniusVentures/SuperGenius/actions/runs/45257655488 | run_tests=true, cold_storage=true | test_coldstorage (post-MoltenVK-fix assets) | 583734cba | **169/169 GREEN** | **20/20 GREEN** |
+| **Linux-x86_64-Release + aarch64-Release** | https://github.com/GeniusVentures/SuperGenius/actions/runs/45257655488 | same | same | same | **GREEN** (build + both lanes) | **GREEN** |
+| **OSX-Release** | https://github.com/GeniusVentures/SuperGenius/actions/runs/45489840538 | run_tests=true, cold_storage=true | test_coldstorage | 6e8b1610c | **171/171 GREEN** | **20/20 GREEN** |
+| *(confirming)* OSX-Release + OSX-Debug | https://github.com/GeniusVentures/SuperGenius/actions/runs/45504484532 | run_tests=true, cold_storage=true | test_coldstorage | 41776b0c0 (final HEAD) | cold 100% green (only non-cold transverse failed) | **20/20 GREEN both configs** |
+
+**Status: COMPLETE (2026-11-25).** The permanent Tier-1 lane in `build-release-tags.yml` is the recurrence guard (B2 ruling — dormant for `dev_coldstorage_additions` until the v1.2 merge; B1 stays one line if ever re-ruled). X11 promoted (D4, one-green bar). No cold-labeled failure was ever quarantined — every cold find in the dispatch trail (D1–D8) was fixed forward in scope.
