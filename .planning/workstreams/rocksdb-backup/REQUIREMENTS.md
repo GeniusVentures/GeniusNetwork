@@ -32,7 +32,7 @@ last_updated: 2026-11-13
 
 ### RECOVER — Bootstrap Branch Composition
 
-- [ ] **RECOVER-01**: fix/trust-genesis-bootstrap is merged into dev_coldstorage_additions with the full existing suite green (Phase 13 gate for all recovery work).
+- [x] **RECOVER-01**: fix/trust-genesis-bootstrap is merged into dev_coldstorage_additions with the full existing suite green (Phase 13 gate for all recovery work).
 - [ ] **RECOVER-02**: The forced walk restores GC-evicted ancestors from cold — retained means hot OR cold-resident-without-evidence; the walk never conflates GC-evicted with pruned.
 - [ ] **RECOVER-03**: The forced walk never resurrects TxPruner-erased elements — CanRestoreElement composition makes prune evidence terminal in recovery, matching serving semantics.
 - [ ] **RECOVER-04**: Recovery peer-failover is bounded (per-CID budget) and walk-gaps abort-never-skip — no infinite failover loops and no silently-validated partial history.
@@ -84,7 +84,7 @@ last_updated: 2026-11-13
 | SERVE-02 | Phase 15 | Pending |
 | SERVE-03 | Phase 15 | Pending |
 | SERVE-04 | Phase 15 | Pending |
-| RECOVER-01 | Phase 13 | Pending |
+| RECOVER-01 | Phase 13 | Complete |
 | RECOVER-02 | Phase 15 | Pending |
 | RECOVER-03 | Phase 15 | Pending |
 | RECOVER-04 | Phase 15 | Pending |

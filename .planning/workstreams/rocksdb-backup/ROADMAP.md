@@ -65,7 +65,7 @@ Milestone audit (passed — 3/3 requirements, 7/7 phases, 5/5 integration seams,
   3. The post-merge verification gate passes observably: 4-term `HasBlock`, cold-chained `GetNodeWithoutRequest`, GATE-03 seal permanence intact, and cold-before-peer fetch ordering observable.
   4. A composition-only grep gate proves no recovery/bootstrap logic was re-derived or rewritten in the merge (checklist + evidence committed).
 
-**Plans**: 4/4 plans executed
+**Plans**: 4/4 plans complete
 
 Plans:
 **Wave 1**
@@ -233,7 +233,7 @@ Plans:
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 13. Bootstrap Branch Merge & Composition Baseline | 4/4 | In Progress|  |
+| 13. Bootstrap Branch Merge & Composition Baseline | 4/4 | Complete    | 2026-11-24 |
 | 14. Durability-Gated TxPruner Eligibility | 3/3 | Complete    | 2026-11-16 |
 | 15. Evidence-Aware Cold Serving & Forced-Walk Recovery | 3/3 | In Progress|  |
 | 16. TxPruner × GC Composition Hardening | 3/3 | In Progress|  |

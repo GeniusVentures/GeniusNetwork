@@ -5,16 +5,17 @@ milestone_name: SuperGenius Cold-Storage Archive Integration
 current_phase: 19
 current_phase_name: Cross-Feature Fault-Race Matrix & Three-Platform CI Capstone
 status: phase_complete_pending_close
-stopped_at: "Phase 19 COMPLETE (2026-11-25): all 5 plans done; 19-05 closed - checklist Status COMPLETE, 19-05-SUMMARY.md written, ROADMAP Phase 19 marked complete (5/5, 2026-11-25), close-out gates verified (5 run links, 28 platform rows, 2 lane steps, cmake.yml zero-diff = B2 held, zero cold quarantines). Capstone evidence: Windows D3 + Linux D3 (run 45257655488) + OSX D7 (45489840538) both-lanes green; D8 (45504484532) confirming at final HEAD 41776b0c0 with Tier-1 20/20 both OSX configs. NEXT: milestone v1.2 wrap (phases 13/15/16/17 still read In Progress in the ROADMAP progress table - reconcile their status, then milestone summary/audit/archive per the user's call)."
-last_updated: "2026-11-25T00:45:00.000Z"
-last_activity: 2026-11-20
-last_activity_desc: Phase 19 execution started
-state_head: 1ffb0aab53656ddecd10fa857f8e787a1c3f02a3
+stopped_at: "Phase 19 COMPLETE (2026-11-25); Phase 13 close-out done retroactively (2026-11-24): UAT 10/10 (554effd), SECURITY threats_open:0 (04e6227), advisory code review 0 critical/major (1c0551a), regression gate 18/18 Tier-1 local (wire pair covered by phase-19 CI), VERIFICATION passed 9/10 must-haves (1 user-ruled deferral closed in Phase 15), ROADMAP/REQUIREMENTS reconciled (RECOVER-01 checked). NOTE: phase.complete rewrote STATE to 'planning Phase 15' - position restored manually; phases 15/16/17 still read In Progress in the ROADMAP progress table (15 has VERIFICATION.md + UAT on disk; 16/17 likewise). NEXT: reconcile 15/16/17 progress rows the same way, then milestone summary/audit/archive per the user's call."
+last_updated: "2026-11-25T01:30:00.000Z"
+last_activity: 2026-11-24
+last_activity_desc: Phase 13 retroactive close-out (verify-work + execute-phase gates)
+state_head: 1c0551a923151731e72de7e88bc6e1a980096443
 progress:
   total_phases: 7
-  completed_phases: 2
+  completed_phases: 4
   total_plans: 25
-  completed_plans: 24
+  completed_plans: 25
+  percent: 57
 ---
 
 # Project State
@@ -29,10 +30,10 @@ See: `.planning/PROJECT.md` (workstream sections); `.planning/workstreams/rocksd
 
 ## Current Position
 
-Phase: 19 (Cross-Feature Fault-Race Matrix & Three-Platform CI Capstone) Ã¢â‚¬â€ EXECUTING
-Plan: 4 of 5 complete
-Status: Executing Phase 19 (Wave 5 next Ã¢â‚¬â€ blocking user checkpoint)
-Last activity: 2026-11-20 Ã¢â‚¬â€ 19-04 complete (the matrix closed)
+Phase: 19 COMPLETE (all 5 plans; capstone closed 2026-11-25) ΓÇö milestone v1.2 wrap pending
+Plan: 5 of 5 complete
+Status: Milestone wrap ΓÇö phases 15/16/17 ROADMAP progress-table reconciliation remaining (13 done 2026-11-24)
+Last activity: 2026-11-24 ΓÇö Phase 13 retroactive close-out (UAT/SECURITY/review/regression/VERIFICATION all green)
 
 ## Progress
 
@@ -74,7 +75,7 @@ v1.1 key decisions archived with the milestone (`milestones/v1.1-ROADMAP.md` + p
 
 **Last session:** 2026-11-21T04:35:00.000Z
 
-**Stopped At:** Phase 19: 19-01..19-04 COMPLETE (SuperGenius b17787b0e; knob-off 16/16 x3 consecutive, RED 9/9 arms with X10 teeth ungated-green, Tier1 20/20). 19-04 closed the matrix: X10 (trichotomy audit + audit-x-GC coherence + empty baseline + byte-flip teeth + VALUE_PRESENT_INVARIANT_VIOLATION counter teeth via WritePrunedEntryForTest) + X11 (the ONE full-wire leg: refusal terminal on the wire - zero cold Gets after the drain-quiesce find; failover serves y-value from A CID-verified; A5 invoked for the A-side concurrent-erase leg - covered by X3-B/X8-B; rebroadcasts bounded-retry vs the address-resolution race). The X1..X11 set is complete. NEXT: /gsd-execute-phase 19 --ws rocksdb-backup runs Wave 5 (19-05: TEST-03 closure - build-release-tags.yml Tier-1 fail-closed lane + the notes/19 rulings doc + refreshed FRESH-CLONE-CHECKLIST + the D-15/D-16 per-platform evidence checkpoint; BLOCKING user checkpoint per the wave marker).
+**Stopped At:** Phase 13 retroactive close-out complete (2026-11-24): UAT 10/10, SECURITY threats_open:0, code review 0 critical/major (2 advisory ledgered open in 13-REVIEW-DISPOSITION.md), regression gate 18/18 local Tier-1 + phase-19 CI for the wire pair, VERIFICATION passed. Phase 19 itself closed 2026-11-25 (see git history for the full 19-05 record). NEXT: reconcile phases 15/16/17 ROADMAP progress rows (all have VERIFICATION.md + UAT on disk), then milestone summary/audit/archive per the user's call.
 **Resume File:** .planning/workstreams/rocksdb-backup/phases/19-cross-feature-fault-race-matrix-three-platform-ci-capstone/19-CONTEXT.md
 
 ## Performance Metrics
