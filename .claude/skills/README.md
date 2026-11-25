@@ -32,6 +32,34 @@ The installed skills are available as `/architecture-review` and `/gnus-standup`
 
 After pulling updates to GeniusNetwork, repeat the copy commands. These are local copies, not live links.
 
+## Install the architecture quality gate
+
+GeniusNetwork's root `CLAUDE.md` imports the shared [architecture quality gate](../architecture-quality-gate.md). Install the same instructions globally so standalone repositories and nested submodules use the gate as well.
+
+From the GeniusNetwork root, after installing the skills:
+
+### macOS and Linux
+
+```bash
+cp .claude/architecture-quality-gate.md "$HOME/.claude/"
+```
+
+### Windows (PowerShell)
+
+```powershell
+Copy-Item ".claude\architecture-quality-gate.md" "$HOME\.claude\" -Force
+```
+
+Create `~/.claude/CLAUDE.md` if it does not exist, or edit the existing file. Add this line once, outside code blocks:
+
+```markdown
+@architecture-quality-gate.md
+```
+
+Preserve all existing personal instructions. If you use a custom `CLAUDE_CONFIG_DIR`, use that directory instead of `~/.claude`. The import is relative to the global `CLAUDE.md`.
+
+Repeat the copy after pulling updates; the import line only needs to be added once. Start a new Claude Code session and check `/memory` to confirm the instructions loaded. The gate applies to GeniusVentures, GNUS.ai, and related GSD projects. It requires review before phase execution and does not replace repository-specific architecture or coding standards.
+
 ## Maintenance
 
 - Edit the canonical skills in this directory.
