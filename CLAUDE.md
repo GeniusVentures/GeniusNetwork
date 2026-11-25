@@ -1,5 +1,7 @@
 # Project Instructions
 
+@.claude/architecture-quality-gate.md
+
 ## Constraints
 
 - **Separation of concerns:** domain (`services//`) · persistence (`models.py`, `alembic/`) · presentation (`templates`, `static/`) · routing (`pocket/`, `app.py`). Name the one concern of the file you edit.
