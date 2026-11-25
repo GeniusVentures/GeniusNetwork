@@ -55,8 +55,8 @@ last_updated: 2026-11-13
 ### TEST — Hardening Capstone
 
 - [x] **TEST-01**: Evidence-aware test fakes model the PrunedLookup tri-state (present / pruned / not-found) hermetically, backing every SERVE / RECOVER / PRUNE suite without live services.
-- [ ] **TEST-02**: An extended fault-race matrix crosses erase × serve × recovery — induced failures at each phase boundary cannot produce resurrection, partial-history validation, or lost last copies.
-- [ ] **TEST-03**: Recovery-walk suites run green on all three platform CI lanes (Windows, macOS, Linux).
+- [x] **TEST-02**: An extended fault-race matrix crosses erase × serve × recovery — induced failures at each phase boundary cannot produce resurrection, partial-history validation, or lost last copies.
+- [x] **TEST-03**: Recovery-walk suites run green on all three platform CI lanes (Windows, macOS, Linux).
 
 ## Future Requirements (Deferred)
 
@@ -95,5 +95,5 @@ last_updated: 2026-11-13
 | POLICY-02 | Phase 18 | Complete |
 | SEAL-01 | Phase 17 | Complete |
 | TEST-01 | Phase 15 | Complete |
-| TEST-02 | Phase 19 | Pending |
-| TEST-03 | Phase 19 | Pending |
+| TEST-02 | Phase 19 | Complete |
+| TEST-03 | Phase 19 | Complete |
