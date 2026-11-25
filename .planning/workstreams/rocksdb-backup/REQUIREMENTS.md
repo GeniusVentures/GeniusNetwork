@@ -25,17 +25,17 @@ last_updated: 2026-11-13
 
 ### SERVE — Evidence-Aware Cold Serving
 
-- [ ] **SERVE-01**: A request for a TxPruner-erased CID is answered with pruned semantics even when cold bytes still exist — the cold chain (Rehydrate path) consults prune evidence before serving; no resurrection.
-- [ ] **SERVE-02**: A request for a GC-evicted CID (no prune evidence) on a cold-enabled node is served through the cold chain and re-warm — evict ≈ DETACH, re-attachable; the node remains an archive node, never masquerading.
-- [ ] **SERVE-03**: The three-way answer (pruned / evicted-restorable / not-found) is consistent across HasBlock, getNode, and the cold chain via a single role-aware evidence predicate owned by GlobalDB.
-- [ ] **SERVE-04**: Pruned answers remain distinct from not-found at the protocol surface so requesters fail over to serving archive nodes correctly (develop's SURV-02 tri-state extended to cold-enabled nodes).
+- [x] **SERVE-01**: A request for a TxPruner-erased CID is answered with pruned semantics even when cold bytes still exist — the cold chain (Rehydrate path) consults prune evidence before serving; no resurrection.
+- [x] **SERVE-02**: A request for a GC-evicted CID (no prune evidence) on a cold-enabled node is served through the cold chain and re-warm — evict ≈ DETACH, re-attachable; the node remains an archive node, never masquerading.
+- [x] **SERVE-03**: The three-way answer (pruned / evicted-restorable / not-found) is consistent across HasBlock, getNode, and the cold chain via a single role-aware evidence predicate owned by GlobalDB.
+- [x] **SERVE-04**: Pruned answers remain distinct from not-found at the protocol surface so requesters fail over to serving archive nodes correctly (develop's SURV-02 tri-state extended to cold-enabled nodes).
 
 ### RECOVER — Bootstrap Branch Composition
 
 - [x] **RECOVER-01**: fix/trust-genesis-bootstrap is merged into dev_coldstorage_additions with the full existing suite green (Phase 13 gate for all recovery work).
-- [ ] **RECOVER-02**: The forced walk restores GC-evicted ancestors from cold — retained means hot OR cold-resident-without-evidence; the walk never conflates GC-evicted with pruned.
-- [ ] **RECOVER-03**: The forced walk never resurrects TxPruner-erased elements — CanRestoreElement composition makes prune evidence terminal in recovery, matching serving semantics.
-- [ ] **RECOVER-04**: Recovery peer-failover is bounded (per-CID budget) and walk-gaps abort-never-skip — no infinite failover loops and no silently-validated partial history.
+- [x] **RECOVER-02**: The forced walk restores GC-evicted ancestors from cold — retained means hot OR cold-resident-without-evidence; the walk never conflates GC-evicted with pruned.
+- [x] **RECOVER-03**: The forced walk never resurrects TxPruner-erased elements — CanRestoreElement composition makes prune evidence terminal in recovery, matching serving semantics.
+- [x] **RECOVER-04**: Recovery peer-failover is bounded (per-CID budget) and walk-gaps abort-never-skip — no infinite failover loops and no silently-validated partial history.
 
 ### COMP — TxPruner × GC Composition
 
@@ -50,11 +50,11 @@ last_updated: 2026-11-13
 
 ### SEAL — Seal Growth Measurement
 
-- [ ] **SEAL-01**: Seal growth is measured at representative workloads (row counts + bytes, including recovery-walk ancestry density) and the explicit decision — accept hot growth vs. future design — is documented with capacity math.
+- [x] **SEAL-01**: Seal growth is measured at representative workloads (row counts + bytes, including recovery-walk ancestry density) and the explicit decision — accept hot growth vs. future design — is documented with capacity math.
 
 ### TEST — Hardening Capstone
 
-- [ ] **TEST-01**: Evidence-aware test fakes model the PrunedLookup tri-state (present / pruned / not-found) hermetically, backing every SERVE / RECOVER / PRUNE suite without live services.
+- [x] **TEST-01**: Evidence-aware test fakes model the PrunedLookup tri-state (present / pruned / not-found) hermetically, backing every SERVE / RECOVER / PRUNE suite without live services.
 - [ ] **TEST-02**: An extended fault-race matrix crosses erase × serve × recovery — induced failures at each phase boundary cannot produce resurrection, partial-history validation, or lost last copies.
 - [ ] **TEST-03**: Recovery-walk suites run green on all three platform CI lanes (Windows, macOS, Linux).
 
@@ -80,20 +80,20 @@ last_updated: 2026-11-13
 | PRUNE-01 | Phase 14 | Complete |
 | PRUNE-02 | Phase 14 | Complete |
 | PRUNE-03 | Phase 14 | Complete |
-| SERVE-01 | Phase 15 | Pending |
-| SERVE-02 | Phase 15 | Pending |
-| SERVE-03 | Phase 15 | Pending |
-| SERVE-04 | Phase 15 | Pending |
+| SERVE-01 | Phase 15 | Complete |
+| SERVE-02 | Phase 15 | Complete |
+| SERVE-03 | Phase 15 | Complete |
+| SERVE-04 | Phase 15 | Complete |
 | RECOVER-01 | Phase 13 | Complete |
-| RECOVER-02 | Phase 15 | Pending |
-| RECOVER-03 | Phase 15 | Pending |
-| RECOVER-04 | Phase 15 | Pending |
+| RECOVER-02 | Phase 15 | Complete |
+| RECOVER-03 | Phase 15 | Complete |
+| RECOVER-04 | Phase 15 | Complete |
 | COMP-01 | Phase 16 | Complete |
 | COMP-02 | Phase 16 | Complete |
 | COMP-03 | Phase 16 | Complete |
 | POLICY-01 | Phase 18 | Complete |
 | POLICY-02 | Phase 18 | Complete |
-| SEAL-01 | Phase 17 | Pending |
-| TEST-01 | Phase 15 | Pending |
+| SEAL-01 | Phase 17 | Complete |
+| TEST-01 | Phase 15 | Complete |
 | TEST-02 | Phase 19 | Pending |
 | TEST-03 | Phase 19 | Pending |

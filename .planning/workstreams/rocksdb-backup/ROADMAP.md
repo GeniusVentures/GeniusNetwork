@@ -44,9 +44,9 @@ Milestone audit (passed — 3/3 requirements, 7/7 phases, 5/5 integration seams,
 
 - [x] **Phase 13: Bootstrap Branch Merge & Composition Baseline** - Merge `fix/trust-genesis-bootstrap` into `dev_coldstorage_additions` with the full existing suite green — the gate for all v1.2 recovery/walk work (completed 2026-11-16 — merge `2af184fa1` pushed by user as `origin/dev_coldstorage_additions`; SC2 zero-regression 167/167 post vs composed pre baseline; SC3 items 1-3 green, item 4 D-12 escalated-deferred to Phase 15 per user ruling; SC4 checklist COMPLETE with fresh final-HEAD D-15 gate outputs)
 - [x] **Phase 14: Durability-Gated TxPruner Eligibility** - A cold-enabled node never erases hot data that is not evidence-Durable in cold — fail closed, TOCTOU re-checked under the compose lock, gate composes with (not into) the eligibility evaluator (completed 2026-11-16)
-- [ ] **Phase 15: Evidence-Aware Cold Serving & Forced-Walk Recovery** - Evidence outranks bytes on every path — fixes the cold-chain resurrection gap and the forced-walk GC-evicted conflation; hermetic tri-state evidence fakes land here
-- [ ] **Phase 16: TxPruner × GC Composition Hardening** - Close the stale-LRU erase window, prove the TxPruner×GC interleave matrix, rule the disposal-starvation interplay fail-safe (under-prune)
-- [ ] **Phase 17: Seal Growth Measurement & Decision** - Measure seal growth at representative workloads (probe first — it feeds Phase 15's walk bounds) and record the accept-vs-redesign decision with capacity math
+- [x] **Phase 15: Evidence-Aware Cold Serving & Forced-Walk Recovery** - Evidence outranks bytes on every path — fixes the cold-chain resurrection gap and the forced-walk GC-evicted conflation; hermetic tri-state evidence fakes land here (completed 2026-11-24)
+- [x] **Phase 16: TxPruner × GC Composition Hardening** - Close the stale-LRU erase window, prove the TxPruner×GC interleave matrix, rule the disposal-starvation interplay fail-safe (under-prune) (completed 2026-11-24)
+- [x] **Phase 17: Seal Growth Measurement & Decision** - Measure seal growth at representative workloads (probe first — it feeds Phase 15's walk bounds) and record the accept-vs-redesign decision with capacity math (completed 2026-11-24)
 - [x] **Phase 18: Role Downgrade, Collectibility Policy & GC Walk-Gap Exemption** - The two-halves rule recorded as one policy (cold permanent this milestone + GC walk-gap exemption); archive→light downgrade E2E-proven (completed 2026-11-19)
 - [x] **Phase 19: Cross-Feature Fault-Race Matrix & Three-Platform CI Capstone** - Induced failures across erase × serve × recovery cannot resurrect, partially validate, or lose last copies; recovery-walk suites green on Windows/macOS/Linux with cold storage ON
 
@@ -115,7 +115,7 @@ Plans:
   4. The forced walk restores GC-evicted ancestors from cold (never conflating GC-evicted with pruned), never resurrects TxPruner-erased elements (`CanRestoreElement` composition is terminal), bounds peer failover per-CID, and aborts-never-skips on walk-gaps — no infinite failover loops, no silently-validated partial history.
   5. Hermetic evidence-aware test fakes model the PrunedLookup tri-state (present / pruned / not-found) and back every SERVE / RECOVER / PRUNE suite without live services — with the refusal matrix running as a product: {hot} × {cold} × {evidence: none/PRUNED/malformed} × {serve, walk visit, erase-gate}.
 
-**Plans**: 3/3 plans executed defined (research + patterns complete 2026-11-17 — anchors re-located at `095c8c502`; D-01 widening ruled feasible, layering fact recorded: the predicate lambda goes GlobalDB-native)
+**Plans**: 3/3 plans complete defined (research + patterns complete 2026-11-17 — anchors re-located at `095c8c502`; D-01 widening ruled feasible, layering fact recorded: the predicate lambda goes GlobalDB-native)
 
 Plans:
 **Wave 1**
@@ -139,7 +139,7 @@ Plans:
   2. An interleave matrix crossing concurrent TxPruner and GC passes — overlapping set rows, seal rows, and the block LRU — proves both idempotent on absent keys, seals untouched by both, and both erase orders converging to one fixed point.
   3. The GC-disposal starvation interplay (journal record deleted → gate reads NoRecord while remote S3 still serves) is ruled and documented with its fail-safe direction asserted by test: the observable outcome is under-prune, never destruction of the last copy.
 
-**Plans**: 3/3 plans executed defined (research + patterns complete 2026-11-18 — anchors re-located at `af644481f` post-Phase-15; open questions ruled: sibling observe-and-continue seam `SetEraseWindowObserverForTest`, Tier-3 leg in a new `cold_compose_live_smoke_test.cpp` sibling file, anomaly-exit coverage via a single pre-re-assert call site)
+**Plans**: 3/3 plans complete defined (research + patterns complete 2026-11-18 — anchors re-located at `af644481f` post-Phase-15; open questions ruled: sibling observe-and-continue seam `SetEraseWindowObserverForTest`, Tier-3 leg in a new `cold_compose_live_smoke_test.cpp` sibling file, anomaly-exit coverage via a single pre-re-assert call site)
 
 Plans:
 **Wave 1**
@@ -161,7 +161,7 @@ Plans:
   2. The measurement probe runs as this phase's first plan and its numbers feed the walk-bounds work: Phase 15's walk-bound defaults are validated (or re-tuned) against the probe's real numbers — the recorded dependency is honored.
   3. An explicit decision — accept hot growth vs. future design — is documented with capacity math citing real walk-recovery numbers; any spill/compaction/sidecar redesign is a measured trigger deferred to a future milestone.
 
-**Plans**: 3/3 plans executed defined (research + patterns complete 2026-11-18 — anchors verified at SuperGenius `741980f5d`; probe-first ordering per SC2)
+**Plans**: 3/3 plans complete defined (research + patterns complete 2026-11-18 — anchors verified at SuperGenius `741980f5d`; probe-first ordering per SC2)
 
 Plans:
 **Wave 1**
@@ -235,9 +235,9 @@ Plans:
 |-------|----------------|--------|-----------|
 | 13. Bootstrap Branch Merge & Composition Baseline | 4/4 | Complete    | 2026-11-24 |
 | 14. Durability-Gated TxPruner Eligibility | 3/3 | Complete    | 2026-11-16 |
-| 15. Evidence-Aware Cold Serving & Forced-Walk Recovery | 3/3 | In Progress|  |
-| 16. TxPruner × GC Composition Hardening | 3/3 | In Progress|  |
-| 17. Seal Growth Measurement & Decision | 3/3 | In Progress|  |
+| 15. Evidence-Aware Cold Serving & Forced-Walk Recovery | 3/3 | Complete    | 2026-11-24 |
+| 16. TxPruner × GC Composition Hardening | 3/3 | Complete    | 2026-11-24 |
+| 17. Seal Growth Measurement & Decision | 3/3 | Complete    | 2026-11-24 |
 | 18. Role Downgrade, Collectibility Policy & GC Walk-Gap Exemption | 4/4 | Complete    | 2026-11-19 |
 | 19. Cross-Feature Fault-Race Matrix & Three-Platform CI Capstone | 5/5 | Complete    | 2026-11-25 |
 

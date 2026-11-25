@@ -16,17 +16,17 @@
     {
       "number": "15",
       "name": "Evidence-Aware Cold Serving & Forced-Walk Recovery",
-      "status": "in_progress"
+      "status": "complete"
     },
     {
       "number": "16",
       "name": "TxPruner × GC Composition Hardening",
-      "status": "in_progress"
+      "status": "complete"
     },
     {
       "number": "17",
       "name": "Seal Growth Measurement & Decision",
-      "status": "in_progress"
+      "status": "complete"
     },
     {
       "number": "18",
@@ -40,9 +40,9 @@
     }
   ],
   "next": {
-    "command": "/gsd:progress --next",
-    "label": "Advance to the next step (plan phase 15)",
-    "reason": "Phase 15 of 7 — needs a plan"
+    "command": "/gsd:new-milestone",
+    "label": "Start a new milestone",
+    "reason": "All phases complete — start a new milestone"
   },
-  "updated_at": "2026-11-25T01:27:48.898Z"
+  "updated_at": "2026-11-25T03:08:24.348Z"
 }
