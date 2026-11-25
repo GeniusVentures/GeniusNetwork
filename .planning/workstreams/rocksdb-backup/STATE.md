@@ -2,19 +2,19 @@
 gsd_state_version: "1.0"
 milestone: v1.2
 milestone_name: SuperGenius Cold-Storage Archive Integration
-current_phase: 19
-status: milestone_complete_pending_wrap
-stopped_at: "Milestone v1.2 summary generated (reports/MILESTONE_SUMMARY-v1.2.md, root 2a6253b); next: audit-milestone or complete-milestone per user call"
-last_updated: "2026-11-25T09:15:12.248Z"
-last_activity: 2026-11-24
-last_activity_desc: Phase 17 complete
-state_head: 2a6253bd3ebacb1b59154fff1709698c62e4aee5
+status: Awaiting next milestone
+stopped_at: "Milestone v1.2 shipped and archived (audit gaps closed, milestone.complete executed, tagged rocksdb-backup-v1.2); next: gsd-new-milestone per user call"
+last_updated: "2026-11-25T20:36:13.897Z"
+last_activity: 2026-11-25
+last_activity_desc: Milestone v1.2 completed and archived
+state_head: 9682c798a654a4cdd7da6524de64502704f6b4b9
 progress:
   total_phases: 7
   completed_phases: 7
   total_plans: 25
   completed_plans: 25
   percent: 100
+current_phase: 19
 current_phase_name: Cross-Feature Fault-Race Matrix & Three-Platform CI Capstone
 ---
 
@@ -26,20 +26,20 @@ See: `.planning/PROJECT.md` (workstream sections); `.planning/workstreams/rocksd
 
 **Core value:** Older CRDT/IPLD blocks can spill from RocksDB hot state to durable, CID-verified object storage through a shared thirdparty static library (`sgns-blockstore`) consumable by both SuperGenius and genius-tube Ã¢â‚¬â€ no RocksDB remote-FS integration, no SDK/SuperGenius types in the public API, and local eviction is never a CRDT deletion.
 
-**Current focus:** Phase 19 Ã¢â‚¬â€ Cross-Feature Fault-Race Matrix & Three-Platform CI Capstone
+**Current focus:** Milestone v1.2 shipped & archived 2026-11-25 — awaiting next milestone ($gsd-new-milestone)
 
 ## Current Position
 
-Phase: 19 (final phase; all phases complete)
-Plan: Not started
-Status: Milestone complete — pending wrap
-Last activity: 2026-11-25 — Milestone v1.2 summary generated
+Phase: Milestone v1.2 complete
+Plan: —
+Status: Awaiting next milestone
+Last activity: 2026-11-25 — Milestone v1.2 completed and archived
 
 ## Progress
 
-**Phases Complete:** 7/7 (v1.2) Ã‚Â· v1.0 archived 2026-10-22 Ã‚Â· v1.1 archived 2026-11-10
+**Phases Complete:** 7/7 (v1.2) Ã‚Â· v1.0 archived 2026-10-22 Ã‚Â· v1.1 archived 2026-11-10 Ã‚Â· v1.2 archived 2026-11-25
 
-v1.2 Phases 13-19 defined Ã¢â‚¬â€ see [ROADMAP.md](ROADMAP.md). v1.1 completion record: [milestones/v1.1-ROADMAP.md](milestones/v1.1-ROADMAP.md).
+v1.2 shipped & archived 2026-11-25 — completion record: [milestones/v1.2-ROADMAP.md](milestones/v1.2-ROADMAP.md) + [MILESTONES.md](MILESTONES.md). v1.1 completion record: [milestones/v1.1-ROADMAP.md](milestones/v1.1-ROADMAP.md).
 
 ## Accumulated Context
 
@@ -60,7 +60,7 @@ v1.2 Phases 13-19 defined Ã¢â‚¬â€ see [ROADMAP.md](ROADMAP.md). v1.1 
 v1.1 key decisions archived with the milestone (`milestones/v1.1-ROADMAP.md` + phase artifacts).
 
 **Todos:**
-- Next: milestone wrap - `$gsd-audit-milestone` then `$gsd-complete-milestone` (--ws rocksdb-backup); at wrap fix REQUIREMENTS.md TEST-02/03 checkboxes, optionally backfill 19-VERIFICATION/UAT/SECURITY parity and the RETROSPECTIVE v1.2 entry
+- None — v1.2 wrap complete (audit gaps closed: retroactive 19-VERIFICATION/UAT/SECURITY + 14/18 SECURITY parity + TEST-02/03 marked complete; RETROSPECTIVE v1.2 entry written; ROADMAP collapsed to milestone groupings; tagged rocksdb-backup-v1.2). Next: `$gsd-new-milestone --ws rocksdb-backup` when ready
 
 **Blockers:** None Ã¢â‚¬â€ watching two external gates: develop Phase 17/20 timing (composition-vs-rebase if they land mid-milestone) and the bootstrap-merge conflict surface (MEDIUM confidence until the merge executes)
 
@@ -72,10 +72,10 @@ v1.1 key decisions archived with the milestone (`milestones/v1.1-ROADMAP.md` + p
 
 ## Session Continuity
 
-**Last session:** 2026-11-25T09:15:11.730Z
+**Last session:** 2026-11-25
 
-**Stopped At:** Milestone v1.2 summary generated (reports/MILESTONE_SUMMARY-v1.2.md, root 2a6253b); next: audit-milestone or complete-milestone per user call
-**Resume File:** .planning/workstreams/rocksdb-backup/reports/MILESTONE_SUMMARY-v1.2.md
+**Stopped At:** Milestone v1.2 shipped and archived — audit gap closure (retroactive phase-19 verification + SECURITY parity 14/18 + TEST-02/03), milestone.complete executed, ROADMAP collapsed, PROJECT.md/RETROSPECTIVE updated, tagged rocksdb-backup-v1.2. Next: $gsd-new-milestone per user call
+**Resume File:** .planning/workstreams/rocksdb-backup/MILESTONES.md
 
 ## Performance Metrics
 
@@ -139,4 +139,4 @@ Items acknowledged and deferred at milestone close, most recent first:
 
 ## Operator Next Steps
 
-- `/gsd-plan-phase 13` Ã¢â‚¬â€ Bootstrap Branch Merge & Composition Baseline (gates all v1.2 recovery/walk work)
+- Start the next milestone with /gsd-new-milestone

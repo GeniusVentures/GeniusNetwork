@@ -93,6 +93,54 @@
 
 ---
 
+## Milestone: v1.2 — SuperGenius Cold-Storage Archive Integration
+
+**Shipped:** 2026-11-25
+**Phases:** 7 (13-19) | **Plans:** 25
+
+### What Was Built
+- The archive-tier semantics: TxPruner erases hot data only when every constituent block is evidence-Durable in cold (exact-equality admission at the cycle filter, in-compose TOCTOU re-check under the compose lock, deferrals as counters never errors), with the PruneEligibility evaluator kept contractually pure so develop's evaluator composes rather than conflicts.
+- Evidence outranks bytes on every read path: one GlobalDB-owned role-aware predicate answers pruned / evicted-restorable / not-found consistently across HasBlock, getNode, and the cold chain — fixing both research-discovered bugs (the cold-chain resurrection gap and the forced-walk GC-evicted conflation), with pruned distinct from not-found at the protocol surface so requesters fail over to archive nodes.
+- TxPruner × GC composition hardened: the stale-LRU erase window closed by post-commit DeleteCIDBlock parity, an 18-leg interleave matrix with the order-dependences asserted as the divergence table, and the disposal-starvation interplay ruled fail-safe (under-prune).
+- Seal growth measured and decided (52.000 B/row at 10^6/10^7; 10^8 extrapolated 5.2 GB / ~16 s full sweep — accept; redesign deferred to the D-11 numeric triggers); D-12 validated kForcedWalkPeerFailoverPerCid = 8 in-band.
+- The two-halves policy (cold permanent this milestone + the GC walk-gap evidence exemption shipped as code) and the archive→light downgrade interlock (persisted role fingerprint + `downgrade_acknowledged` ack + start-normally disarm), E2E-proven on the t0→t3 single-node timeline.
+- The capstone: the X1..X11 cross-feature fault-race matrix (both production gaps it exposed — X1/X2 serve TOCTOU, X11 wire resurrection — fixed forward and re-proven red→green) plus the Tier-1 fail-closed CI lane green on Windows/Linux/macOS across dispatches D1–D8 at final HEAD `41776b0c0`. Zero new dependencies; sgns-blockstore frozen v1 untouched.
+
+### What Worked
+- Governing principle set at research time ("evidence outranks bytes, node-locally") held for the entire milestone — every phase's semantics derived from it without re-litigation.
+- Zero-dependency composition: all v1.2 work composed pinned mechanisms; the frozen v1 library contract never moved, so integration risk stayed inside SuperGenius.
+- The audit's recommended closure path (retroactive gsd-verifier for phases sealed out-of-band) worked twice — 13/15/16/17 on 2026-11-24 and phase 19 at wrap — turning execution-order drift into a same-day artifact reconciliation instead of a blocker.
+- Fix-forward dispatch discipline: every cold-labeled CI failure across D1–D8 was root-caused and fixed (never quarantined, never excluded), and several fixes were real production improvements (the X11 merge-gate, the buffer.hpp ctor, the MoltenVK install skip).
+- Milestone audit before close: the gaps_found verdict with ONE artifact blocker (not a delivery blocker) gave the wrap an exact, cheap closure list instead of a debate.
+- UAT as recorded rulings: user rulings (D8 load-class, X11 promotion bar, B1/B2 push topology, WARP environmental) committed in the notes doc doubled as the retroactive UAT record.
+
+### What Was Inefficient
+- Phase 19 closed out-of-band (19-05-SUMMARY + FRESH-CLONE-CHECKLIST) without the canonical VERIFICATION/UAT/SECURITY artifacts — the wrap then paid a retroactive verifier run to canonicalize evidence that already existed. The 2026-11-24 reconciliation fixed the same shape for four phases; the lesson did not transfer to phase 19's close.
+- Wall-time-fragile assertion pattern recurred across the phase-19 dispatch trail (baseline captures racing background actors) — the "gate on what HAS deterministically happened" rule was only written down after the D7 find.
+- The local environment (CloudflareWARP breaking two-node loopback dials) cost an evening of triage before being ruled environmental; the runbook entry now exists but the adapter check should be first, not last.
+- STATE.md tooling quirks recurred: the percent frontmatter field dropped again by state verbs, and out-of-order phase completion rewrites linear-frontier assumptions — both repaired manually this milestone.
+
+### Patterns Established
+- Covered-file digests at final HEAD as the retroactive verification instrument (v2:sha256 over planning + production touches) — verifiable evidence without re-running suites.
+- The closing-evidence table per platform/CI-dispatch (run link, full-suite lane, Tier-1 lane) as the artifact class for platform-green requirements.
+- SECURITY.md L1 short-circuit (plan-authored registers, asvs_level 1, threats_open 0) as the parity baseline for every phase at archive time.
+- Fix-forward-never-quarantine as the CI posture for cold-labeled failures; quarantine tables reserved for NON-cold transverse suites with documented transverse status.
+
+### Key Lessons
+1. Any assertion whose truth depends on a background actor NOT having acted yet is wall-time-fragile — gate on what HAS deterministically happened; the same applies to baseline captures (snapshot only after the full deterministic fact).
+2. Close phases with their canonical artifacts at execution time; retroactive canonicalization works but costs a second pass and an audit blocker if skipped (phases 13/15/16/17 AND 19 this milestone).
+3. `install(FILES)` is mtime-skippable — never let two install rules write the same output file where the second must win; REMOVE-then-install instead (the MoltenVK da17826 root cause).
+4. A topic-AGNOSTIC queued peer-queue push (PubSubBroadcasterExt) means pre-dial puts do NOT isolate test legs — evidence must be armed before the dial, and merges must be gated on evidence presence at the receive seam (X11's three stacked mechanisms).
+5. Check the network adapter list for CloudflareWARP FIRST when local two-node pubsub tests wedge with zero gossip connections — a 60 s zero-connection window means the dial itself is blocked, not slow.
+6. When an SEH fires at case start, check the fixture actually built the stack the case seeds on before blaming teardown residue (the _LegB null-deref root cause).
+
+### Cost Observations
+- Model mix: not tracked per-model (Copilot runtime, inline + subagents; gsd-verifier retroactive runs via subagent).
+- Timeline: 2026-11-13 → 2026-11-24 (12 days of execution; wrap 2026-11-25).
+- SuperGenius dev_coldstorage_additions: 58 files (+23,483/−215) from the merge-prep baseline; thirdparty 1 commit (`da17826`); sgns-blockstore 0. 8 CI dispatches (D1–D8).
+
+---
+
 ## Cross-Milestone Trends
 
 ### Process Evolution
@@ -101,6 +149,7 @@
 |-----------|----------|--------|------------|
 | v1.0 | 4 days | 5 | First rocksdb-backup milestone; established three-tier testing + fail-closed CI as the workstream norm |
 | v1.1 | 20 days | 7 | Single-seam integration discipline; barrier-driven race instrumentation; evidence-based UAT via accepted CI runs; human-checkpoint (tag cut) protocol |
+| v1.2 | 12 days | 7 | Evidence-outranks-bytes governing principle; frozen-contract zero-dep composition; retroactive verification reconciliation at close; fix-forward CI dispatch discipline (D1–D8) |
 
 ### Cumulative Quality
 
@@ -108,9 +157,12 @@
 |-----------|-------|----------|-------------------|
 | v1.0 | 15 ctest registrations (Tier-1 lane 12/12, full battery 14/14+) | taxonomy/conformance kit across all 3 backends | minio-cpp pinned v1.0.0, no GNUS fork |
 | v1.1 | SuperGenius Tier-1: 12→17 cold-storage suites + tier1_static_audit in CI (Win 153/153, Linux 152/152, OSX 155/155 fresh-clone) | fault-race matrix, resurrection counter-tests, soak evidence trio, milestone audit 5/5 seams | no new third-party deps; blake2 vendored object code reused from ipfs-lite-cpp |
+| v1.2 | 20 Tier-1 registrations (19 cold_* suites + tier1_static_audit) + the Tier-1 fail-closed lane in the tag-build workflow, green on all 3 platforms (D1–D8, final HEAD 41776b0c0) | X1..X11 fault-race matrix, downgrade E2E t0→t3, GC walk-gap exemption red-first; milestone audit 30/30 seams, 7/7 flows | zero new deps; sgns-blockstore frozen v1 untouched (0 commits) |
 
 ### Top Lessons (Verified Across Milestones)
 
 1. (First milestone — candidate pool seeded above; re-rank after v1.1+)
 2. Verified in v1.1: fail-closed Tier-1 discipline scaled from 15 registrations to a three-platform fresh-clone lane without lane drift (tier audit held).
 3. Verified in v1.1: hermetic fakes + evidence artifacts beat live-endpoint CI — the live tier stayed dev-gated and still closed its requirement with committed evidence.
+4. Verified in v1.2: a frozen library contract + zero-new-deps posture keeps composition risk inside the consumer — three milestones in, the node never broke because the library moved under it.
+5. Verified in v1.2: failing-first matrices find real production bugs unit-green code masks — the X1/X2 serve TOCTOU and X11 wire resurrection gaps were both matrix finds, both fixed forward.
