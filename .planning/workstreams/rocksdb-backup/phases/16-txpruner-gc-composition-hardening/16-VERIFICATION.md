@@ -1,52 +1,119 @@
 ---
 phase: 16-txpruner-gc-composition-hardening
-status: passed_with_uat
-verified: 2026-11-18
-verifier: inline-executor (Copilot sequential mode)
-requirements: [COMP-01, COMP-02, COMP-03]
+verified: 2026-11-24T20:45:00Z
+status: passed
+score: 3/3 must-haves verified
+covered_files:
+  - .planning/workstreams/rocksdb-backup/notes/16-txpruner-gc-composition-rulings.md
+  - .planning/workstreams/rocksdb-backup/phases/16-txpruner-gc-composition-hardening/16-01-PLAN.md
+  - .planning/workstreams/rocksdb-backup/phases/16-txpruner-gc-composition-hardening/16-01-SUMMARY.md
+  - .planning/workstreams/rocksdb-backup/phases/16-txpruner-gc-composition-hardening/16-02-PLAN.md
+  - .planning/workstreams/rocksdb-backup/phases/16-txpruner-gc-composition-hardening/16-02-SUMMARY.md
+  - .planning/workstreams/rocksdb-backup/phases/16-txpruner-gc-composition-hardening/16-03-PLAN.md
+  - .planning/workstreams/rocksdb-backup/phases/16-txpruner-gc-composition-hardening/16-03-SUMMARY.md
+  - .planning/workstreams/rocksdb-backup/phases/16-txpruner-gc-composition-hardening/16-UAT.md
+  - SuperGenius/src/crdt/globaldb/ColdStorageManager.cpp
+  - SuperGenius/src/crdt/globaldb/ColdStorageManager.hpp
+  - SuperGenius/src/crdt/globaldb/ColdStorageStack.cpp
+  - SuperGenius/src/crdt/globaldb/ColdStorageStack.hpp
+  - SuperGenius/src/crdt/globaldb/globaldb.cpp
+  - SuperGenius/src/crdt/globaldb/globaldb.hpp
+  - SuperGenius/src/crdt/graphsync_dagsyncer.hpp
+  - SuperGenius/src/transaction/TxPruner.cpp
+  - SuperGenius/src/transaction/TxPruner.hpp
+  - SuperGenius/test/src/crdt/CMakeLists.txt
+  - SuperGenius/test/src/crdt/cold_compose_live_smoke_test.cpp
+  - SuperGenius/test/src/crdt/cold_compose_matrix_test.cpp
+covered_digest: "v2:sha256:65fe4a16635c3ed384627710fcc3af3e70620b91f3dd9bcdab10a79feeeaa3c7"
+behavior_unverified: 0
+overrides_applied: 0
+re_verification:
+  previous_status: passed_with_uat
+  previous_score: 3/3
+  gaps_closed:
+    - "The MinIO live SC3 leg (the sole prior human-verification item): closed via 16-UAT.md - 1/1 passed, accepted on hermetic coverage (cold_compose_matrix_test, the S3a deterministic stand-in) with the live leg recorded as the standing dev-opt-in per D-11b's hybrid posture (parent commit c0af2ab)"
+  gaps_remaining: []
+  regressions: []
 ---
 
-# Phase 16 Verification Report
+# Phase 16: TxPruner × GC Composition Hardening — Verification Report
 
-**Phase goal (ROADMAP):** concurrent TxPruner and GC passes proven safe on the gated, evidence-aware line — sequenced (never unified), with the stale-LRU erase window closed (SC1/COMP-01), the interleave matrix proven (SC2/COMP-02), and the GC-disposal starvation interplay ruled fail-safe (SC3/COMP-03).
+**Phase Goal (ROADMAP):** Concurrent TxPruner and GC passes proven safe on the gated, evidence-aware line — sequenced (never unified) — with the stale-LRU erase window closed (SC1/COMP-01), the interleave matrix proven (SC2/COMP-02), and the disposal-starvation interplay ruled fail-safe: under-prune (SC3/COMP-03).
+**Verified:** 2026-11-24T20:45:00Z
+**Status:** passed
+**Re-verification:** Yes — regeneration of the prior nonstandard `passed_with_uat` report (written by the inline executor) now that its one human item has closed; all checks re-run against CURRENT HEAD after phases 17-19 forward drift.
 
-## Method
+**Lineage at verification:** SuperGenius `41776b0c0` (fix(19-05), tag `test_coldstorage`) · parent `c0af2ab` (test(16): complete UAT — 1 passed, 0 issues).
 
-Goal-backward check of the three plans' SUMMARYs against the codebase and the Tier-1 lane (run twice, green), plus the per-plan verification gates recorded in each SUMMARY (ordering probes, zero-diff windows, purity gates, red-first signatures).
+## Goal Achievement
 
-## SC1 / COMP-01 — VERIFIED (automated)
+### Observable Truths
 
-- The post-commit `DeleteCIDBlock` sits strictly between the batch commit and the seal re-assert (`globaldb.cpp`, ordering probe commit=1666 < delete=1682 < seal=1690 at review time) — both committed exits covered, unconditional for every caller (D-04).
-- Guard 3 and `RunHotCleanup`/A6 carry ZERO diff lines vs `af644481f` (probes returned 0 hunks).
-- Proven red→green at both D-06 layers: W1 (deterministic, `SC1-STALE-SERVE` red signature captured pre-fix) and W2 (real-thread barrier); W3/W4 rule the abort-path and absent-key edges.
-- Evidence: `cold_compose_matrix_test` legs W1-W4; commits `5f6ff19d9`, `88283905e`.
+| # | Truth (ROADMAP SC / requirement) | Status | Evidence (at HEAD, this verification) |
+|---|--------------------------------|--------|----------------------------------------|
+| 1 | **SC1 / COMP-01** — `EraseEntry`'s post-commit cleanup hardened to GC parity: a concurrent `GrabCIDBlock`-path insert between compose-start and commit cannot leave a stale LRU entry | ✓ VERIFIED | `globaldb.cpp:1739` `BOOST_OUTCOME_TRY( batch->commit() )` → `:1755` `(void)m_dagSyncer->DeleteCIDBlock( cid )` → `:1763` seal re-assert — the delete sits strictly between the commit and the re-assert, so **both committed exits** (success and `POST_COMMIT_ERASE_ANOMALY` at `:1772`) are covered; full block read — the call is **unconditional** (no caller-identity, cold-state, marker, or flag condition). Guard 3 admission intact (`:1645-1652`, `IsCIDInCache` refusal with `Error::INVALID_PARAMETERS`). GC parity intact: `ColdStorageManager.cpp:1389-1424` `RunHotCleanup` still batch → commit → A6 `DeleteCIDBlock` (no symmetry edit leaked through phases 17-19). Deterministic seam present: static `erase_window_observer_for_test_` (`:1477`), setter (`:1483`), fire immediately before the commit (`:1735-1737`, void observe-and-continue). Legs W1-W4 present in the suite (truth 2). Behavioral: suite PASS this run |
+| 2 | **SC2 / COMP-02** — interleave matrix over overlapping set rows, seal rows, and the block LRU proves both pruners idempotent on absent keys, seals untouched, both erase orders converging | ✓ VERIFIED | Full 18-leg inventory present in `cold_compose_matrix_test.cpp` at HEAD: W1 `:1092`, W2 `:1211` (real-thread `WindowGate` `:1154`), W3 `:1279`, W4 `:1340`; M1 `Converge_TxPrunerThenGC_Matches_GCThenTxPruner` `:1788`, M2-M4 `Interleave_*` `:2027/:2098/:2154`, M5-M6 `Crossfire_*` `:2211/:2267`, M7 `Seals_NeverTouched…` `:2306`, M8 `Converge_FixedPointIsStable…` `:2359`; R1-R2 `Race_*` `:2507/:2589`, R3 `InteractionC_DurabilityFlipStraddlingReads_LastCopySurvives` `:2645`. Registration: `CMakeLists.txt:487-518` — inside `if(SGNS_COLD_STORAGE)` with `set_tests_properties(cold_compose_matrix_test PROPERTIES LABELS "Tier1")`. Sequencing (never unified) holds: ruling doc §f D-01 records free concurrency + no mutex/serialization wrapper; no mutual-exclusion machinery found in either pruner at HEAD. The 16-03 semantic re-scoping (order-INVARIANT projection converges; the walk-gap under-eviction and D-10 stranding are designed per-order terminal states, asserted as the divergence table) stands as recorded — no idempotence-contract divergence (D-03) ever fired. Behavioral: suite PASS this run |
+| 3 | **SC3 / COMP-03** — GC-disposal starvation interplay ruled, documented, fail-safe direction asserted by test: under-prune, never destruction of the last copy | ✓ VERIFIED | Consult chain intact at HEAD: `TxPruner.cpp:133` `globaldb.IsColdDisposed( cid )` → `globaldb.cpp:1521` `GlobalDB::IsColdDisposed` (const) → free bridge `sgns::crdt::IsColdDisposed( cold_manager_, cid )` `:1534` → `ColdStorageManager.cpp:736-742` `IsDisposed` under `cold_store_mutex_` → `local_block_store_->IsDisposed` (library-owned keyspace, no third builder). **Only the NoRecord arm consults** (`TxPruner.cpp:120-135`); Pending/Accepted/default never consult (`:137-146`). Stranded split counter surfaces: `++stats.cold_disposed_stranded_groups` (`:135`) + INFO `cold_disposed_stranded={}` between `cold_unreadable` and `skipped` (`:422-431`) — a counter, never an error. Deterministic legs present: S3a `:1508`, S3b `:1626`, S3c `:1689`; Tier-3 live leg `cold_compose_live_smoke_test` registered with `LABELS "Tier3"` (`CMakeLists.txt:702-732`). Rulings documented at both destructive homes + `notes/16-txpruner-gc-composition-rulings.md` (D-01/D-02/D-10/D-12 records present, incl. the D-01 sequencing record and the under-prune ruling). Prior human item CLOSED: 16-UAT.md 1/1 pass (parent commit `c0af2ab`) — the live leg accepted on hermetic coverage with the dev-opt-in posture recorded. Behavioral: suite PASS this run |
 
-## SC2 / COMP-02 — VERIFIED (automated), with the recorded semantic re-scoping
+**Score:** 3/3 truths verified (0 present-but-behavior-unverified)
 
-- The matrix product exists and is green: M1-M8 (deterministic) + R1-R3 (races) over all shared surfaces (set rows, block bytes, LRU, seals, both marker namespaces, disposed markers).
-- **Re-scoping (16-03 deviation #1, accepted):** literal one-fixed-point convergence is unattainable because two DESIGNED order-dependences intervene — the post-erase walk-gap abort (under-eviction) and the D-10 stranding. The proven contract: the order-INVARIANT projection converges (byte-level where constructively possible; class-state vectors elsewhere) + the explicit per-order divergence table. No idempotence-contract bug found (D-03 never triggered); no lock added (D-01 holds); seals survive every run (M7); re-runs change nothing (M8); crossfire key-identity holds (M5/M6).
-- D-02's Interaction-C invariant race-tested in all three straddle orderings with last-copy survival asserted through the library remote read (R3).
-- Evidence: commits `84391b372`, `741980f5d`; knobs `SGNS_COMPOSE_RACE_JITTER_SEED/_ITERS`.
+### Required Artifacts
 
-## SC3 / COMP-03 — VERIFIED (deterministic automated; live leg loud-skipped → UAT)
+| Artifact | Expected | Status | Details |
+|----------|----------|--------|---------|
+| `SuperGenius/src/crdt/globaldb/globaldb.cpp` | SC1 close + observer seam + IsColdDisposed bridge | ✓ VERIFIED | Commit→delete→re-assert ordering at `:1739/:1755/:1763`; seam fire `:1735`; bridge `:1521-1534` |
+| `SuperGenius/src/crdt/globaldb/globaldb.hpp` | Seam declaration + bridge declaration | ✓ VERIFIED | Declarations present beside the sibling hook families |
+| `SuperGenius/src/crdt/globaldb/ColdStorageManager.cpp/.hpp` | `IsDisposed` pass-through + D-12 comment at the disposal home | ✓ VERIFIED | `:736-742` pass-through; `EvictLocalAndMarkDisposed` consumption `:1353`; `RunHotCleanup` A6 order unchanged |
+| `SuperGenius/src/crdt/globaldb/ColdStorageStack.cpp/.hpp` | Null-safe `IsColdDisposed` free bridge | ✓ VERIFIED | The D-09 layering hop the consult routes through |
+| `SuperGenius/src/transaction/TxPruner.cpp/.hpp` | NoRecord split + stranded counter + INFO surfacing | ✓ VERIFIED | `:120-146` arm structure; `:135` counter; `:422-431` INFO label |
+| `SuperGenius/src/crdt/graphsync_dagsyncer.hpp` | AddCIDBlock/GrabCIDBlock public beside their siblings | ✓ VERIFIED | The counter-test surface (16-01 access-only change) |
+| `SuperGenius/test/src/crdt/cold_compose_matrix_test.cpp` | 18-leg Tier-1 evidence suite (W/S/M/R families) | ✓ VERIFIED | All 18 legs located by name at HEAD (truth table); PASS this run |
+| `SuperGenius/test/src/crdt/cold_compose_live_smoke_test.cpp` | Env-gated Tier-3 live leg | ✓ VERIFIED | Registered `:702-732`, `LABELS "Tier3"`, env-gated loud skip |
+| `SuperGenius/test/src/crdt/CMakeLists.txt` | Suite registrations | ✓ VERIFIED | `:487-518` Tier-1 under `SGNS_COLD_STORAGE`; `:702-732` Tier-3 |
+| `.planning/…/notes/16-txpruner-gc-composition-rulings.md` | D-12 ruling doc (options, v2 pointer, lag, sequencing) | ✓ VERIFIED | D-01 §f / D-02 / D-10 / D-12 / under-prune records confirmed present |
 
-- The D-10 consult chain (`GlobalDB::IsColdDisposed` → manager → library) rides the proven lock order; `PruneEligibility` zero-diff vs `af644481f`; the stranded counter surfaces as `cold_disposed_stranded={}`; only the NoRecord arm consults (S3c).
-- Fail-safe direction asserted by test both ways: S3a (hermetic real disposal → stranded == 1, erased == 0, value survives; red-first `SC3-UNDIFFERENTIATED` captured against the consult-reverted line) and the live MinIO leg (D-11b).
-- Rulings documented at both destructive homes + the workstream doc `notes/16-txpruner-gc-composition-rulings.md` (probe anchors all present).
-- **Human item:** the Tier-3 live leg (real MinIO + real GC disposal → stranded cycle + remote fetchability) is env-gated and ran as its labelled loud skip in this environment — the deterministic stand-in (S3a) is the CI evidence; a developer run with `SGNS_BLOCKSTORE_TEST_MINIO_BIN` remains the live confirmation.
+### Key Link Verification
 
-## Requirement traceability
+| From | To | Via | Status |
+|------|----|----|--------|
+| Observer fire (pre-commit) | Post-commit `DeleteCIDBlock` eviction | `batch->commit()` between them — the deterministic SC1 proof path | ✓ WIRED (`:1735 → :1739 → :1755`) |
+| TxPruner NoRecord arm | Library disposed keyspace | `GlobalDB::IsColdDisposed` → free bridge → `ColdStorageManager::IsDisposed` → `LocalBlockStore::IsDisposed` | ✓ WIRED (all four hops read at HEAD) |
+| `PruneCycleStats.cold_disposed_stranded_groups` | Operator visibility | `RecordCompletedCycle` INFO `cold_disposed_stranded={}` | ✓ WIRED (`TxPruner.cpp:422-431`) |
+| Matrix legs | Park points | `SetEraseWindowObserverForTest` + GC hook families + `WindowGate` barriers | ✓ WIRED (gate at `:1154`, used `:1233/:2052-2169/:2517-2746`) |
+| Suite → ctest | Tier-1 lane | `if(SGNS_COLD_STORAGE)` + `set_tests_properties … LABELS "Tier1"` | ✓ WIRED (ran green via exactly this registration) |
 
-| ID | Letter | Plans | Status |
-|----|--------|-------|--------|
-| COMP-01 | SC1 stale-LRU window closed | 16-01 | Complete (verified automated) |
-| COMP-02 | SC2 interleave matrix | 16-03 | Complete (verified automated, re-scoped contract recorded) |
-| COMP-03 | SC3 starvation fail-safe | 16-02 | Complete (deterministic verified; live leg → UAT) |
+### Behavioral Spot-Checks
 
-## Gaps
+| Behavior | Command | Result | Status |
+|----------|---------|--------|--------|
+| The phase's full evidence suite at CURRENT HEAD (all 18 legs: SC1 window close both layers, SC3 stranded cycle, SC2 matrix + races) | `ctest --test-dir SuperGenius/build/Windows/Release -C Release -R "^cold_compose_matrix_test$" --no-tests=error` | `1/1 Test #112: cold_compose_matrix_test … Passed 37.14 sec`, exit=0, Tier1 label | ✓ PASS |
 
-None blocking. Registered deferred items (documented in the ruling doc + 16-02 SUMMARY): the coldstore handle leak after retention-GC shutdown (hardening; test-posture-only impact), TEST-03-style live MinIO confirmation (UAT), and the standing PollUntil sleep-count probe-letter deviation.
+Corroborating runs cited (today, per execution context): the same suite PASSED at 37.22s inside an 18/18 Tier-1 local lane, and the phase-19 CI capstone ran Tier-1 20/20 on three platforms — consistent with the independent PASS recorded above.
 
-## human_verification
+### Requirements Coverage
 
-1. Live SC3 leg: with a MinIO COMMUNITY binary, run `cold_compose_live_smoke_test` (env `SGNS_BLOCKSTORE_TEST_MINIO_BIN`; runbook `thirdparty/sgns-blockstore/docs/testing-tiers.md`; one-time `mc mb compose-smoke/compose-smoke` on 127.0.0.1:19793) — expect: real disposal strands the cycle (`cold_disposed_stranded_groups == 1`, erased 0) and the disposed block's bytes answer from the remote.
+| Requirement | Source Plan | Description | Status | Evidence |
+|-------------|------------|-------------|--------|----------|
+| COMP-01 | 16-01 | Post-commit cleanup hardened to GC parity — stale-LRU window closed | ✓ SATISFIED | Truth 1 |
+| COMP-02 | 16-03 | Interleave matrix proven — idempotent, seals untouched, converging | ✓ SATISFIED | Truth 2 |
+| COMP-03 | 16-02 | Disposal-starvation interplay ruled, documented, fail-safe asserted by test | ✓ SATISFIED | Truth 3 (deterministic + UAT-closed live posture) |
+
+No orphaned requirements: REQUIREMENTS.md maps exactly COMP-01/02/03 to Phase 16, all claimed by plans and satisfied.
+
+### Anti-Patterns Found
+
+Debt-marker scan (`TBD|FIXME|XXX`) over all phase-changed production and test files: zero matches. The prior verification's registered deferred items (coldstore handle leak after retention-GC shutdown; the standing PollUntil sleep-count probe-letter deviation) remain documented postures in the ruling doc/16-02 SUMMARY — non-blocking, unchanged by phases 17-19.
+
+### Human Verification Required
+
+None remaining. The prior report's sole human item — the MinIO live SC3 leg — was resolved in 16-UAT.md (1/1 passed, `c0af2ab`): accepted on hermetic coverage with the live run recorded as the standing developer opt-in per the D-11b hybrid posture. That acceptance IS the human decision this verifier would otherwise have requested; nothing new requires human judgment.
+
+### Gaps Summary
+
+None. All three roadmap success criteria hold at current HEAD (`41776b0c0`) despite phases 17-19 touching overlapping files — the drift is legitimate forward work and every phase-16 must-have survived it: the SC1 close retains its single-home placement and both-exit coverage, guard 3 and GC's sanctioned A6 ordering are unedited, the consult chain and stranded counter are intact with NoRecord-only discipline, the 18-leg suite is registered Tier-1 under `SGNS_COLD_STORAGE`, the D-01 sequencing record (concurrent, never unified, no mutex) is both documented and reflected in the code, and the suite passed under this verifier's own run at HEAD.
+
+---
+
+_Verified: 2026-11-24T20:45:00Z_
+_Verifier: gsd-verifier (regenerated canonical report; supersedes the inline-executor `passed_with_uat` report of 2026-11-18)_
+
