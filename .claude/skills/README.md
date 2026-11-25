@@ -32,33 +32,54 @@ The installed skills are available as `/architecture-review` and `/gnus-standup`
 
 After pulling updates to GeniusNetwork, repeat the copy commands. These are local copies, not live links.
 
-## Install the architecture quality gate
+## Install shared instructions without replacing personal preferences
 
-GeniusNetwork's root `CLAUDE.md` imports the shared [architecture quality gate](../architecture-quality-gate.md). Install the same instructions globally so standalone repositories and nested submodules use the gate as well.
+GeniusNetwork's root `CLAUDE.md` imports the shared [architecture quality gate](../architecture-quality-gate.md). Install that file globally and append a small GNUS Shared Skills section to your existing personal instructions. Never replace your personal CLAUDE.md with the repository's CLAUDE.md.
 
-From the GeniusNetwork root, after installing the skills:
+From the GeniusNetwork root, after installing the skills, run the commands below. They create a personal CLAUDE.md if needed, preserve its existing content, and skip the append if the shared section already exists. If the architecture gate import was installed previously, they do not duplicate it.
 
 ### macOS and Linux
 
 ```bash
-cp .claude/architecture-quality-gate.md "$HOME/.claude/"
+config_dir="${CLAUDE_CONFIG_DIR:-$HOME/.claude}"
+mkdir -p "$config_dir"
+cp .claude/architecture-quality-gate.md "$config_dir/"
+claude_file="$config_dir/CLAUDE.md"
+touch "$claude_file"
+
+if ! grep -Eq '^## GNUS Shared Skills[[:space:]]*$' "$claude_file"; then
+    {
+        printf '\n\n## GNUS Shared Skills\n\n'
+        if ! grep -Eq '^@architecture-quality-gate\.md[[:space:]]*$' "$claude_file"; then
+            printf '@architecture-quality-gate.md\n\n'
+        fi
+        printf '%s\n' '- Use `/gnus-standup` only when explicitly requested to generate the daily engineering standup.'
+    } >> "$claude_file"
+fi
 ```
 
 ### Windows (PowerShell)
 
 ```powershell
-Copy-Item ".claude\architecture-quality-gate.md" "$HOME\.claude\" -Force
+$configDir = if ($env:CLAUDE_CONFIG_DIR) { $env:CLAUDE_CONFIG_DIR } else { Join-Path $HOME ".claude" }
+New-Item -ItemType Directory -Force -Path $configDir | Out-Null
+Copy-Item ".claude\architecture-quality-gate.md" -Destination $configDir -Force
+$claudeFile = Join-Path $configDir "CLAUDE.md"
+$existing = if (Test-Path -LiteralPath $claudeFile) { Get-Content -LiteralPath $claudeFile } else { @() }
+
+if ($existing -notcontains "## GNUS Shared Skills") {
+    $lines = @("", "", "## GNUS Shared Skills", "")
+    if ($existing -notcontains "@architecture-quality-gate.md") {
+        $lines += @("@architecture-quality-gate.md", "")
+    }
+    $lines += '- Use `/gnus-standup` only when explicitly requested to generate the daily engineering standup.'
+    Add-Content -LiteralPath $claudeFile -Value $lines -Encoding UTF8
+}
 ```
 
-Create `~/.claude/CLAUDE.md` if it does not exist, or edit the existing file. Add this line once, outside code blocks:
+These commands append instructions only to your personal CLAUDE.md. They do not change the GSD-generated profile, personal preferences, coding standards, or other existing rules. If you already have a custom GNUS Shared Skills section, review it manually rather than replacing it. The architecture gate import must be outside any fenced code block.
 
-```markdown
-@architecture-quality-gate.md
-```
-
-Preserve all existing personal instructions. If you use a custom `CLAUDE_CONFIG_DIR`, use that directory instead of `~/.claude`. The import is relative to the global `CLAUDE.md`.
-
-Repeat the copy after pulling updates; the import line only needs to be added once. Start a new Claude Code session and check `/memory` to confirm the instructions loaded. The gate applies to GeniusVentures, GNUS.ai, and related GSD projects. It requires review before phase execution and does not replace repository-specific architecture or coding standards.
+Repeat the copy commands after pulling updates; the append step is safe to run again. Start a new Claude Code session and check `/memory` to confirm the instructions loaded. The gate applies to GeniusVentures, GNUS.ai, and related GSD projects. It requires review before phase execution and does not replace repository-specific architecture or coding standards.
 
 ## Maintenance
 
